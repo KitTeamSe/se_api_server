@@ -11,11 +11,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AccountReadUseCase {
 
-    private final AccountJpaRepository accountJpaRepository;
+  private final AccountJpaRepository accountJpaRepository;
 
-    public Account read(Long accountId){
-        Optional<Account> member = accountJpaRepository.findById(accountId);
-        return member.get();
-    }
+  public Account read(Long accountId) {
+    Optional<Account> member = accountJpaRepository.findById(accountId);
+    return member.get();
+  }
 
 }
