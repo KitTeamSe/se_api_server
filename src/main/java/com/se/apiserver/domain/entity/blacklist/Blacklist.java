@@ -24,14 +24,14 @@ public class Blacklist extends BaseEntity {
   private Long blacklistId;
 
   @ManyToOne
-  @JoinColumn(name = "account_id")
+  @JoinColumn(name = "accountId", nullable = false)
   private Account registrant;
 
-  @Column(length = 20)
+  @Column(length = 20, nullable = false)
   @Size(min = 4, max = 20)
   private String ip;
 
-  @Column(length = 50)
+  @Column(length = 50, nullable = false)
   @Size(min = 4, max = 20)
   private String reason;
 
