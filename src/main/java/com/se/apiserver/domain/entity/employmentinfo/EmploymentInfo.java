@@ -12,39 +12,41 @@ import java.time.LocalDate;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EmploymentInfo extends BaseEntity {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long employmentInfoId;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    private Account account;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long employmentInfoId;
 
-    @Column(length = 30)
-    @Size(min = 3, max = 30)
-    private String position;
+  @OneToOne(fetch = FetchType.LAZY)
+  private Account account;
 
-    @Column(length = 255)
-    @Size(min = 10, max = 255)
-    private String blogUrl;
+  @Column(length = 30)
+  @Size(min = 3, max = 30)
+  private String position;
 
-    @Column(length = 255)
-    @Size(min = 10, max = 255)
-    private String githubUrl;
+  @Column(length = 255)
+  @Size(min = 10, max = 255)
+  private String blogUrl;
 
-    private LocalDate dateGraduation;
+  @Column(length = 255)
+  @Size(min = 10, max = 255)
+  private String githubUrl;
 
-    @Column(length = 30)
-    @Size(min = 3, max = 30)
-    private String currentCompany;
+  private LocalDate dateGraduation;
 
-    @Column(length = 10)
-    @Size(min = 2, max = 10)
-    private String languageTestType;
+  @Column(length = 30)
+  @Size(min = 3, max = 30)
+  private String currentCompany;
 
-    @Column(length = 10)
-    @Size(min = 2, max = 10)
-    private String languageScore;
+  @Column(length = 10)
+  @Size(min = 2, max = 10)
+  private String languageTestType;
 
-    private Double avrGrades;
+  @Column(length = 10)
+  @Size(min = 2, max = 10)
+  private String languageScore;
+
+  private Double avrGrades;
 
 
 }
