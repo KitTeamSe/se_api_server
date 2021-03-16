@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Entity
@@ -23,6 +24,7 @@ public class Reply extends BaseEntity {
     private Post post;
 
     @Column(length = 500, nullable = false)
+    @Size(min = 4, max = 500)
     private String text;
 
     @ManyToOne
@@ -33,9 +35,11 @@ public class Reply extends BaseEntity {
     private Anonymous anonymous;
 
     @Column(length = 20, nullable = false)
+    @Size(min = 4, max = 20)
     private String ip;
 
     @Column(length = 10, nullable = false)
+    @Size(min = 2, max = 10)
     private ReplyStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)

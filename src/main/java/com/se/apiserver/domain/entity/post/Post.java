@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,24 +30,29 @@ public class Post {
     private Account account;
 
     @Column(length = 50, nullable = false)
+    @Size(min = 3, max = 50)
     private String title;
 
     @Column(length = 2000, nullable = false)
+    @Size(min = 5, max = 2000)
     private String text;
 
     @Embedded
     private Anonymous anonymous;
 
     @Column(length = 20, nullable = false)
+    @Size(min = 4, max = 20)
     private String ip;
 
     @Column(length = 10, nullable = false)
+    @Size(min = 2, max = 10)
     private PostType isNotice;
 
     @Column(nullable = false)
     private Integer views;
 
     @Column(length = 10, nullable = false)
+    @Size(min = 2, max = 10)
     private PostStatus status;
 
     @OneToMany(mappedBy = "post")
