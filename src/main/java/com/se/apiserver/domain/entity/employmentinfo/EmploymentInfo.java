@@ -18,6 +18,7 @@ public class EmploymentInfo extends BaseEntity {
   private Long employmentInfoId;
 
   @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "account_id", referencedColumnName = "accountId", nullable = false)
   private Account account;
 
   @Column(length = 30)

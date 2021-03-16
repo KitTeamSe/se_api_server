@@ -22,7 +22,7 @@ public class Account extends BaseEntity implements UserDetails {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long account_id;
+  private Long accountId;
 
   @Size(min = 5, max = 20)
   @Column(nullable = false)
@@ -54,6 +54,7 @@ public class Account extends BaseEntity implements UserDetails {
   @Column(nullable = false)
   private String email;
 
+  @Column(length = 20)
   @Size(min = 4, max = 20)
   private String lastSignInIp;
 
@@ -64,25 +65,6 @@ public class Account extends BaseEntity implements UserDetails {
   @ElementCollection(fetch = FetchType.LAZY)
   @Builder.Default
   private List<String> roles = new ArrayList<>();
-
-  @Builder
-  public Account(Long account_id, @Size(min = 5, max = 20) String id, String password, String name, String nickname,
-      String studentId,
-      AccountType type, String phoneNumber, String email, String lastSignInIp,
-      InformationOpenAgree informationOpenAgree, List<String> roles) {
-    this.account_id = account_id;
-    this.id = id;
-    this.password = password;
-    this.name = name;
-    this.nickname = nickname;
-    this.studentId = studentId;
-    this.type = type;
-    this.phoneNumber = phoneNumber;
-    this.email = email;
-    this.lastSignInIp = lastSignInIp;
-    this.informationOpenAgree = informationOpenAgree;
-    this.roles = roles;
-  }
 
   protected Account() {
   }
@@ -99,7 +81,7 @@ public class Account extends BaseEntity implements UserDetails {
 
   @Override
   public String getUsername() {
-    return String.valueOf(this.getAccount_id());
+    return String.valueOf(this.getAccountId());
   }
 
   @Override

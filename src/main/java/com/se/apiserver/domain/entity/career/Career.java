@@ -24,16 +24,16 @@ public class Career extends BaseEntity {
   private Long careerId;
 
   @ManyToOne
-  @JoinColumn(name = "emplyment_info_id")
+  @JoinColumn(name = "emplyment_info_id", nullable = false)
   private EmploymentInfo employmentInfo;
 
-  @Column(length = 30)
+  @Column(length = 30, nullable = false)
   private String company;
 
-  @Column(length = 30)
+  @Column(length = 30, nullable = false)
   private String duty;
 
-  @Column
+  @Column(nullable = false)
   private LocalDate dateStart;
 
   @Column

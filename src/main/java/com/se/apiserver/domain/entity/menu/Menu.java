@@ -33,18 +33,18 @@ public class Menu extends BaseEntity {
   @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
   private List<Menu> child;
 
-  @Column(length = 10)
+  @Column(length = 10, nullable = false)
   @Size(min = 2, max = 10)
   private String name;
 
-  @Column
+  @Column(nullable = false)
   private Integer menuOrder;
 
-  @Column(length = 50)
+  @Column(length = 50, nullable = false)
   @Size(min = 2, max = 50)
   private String description;
 
-  @Column(length = 255)
+  @Column(length = 255, nullable = false)
   @Size(min = 4, max = 255)
   private String url;
 }
