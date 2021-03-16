@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @Getter
 public class Account extends BaseEntity implements UserDetails {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long account_id;
+    private Long account_id;
 
     @Size(min = 5, max = 20)
     @Column(nullable = false)
