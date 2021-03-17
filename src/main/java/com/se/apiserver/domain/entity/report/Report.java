@@ -4,6 +4,7 @@ import com.se.apiserver.domain.entity.BaseEntity;
 import com.se.apiserver.domain.entity.account.Account;
 import com.se.apiserver.domain.entity.post.Post;
 import com.se.apiserver.domain.entity.reply.Reply;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,7 +15,7 @@ import java.util.List;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Report extends BaseEntity {
 
     @Id
@@ -22,11 +23,11 @@ public class Report extends BaseEntity {
     private Long reportId;
 
     @ManyToOne
-    @JoinColumn(name = "reply_id")
+    @JoinColumn(name = "reply_id", referencedColumnName = "replyId")
     private Reply reply;
 
     @ManyToOne
-    @JoinColumn(name = "post_id", nullable = false)
+    @JoinColumn(name = "post_id", referencedColumnName = "postId")
     private Post post;
 
     @Column(length = 255, nullable = false)
@@ -42,14 +43,15 @@ public class Report extends BaseEntity {
     private ProcessType processType;
 
     @ManyToOne
-    @JoinColumn(name = "account_id", referencedColumnName = "accountId")
+    @JoinColumn(name = "processor", referencedColumnName = "accountId")
     private Account processor;
 
-    @OneToMany(mappedBy = "report")
-    private List<ReportAccountMapping> repoerters = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "reporter", referencedColumnName = "accountId")
+    private Account reporter;
 
     @ManyToOne
-    @JoinColumn(name = "account_id", referencedColumnName = "accountId", nullable = false)
+    @JoinColumn(name = "reported", referencedColumnName = "accountId", nullable = false)
     private Account reported;
 
 }

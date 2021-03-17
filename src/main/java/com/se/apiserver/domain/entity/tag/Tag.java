@@ -4,6 +4,7 @@ import com.se.apiserver.domain.entity.BaseEntity;
 import com.se.apiserver.domain.entity.account.Account;
 import com.se.apiserver.domain.entity.account.AccountReceiveTagMapping;
 import com.se.apiserver.domain.entity.post.PostTagMapping;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,7 +15,7 @@ import java.util.List;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Tag extends BaseEntity {
 
     @Id

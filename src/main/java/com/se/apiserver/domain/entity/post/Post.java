@@ -9,8 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.swing.text.StyleContext;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,8 +56,5 @@ public class Post {
 
     @OneToMany(mappedBy = "post")
     private List<Reply> replies = new ArrayList<>();
-
-    @OneToMany(mappedBy = "post")
-    private List<PostTagMapping> tags = new ArrayList<>();
 
 }

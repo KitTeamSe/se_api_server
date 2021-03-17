@@ -1,17 +1,19 @@
 package com.se.apiserver.domain.entity.noticerecord;
 
 import com.se.apiserver.domain.entity.BaseEntity;
-import com.se.apiserver.domain.entity.account.Account;
-import com.se.apiserver.domain.entity.account.AccountReceiveTagMapping;
 import com.se.apiserver.domain.entity.fcm.Fcm;
+import com.se.apiserver.domain.entity.post.Post;
+import com.se.apiserver.domain.entity.tag.Tag;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class NoticeRecord extends BaseEntity {
 
     @Id
@@ -23,8 +25,15 @@ public class NoticeRecord extends BaseEntity {
     private Fcm fcm;
 
     @ManyToOne
-    @JoinColumn(name = "Account_receive_tag_mapping_id", referencedColumnName = "AccountReceiveTagMappingId", nullable = false)
-    private AccountReceiveTagMapping AccountReceiveTagMapping;
+    @JoinColumn(name = "tag_id", referencedColumnName = "tagId")
+    private Tag tag;
 
+    @ManyToOne
+    @JoinColumn(name = "post_id", referencedColumnName = "postId")
+    private Post post;
+
+    @Column(length = 255, nullable = false)
+    @Size(min = 2, max = 255)
+    private String text;
 
 }

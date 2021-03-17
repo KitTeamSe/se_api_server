@@ -1,5 +1,6 @@
 package com.se.apiserver.domain.entity.post;
 
+import com.se.apiserver.domain.entity.tag.Tag;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -19,5 +20,5 @@ public class PostTagMapping {
 
     @ManyToOne
     @JoinColumn(name = "tag_id", referencedColumnName = "tagId", nullable = false)
-    private Post tag;
+    private Tag tag;
 }
