@@ -1,10 +1,8 @@
 package com.se.apiserver.domain.entity.account;
 
 import com.se.apiserver.domain.entity.BaseEntity;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -103,4 +101,5 @@ public class Account extends BaseEntity implements UserDetails {
   public boolean isEnabled() {
     return true;
   }
+
 }
