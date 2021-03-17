@@ -1,6 +1,7 @@
 package com.se.apiserver.domain.entity.account;
 
 import com.se.apiserver.domain.entity.BaseEntity;
+import com.se.apiserver.domain.entity.report.ReportAccountMapping;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -103,4 +104,10 @@ public class Account extends BaseEntity implements UserDetails {
   public boolean isEnabled() {
     return true;
   }
+
+  @OneToMany(mappedBy = "account")
+  private List<AccountReceiveTagMapping> tags = new ArrayList<>();
+
+  @OneToMany(mappedBy = "account")
+  private List<ReportAccountMapping> reports = new ArrayList<>();
 }
