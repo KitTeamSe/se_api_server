@@ -1,15 +1,20 @@
 package com.se.apiserver.http.dto.account;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.se.apiserver.domain.entity.account.AccountType;
 import com.se.apiserver.domain.entity.account.InformationOpenAgree;
 import javax.persistence.Column;
 import javax.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+
+import io.swagger.annotations.ApiModel;
+import lombok.*;
 
 public class AccountCreateDto {
 
   @Data
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @ApiModel("회원 가입 요청")
   static public class Request{
     @Size(min = 5, max = 20)
     private String id;
@@ -42,6 +47,7 @@ public class AccountCreateDto {
 
   @Data
   @AllArgsConstructor
+  @ApiModel("회원가입 응답")
   static public class Response{
       private Long id;
   }

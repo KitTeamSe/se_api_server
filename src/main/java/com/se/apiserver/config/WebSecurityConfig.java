@@ -2,10 +2,13 @@ package com.se.apiserver.config;
 
 import com.se.apiserver.security.filter.JwtAuthenticationFilters;
 import com.se.apiserver.security.provider.JwtTokenResolver;
+import com.se.apiserver.security.service.AccountDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -15,10 +18,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @RequiredArgsConstructor
 @Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final JwtTokenResolver jwtTokenResolver;
+
+  private final AccountDetailService accountDetailService;
 
   @Override
   protected AuthenticationManager authenticationManager() throws Exception {
@@ -33,7 +39,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and()
         .authorizeRequests()
-        .antMatchers("/api/v1/signup").permitAll()
+        .antMatchers("/api/v1/signup", "/api/v1/signin").permitAll()
         .antMatchers("/swagger-resources/**", "/swagger-ui.html", "/webjars/**").permitAll()
         .anyRequest().authenticated()
         .and()

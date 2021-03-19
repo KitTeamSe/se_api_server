@@ -1,42 +1,51 @@
 package com.se.apiserver.http.api.account;
 
 import com.se.apiserver.domain.entity.account.Account;
-import com.se.apiserver.domain.usecase.account.AccountCreateUseCase;
-import com.se.apiserver.domain.usecase.account.AccountDeleteUseCase;
-import com.se.apiserver.domain.usecase.account.AccountReadUseCase;
-import com.se.apiserver.domain.usecase.account.AccountUpdateUseCase;
+import com.se.apiserver.domain.usecase.account.*;
 import com.se.apiserver.http.dto.account.AccountCreateDto;
-import com.se.apiserver.http.dto.account.AccountCreateDto.Request;
 import com.se.apiserver.http.dto.account.AccountCreateDto.Response;
 import com.se.apiserver.http.dto.account.AccountReadDto;
+import com.se.apiserver.http.dto.account.AccountSignInDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.Mapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.websocket.server.PathParam;
 
 @RestController
 @RequiredArgsConstructor
 public class AccountApiController {
 
-  private final AccountCreateUseCase accountCreateUseCase;
-  private final AccountReadUseCase accountReadUseCase;
-  private final AccountUpdateUseCase accountUpdateUseCase;
-  private final AccountDeleteUseCase accountDeleteUseCase;
+    private final AccountCreateUseCase accountCreateUseCase;
+    private final AccountReadUseCase accountReadUseCase;
+    private final AccountUpdateUseCase accountUpdateUseCase;
+    private final AccountDeleteUseCase accountDeleteUseCase;
+    private final AccountSignInUseCase accountSignInUseCase;
 
 
-  @PostMapping(path = "/api/v1/signup")
-  public AccountCreateDto.Response createAccount(@RequestBody @Validated Request request){
-    Long id = accountCreateUseCase.signUp(request);
-    return new Response(id);
-  }
+    // TODO 인증 서버로 이전
+    @PostMapping(path = "/api/v1/signup")
+    public AccountCreateDto.Response signUp(@RequestBody @Validated AccountCreateDto.Request request) {
+        Long id = accountCreateUseCase.signUp(request);
+        return new Response(id);
+    }
 
-  @GetMapping(path = "/api/v1/signin")
-  public AccountReadDto.Response readAccount(@RequestParam Long id){
-    Account account = accountReadUseCase.read(id);
-    return new AccountReadDto.Response(account.getId(), account.getPassword());
-  }
+    @PreAuthorize("hasAuthority('ACCOUNT_ACCESS')")
+    @GetMapping(path = "/api/v1/user/{id}")
+    public AccountReadDto.Response readAccount(@PathVariable(value = "id") Long id) {
+        Account account = accountReadUseCase.read(id);
+        return new AccountReadDto.Response(account.getIdString(), account.getPassword());
+    }
+
+    // TODO 인증 서버로 이전
+    @PostMapping(path = "/api/v1/signin")
+    public AccountSignInDto.Response signIn(@RequestBody @Validated AccountSignInDto.Request request) {
+        System.out.println(request.getId());
+        System.out.println(request.getPw());
+        String token = accountSignInUseCase.signIn(request.getId(), request.getPw());
+        return new AccountSignInDto.Response(token);
+    }
+
 }

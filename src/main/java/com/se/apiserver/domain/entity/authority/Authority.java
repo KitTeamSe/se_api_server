@@ -6,14 +6,16 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Authority extends BaseEntity {
+@Builder
+@AllArgsConstructor
+public class Authority extends BaseEntity implements GrantedAuthority {
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long authorityId;
 
@@ -22,4 +24,9 @@ public class Authority extends BaseEntity {
 
   @Column(length = 30)
   private String nameKor;
+
+  @Override
+  public String getAuthority() {
+    return nameEng;
+  }
 }

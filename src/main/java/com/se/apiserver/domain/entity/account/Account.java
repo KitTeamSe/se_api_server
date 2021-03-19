@@ -22,8 +22,8 @@ public class Account extends BaseEntity {
   private Long accountId;
 
   @Size(min = 5, max = 20)
-  @Column(nullable = false)
-  private String id;
+  @Column(nullable = false, unique = true)
+  private String idString;
 
   @Column(nullable = false)
   private String password;

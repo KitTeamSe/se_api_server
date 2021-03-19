@@ -1,7 +1,7 @@
 package com.se.apiserver.domain.entity.career;
 
 import com.se.apiserver.domain.entity.BaseEntity;
-import com.se.apiserver.domain.entity.employmentinfo.EmploymentInfo;
+import com.se.apiserver.domain.entity.job.Job;
 import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,7 +25,7 @@ public class Career extends BaseEntity {
 
   @ManyToOne
   @JoinColumn(name = "emplyment_info_id", nullable = false)
-  private EmploymentInfo employmentInfo;
+  private Job job;
 
   @Column(length = 30, nullable = false)
   private String company;

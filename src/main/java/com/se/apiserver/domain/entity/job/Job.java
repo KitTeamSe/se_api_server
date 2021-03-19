@@ -1,4 +1,4 @@
-package com.se.apiserver.domain.entity.employmentinfo;
+package com.se.apiserver.domain.entity.job;
 
 import com.se.apiserver.domain.entity.BaseEntity;
 import com.se.apiserver.domain.entity.account.Account;
@@ -11,7 +11,7 @@ import java.time.LocalDate;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class EmploymentInfo extends BaseEntity {
+public class Job extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
