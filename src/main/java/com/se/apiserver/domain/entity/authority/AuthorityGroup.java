@@ -1,9 +1,7 @@
-package com.se.apiserver.domain.entity.authorityGroup;
+package com.se.apiserver.domain.entity.authority;
 
 import com.se.apiserver.domain.entity.BaseEntity;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -11,6 +9,8 @@ import javax.validation.constraints.Size;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@AllArgsConstructor
 public class AuthorityGroup extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long authorityGroupId;
