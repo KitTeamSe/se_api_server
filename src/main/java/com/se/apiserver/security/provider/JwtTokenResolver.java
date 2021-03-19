@@ -36,7 +36,8 @@ public class JwtTokenResolver {
   }
 
   public Authentication getAuthentication(String token) {
-    UserDetails userDetails = accountReadUseCase.read(Long.parseLong(getUserId(token)));
+//    UserDetails userDetails = accountReadUseCase.read(Long.parseLong(getUserId(token)));
+    UserDetails userDetails = null;
     return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
   }
 

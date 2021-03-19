@@ -1,9 +1,15 @@
 package com.se.apiserver.http.dto.account;
 
+import javax.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
 public class AccountReadDto {
 
-  static public class Request {
-
-    Long id;
+  @Data
+  @AllArgsConstructor
+  static public class Response {
+    private String id;
+    private String pw;
   }
 }

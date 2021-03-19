@@ -1,4 +1,4 @@
-package com.se.apiserver.domain.entity.authorityGroup;
+package com.se.apiserver.domain.entity.authority;
 
 import com.se.apiserver.domain.entity.account.Account;
 import lombok.AccessLevel;
