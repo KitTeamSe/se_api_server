@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.Size;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -47,4 +48,15 @@ public class Menu extends BaseEntity {
   @Column(length = 255, nullable = false)
   @Size(min = 4, max = 255)
   private String url;
+
+  @Builder
+  public Menu(Long menuId, Menu parent, List<Menu> child, @Size(min = 2, max = 10) String name, Integer menuOrder, @Size(min = 2, max = 50) String description, @Size(min = 4, max = 255) String url) {
+    this.menuId = menuId;
+    this.parent = parent;
+    this.child = child;
+    this.name = name;
+    this.menuOrder = menuOrder;
+    this.description = description;
+    this.url = url;
+  }
 }

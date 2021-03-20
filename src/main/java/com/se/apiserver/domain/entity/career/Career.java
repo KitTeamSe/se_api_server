@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -38,4 +39,14 @@ public class Career extends BaseEntity {
 
   @Column
   private LocalDate dateEnd;
+
+  @Builder
+  public Career(Long careerId, Job job, String company, String duty, LocalDate dateStart, LocalDate dateEnd) {
+    this.careerId = careerId;
+    this.job = job;
+    this.company = company;
+    this.duty = duty;
+    this.dateStart = dateStart;
+    this.dateEnd = dateEnd;
+  }
 }

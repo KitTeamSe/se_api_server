@@ -5,6 +5,7 @@ import com.se.apiserver.domain.entity.board.Board;
 import com.se.apiserver.domain.entity.common.Anonymous;
 import com.se.apiserver.domain.entity.reply.Reply;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -45,6 +46,7 @@ public class Post {
 
     @Column(length = 10, nullable = false)
     @Size(min = 2, max = 10)
+    @Enumerated(EnumType.STRING)
     private PostType isNotice;
 
     @Column(nullable = false)
@@ -52,9 +54,24 @@ public class Post {
 
     @Column(length = 10, nullable = false)
     @Size(min = 2, max = 10)
+    @Enumerated(EnumType.STRING)
     private PostStatus status;
 
     @OneToMany(mappedBy = "post")
     private List<Reply> replies = new ArrayList<>();
 
+    @Builder
+    public Post(Long postId, Board board, Account account, @Size(min = 3, max = 50) String title, @Size(min = 5, max = 2000) String text, Anonymous anonymous, @Size(min = 4, max = 20) String ip, @Size(min = 2, max = 10) PostType isNotice, Integer views, @Size(min = 2, max = 10) PostStatus status, List<Reply> replies) {
+        this.postId = postId;
+        this.board = board;
+        this.account = account;
+        this.title = title;
+        this.text = text;
+        this.anonymous = anonymous;
+        this.ip = ip;
+        this.isNotice = isNotice;
+        this.views = views;
+        this.status = status;
+        this.replies = replies;
+    }
 }

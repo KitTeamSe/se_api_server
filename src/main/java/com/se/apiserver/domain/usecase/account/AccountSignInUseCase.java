@@ -1,6 +1,7 @@
 package com.se.apiserver.domain.usecase.account;
 
 import com.se.apiserver.domain.entity.account.Account;
+import com.se.apiserver.domain.error.account.AccountErrorCode;
 import com.se.apiserver.domain.exception.account.NoSuchAccountException;
 import com.se.apiserver.domain.exception.account.PasswordInCorrectException;
 import com.se.apiserver.domain.usecase.UseCase;
@@ -19,13 +20,13 @@ public class AccountSignInUseCase {
 
     public String signIn(String id, String password){
         Account account = accountJpaRepository.findByIdString(id)
-                .orElseThrow(() -> new NoSuchAccountException());
+                .orElseThrow(() -> new NoSuchAccountException(AccountErrorCode.NO_SUCH_ACCOUNT));
         System.out.println("dasdasdasdsad");
         System.out.println(account.getAccountId());
         System.out.println(account.getPassword());
 
         if(!passwordEncoder.matches(password, account.getPassword()))
-            throw new PasswordInCorrectException();
+            throw new PasswordInCorrectException(AccountErrorCode.PASSWORD_INCORRECT);
 
         String token = jwtTokenResolver.createToken(String.valueOf(account.getAccountId()));
         return token;

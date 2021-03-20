@@ -30,8 +30,7 @@ public class Swagger2Config extends WebMvcConfigurationSupport {
   public Docket api() {
     return new Docket(DocumentationType.SWAGGER_2)
         .select()
-        .apis(RequestHandlerSelectors.any())
-        .paths(PathSelectors.any())
+        .apis(RequestHandlerSelectors.basePackage("com.se.apiserver.http.api"))
         .build()
         .apiInfo(apiInfo())
         .securityContexts(Arrays.asList(securityContext()))

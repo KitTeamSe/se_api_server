@@ -1,6 +1,7 @@
 package com.se.apiserver.security.service;
 
 import com.se.apiserver.domain.entity.account.Account;
+import com.se.apiserver.domain.error.account.AccountErrorCode;
 import com.se.apiserver.domain.exception.account.NoSuchAccountException;
 import com.se.apiserver.domain.usecase.UseCase;
 import com.se.apiserver.repository.account.AccountJpaRepository;
@@ -26,7 +27,7 @@ public class AccountDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String accountId) throws UsernameNotFoundException {
         Account account = accountJpaRepository.findById(Long.parseLong(accountId))
-                .orElseThrow(() -> new NoSuchAccountException());
+                .orElseThrow(() -> new NoSuchAccountException(AccountErrorCode.NO_SUCH_ACCOUNT));
 
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>(authorityJpaRepository.findByAccountId(account.getAccountId()));
         return new User(accountId, account.getPassword(), grantedAuthorities);

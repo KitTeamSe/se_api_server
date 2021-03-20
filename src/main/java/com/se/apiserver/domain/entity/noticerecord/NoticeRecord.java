@@ -5,6 +5,7 @@ import com.se.apiserver.domain.entity.fcm.Fcm;
 import com.se.apiserver.domain.entity.post.Post;
 import com.se.apiserver.domain.entity.tag.Tag;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -36,4 +37,12 @@ public class NoticeRecord extends BaseEntity {
     @Size(min = 2, max = 255)
     private String text;
 
+    @Builder
+    public NoticeRecord(Long noteceRecordId, Fcm fcm, Tag tag, Post post, @Size(min = 2, max = 255) String text) {
+        this.noteceRecordId = noteceRecordId;
+        this.fcm = fcm;
+        this.tag = tag;
+        this.post = post;
+        this.text = text;
+    }
 }

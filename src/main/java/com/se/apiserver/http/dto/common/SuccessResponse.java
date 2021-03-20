@@ -8,12 +8,12 @@ public class SuccessResponse<E> {
     private int code;
     private String message;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private E body;
+    private E data;
 
-    public SuccessResponse(int code, String message, E body) {
+    public SuccessResponse(int code, String message, E data) {
         this.code = code;
         this.message = message;
-        this.body = body;
+        this.data = data;
     }
 
     public SuccessResponse(int code, String message) {

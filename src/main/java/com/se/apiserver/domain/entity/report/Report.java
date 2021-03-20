@@ -5,6 +5,7 @@ import com.se.apiserver.domain.entity.account.Account;
 import com.se.apiserver.domain.entity.post.Post;
 import com.se.apiserver.domain.entity.reply.Reply;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -36,10 +37,12 @@ public class Report extends BaseEntity {
 
     @Column(length = 20, nullable = false)
     @Size(min = 2, max = 20)
+    @Enumerated(EnumType.STRING)
     private ReportStatus status;
 
     @Column(length = 20, nullable = false)
     @Size(min = 2, max = 20)
+    @Enumerated(EnumType.STRING)
     private ProcessType processType;
 
     @ManyToOne
@@ -54,4 +57,16 @@ public class Report extends BaseEntity {
     @JoinColumn(name = "reported", referencedColumnName = "accountId", nullable = false)
     private Account reported;
 
+    @Builder
+    public Report(Long reportId, Reply reply, Post post, @Size(min = 2, max = 255) String text, @Size(min = 2, max = 20) ReportStatus status, @Size(min = 2, max = 20) ProcessType processType, Account processor, Account reporter, Account reported) {
+        this.reportId = reportId;
+        this.reply = reply;
+        this.post = post;
+        this.text = text;
+        this.status = status;
+        this.processType = processType;
+        this.processor = processor;
+        this.reporter = reporter;
+        this.reported = reported;
+    }
 }

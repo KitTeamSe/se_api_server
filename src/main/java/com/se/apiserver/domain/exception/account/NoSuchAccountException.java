@@ -1,6 +1,10 @@
 package com.se.apiserver.domain.exception.account;
 
-public class NoSuchAccountException extends RuntimeException {
+import com.se.apiserver.domain.error.ErrorCode;
+import com.se.apiserver.domain.exception.BusinessException;
 
-
+public class NoSuchAccountException extends BusinessException {
+    public NoSuchAccountException(ErrorCode errorCode) {
+        super(errorCode);
+    }
 }

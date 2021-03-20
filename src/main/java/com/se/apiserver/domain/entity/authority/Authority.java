@@ -14,7 +14,6 @@ import org.springframework.security.core.GrantedAuthority;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
-@AllArgsConstructor
 public class Authority extends BaseEntity implements GrantedAuthority {
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long authorityId;
@@ -28,5 +27,12 @@ public class Authority extends BaseEntity implements GrantedAuthority {
   @Override
   public String getAuthority() {
     return nameEng;
+  }
+
+  @Builder
+  public Authority(Long authorityId, String nameEng, String nameKor) {
+    this.authorityId = authorityId;
+    this.nameEng = nameEng;
+    this.nameKor = nameKor;
   }
 }

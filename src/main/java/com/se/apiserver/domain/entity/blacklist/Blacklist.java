@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.Size;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -35,4 +36,11 @@ public class Blacklist extends BaseEntity {
   @Size(min = 4, max = 20)
   private String reason;
 
+  @Builder
+  public Blacklist(Long blacklistId, Account registrant, @Size(min = 4, max = 20) String ip, @Size(min = 4, max = 20) String reason) {
+    this.blacklistId = blacklistId;
+    this.registrant = registrant;
+    this.ip = ip;
+    this.reason = reason;
+  }
 }

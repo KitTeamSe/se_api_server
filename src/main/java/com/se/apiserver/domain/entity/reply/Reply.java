@@ -4,6 +4,7 @@ import com.se.apiserver.domain.entity.BaseEntity;
 import com.se.apiserver.domain.entity.account.Account;
 import com.se.apiserver.domain.entity.common.Anonymous;
 import com.se.apiserver.domain.entity.post.Post;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,7 +14,7 @@ import java.util.List;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Reply extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,6 +41,7 @@ public class Reply extends BaseEntity {
 
     @Column(length = 10, nullable = false)
     @Size(min = 2, max = 10)
+    @Enumerated(EnumType.STRING)
     private ReplyStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
