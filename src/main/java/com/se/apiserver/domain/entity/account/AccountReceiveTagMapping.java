@@ -1,5 +1,6 @@
 package com.se.apiserver.domain.entity.account;
 
+import com.se.apiserver.domain.entity.BaseEntity;
 import com.se.apiserver.domain.entity.tag.Tag;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -10,7 +11,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AccountReceiveTagMapping {
+public class AccountReceiveTagMapping extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long accountReceiveTagMappingId;

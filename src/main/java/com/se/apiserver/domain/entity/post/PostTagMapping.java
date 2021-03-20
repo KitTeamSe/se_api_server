@@ -1,15 +1,17 @@
 package com.se.apiserver.domain.entity.post;
 
+import com.se.apiserver.domain.entity.BaseEntity;
 import com.se.apiserver.domain.entity.tag.Tag;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.dom4j.tree.BaseElement;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
 @NoArgsConstructor
-public class PostTagMapping {
+public class PostTagMapping extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long postTagMappingId;
