@@ -4,7 +4,6 @@ import com.se.apiserver.domain.entity.BaseEntity;
 import com.se.apiserver.domain.entity.tag.Tag;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.dom4j.tree.BaseElement;
 
 import javax.persistence.*;
 
