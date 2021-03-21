@@ -7,6 +7,8 @@ import com.se.apiserver.domain.entity.post.Post;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -21,7 +23,7 @@ public class Reply extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long replyId;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
   @JoinColumn(name = "post_id", nullable = false)
   private Post post;
 
@@ -29,7 +31,7 @@ public class Reply extends BaseEntity {
   @Size(min = 4, max = 500)
   private String text;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
   @JoinColumn(name = "account_id", referencedColumnName = "accountId")
   private Account account;
 
@@ -45,11 +47,11 @@ public class Reply extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private ReplyStatus status;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
   @JoinColumn(name = "parent_id")
   private Reply parent;
 
-  @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "parent", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, orphanRemoval = true)
   private List<Reply> child;
 
   @Column(nullable = false)

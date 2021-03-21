@@ -18,7 +18,7 @@ public class Job extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long employmentInfoId;
 
-  @OneToOne(fetch = FetchType.LAZY)
+  @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
   @JoinColumn(name = "account_id", referencedColumnName = "accountId", nullable = false)
   private Account account;
 

@@ -8,6 +8,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -23,7 +25,7 @@ public class Tag extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long tagId;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
   @JoinColumn(name = "account_id", referencedColumnName = "accountId", nullable = false)
   private Account registrantId;
 
@@ -31,10 +33,10 @@ public class Tag extends BaseEntity {
   @Size(min = 1, max = 30)
   private String text;
 
-  @OneToMany(mappedBy = "tag")
+  @OneToMany(mappedBy = "tag", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, orphanRemoval = true)
   private List<PostTagMapping> posts = new ArrayList<>();
 
-  @OneToMany(mappedBy = "tag")
+  @OneToMany(mappedBy = "tag", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, orphanRemoval = true)
   private List<AccountReceiveTagMapping> accounts = new ArrayList<>();
 
   @Builder

@@ -8,6 +8,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -23,11 +25,11 @@ public class Report extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long reportId;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
   @JoinColumn(name = "reply_id", referencedColumnName = "replyId")
   private Reply reply;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
   @JoinColumn(name = "post_id", referencedColumnName = "postId")
   private Post post;
 
@@ -45,15 +47,15 @@ public class Report extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private ProcessType processType;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
   @JoinColumn(name = "processor", referencedColumnName = "accountId")
   private Account processor;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
   @JoinColumn(name = "reporter", referencedColumnName = "accountId")
   private Account reporter;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
   @JoinColumn(name = "reported", referencedColumnName = "accountId", nullable = false)
   private Account reported;
 

@@ -8,6 +8,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -23,11 +25,11 @@ public class Post {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long postId;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
   @JoinColumn(name = "board_id", referencedColumnName = "boardId", nullable = false)
   private Board board;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
   @JoinColumn(name = "account_id", referencedColumnName = "accountId")
   private Account account;
 
@@ -59,7 +61,7 @@ public class Post {
   @Enumerated(EnumType.STRING)
   private PostStatus status;
 
-  @OneToMany(mappedBy = "post")
+  @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, orphanRemoval = true)
   private List<Reply> replies = new ArrayList<>();
 
   @Builder

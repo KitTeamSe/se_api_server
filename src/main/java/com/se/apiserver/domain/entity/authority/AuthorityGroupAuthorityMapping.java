@@ -1,14 +1,12 @@
 package com.se.apiserver.domain.entity.authority;
 
 import com.se.apiserver.domain.entity.BaseEntity;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+
+import javax.persistence.*;
 
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
@@ -21,11 +19,11 @@ public class AuthorityGroupAuthorityMapping extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long authorityGroupAuthorityMappingId;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
   @JoinColumn(name = "authority_id", referencedColumnName = "authorityId")
   private Authority authority;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
   @JoinColumn(name = "authority_group_id", referencedColumnName = "authorityGroupId")
   private AuthorityGroup authorityGroup;
 }

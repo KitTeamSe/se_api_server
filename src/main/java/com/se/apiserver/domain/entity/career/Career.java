@@ -3,17 +3,14 @@ package com.se.apiserver.domain.entity.career;
 import com.se.apiserver.domain.entity.BaseEntity;
 import com.se.apiserver.domain.entity.job.Job;
 import java.time.LocalDate;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -24,7 +21,7 @@ public class Career extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long careerId;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
   @JoinColumn(name = "emplyment_info_id", nullable = false)
   private Job job;
 

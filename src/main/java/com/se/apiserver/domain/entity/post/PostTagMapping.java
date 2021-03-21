@@ -5,6 +5,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
@@ -17,11 +19,11 @@ public class PostTagMapping {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long postTagMappingId;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
   @JoinColumn(name = "post_id", referencedColumnName = "postId", nullable = false)
   private Post post;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
   @JoinColumn(name = "tag_id", referencedColumnName = "tagId", nullable = false)
   private Tag tag;
 

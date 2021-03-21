@@ -2,18 +2,15 @@ package com.se.apiserver.domain.entity.blacklist;
 
 import com.se.apiserver.domain.entity.BaseEntity;
 import com.se.apiserver.domain.entity.account.Account;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
@@ -24,7 +21,7 @@ public class Blacklist extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long blacklistId;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
   @JoinColumn(name = "accountId", nullable = false)
   private Account registrant;
 

@@ -8,6 +8,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -21,15 +23,15 @@ public class NoticeRecord extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long noteceRecordId;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
   @JoinColumn(name = "fcm_id", referencedColumnName = "fcmId", nullable = false)
   private Fcm fcm;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
   @JoinColumn(name = "tag_id", referencedColumnName = "tagId")
   private Tag tag;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
   @JoinColumn(name = "post_id", referencedColumnName = "postId")
   private Post post;
 

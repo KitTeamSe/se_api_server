@@ -6,6 +6,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -31,11 +33,11 @@ public class Board extends BaseEntity {
   @Column(nullable = false)
   private Integer menuOrder;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
   @JoinColumn(name = "registrant_id", referencedColumnName = "accountId", nullable = false)
   private Account registrantAccount;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
   @JoinColumn(name = "last_modified_account_id", referencedColumnName = "accountId")
   private Account lastModifiedAccount;
 

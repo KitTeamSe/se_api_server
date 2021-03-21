@@ -5,6 +5,8 @@ import com.se.apiserver.domain.entity.account.Account;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -18,7 +20,7 @@ public class Fcm extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long fcmId;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
   @JoinColumn(name = "account_id", referencedColumnName = "accountId", nullable = false)
   private Account account;
 

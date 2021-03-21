@@ -4,6 +4,7 @@ import com.se.apiserver.domain.entity.account.Account;
 import com.se.apiserver.domain.entity.account.AccountVerifyStatus;
 import com.se.apiserver.domain.entity.account.AccountVerifyToken;
 import com.se.apiserver.domain.error.account.AccountErrorCode;
+import com.se.apiserver.domain.exception.account.AlreadyVerifiedException;
 import com.se.apiserver.domain.exception.account.EmailVerifyTokenExpiredException;
 import com.se.apiserver.domain.exception.account.NoSuchAccountException;
 import com.se.apiserver.domain.usecase.UseCase;
@@ -57,7 +58,6 @@ public class AccountVerifyUseCase {
   public void sendVerifyRequestEmail(String email) {
 
     String token = generateToken();
-    //TODO 이미 인증된 토큰
     try {
       MimeMessage mimeMessage = javaMailSender.createMimeMessage();
       MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
@@ -86,6 +86,9 @@ public class AccountVerifyUseCase {
 
   public boolean verify(String token) {
     AccountVerifyToken accountVerifyToken = accountVerifyTokenJpaRepository.findFirstByToken(token);
+    if(accountVerifyToken.getStatus() == AccountVerifyStatus.VERIFIED)
+      throw new AlreadyVerifiedException();
+
     LocalDateTime now = LocalDateTime.now();
     if(now.isAfter(accountVerifyToken.getTimeExpire()))
       throw new EmailVerifyTokenExpiredException();

@@ -37,8 +37,6 @@ public class JwtTokenResolver {
 
   private final Long tokenExpirePeriod = 1000L * 60 * 60;
 
-  private final AccountReadUseCase accountReadUseCase;
-
   @PostConstruct
   protected void init() {
     securityKey = Base64.getEncoder().encodeToString(securityKey.getBytes());

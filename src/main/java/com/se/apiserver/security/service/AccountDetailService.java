@@ -7,6 +7,8 @@ import com.se.apiserver.domain.usecase.UseCase;
 import com.se.apiserver.repository.account.AccountJpaRepository;
 import com.se.apiserver.repository.authority.AuthorityJpaRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,6 +28,12 @@ public class AccountDetailService implements UserDetailsService {
   private final AccountJpaRepository accountJpaRepository;
   private final AuthorityJpaRepository authorityJpaRepository;
 
+  @Value("${spring.security.anonymous.id}")
+  private String ANONYMOUS_ID;
+
+  @Value("${spring.security.anonymous.pw}")
+  private String ANONYMOUS_PW;
+
   @Override
   public UserDetails loadUserByUsername(String accountId) throws UsernameNotFoundException {
     Account account = accountJpaRepository.findById(Long.parseLong(accountId))
@@ -33,18 +41,27 @@ public class AccountDetailService implements UserDetailsService {
 
     Set<GrantedAuthority> grantedAuthorities = new HashSet<>(
         authorityJpaRepository.findByAccountId(account.getAccountId()));
-    return new User(accountId, account.getPassword(), grantedAuthorities);
+    return new User(account.getIdString(), account.getPassword(), grantedAuthorities);
   }
 
   public UserDetails loadDefaultGroupAuthorities(String groupName) throws UsernameNotFoundException {
     Set<GrantedAuthority> grantedAuthorities = new HashSet<>(
         authorityJpaRepository.findByAuthorityGroupName(groupName));
-    return new User("DEFAULT", "DEFAULT", grantedAuthorities);
+    return new User(ANONYMOUS_ID, ANONYMOUS_PW, grantedAuthorities);
   }
 
   public boolean hasAuthority(String auth) {
     Set<String> authorities = AuthorityUtils
         .authorityListToSet(SecurityContextHolder.getContext().getAuthentication().getAuthorities());
     return authorities.contains(auth);
+  }
+
+  public boolean isOwner(Account account) {
+    String id = SecurityContextHolder.getContext().getAuthentication().getName();
+    if(id.equals(ANONYMOUS_ID))
+      return false;
+    if(!id.equals(account.getIdString()))
+      return false;
+    return true;
   }
 }

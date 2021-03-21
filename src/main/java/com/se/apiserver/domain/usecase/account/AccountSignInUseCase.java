@@ -5,20 +5,23 @@ import com.se.apiserver.domain.error.account.AccountErrorCode;
 import com.se.apiserver.domain.exception.account.NoSuchAccountException;
 import com.se.apiserver.domain.exception.account.PasswordInCorrectException;
 import com.se.apiserver.domain.usecase.UseCase;
+import com.se.apiserver.http.dto.account.AccountSignInDto;
 import com.se.apiserver.repository.account.AccountJpaRepository;
 import com.se.apiserver.security.provider.JwtTokenResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
 @UseCase
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class AccountSignInUseCase {
 
   private final JwtTokenResolver jwtTokenResolver;
   private final AccountJpaRepository accountJpaRepository;
   private final PasswordEncoder passwordEncoder;
 
-  public String signIn(String id, String password) {
+  public AccountSignInDto.Response signIn(String id, String password) {
     Account account = accountJpaRepository.findByIdString(id)
         .orElseThrow(() -> new NoSuchAccountException());
 
@@ -27,6 +30,6 @@ public class AccountSignInUseCase {
       }
 
     String token = jwtTokenResolver.createToken(String.valueOf(account.getAccountId()));
-    return token;
+    return new AccountSignInDto.Response(token);
   }
 }

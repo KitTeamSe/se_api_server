@@ -18,6 +18,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
@@ -28,11 +30,11 @@ public class Menu extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long menuId;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
   @JoinColumn(name = "parent_id")
   private Menu parent;
 
-  @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "parent", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, orphanRemoval = true)
   private List<Menu> child;
 
   @Column(length = 10, nullable = false)

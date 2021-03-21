@@ -7,8 +7,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 
 @Entity
@@ -18,6 +21,7 @@ public class Account extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private Long accountId;
 
   @Size(min = 4, max = 20)
@@ -44,11 +48,12 @@ public class Account extends BaseEntity {
   private AccountType type;
 
   @Size(min = 10, max = 20)
-  @Column
+  @Column(length = 20, unique = true)
   private String phoneNumber;
 
   @Size(min = 4, max = 40)
   @Column(nullable = false, unique = true)
+  @Email
   private String email;
 
   @Column(length = 20)
@@ -59,7 +64,7 @@ public class Account extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private InformationOpenAgree informationOpenAgree;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
   @JoinColumn(name = "question_id", referencedColumnName = "questionId", nullable = false)
   private Question question;
 
@@ -86,7 +91,31 @@ public class Account extends BaseEntity {
     this.informationOpenAgree = informationOpenAgree;
   }
 
+  public void updateIfNotNull(String name, AccountType type, InformationOpenAgree informationOpenAgree) {
+    if(name != null)
+      this.name = name;
+    if(type != null)
+      this.type = type;
+    if(informationOpenAgree != null)
+      this.informationOpenAgree = informationOpenAgree;
+  }
+
+  public void updateQnA(Question question, String answer) {
+    this.question = question;
+    this.answer = answer;
+  }
+
+  public void updateNickname(String nickname) {
+    this.nickname = nickname;
+  }
+
+  public void updateStudentId(String studentId) {
+    this.studentId = studentId;
+  }
+
   public void changePassword(String newPassword){
     this.password = newPassword;
   }
+
+
 }

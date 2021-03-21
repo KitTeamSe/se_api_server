@@ -12,43 +12,57 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.se.apiserver.http.dto.common.PageRequest;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 public class AccountReadDto {
-
   @Data
+  @NoArgsConstructor
   @AllArgsConstructor
-  static public class ReadResponse {
+  @Builder
+  static public class SearchRequest{
+    private String name;
+    private String nickname;
+    private String email;
+    private String studentId;
+    private String phoneNumber;
+    private AccountType type;
 
-    @Size(min = 4, max = 20)
-    private String id;
-    private String pw;
+    @NotNull
+    private PageRequest pageRequest;
   }
+
+
 
   @Data
   @Builder
-  static public class ReadAllResponse {
+  static public class Response {
 
-    @Size(min = 4, max = 20)
     private String idString;
 
     private String name;
 
     private String nickname;
 
-    private String studentId;
+    private String email;
 
     private AccountType type;
 
+    @JsonInclude(Include.NON_NULL)
     private String phoneNumber;
 
-    private String email;
+    @JsonInclude(Include.NON_NULL)
+    private String studentId;
 
+    @JsonInclude(Include.NON_NULL)
     private InformationOpenAgree informationOpenAgree;
 
     @JsonInclude(Include.NON_NULL)
@@ -56,22 +70,5 @@ public class AccountReadDto {
 
     @JsonInclude(Include.NON_NULL)
     private Long accountId;
-
-    public static ReadAllResponse create(Account account, boolean hasManageAuthority) {
-      ReadAllResponseBuilder res = ReadAllResponse.builder()
-          .idString(account.getIdString())
-          .name(account.getName())
-          .nickname(account.getNickname())
-          .type(account.getType())
-          .phoneNumber(account.getPhoneNumber())
-          .email(account.getEmail())
-          .informationOpenAgree(account.getInformationOpenAgree());
-
-      if (hasManageAuthority) {
-        res.lastSignInIp(account.getLastSignInIp())
-            .accountId(account.getAccountId());
-      }
-      return res.build();
-    }
   }
 }

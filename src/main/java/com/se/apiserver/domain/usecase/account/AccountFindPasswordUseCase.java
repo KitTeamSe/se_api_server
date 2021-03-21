@@ -20,10 +20,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class AccountFindPasswordUseCase {
 
   private final AccountJpaRepository accountJpaRepository;
-
   private final PasswordEncoder passwordEncoder;
-
   private final JavaMailSender mailSender;
+  private final AccountUpdateUseCase accountUpdateUseCase;
 
   @Value("${spring.mail.username}")
   private String SERVER_EMAIL;
@@ -36,10 +35,7 @@ public class AccountFindPasswordUseCase {
       throw new QaNotMatchException();
 
     String randomPassword = RandomString.make();
-    String hashedRandomPassword = passwordEncoder.encode(randomPassword);
-
-    account.changePassword(hashedRandomPassword);
-
+    accountUpdateUseCase.updatePassword(account, randomPassword);
     accountJpaRepository.save(account);
 
     SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
