@@ -14,36 +14,39 @@ import javax.validation.constraints.Size;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Board extends BaseEntity {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long boardId;
 
-    @Column(length = 10, nullable = false)
-    @Size(min = 2, max = 10)
-    private String name;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long boardId;
 
-    @Column(length = 10, nullable = false)
-    @Enumerated(EnumType.STRING)
-    @Size(min = 2, max = 10)
-    private BoardStatus status;
+  @Column(length = 10, nullable = false)
+  @Size(min = 2, max = 10)
+  private String name;
 
-    @Column(nullable = false)
-    private Integer menuOrder;
+  @Column(length = 10, nullable = false)
+  @Enumerated(EnumType.STRING)
+  @Size(min = 2, max = 10)
+  private BoardStatus status;
 
-    @ManyToOne
-    @JoinColumn(name = "registrant_id", referencedColumnName = "accountId", nullable = false)
-    private Account registrantAccount;
+  @Column(nullable = false)
+  private Integer menuOrder;
 
-    @ManyToOne
-    @JoinColumn(name = "last_modified_account_id", referencedColumnName = "accountId")
-    private Account lastModifiedAccount;
+  @ManyToOne
+  @JoinColumn(name = "registrant_id", referencedColumnName = "accountId", nullable = false)
+  private Account registrantAccount;
 
-    @Builder
-    public Board(Long boardId, @Size(min = 2, max = 10) String name, @Size(min = 2, max = 10) BoardStatus status, Integer menuOrder, Account registrantAccount, Account lastModifiedAccount) {
-        this.boardId = boardId;
-        this.name = name;
-        this.status = status;
-        this.menuOrder = menuOrder;
-        this.registrantAccount = registrantAccount;
-        this.lastModifiedAccount = lastModifiedAccount;
-    }
+  @ManyToOne
+  @JoinColumn(name = "last_modified_account_id", referencedColumnName = "accountId")
+  private Account lastModifiedAccount;
+
+  @Builder
+  public Board(Long boardId, @Size(min = 2, max = 10) String name, @Size(min = 2, max = 10) BoardStatus status,
+      Integer menuOrder, Account registrantAccount, Account lastModifiedAccount) {
+    this.boardId = boardId;
+    this.name = name;
+    this.status = status;
+    this.menuOrder = menuOrder;
+    this.registrantAccount = registrantAccount;
+    this.lastModifiedAccount = lastModifiedAccount;
+  }
 }

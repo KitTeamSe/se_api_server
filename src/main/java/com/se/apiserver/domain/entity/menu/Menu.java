@@ -24,7 +24,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Menu extends BaseEntity {
 
-  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long menuId;
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -50,7 +51,8 @@ public class Menu extends BaseEntity {
   private String url;
 
   @Builder
-  public Menu(Long menuId, Menu parent, List<Menu> child, @Size(min = 2, max = 10) String name, Integer menuOrder, @Size(min = 2, max = 50) String description, @Size(min = 4, max = 255) String url) {
+  public Menu(Long menuId, Menu parent, List<Menu> child, @Size(min = 2, max = 10) String name, Integer menuOrder,
+      @Size(min = 2, max = 50) String description, @Size(min = 4, max = 255) String url) {
     this.menuId = menuId;
     this.parent = parent;
     this.child = child;

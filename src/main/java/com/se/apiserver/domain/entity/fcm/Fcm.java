@@ -14,15 +14,15 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Fcm extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long fcmId;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long fcmId;
 
-    @ManyToOne
-    @JoinColumn(name = "account_id", referencedColumnName = "accountId", nullable = false)
-    private Account account;
+  @ManyToOne
+  @JoinColumn(name = "account_id", referencedColumnName = "accountId", nullable = false)
+  private Account account;
 
-    @Column(length = 255, nullable = false)
-    @Size(min = 10, max = 255)
-    private String pushToken;
+  @Column(length = 255, nullable = false)
+  @Size(min = 10, max = 255)
+  private String pushToken;
 }

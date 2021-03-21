@@ -8,6 +8,8 @@ import com.se.apiserver.repository.account.AccountJpaRepository;
 import com.se.apiserver.repository.authority.AuthorityJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,20 +23,28 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class AccountDetailService implements UserDetailsService {
 
-    private final AccountJpaRepository accountJpaRepository;
-    private final AuthorityJpaRepository authorityJpaRepository;
+  private final AccountJpaRepository accountJpaRepository;
+  private final AuthorityJpaRepository authorityJpaRepository;
 
-    @Override
-    public UserDetails loadUserByUsername(String accountId) throws UsernameNotFoundException {
-        Account account = accountJpaRepository.findById(Long.parseLong(accountId))
-                .orElseThrow(() -> new NoSuchAccountException(AccountErrorCode.NO_SUCH_ACCOUNT));
+  @Override
+  public UserDetails loadUserByUsername(String accountId) throws UsernameNotFoundException {
+    Account account = accountJpaRepository.findById(Long.parseLong(accountId))
+        .orElseThrow(() -> new NoSuchAccountException());
 
-        Set<GrantedAuthority> grantedAuthorities = new HashSet<>(authorityJpaRepository.findByAccountId(account.getAccountId()));
-        return new User(accountId, account.getPassword(), grantedAuthorities);
-    }
+    Set<GrantedAuthority> grantedAuthorities = new HashSet<>(
+        authorityJpaRepository.findByAccountId(account.getAccountId()));
+    return new User(accountId, account.getPassword(), grantedAuthorities);
+  }
 
-    public UserDetails loadDefaultGroupAuthorities(String groupName) throws UsernameNotFoundException {
-        Set<GrantedAuthority> grantedAuthorities = new HashSet<>(authorityJpaRepository.findByAuthorityGroupName(groupName));
-        return new User("DEFAULT", "DEFAULT", grantedAuthorities);
-    }
+  public UserDetails loadDefaultGroupAuthorities(String groupName) throws UsernameNotFoundException {
+    Set<GrantedAuthority> grantedAuthorities = new HashSet<>(
+        authorityJpaRepository.findByAuthorityGroupName(groupName));
+    return new User("DEFAULT", "DEFAULT", grantedAuthorities);
+  }
+
+  public boolean hasAuthority(String auth) {
+    Set<String> authorities = AuthorityUtils
+        .authorityListToSet(SecurityContextHolder.getContext().getAuthentication().getAuthorities());
+    return authorities.contains(auth);
+  }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.se.apiserver.domain.entity.account.AccountType;
 import com.se.apiserver.domain.entity.account.InformationOpenAgree;
 import javax.persistence.Column;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 
 import io.swagger.annotations.ApiModel;
@@ -17,9 +18,10 @@ public class AccountCreateDto {
   @NoArgsConstructor
   @AllArgsConstructor
   @ApiModel("회원 가입 요청")
-  static public class Request{
+  static public class Request {
+
     @ApiModelProperty(example = "account", notes = "아이디")
-    @Size(min = 5, max = 20)
+    @Size(min = 4, max = 20)
     private String id;
 
     @ApiModelProperty(example = "password", notes = "비밀번호")
@@ -46,16 +48,17 @@ public class AccountCreateDto {
     private String phoneNumber;
 
     @ApiModelProperty(example = "abc@def.com", notes = "이메일")
-    @Column(nullable = false)
+    @Email
     private String email;
   }
 
   @Data
   @AllArgsConstructor
   @ApiModel("회원가입 응답")
-  static public class Response{
+  static public class Response {
+
     @ApiModelProperty(example = "1", notes = "사용자 pk")
-      private Long id;
+    private Long id;
   }
 
 }

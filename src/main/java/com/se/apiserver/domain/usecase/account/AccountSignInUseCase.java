@@ -14,21 +14,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 public class AccountSignInUseCase {
 
-    private final JwtTokenResolver jwtTokenResolver;
-    private final AccountJpaRepository accountJpaRepository;
-    private final PasswordEncoder passwordEncoder;
+  private final JwtTokenResolver jwtTokenResolver;
+  private final AccountJpaRepository accountJpaRepository;
+  private final PasswordEncoder passwordEncoder;
 
-    public String signIn(String id, String password){
-        Account account = accountJpaRepository.findByIdString(id)
-                .orElseThrow(() -> new NoSuchAccountException(AccountErrorCode.NO_SUCH_ACCOUNT));
-        System.out.println("dasdasdasdsad");
-        System.out.println(account.getAccountId());
-        System.out.println(account.getPassword());
+  public String signIn(String id, String password) {
+    Account account = accountJpaRepository.findByIdString(id)
+        .orElseThrow(() -> new NoSuchAccountException());
 
-        if(!passwordEncoder.matches(password, account.getPassword()))
-            throw new PasswordInCorrectException(AccountErrorCode.PASSWORD_INCORRECT);
+      if (!passwordEncoder.matches(password, account.getPassword())) {
+          throw new PasswordInCorrectException();
+      }
 
-        String token = jwtTokenResolver.createToken(String.valueOf(account.getAccountId()));
-        return token;
-    }
+    String token = jwtTokenResolver.createToken(String.valueOf(account.getAccountId()));
+    return token;
+  }
 }

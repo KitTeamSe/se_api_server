@@ -1,5 +1,7 @@
 package com.se.apiserver.config;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -24,7 +26,12 @@ import java.util.List;
 @Configuration
 @EnableSwagger2
 @Import(BeanValidatorPluginsConfiguration.class)
+@RequiredArgsConstructor
 public class Swagger2Config extends WebMvcConfigurationSupport {
+
+
+  @Value("${spring.jwt.header}")
+  private String AUTH_HEADER;
 
   @Bean
   public Docket api() {
@@ -39,7 +46,7 @@ public class Swagger2Config extends WebMvcConfigurationSupport {
   }
 
   private ApiKey apiKey() {
-    return new ApiKey("JWT", "X-AUTH-TOKEN", "header");
+    return new ApiKey("JWT", AUTH_HEADER, "header");
   }
 
   private SecurityContext securityContext() {

@@ -1,6 +1,7 @@
 package com.se.apiserver.domain.entity.account;
 
 import com.se.apiserver.domain.entity.BaseEntity;
+import javax.jdo.annotations.Join;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +20,7 @@ public class Account extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long accountId;
 
-  @Size(min = 5, max = 20)
+  @Size(min = 4, max = 20)
   @Column(nullable = false, unique = true)
   private String idString;
 
@@ -31,11 +32,11 @@ public class Account extends BaseEntity {
   private String name;
 
   @Size(min = 2, max = 20)
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
   private String nickname;
 
   @Size(min = 8, max = 20)
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
   private String studentId;
 
   @Column(nullable = false, length = 20)
@@ -47,7 +48,7 @@ public class Account extends BaseEntity {
   private String phoneNumber;
 
   @Size(min = 4, max = 40)
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
   private String email;
 
   @Column(length = 20)
@@ -58,8 +59,20 @@ public class Account extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private InformationOpenAgree informationOpenAgree;
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "question_id", referencedColumnName = "questionId", nullable = false)
+  private Question question;
+
+  @Column(length = 100, nullable = false)
+  @Size(min = 2, max = 100)
+  private String answer;
+
   @Builder
-  public Account(Long accountId, @Size(min = 5, max = 20) String idString, String password, @Size(min = 2, max = 20) String name, @Size(min = 2, max = 20) String nickname, @Size(min = 8, max = 20) String studentId, AccountType type, @Size(min = 10, max = 20) String phoneNumber, @Size(min = 4, max = 40) String email, @Size(min = 4, max = 20) String lastSignInIp, InformationOpenAgree informationOpenAgree) {
+  public Account(Long accountId, @Size(min = 5, max = 20) String idString, String password,
+      @Size(min = 2, max = 20) String name, @Size(min = 2, max = 20) String nickname,
+      @Size(min = 8, max = 20) String studentId, AccountType type, @Size(min = 10, max = 20) String phoneNumber,
+      @Size(min = 4, max = 40) String email, @Size(min = 4, max = 20) String lastSignInIp,
+      InformationOpenAgree informationOpenAgree) {
     this.accountId = accountId;
     this.idString = idString;
     this.password = password;
@@ -71,5 +84,9 @@ public class Account extends BaseEntity {
     this.email = email;
     this.lastSignInIp = lastSignInIp;
     this.informationOpenAgree = informationOpenAgree;
+  }
+
+  public void changePassword(String newPassword){
+    this.password = newPassword;
   }
 }

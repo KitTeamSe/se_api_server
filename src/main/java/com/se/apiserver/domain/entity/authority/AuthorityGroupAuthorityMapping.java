@@ -12,11 +12,13 @@ import lombok.*;
 
 @Entity
 @Getter
-@NoArgsConstructor(access =  AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @AllArgsConstructor
 public class AuthorityGroupAuthorityMapping extends BaseEntity {
-  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long authorityGroupAuthorityMappingId;
 
   @ManyToOne

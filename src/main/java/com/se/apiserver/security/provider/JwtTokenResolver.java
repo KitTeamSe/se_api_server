@@ -26,6 +26,8 @@ public class JwtTokenResolver {
 
   private final AccountDetailService accountDetailService;
 
+  @Value("${spring.jwt.header}")
+  private String AUTH_HEADER;
 
   @Value("${spring.jwt.default-group}")
   private String defaultGroup;
@@ -52,7 +54,7 @@ public class JwtTokenResolver {
   }
 
   public String resolveToken(HttpServletRequest httpRequest) {
-    return httpRequest.getHeader("X-AUTH-TOKEN");
+    return httpRequest.getHeader(AUTH_HEADER);
   }
 
   public boolean validateToken(String token) {
@@ -65,19 +67,19 @@ public class JwtTokenResolver {
   }
 
   // TODO 인증서버 구축시 삭제
-  public String createToken(String userId){
+  public String createToken(String userId) {
     Claims claims = Jwts.claims().setSubject(userId);
     Date now = new Date();
     return Jwts.builder()
-            .setClaims(claims)
-            .setIssuedAt(now)
-            .setExpiration(new Date(now.getTime() + tokenExpirePeriod))
-            .signWith(SignatureAlgorithm.HS256, securityKey)
-            .compact();
+        .setClaims(claims)
+        .setIssuedAt(now)
+        .setExpiration(new Date(now.getTime() + tokenExpirePeriod))
+        .signWith(SignatureAlgorithm.HS256, securityKey)
+        .compact();
   }
 
-    public Authentication getDefaultAuthentication() {
-      UserDetails userDetails = accountDetailService.loadDefaultGroupAuthorities(defaultGroup);
-      return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-    }
+  public Authentication getDefaultAuthentication() {
+    UserDetails userDetails = accountDetailService.loadDefaultGroupAuthorities(defaultGroup);
+    return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+  }
 }

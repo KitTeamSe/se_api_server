@@ -23,19 +23,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilters extends GenericFilterBean {
 
-    private final JwtTokenResolver jwtTokenResolver;
+  private final JwtTokenResolver jwtTokenResolver;
 
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
-        String token = jwtTokenResolver.resolveToken((HttpServletRequest) request);
-        Authentication auth;
-        if (token != null && jwtTokenResolver.validateToken(token))
-            auth = jwtTokenResolver.getAuthentication(token);
-        else
-            auth = jwtTokenResolver.getDefaultAuthentication();
+  @Override
+  public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+      throws IOException, ServletException {
+    String token = jwtTokenResolver.resolveToken((HttpServletRequest) request);
+    Authentication auth;
+      if (token != null && jwtTokenResolver.validateToken(token)) {
+          auth = jwtTokenResolver.getAuthentication(token);
+      } else {
+          auth = jwtTokenResolver.getDefaultAuthentication();
+      }
 
-        SecurityContextHolder.getContext().setAuthentication(auth);
-        chain.doFilter(request, response);
-    }
+    SecurityContextHolder.getContext().setAuthentication(auth);
+    chain.doFilter(request, response);
+  }
 }

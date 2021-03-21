@@ -12,15 +12,17 @@ import javax.validation.constraints.Size;
 @Builder
 @AllArgsConstructor
 public class AuthorityGroup extends BaseEntity {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long authorityGroupId;
 
-    @Column(length = 30, nullable = false, unique = true)
-    @Size(min = 2, max = 30)
-    private String name;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long authorityGroupId;
 
-    @Column(length = 100, nullable = false)
-    @Size(min = 2, max = 100)
-    private String description;
+  @Column(length = 30, nullable = false, unique = true)
+  @Size(min = 2, max = 30)
+  private String name;
+
+  @Column(length = 100, nullable = false)
+  @Size(min = 2, max = 100)
+  private String description;
 
 }

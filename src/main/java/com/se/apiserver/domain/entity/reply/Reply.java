@@ -16,42 +16,43 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Reply extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long replyId;
 
-    @ManyToOne
-    @JoinColumn(name = "post_id", nullable = false)
-    private Post post;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long replyId;
 
-    @Column(length = 500, nullable = false)
-    @Size(min = 4, max = 500)
-    private String text;
+  @ManyToOne
+  @JoinColumn(name = "post_id", nullable = false)
+  private Post post;
 
-    @ManyToOne
-    @JoinColumn(name = "account_id", referencedColumnName = "accountId")
-    private Account account;
+  @Column(length = 500, nullable = false)
+  @Size(min = 4, max = 500)
+  private String text;
 
-    @Embedded
-    private Anonymous anonymous;
+  @ManyToOne
+  @JoinColumn(name = "account_id", referencedColumnName = "accountId")
+  private Account account;
 
-    @Column(length = 20, nullable = false)
-    @Size(min = 4, max = 20)
-    private String ip;
+  @Embedded
+  private Anonymous anonymous;
 
-    @Column(length = 10, nullable = false)
-    @Size(min = 2, max = 10)
-    @Enumerated(EnumType.STRING)
-    private ReplyStatus status;
+  @Column(length = 20, nullable = false)
+  @Size(min = 4, max = 20)
+  private String ip;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id")
-    private Reply parent;
+  @Column(length = 10, nullable = false)
+  @Size(min = 2, max = 10)
+  @Enumerated(EnumType.STRING)
+  private ReplyStatus status;
 
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
-    private List<Reply> child;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "parent_id")
+  private Reply parent;
 
-    @Column(nullable = false)
-    private Integer depth;
+  @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+  private List<Reply> child;
+
+  @Column(nullable = false)
+  private Integer depth;
 
 }

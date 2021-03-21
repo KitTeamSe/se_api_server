@@ -15,7 +15,9 @@ import org.springframework.security.core.GrantedAuthority;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 public class Authority extends BaseEntity implements GrantedAuthority {
-  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long authorityId;
 
   @Column(length = 30)

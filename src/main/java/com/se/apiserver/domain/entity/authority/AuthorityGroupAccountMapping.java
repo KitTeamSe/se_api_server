@@ -11,14 +11,16 @@ import javax.persistence.*;
 @Builder
 @AllArgsConstructor
 public class AuthorityGroupAccountMapping {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long authorityGroupAccountMappingId;
 
-    @ManyToOne
-    @JoinColumn(name = "account_id", referencedColumnName = "accountId", nullable = false)
-    private Account account;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long authorityGroupAccountMappingId;
 
-    @ManyToOne
-    @JoinColumn(name = "authority_group_id", referencedColumnName = "authorityGroupId", nullable = false)
-    private AuthorityGroup authorityGroup;
+  @ManyToOne
+  @JoinColumn(name = "account_id", referencedColumnName = "accountId", nullable = false)
+  private Account account;
+
+  @ManyToOne
+  @JoinColumn(name = "authority_group_id", referencedColumnName = "authorityGroupId", nullable = false)
+  private AuthorityGroup authorityGroup;
 }

@@ -5,4 +5,5 @@ import com.se.apiserver.domain.entity.authority.AuthorityGroupAccountMapping;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AuthorityGroupAccountMappingJpaRepository extends JpaRepository<AuthorityGroupAccountMapping, Long> {
+
 }

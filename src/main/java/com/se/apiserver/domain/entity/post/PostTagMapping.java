@@ -12,22 +12,23 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostTagMapping {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long postTagMappingId;
 
-    @ManyToOne
-    @JoinColumn(name = "post_id", referencedColumnName = "postId", nullable = false)
-    private Post post;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long postTagMappingId;
 
-    @ManyToOne
-    @JoinColumn(name = "tag_id", referencedColumnName = "tagId", nullable = false)
-    private Tag tag;
+  @ManyToOne
+  @JoinColumn(name = "post_id", referencedColumnName = "postId", nullable = false)
+  private Post post;
 
-    @Builder
-    public PostTagMapping(Long postTagMappingId, Post post, Tag tag) {
-        this.postTagMappingId = postTagMappingId;
-        this.post = post;
-        this.tag = tag;
-    }
+  @ManyToOne
+  @JoinColumn(name = "tag_id", referencedColumnName = "tagId", nullable = false)
+  private Tag tag;
+
+  @Builder
+  public PostTagMapping(Long postTagMappingId, Post post, Tag tag) {
+    this.postTagMappingId = postTagMappingId;
+    this.post = post;
+    this.tag = tag;
+  }
 }

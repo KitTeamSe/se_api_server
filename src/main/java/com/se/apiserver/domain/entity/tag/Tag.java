@@ -19,30 +19,31 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Tag extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long tagId;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long tagId;
 
-    @ManyToOne
-    @JoinColumn(name = "account_id", referencedColumnName = "accountId", nullable = false)
-    private Account registrantId;
+  @ManyToOne
+  @JoinColumn(name = "account_id", referencedColumnName = "accountId", nullable = false)
+  private Account registrantId;
 
-    @Column(length = 30, nullable = false)
-    @Size(min = 1, max = 30)
-    private String text;
+  @Column(length = 30, nullable = false)
+  @Size(min = 1, max = 30)
+  private String text;
 
-    @OneToMany(mappedBy = "tag")
-    private List<PostTagMapping> posts = new ArrayList<>();
+  @OneToMany(mappedBy = "tag")
+  private List<PostTagMapping> posts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "tag")
-    private List<AccountReceiveTagMapping> accounts = new ArrayList<>();
+  @OneToMany(mappedBy = "tag")
+  private List<AccountReceiveTagMapping> accounts = new ArrayList<>();
 
-    @Builder
-    public Tag(Long tagId, Account registrantId, @Size(min = 1, max = 30) String text, List<PostTagMapping> posts, List<AccountReceiveTagMapping> accounts) {
-        this.tagId = tagId;
-        this.registrantId = registrantId;
-        this.text = text;
-        this.posts = posts;
-        this.accounts = accounts;
-    }
+  @Builder
+  public Tag(Long tagId, Account registrantId, @Size(min = 1, max = 30) String text, List<PostTagMapping> posts,
+      List<AccountReceiveTagMapping> accounts) {
+    this.tagId = tagId;
+    this.registrantId = registrantId;
+    this.text = text;
+    this.posts = posts;
+    this.accounts = accounts;
+  }
 }

@@ -36,7 +36,6 @@ public class AccountCreateUseCase {
         .informationOpenAgree(InformationOpenAgree.DISAGREE)
         .type(AccountType.ASSISTANT)
         .build();
-    System.out.println(account.getIdString());
     accountJpaRepository.save(account);
     return account.getAccountId();
   }

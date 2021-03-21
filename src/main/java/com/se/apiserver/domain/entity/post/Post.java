@@ -18,60 +18,65 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long postId;
 
-    @ManyToOne
-    @JoinColumn(name = "board_id", referencedColumnName = "boardId", nullable = false)
-    private Board board;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long postId;
 
-    @ManyToOne
-    @JoinColumn(name = "account_id", referencedColumnName = "accountId")
-    private Account account;
+  @ManyToOne
+  @JoinColumn(name = "board_id", referencedColumnName = "boardId", nullable = false)
+  private Board board;
 
-    @Column(length = 50, nullable = false)
-    @Size(min = 3, max = 50)
-    private String title;
+  @ManyToOne
+  @JoinColumn(name = "account_id", referencedColumnName = "accountId")
+  private Account account;
 
-    @Column(length = 2000, nullable = false)
-    @Size(min = 5, max = 2000)
-    private String text;
+  @Column(length = 50, nullable = false)
+  @Size(min = 3, max = 50)
+  private String title;
 
-    @Embedded
-    private Anonymous anonymous;
+  @Column(length = 2000, nullable = false)
+  @Size(min = 5, max = 2000)
+  private String text;
 
-    @Column(length = 20, nullable = false)
-    @Size(min = 4, max = 20)
-    private String ip;
+  @Embedded
+  private Anonymous anonymous;
 
-    @Column(length = 10, nullable = false)
-    @Size(min = 2, max = 10)
-    @Enumerated(EnumType.STRING)
-    private PostType isNotice;
+  @Column(length = 20, nullable = false)
+  @Size(min = 4, max = 20)
+  private String ip;
 
-    @Column(nullable = false)
-    private Integer views;
+  @Column(length = 10, nullable = false)
+  @Size(min = 2, max = 10)
+  @Enumerated(EnumType.STRING)
+  private PostType isNotice;
 
-    @Column(length = 10, nullable = false)
-    @Size(min = 2, max = 10)
-    @Enumerated(EnumType.STRING)
-    private PostStatus status;
+  @Column(nullable = false)
+  private Integer views;
 
-    @OneToMany(mappedBy = "post")
-    private List<Reply> replies = new ArrayList<>();
+  @Column(length = 10, nullable = false)
+  @Size(min = 2, max = 10)
+  @Enumerated(EnumType.STRING)
+  private PostStatus status;
 
-    @Builder
-    public Post(Long postId, Board board, Account account, @Size(min = 3, max = 50) String title, @Size(min = 5, max = 2000) String text, Anonymous anonymous, @Size(min = 4, max = 20) String ip, @Size(min = 2, max = 10) PostType isNotice, Integer views, @Size(min = 2, max = 10) PostStatus status, List<Reply> replies) {
-        this.postId = postId;
-        this.board = board;
-        this.account = account;
-        this.title = title;
-        this.text = text;
-        this.anonymous = anonymous;
-        this.ip = ip;
-        this.isNotice = isNotice;
-        this.views = views;
-        this.status = status;
-        this.replies = replies;
-    }
+  @OneToMany(mappedBy = "post")
+  private List<Reply> replies = new ArrayList<>();
+
+  @Builder
+  public Post(Long postId, Board board, Account account, @Size(min = 3, max = 50) String title,
+      @Size(min = 5, max = 2000) String text, Anonymous anonymous, @Size(min = 4, max = 20) String ip,
+      @Size(min = 2, max = 10) PostType isNotice, Integer views, @Size(min = 2, max = 10) PostStatus status,
+      List<Reply> replies) {
+    this.postId = postId;
+    this.board = board;
+    this.account = account;
+    this.title = title;
+    this.text = text;
+    this.anonymous = anonymous;
+    this.ip = ip;
+    this.isNotice = isNotice;
+    this.views = views;
+    this.status = status;
+    this.replies = replies;
+  }
 }
