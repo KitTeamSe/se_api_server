@@ -1,7 +1,6 @@
 package com.se.apiserver.security.provider;
 
 
-import com.se.apiserver.domain.usecase.account.AccountReadUseCase;
 import com.se.apiserver.security.service.AccountDetailService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -18,7 +17,6 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
 import java.util.Date;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Component

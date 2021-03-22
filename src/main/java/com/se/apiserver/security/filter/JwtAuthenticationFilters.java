@@ -1,13 +1,9 @@
 package com.se.apiserver.security.filter;
 
 
-import com.se.apiserver.domain.entity.authority.Authority;
 import com.se.apiserver.security.provider.JwtTokenResolver;
-import com.se.apiserver.security.service.AccountDetailService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -17,8 +13,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilters extends GenericFilterBean {

@@ -1,14 +1,11 @@
 package com.se.apiserver.security.service;
 
-import com.se.apiserver.domain.entity.account.Account;
-import com.se.apiserver.domain.error.account.AccountErrorCode;
-import com.se.apiserver.domain.exception.account.NoSuchAccountException;
-import com.se.apiserver.domain.usecase.UseCase;
-import com.se.apiserver.repository.account.AccountJpaRepository;
-import com.se.apiserver.repository.authority.AuthorityJpaRepository;
+import com.se.apiserver.v1.account.domain.entity.Account;
+import com.se.apiserver.v1.account.domain.exception.NoSuchAccountException;
+import com.se.apiserver.v1.account.infra.repository.AccountJpaRepository;
+import com.se.apiserver.v1.authority.infra.repository.AuthorityJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;

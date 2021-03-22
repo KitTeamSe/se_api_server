@@ -1,20 +1,17 @@
 package com.se.apiserver;
 
-import com.se.apiserver.domain.entity.account.Account;
-import com.se.apiserver.domain.entity.account.AccountType;
-import com.se.apiserver.domain.entity.account.InformationOpenAgree;
-import com.se.apiserver.domain.entity.authority.Authority;
-import com.se.apiserver.domain.entity.authority.AuthorityGroup;
-import com.se.apiserver.domain.entity.authority.AuthorityGroupAccountMapping;
-import com.se.apiserver.domain.entity.authority.AuthorityGroupAuthorityMapping;
-import com.se.apiserver.repository.account.AccountJpaRepository;
-import com.se.apiserver.repository.authority.AuthorityGroupAccountMappingJpaRepository;
-import com.se.apiserver.repository.authority.AuthorityGroupAuthorityMappingJpaRepository;
-import com.se.apiserver.repository.authority.AuthorityGroupJpaRepository;
-import com.se.apiserver.repository.authority.AuthorityJpaRepository;
-import lombok.RequiredArgsConstructor;
-import org.aspectj.lang.annotation.Before;
-import org.junit.jupiter.api.BeforeAll;
+import com.se.apiserver.v1.account.domain.entity.Account;
+import com.se.apiserver.v1.account.domain.entity.AccountType;
+import com.se.apiserver.v1.account.domain.entity.InformationOpenAgree;
+import com.se.apiserver.v1.authority.domain.entity.Authority;
+import com.se.apiserver.v1.authority.domain.entity.AuthorityGroup;
+import com.se.apiserver.v1.authority.domain.entity.AuthorityGroupAccountMapping;
+import com.se.apiserver.v1.authority.domain.entity.AuthorityGroupAuthorityMapping;
+import com.se.apiserver.v1.account.infra.repository.AccountJpaRepository;
+import com.se.apiserver.v1.authority.infra.repository.AuthorityGroupAccountMappingJpaRepository;
+import com.se.apiserver.v1.authority.infra.repository.AuthorityGroupAuthorityMappingJpaRepository;
+import com.se.apiserver.v1.authority.infra.repository.AuthorityGroupJpaRepository;
+import com.se.apiserver.v1.authority.infra.repository.AuthorityJpaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
