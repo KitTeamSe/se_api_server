@@ -1,13 +1,14 @@
 package com.se.apiserver.security.service;
 
-import com.se.apiserver.domain.entity.account.Account;
-import com.se.apiserver.domain.error.account.AccountErrorCode;
-import com.se.apiserver.domain.exception.account.NoSuchAccountException;
-import com.se.apiserver.domain.usecase.UseCase;
-import com.se.apiserver.repository.account.AccountJpaRepository;
-import com.se.apiserver.repository.authority.AuthorityJpaRepository;
+import com.se.apiserver.v1.account.domain.entity.Account;
+import com.se.apiserver.v1.account.domain.exception.NoSuchAccountException;
+import com.se.apiserver.v1.account.infra.repository.AccountJpaRepository;
+import com.se.apiserver.v1.authority.infra.repository.AuthorityJpaRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,20 +22,43 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class AccountDetailService implements UserDetailsService {
 
-    private final AccountJpaRepository accountJpaRepository;
-    private final AuthorityJpaRepository authorityJpaRepository;
+  private final AccountJpaRepository accountJpaRepository;
+  private final AuthorityJpaRepository authorityJpaRepository;
 
-    @Override
-    public UserDetails loadUserByUsername(String accountId) throws UsernameNotFoundException {
-        Account account = accountJpaRepository.findById(Long.parseLong(accountId))
-                .orElseThrow(() -> new NoSuchAccountException(AccountErrorCode.NO_SUCH_ACCOUNT));
+  @Value("${spring.security.anonymous.id}")
+  private String ANONYMOUS_ID;
 
-        Set<GrantedAuthority> grantedAuthorities = new HashSet<>(authorityJpaRepository.findByAccountId(account.getAccountId()));
-        return new User(accountId, account.getPassword(), grantedAuthorities);
-    }
+  @Value("${spring.security.anonymous.pw}")
+  private String ANONYMOUS_PW;
 
-    public UserDetails loadDefaultGroupAuthorities(String groupName) throws UsernameNotFoundException {
-        Set<GrantedAuthority> grantedAuthorities = new HashSet<>(authorityJpaRepository.findByAuthorityGroupName(groupName));
-        return new User("DEFAULT", "DEFAULT", grantedAuthorities);
-    }
+  @Override
+  public UserDetails loadUserByUsername(String accountId) throws UsernameNotFoundException {
+    Account account = accountJpaRepository.findById(Long.parseLong(accountId))
+        .orElseThrow(() -> new NoSuchAccountException());
+
+    Set<GrantedAuthority> grantedAuthorities = new HashSet<>(
+        authorityJpaRepository.findByAccountId(account.getAccountId()));
+    return new User(account.getIdString(), account.getPassword(), grantedAuthorities);
+  }
+
+  public UserDetails loadDefaultGroupAuthorities(String groupName) throws UsernameNotFoundException {
+    Set<GrantedAuthority> grantedAuthorities = new HashSet<>(
+        authorityJpaRepository.findByAuthorityGroupName(groupName));
+    return new User(ANONYMOUS_ID, ANONYMOUS_PW, grantedAuthorities);
+  }
+
+  public boolean hasAuthority(String auth) {
+    Set<String> authorities = AuthorityUtils
+        .authorityListToSet(SecurityContextHolder.getContext().getAuthentication().getAuthorities());
+    return authorities.contains(auth);
+  }
+
+  public boolean isOwner(Account account) {
+    String id = SecurityContextHolder.getContext().getAuthentication().getName();
+    if(id.equals(ANONYMOUS_ID))
+      return false;
+    if(!id.equals(account.getIdString()))
+      return false;
+    return true;
+  }
 }

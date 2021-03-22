@@ -1,7 +1,6 @@
 package com.se.apiserver.security.provider;
 
 
-import com.se.apiserver.domain.usecase.account.AccountReadUseCase;
 import com.se.apiserver.security.service.AccountDetailService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -18,7 +17,6 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
 import java.util.Date;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Component
@@ -26,6 +24,8 @@ public class JwtTokenResolver {
 
   private final AccountDetailService accountDetailService;
 
+  @Value("${spring.jwt.header}")
+  private String AUTH_HEADER;
 
   @Value("${spring.jwt.default-group}")
   private String defaultGroup;
@@ -34,8 +34,6 @@ public class JwtTokenResolver {
   private String securityKey;
 
   private final Long tokenExpirePeriod = 1000L * 60 * 60;
-
-  private final AccountReadUseCase accountReadUseCase;
 
   @PostConstruct
   protected void init() {
@@ -52,7 +50,7 @@ public class JwtTokenResolver {
   }
 
   public String resolveToken(HttpServletRequest httpRequest) {
-    return httpRequest.getHeader("X-AUTH-TOKEN");
+    return httpRequest.getHeader(AUTH_HEADER);
   }
 
   public boolean validateToken(String token) {
@@ -65,19 +63,19 @@ public class JwtTokenResolver {
   }
 
   // TODO 인증서버 구축시 삭제
-  public String createToken(String userId){
+  public String createToken(String userId) {
     Claims claims = Jwts.claims().setSubject(userId);
     Date now = new Date();
     return Jwts.builder()
-            .setClaims(claims)
-            .setIssuedAt(now)
-            .setExpiration(new Date(now.getTime() + tokenExpirePeriod))
-            .signWith(SignatureAlgorithm.HS256, securityKey)
-            .compact();
+        .setClaims(claims)
+        .setIssuedAt(now)
+        .setExpiration(new Date(now.getTime() + tokenExpirePeriod))
+        .signWith(SignatureAlgorithm.HS256, securityKey)
+        .compact();
   }
 
-    public Authentication getDefaultAuthentication() {
-      UserDetails userDetails = accountDetailService.loadDefaultGroupAuthorities(defaultGroup);
-      return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-    }
+  public Authentication getDefaultAuthentication() {
+    UserDetails userDetails = accountDetailService.loadDefaultGroupAuthorities(defaultGroup);
+    return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+  }
 }
