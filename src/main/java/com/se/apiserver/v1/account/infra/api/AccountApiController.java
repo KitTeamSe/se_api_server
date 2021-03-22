@@ -30,6 +30,7 @@ public class AccountApiController {
     private final AccountSignInUseCase accountSignInUseCase;
     private final AccountVerifyUseCase accountVerifyUseCase;
     private final AccountFindPasswordUseCase accountFindPasswordUseCase;
+    private final AccountFindIdUseCase accountFindIdUseCase;
 
     private final AccountDetailService accountDetailService;
 
@@ -42,7 +43,7 @@ public class AccountApiController {
     @ApiOperation(value = "회원 가입")
     public SuccessResponse<Long> signUp(@RequestBody @Validated AccountCreateDto.Request request, HttpServletRequest httpServletRequest) {
         return new SuccessResponse<>(HttpStatus.CREATED.value(), "회원가입에 성공했습니다.",
-                accountCreateUseCase.signUp(request, httpServletRequest));
+                accountCreateUseCase.signUp(request, httpServletRequest.getRemoteAddr()));
     }
 
     // TODO 인증 서버로 이전
@@ -65,7 +66,7 @@ public class AccountApiController {
     @ApiOperation(value = "이메일로 아이디 찾기")
     public SuccessResponse<AccountFindIdByEmailDto.Response> findAccountByEmail(
             @ApiParam(value = "사용자 이메일", example = "user@user.com") @PathVariable(value = "email") String email) {
-        return new SuccessResponse(HttpStatus.OK.value(), "조회 성공", accountReadUseCase.readByEmail(email));
+        return new SuccessResponse(HttpStatus.OK.value(), "조회 성공", accountFindIdUseCase.readByEmail(email));
     }
 
     @PostMapping(path = "/account/verify/email/{email}")

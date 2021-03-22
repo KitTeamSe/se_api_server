@@ -1,11 +1,13 @@
 package com.se.apiserver.security.service;
 
 import com.se.apiserver.v1.account.domain.entity.Account;
-import com.se.apiserver.v1.account.domain.exception.NoSuchAccountException;
+import com.se.apiserver.v1.account.domain.error.AccountErrorCode;
 import com.se.apiserver.v1.account.infra.repository.AccountJpaRepository;
 import com.se.apiserver.v1.authority.infra.repository.AuthorityJpaRepository;
+import com.se.apiserver.v1.common.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,7 +36,7 @@ public class AccountDetailService implements UserDetailsService {
   @Override
   public UserDetails loadUserByUsername(String accountId) throws UsernameNotFoundException {
     Account account = accountJpaRepository.findById(Long.parseLong(accountId))
-        .orElseThrow(() -> new NoSuchAccountException());
+        .orElseThrow(() -> new BusinessException(AccountErrorCode.NO_SUCH_ACCOUNT));
 
     Set<GrantedAuthority> grantedAuthorities = new HashSet<>(
         authorityJpaRepository.findByAccountId(account.getAccountId()));
@@ -54,7 +56,11 @@ public class AccountDetailService implements UserDetailsService {
   }
 
   public boolean isOwner(Account account) {
+    if(SecurityContextHolder.getContext().getAuthentication() == null || SecurityContextHolder.getContext().getAuthentication().getName() == null)
+      throw new AccessDeniedException("비정상적인 접근");
+
     String id = SecurityContextHolder.getContext().getAuthentication().getName();
+
     if(id.equals(ANONYMOUS_ID))
       return false;
     if(!id.equals(account.getIdString()))

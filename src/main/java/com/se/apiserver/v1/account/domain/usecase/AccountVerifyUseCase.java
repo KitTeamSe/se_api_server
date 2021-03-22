@@ -3,9 +3,7 @@ package com.se.apiserver.v1.account.domain.usecase;
 import com.se.apiserver.v1.account.domain.entity.Account;
 import com.se.apiserver.v1.account.domain.entity.AccountVerifyStatus;
 import com.se.apiserver.v1.account.domain.entity.AccountVerifyToken;
-import com.se.apiserver.v1.account.domain.exception.AlreadyVerifiedException;
-import com.se.apiserver.v1.account.domain.exception.EmailVerifyTokenExpiredException;
-import com.se.apiserver.v1.account.domain.exception.NoSuchAccountException;
+import com.se.apiserver.v1.account.domain.error.AccountErrorCode;
 import com.se.apiserver.v1.common.domain.usecase.UseCase;
 import com.se.apiserver.v1.account.infra.repository.AccountJpaRepository;
 import com.se.apiserver.v1.account.infra.repository.AccountVerifyTokenJpaRepository;
@@ -13,6 +11,8 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 import javax.mail.internet.MimeMessage;
+
+import com.se.apiserver.v1.common.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -40,18 +40,8 @@ public class AccountVerifyUseCase {
 
   private final Long VERIFY_TOKEN_LIFE_TIME = 1000L * 60 * 60;
 
-  public void sendVerifyRequestEmailByEmail(String email) {
-    sendVerifyRequestEmail(email);
-  }
-
-  public void sendVerifyRequestEmailByAccountId(String id) {
-    Account account = accountJpaRepository.findByIdString(id)
-        .orElseThrow(() -> new NoSuchAccountException());
-    sendVerifyRequestEmail(account.getEmail());
-  }
-
   @Transactional
-  public void sendVerifyRequestEmail(String email) {
+  private boolean sendVerifyRequestEmail(String email) {
 
     String token = generateToken();
     try {
@@ -61,20 +51,34 @@ public class AccountVerifyUseCase {
       helper.setTo(email);
       helper.setSubject("SE 이메일 인증 안내");
       helper.setFrom(SERVER_EMAIL);
-      Date now = new Date();
       AccountVerifyToken accountVerifyToken = AccountVerifyToken.builder()
-          .token(token)
-          .email(email)
-          .timeExpire(LocalDateTime.now().plusHours(1))
-          .status(AccountVerifyStatus.UNVERIFIED)
-          .build();
+              .token(token)
+              .email(email)
+              .timeExpire(LocalDateTime.now().plusHours(1))
+              .status(AccountVerifyStatus.UNVERIFIED)
+              .build();
 
       accountVerifyTokenJpaRepository.save(accountVerifyToken);
 
       javaMailSender.send(mimeMessage);
+      return true;
     }catch (Exception e){
+      return false;
     }
   }
+
+
+  public boolean sendVerifyRequestEmailByEmail(String email) {
+    return sendVerifyRequestEmail(email);
+  }
+
+  public boolean sendVerifyRequestEmailByAccountId(String id) {
+    Account account = accountJpaRepository.findByIdString(id)
+        .orElseThrow(() -> new BusinessException(AccountErrorCode.NO_SUCH_ACCOUNT));
+    return sendVerifyRequestEmail(account.getEmail());
+  }
+
+
 
   private String generateToken() {
     return UUID.randomUUID().toString();
@@ -83,11 +87,11 @@ public class AccountVerifyUseCase {
   public boolean verify(String token) {
     AccountVerifyToken accountVerifyToken = accountVerifyTokenJpaRepository.findFirstByToken(token);
     if(accountVerifyToken.getStatus() == AccountVerifyStatus.VERIFIED)
-      throw new AlreadyVerifiedException();
+      throw new BusinessException(AccountErrorCode.ALREADY_VERIFIED);
 
     LocalDateTime now = LocalDateTime.now();
     if(now.isAfter(accountVerifyToken.getTimeExpire()))
-      throw new EmailVerifyTokenExpiredException();
+      throw new BusinessException(AccountErrorCode.EMAIL_VERIFY_TOKEN_EXPIRED);
 
     accountVerifyToken.verify();
     accountVerifyTokenJpaRepository.save(accountVerifyToken);

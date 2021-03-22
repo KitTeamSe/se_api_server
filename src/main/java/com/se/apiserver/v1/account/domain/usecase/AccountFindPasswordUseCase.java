@@ -1,12 +1,11 @@
 package com.se.apiserver.v1.account.domain.usecase;
 
 import com.se.apiserver.v1.account.domain.entity.Account;
-import com.se.apiserver.v1.account.domain.exception.EmailNotMatchException;
-import com.se.apiserver.v1.account.domain.exception.NoSuchAccountException;
-import com.se.apiserver.v1.account.domain.exception.QaNotMatchException;
+import com.se.apiserver.v1.account.domain.error.AccountErrorCode;
 import com.se.apiserver.v1.common.domain.usecase.UseCase;
 import com.se.apiserver.v1.account.infra.dto.AccountFindPasswordDto.Request;
 import com.se.apiserver.v1.account.infra.repository.AccountJpaRepository;
+import com.se.apiserver.v1.common.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,11 +26,11 @@ public class AccountFindPasswordUseCase {
   private String SERVER_EMAIL;
 
   public boolean findPassword(Request request) {
-    Account account = accountJpaRepository.findByIdString(request.getId()).orElseThrow(() -> new NoSuchAccountException());
+    Account account = accountJpaRepository.findByIdString(request.getId()).orElseThrow(() -> new BusinessException(AccountErrorCode.NO_SUCH_ACCOUNT));
     if(!account.getEmail().equals(request.getEmail()))
-      throw new EmailNotMatchException();
+      throw new BusinessException(AccountErrorCode.EMAIL_NOT_MATCH);
     if(account.getQuestion().getQuestionId() != request.getQuestionId() || !account.getAnswer().equals(request.getAnswer()))
-      throw new QaNotMatchException();
+      throw new BusinessException(AccountErrorCode.QA_NOT_MATCH);
 
     String randomPassword = RandomString.make();
     accountUpdateUseCase.updatePassword(account, randomPassword);
