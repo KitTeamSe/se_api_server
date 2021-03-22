@@ -1,6 +1,7 @@
 package com.se.apiserver;
 
 import com.se.apiserver.security.provider.JwtTokenResolver;
+import org.hibernate.annotations.SQLInsert;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;

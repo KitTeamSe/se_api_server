@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.Size;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -21,4 +22,10 @@ public class Question extends BaseEntity {
   @Column(length = 100)
   @Size(min = 2, max = 100)
   private String text;
+
+  @Builder
+  public Question(Long questionId, @Size(min = 2, max = 100) String text) {
+    this.questionId = questionId;
+    this.text = text;
+  }
 }

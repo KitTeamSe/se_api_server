@@ -15,6 +15,7 @@ public class AccountCreateDto {
   @NoArgsConstructor
   @AllArgsConstructor
   @ApiModel("회원 가입 요청")
+  @Builder
   static public class Request {
 
     @ApiModelProperty(example = "account", notes = "아이디")
@@ -47,6 +48,15 @@ public class AccountCreateDto {
     @ApiModelProperty(example = "abc@def.com", notes = "이메일")
     @Email
     private String email;
+
+    @ApiModelProperty(example = "abc@def.com", notes = "이메일")
+    private Long questionId;
+
+    @ApiModelProperty(example = "abc@def.com", notes = "이메일")
+    @Size(min = 2, max = 100)
+    private String answer;
+
+
   }
 
   @Data

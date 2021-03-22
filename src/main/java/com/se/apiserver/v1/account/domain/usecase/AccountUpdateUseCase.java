@@ -1,17 +1,14 @@
 package com.se.apiserver.v1.account.domain.usecase;
 
-import com.se.apiserver.v1.account.domain.exception.InvalidQnAInputException;
+import com.se.apiserver.v1.account.domain.error.AccountErrorCode;
 import com.se.apiserver.v1.account.domain.entity.Account;
 import com.se.apiserver.v1.account.domain.entity.Question;
-import com.se.apiserver.v1.account.domain.exception.DuplicatedNicknameException;
-import com.se.apiserver.v1.account.domain.exception.DuplicatedStudentIdException;
-import com.se.apiserver.v1.account.domain.exception.NoSuchAccountException;
-import com.se.apiserver.v1.account.domain.exception.NoSuchQuestion;
 import com.se.apiserver.v1.common.domain.usecase.UseCase;
 import com.se.apiserver.v1.account.infra.dto.AccountUpdateDto;
 import com.se.apiserver.v1.account.infra.repository.AccountJpaRepository;
 import com.se.apiserver.v1.account.infra.repository.QuestionJpaRepository;
 import com.se.apiserver.security.service.AccountDetailService;
+import com.se.apiserver.v1.common.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,8 +25,8 @@ public class AccountUpdateUseCase {
     private final AccountDetailService accountDetailService;
 
     @Transactional
-    public void update(AccountUpdateDto.Request request) {
-        Account account = accountJpaRepository.findByIdString(request.getId()).orElseThrow(() -> new NoSuchAccountException());
+    public boolean update(AccountUpdateDto.Request request) {
+        Account account = accountJpaRepository.findByIdString(request.getId()).orElseThrow(() -> new BusinessException(AccountErrorCode.NO_SUCH_ACCOUNT));
 
         if(!accountDetailService.isOwner(account) && !accountDetailService.hasAuthority("ACCOUNT_MANAGE"))
             throw new AccessDeniedException("비정상적인 접근");
@@ -43,10 +40,10 @@ public class AccountUpdateUseCase {
             updateNickname(account, request.getNickname());
 
         if(request.getQuestionId() == null && request.getAnswer() != null)
-            throw new InvalidQnAInputException();
+            throw new BusinessException(AccountErrorCode.QNA_INVALID_INPUT);
 
         if(request.getQuestionId() != null && request.getAnswer() == null)
-            throw new InvalidQnAInputException();
+            throw new BusinessException(AccountErrorCode.QNA_INVALID_INPUT);
 
         if(request.getQuestionId() != null && request.getAnswer() != null)
             updateQnA(account, request.getQuestionId(), request.getAnswer());
@@ -54,22 +51,23 @@ public class AccountUpdateUseCase {
         if(request.getStudentId() != null)
             updateStudentId(account, request.getStudentId());
         accountJpaRepository.save(account);
+        return true;
     }
 
     public void updateStudentId(Account account, String studentId) {
-        if(!accountJpaRepository.findByStudentId(studentId).isEmpty())
-            throw new DuplicatedStudentIdException();
+        if(accountJpaRepository.findByStudentId(studentId).isPresent())
+            throw new BusinessException(AccountErrorCode.DUPLICATED_STUDENT_ID);
         account.updateStudentId(studentId);
     }
 
     public void updateQnA(Account account, Long questionId, String answer) {
-        Question question = questionJpaRepository.findById(questionId).orElseThrow(() -> new NoSuchQuestion());
+        Question question = questionJpaRepository.findById(questionId).orElseThrow(() -> new BusinessException(AccountErrorCode.NO_SUCH_QUESTION));
         account.updateQnA(question, answer);
     }
 
     public void updateNickname(Account account, String nickname) {
         if(!accountJpaRepository.findByNickname(nickname).isEmpty())
-            throw new DuplicatedNicknameException();
+            throw new BusinessException(AccountErrorCode.DUPLICATED_NICKNAME);
         account.updateNickname(nickname);
     }
 

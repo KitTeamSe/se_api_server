@@ -15,7 +15,9 @@ public enum AccountErrorCode implements ErrorCode {
     NO_SUCH_QUESTION(406,"ME07", "존재하지 않은 질문"),
     DUPLICATED_NICKNAME(407,"ME08", "닉네임 중복"),
     DUPLICATED_STUDENT_ID(408,"ME09", "학번 중복"),
-    QNA_INVALID_INPUT(409,"ME10", "올바르지 않은 QnA 질문 응답 쌍");
+    QNA_INVALID_INPUT(409,"ME10", "올바르지 않은 QnA 질문 응답 쌍"),
+    DUPLICATED_EMAIL(410,"ME11", "이메일 중복"),
+    DUPLICATED_ID(411,"ME12", "아이디 중복");
     private int status;
     private final String code;
     private final String message;

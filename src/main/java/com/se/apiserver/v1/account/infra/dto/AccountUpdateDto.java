@@ -4,6 +4,7 @@ import com.se.apiserver.v1.account.domain.entity.AccountType;
 import com.se.apiserver.v1.account.domain.entity.InformationOpenAgree;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
@@ -12,6 +13,7 @@ import javax.validation.constraints.Size;
 public class AccountUpdateDto {
     @Data
     @ApiModel("회원 정보 수정 요청")
+    @Builder
     static public class Request{
 
         @Size(min = 4, max = 20)

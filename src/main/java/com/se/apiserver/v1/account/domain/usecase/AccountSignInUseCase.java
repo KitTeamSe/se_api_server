@@ -1,12 +1,12 @@
 package com.se.apiserver.v1.account.domain.usecase;
 
 import com.se.apiserver.v1.account.domain.entity.Account;
-import com.se.apiserver.v1.account.domain.exception.NoSuchAccountException;
-import com.se.apiserver.v1.account.domain.exception.PasswordInCorrectException;
+import com.se.apiserver.v1.account.domain.error.AccountErrorCode;
 import com.se.apiserver.v1.common.domain.usecase.UseCase;
 import com.se.apiserver.v1.account.infra.dto.AccountSignInDto;
 import com.se.apiserver.v1.account.infra.repository.AccountJpaRepository;
 import com.se.apiserver.security.provider.JwtTokenResolver;
+import com.se.apiserver.v1.common.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,10 +22,10 @@ public class AccountSignInUseCase {
 
   public AccountSignInDto.Response signIn(String id, String password) {
     Account account = accountJpaRepository.findByIdString(id)
-        .orElseThrow(() -> new NoSuchAccountException());
+        .orElseThrow(() -> new BusinessException(AccountErrorCode.NO_SUCH_ACCOUNT));
 
       if (!passwordEncoder.matches(password, account.getPassword())) {
-          throw new PasswordInCorrectException();
+          throw new BusinessException(AccountErrorCode.PASSWORD_INCORRECT);
       }
 
     String token = jwtTokenResolver.createToken(String.valueOf(account.getAccountId()));

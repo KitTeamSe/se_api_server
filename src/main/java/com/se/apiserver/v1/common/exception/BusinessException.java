@@ -2,7 +2,7 @@ package com.se.apiserver.v1.common.exception;
 
 import com.se.apiserver.v1.common.domain.error.ErrorCode;
 
-public abstract class BusinessException extends RuntimeException {
+public class BusinessException extends RuntimeException {
 
   private ErrorCode errorCode;
 
@@ -11,6 +11,7 @@ public abstract class BusinessException extends RuntimeException {
   }
 
   public BusinessException(ErrorCode errorCode) {
+    super(errorCode.getMessage());
     this.errorCode = errorCode;
   }
 }

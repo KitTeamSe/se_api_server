@@ -1,5 +1,6 @@
 package com.se.apiserver.v1.post.domain.entity;
 
+import com.se.apiserver.v1.common.domain.entity.BaseEntity;
 import com.se.apiserver.v1.tag.domain.entity.Tag;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -11,7 +12,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostTagMapping {
+public class PostTagMapping extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
