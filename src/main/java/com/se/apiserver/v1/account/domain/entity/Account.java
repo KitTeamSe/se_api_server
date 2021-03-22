@@ -113,8 +113,8 @@ public class Account extends BaseEntity {
         this.studentId = studentId;
     }
 
-    public void changePassword(String newPassword) {
-        this.password = newPassword;
+    public void changePassword(String newHashedPassword) {
+        this.password = newHashedPassword;
     }
 
 

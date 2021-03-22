@@ -13,7 +13,7 @@ public class AccountFindPasswordDto {
   @Data
   @AllArgsConstructor
   @NoArgsConstructor
-  @ApiModel("비밀번호 변경 요청")
+  @ApiModel("비밀번호 찾기 요청")
   static public class Request {
 
     @ApiModelProperty(notes = "사용자 아이디", example = "user")

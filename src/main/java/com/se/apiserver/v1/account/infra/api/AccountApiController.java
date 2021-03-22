@@ -10,6 +10,7 @@ import io.swagger.annotations.*;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -86,7 +87,7 @@ public class AccountApiController {
     }
 
     //TODO FE 요구사항에 따라서 수정
-    @GetMapping(path = "/account/verify/{token}")
+    @PostMapping(path = "/account/verify/{token}")
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "이메일 인증")
     public SuccessResponse verifyEmail(@ApiParam(value = "토큰", example = "token_value") @PathVariable(value = "token") String token) {
@@ -122,6 +123,7 @@ public class AccountApiController {
 
     @GetMapping("/account/{id}")
     @ResponseStatus(value = HttpStatus.OK)
+    @PreAuthorize("hasAnyAuthority('ACCOUNT_ACCESS', 'ACCOUNT_MANAGE')")
     @ApiOperation(value = "회원 정보 조회")
     public SuccessResponse<AccountReadDto.Response> deleteAccount(@PathVariable(name = "id") String id) {
         accountReadUseCase.read(id);
@@ -133,15 +135,16 @@ public class AccountApiController {
     @PreAuthorize("hasAnyAuthority('ACCOUNT_MANAGE')")
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "사용자 목록 조회")
-    public SuccessResponse<Page<Account>> readAllAccount(@RequestBody @Validated PageRequest pageRequest) {
+    public SuccessResponse<Pageable> readAllAccount(@RequestBody @Validated PageRequest pageRequest) {
         return new SuccessResponse(HttpStatus.OK.value(), "조회 성공", accountReadUseCase.readAll(pageRequest));
     }
 
 
     @PostMapping("/account/search")
     @ResponseStatus(value = HttpStatus.OK)
-    @ApiOperation(value = "회원 검색")
-    public SuccessResponse<Page<Account>> searchAccount(@RequestBody @Validated AccountReadDto.SearchRequest searchRequest) {
+    @PreAuthorize("hasAnyAuthority('ACCOUNT_MANAGE')")
+    @ApiOperation(value = "회원 정보 검색")
+    public SuccessResponse<Pageable> searchAccount(@RequestBody @Validated AccountReadDto.SearchRequest searchRequest) {
         return new SuccessResponse(HttpStatus.OK.value(), "조회 성공", accountReadUseCase.search(searchRequest));
     }
 

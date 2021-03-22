@@ -14,23 +14,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 public class AccountReadDto {
-  @Data
-  @NoArgsConstructor
-  @AllArgsConstructor
-  @Builder
-  static public class SearchRequest{
-    private String name;
-    private String nickname;
-    private String email;
-    private String studentId;
-    private String phoneNumber;
-    private AccountType type;
-
-    @NotNull
-    private PageRequest pageRequest;
-  }
-
-
 
   @Data
   @Builder
@@ -60,5 +43,21 @@ public class AccountReadDto {
 
     @JsonInclude(Include.NON_NULL)
     private Long accountId;
+  }
+
+  @Data
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @Builder
+  static public class SearchRequest{
+    private String name;
+    private String nickname;
+    private String email;
+    private String studentId;
+    private String phoneNumber;
+    private AccountType type;
+
+    @NotNull
+    private PageRequest pageRequest;
   }
 }

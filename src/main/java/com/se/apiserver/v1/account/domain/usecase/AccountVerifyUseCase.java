@@ -41,7 +41,7 @@ public class AccountVerifyUseCase {
   private final Long VERIFY_TOKEN_LIFE_TIME = 1000L * 60 * 60;
 
   @Transactional
-  private boolean sendVerifyRequestEmail(String email) {
+  boolean sendVerifyRequestEmail(String email) {
 
     String token = generateToken();
     try {
