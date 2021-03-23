@@ -33,8 +33,6 @@ public class AccountApiController {
     private final AccountFindPasswordUseCase accountFindPasswordUseCase;
     private final AccountFindIdUseCase accountFindIdUseCase;
 
-    private final AccountDetailService accountDetailService;
-
 
     // TODO 인증 서버로 이전, 유니크 중복 검사
     @PostMapping(path = "/signup")

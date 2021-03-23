@@ -207,4 +207,6 @@ public class AccountCreateUseCaseTest {
         Assertions.assertThatThrownBy(() -> {accountCreateUseCase.signUp(req, "192.168.0.1");})
                 .isInstanceOf(BusinessException.class).hasMessage(AccountErrorCode.DUPLICATED_ID.getMessage());
     }
+
+
 }

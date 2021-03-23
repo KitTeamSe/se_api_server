@@ -4,9 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.Min;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Value;
+import lombok.*;
 import org.springframework.data.domain.Sort;
 
 import javax.validation.constraints.Size;
@@ -14,6 +12,8 @@ import javax.validation.constraints.Size;
 @ApiModel("페이지 요청")
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class PageRequest {
 
   @ApiModelProperty(example = "1", notes = "페이지, 1 이상이여야 함")
