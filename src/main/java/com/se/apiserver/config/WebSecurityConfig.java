@@ -1,8 +1,10 @@
 package com.se.apiserver.config;
 
+import com.se.apiserver.security.filter.IpBlacklistFilters;
 import com.se.apiserver.security.filter.JwtAuthenticationFilters;
 import com.se.apiserver.security.provider.JwtTokenResolver;
 import com.se.apiserver.security.service.AccountDetailService;
+import com.se.apiserver.v1.blacklist.domain.usecase.BlacklistDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -22,33 +24,35 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-  private final JwtTokenResolver jwtTokenResolver;
+    private final JwtTokenResolver jwtTokenResolver;
 
-  private final AccountDetailService accountDetailService;
+    private final BlacklistDetailService blacklistDetailService;
 
-  @Override
-  protected AuthenticationManager authenticationManager() throws Exception {
-    return super.authenticationManager();
-  }
+    @Override
+    protected AuthenticationManager authenticationManager() throws Exception {
+        return super.authenticationManager();
+    }
 
-  @Override
-  protected void configure(HttpSecurity http) throws Exception {
-    http
-        .httpBasic().disable()
-        .csrf().disable()
-        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        .and()
-        .authorizeRequests()
-        .antMatchers("/api/v1/signup", "/api/v1/signin").permitAll()
-        .antMatchers("/swagger-resources/**", "/swagger-ui.html", "/webjars/**").permitAll()
-        .anyRequest().authenticated()
-        .and()
-        .addFilterBefore(new JwtAuthenticationFilters(jwtTokenResolver), UsernamePasswordAuthenticationFilter.class);
-  }
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .httpBasic().disable()
+                .csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .authorizeRequests()
+                .antMatchers("/api/v1/signup", "/api/v1/signin").permitAll()
+                .antMatchers("/swagger-resources/**", "/swagger-ui.html", "/webjars/**").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .addFilterBefore(new JwtAuthenticationFilters(jwtTokenResolver), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new IpBlacklistFilters(blacklistDetailService), JwtAuthenticationFilters.class);
 
-  @Override
-  public void configure(WebSecurity web) throws Exception {
-    web.ignoring().antMatchers("/v2/api-docs", "...");
-  }
+    }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/v2/api-docs", "...");
+    }
 }
 

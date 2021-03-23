@@ -26,15 +26,15 @@ public class AccountCreateDto {
     @Size(min = 8, max = 20)
     private String password;
 
-    @ApiModelProperty(example = "account", notes = "이름")
+    @ApiModelProperty(example = "name", notes = "이름")
     @Size(min = 2, max = 20)
     private String name;
 
-    @ApiModelProperty(example = "account", notes = "닉네임")
+    @ApiModelProperty(example = "nickname", notes = "닉네임")
     @Size(min = 2, max = 20)
     private String nickname;
 
-    @ApiModelProperty(example = "00000000", notes = "학번")
+    @ApiModelProperty(example = "11110000", notes = "학번")
     @Size(min = 8, max = 20)
     private String studentId;
 
@@ -49,10 +49,10 @@ public class AccountCreateDto {
     @Email
     private String email;
 
-    @ApiModelProperty(example = "abc@def.com", notes = "이메일")
+    @ApiModelProperty(example = "1", notes = "질문 번호")
     private Long questionId;
 
-    @ApiModelProperty(example = "abc@def.com", notes = "이메일")
+    @ApiModelProperty(example = "구미", notes = "답변")
     @Size(min = 2, max = 100)
     private String answer;
 

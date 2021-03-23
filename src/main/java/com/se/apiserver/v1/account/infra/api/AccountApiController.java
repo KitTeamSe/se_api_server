@@ -58,10 +58,6 @@ public class AccountApiController {
                 accountSignInUseCase.signIn(request.getId(), request.getPw()));
     }
 
-
-
-    /// 아래 실제 유스케이스
-
     @GetMapping(path = "/account/email/{email}")
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "이메일로 아이디 찾기")
