@@ -8,7 +8,7 @@ import com.se.apiserver.v1.account.domain.error.AccountErrorCode;
 import com.se.apiserver.v1.account.infra.dto.AccountUpdateDto;
 import com.se.apiserver.v1.account.infra.repository.AccountJpaRepository;
 import com.se.apiserver.v1.account.infra.repository.QuestionJpaRepository;
-import com.se.apiserver.v1.common.exception.BusinessException;
+import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,12 +67,12 @@ class AccountUpdateUseCaseTest {
     void 업데이트_성공() {
         //given
         createData();
-        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("test",
-                "test", Arrays.asList(new SimpleGrantedAuthority("ACCOUNT_ACCESS"))));
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("1",
+                "1", Arrays.asList(new SimpleGrantedAuthority("ACCOUNT_ACCESS"))));
         //when
         boolean res = accountUpdateUseCase.update(
                 AccountUpdateDto.Request.builder()
-                        .id("test")
+                        .id("user")
                         .nickname("newwww")
                         .studentId("20005555")
                         .questionId(question2.getQuestionId())
@@ -80,7 +80,7 @@ class AccountUpdateUseCaseTest {
                         .build()
         );
         //then
-        account = accountJpaRepository.findByIdString("test").get();
+        account = accountJpaRepository.findById(1L).get();
         Assertions.assertThat(res).isEqualTo(true);
         Assertions.assertThat(account.getNickname()).isEqualTo("newwww");
         Assertions.assertThat(account.getStudentId()).isEqualTo("20005555");
@@ -92,12 +92,12 @@ class AccountUpdateUseCaseTest {
     void 업데이트_관리자_성공() {
         //given
         createData();
-        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("test2",
-                "test2", Arrays.asList(new SimpleGrantedAuthority("ACCOUNT_MANAGE"))));
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("2",
+                "2", Arrays.asList(new SimpleGrantedAuthority("ACCOUNT_MANAGE"))));
         //when
         boolean res = accountUpdateUseCase.update(
                 AccountUpdateDto.Request.builder()
-                        .id("test")
+                        .id("admin")
                         .nickname("newwww")
                         .studentId("20005555")
                         .questionId(question2.getQuestionId())
@@ -105,7 +105,7 @@ class AccountUpdateUseCaseTest {
                         .build()
         );
         //then
-        account = accountJpaRepository.findByIdString("test").get();
+        account = accountJpaRepository.findById(2L).get();
         Assertions.assertThat(res).isEqualTo(true);
         Assertions.assertThat(account.getNickname()).isEqualTo("newwww");
         Assertions.assertThat(account.getStudentId()).isEqualTo("20005555");
@@ -137,14 +137,14 @@ class AccountUpdateUseCaseTest {
     void 업데이트_학번중복_실패() {
         //given
         createData();
-        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("test2",
-                "test2", Arrays.asList(new SimpleGrantedAuthority("ACCOUNT_MANAGE"))));
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("1",
+                "1", Arrays.asList(new SimpleGrantedAuthority("ACCOUNT_MANAGE"))));
         //when
         //then
         Assertions.assertThatThrownBy(() -> {
             accountUpdateUseCase.update(
                     AccountUpdateDto.Request.builder()
-                            .id("test")
+                            .id("user")
                             .nickname("test2")
                             .studentId("20003156")
                             .questionId(question2.getQuestionId())

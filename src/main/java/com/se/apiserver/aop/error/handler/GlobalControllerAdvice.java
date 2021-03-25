@@ -2,7 +2,7 @@ package com.se.apiserver.aop.error.handler;
 
 import com.se.apiserver.v1.common.domain.error.ErrorCode;
 import com.se.apiserver.v1.common.domain.error.GlobalErrorCode;
-import com.se.apiserver.v1.common.exception.BusinessException;
+import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.common.infra.dto.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

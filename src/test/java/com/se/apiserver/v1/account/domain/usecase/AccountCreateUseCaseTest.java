@@ -8,7 +8,7 @@ import com.se.apiserver.v1.account.domain.error.AccountErrorCode;
 import com.se.apiserver.v1.account.infra.dto.AccountCreateDto;
 import com.se.apiserver.v1.account.infra.repository.AccountJpaRepository;
 import com.se.apiserver.v1.account.infra.repository.QuestionJpaRepository;
-import com.se.apiserver.v1.common.exception.BusinessException;
+import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

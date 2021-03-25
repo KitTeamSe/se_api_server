@@ -8,7 +8,7 @@ import com.se.apiserver.v1.account.infra.dto.AccountUpdateDto;
 import com.se.apiserver.v1.account.infra.repository.AccountJpaRepository;
 import com.se.apiserver.v1.account.infra.repository.QuestionJpaRepository;
 import com.se.apiserver.security.service.AccountDetailService;
-import com.se.apiserver.v1.common.exception.BusinessException;
+import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;

@@ -5,7 +5,7 @@ import com.se.apiserver.v1.account.domain.error.AccountErrorCode;
 import com.se.apiserver.v1.common.domain.usecase.UseCase;
 import com.se.apiserver.v1.account.infra.dto.AccountFindPasswordDto.Request;
 import com.se.apiserver.v1.account.infra.repository.AccountJpaRepository;
-import com.se.apiserver.v1.common.exception.BusinessException;
+import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Value;
