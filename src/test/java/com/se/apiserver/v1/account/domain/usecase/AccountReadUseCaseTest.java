@@ -59,8 +59,8 @@ public class AccountReadUseCaseTest {
                 .build();
         accountJpaRepository.save(account);
 
-        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("test",
-                "test", Arrays.asList(new SimpleGrantedAuthority("ACCOUNT_ACCESS"))));
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(String.valueOf(account.getAccountId()),
+                "3", Arrays.asList(new SimpleGrantedAuthority("ACCOUNT_ACCESS"))));
 
         //when
         AccountReadDto.Response dto = accountReadUseCase.read("test");

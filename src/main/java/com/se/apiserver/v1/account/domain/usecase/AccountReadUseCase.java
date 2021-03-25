@@ -3,9 +3,8 @@ package com.se.apiserver.v1.account.domain.usecase;
 import com.se.apiserver.v1.account.domain.entity.Account;
 import com.se.apiserver.v1.account.domain.error.AccountErrorCode;
 import com.se.apiserver.v1.common.domain.usecase.UseCase;
-import com.se.apiserver.v1.account.infra.dto.AccountFindIdByEmailDto;
 import com.se.apiserver.v1.account.infra.dto.AccountReadDto;
-import com.se.apiserver.v1.common.exception.BusinessException;
+import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.common.infra.dto.PageRequest;
 import com.se.apiserver.v1.account.infra.repository.AccountJpaRepository;
 import com.se.apiserver.v1.account.infra.repository.AccountQueryRepository;
@@ -17,7 +16,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageImpl;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.se.apiserver.v1.account.infra.dto.AccountReadDto.*;

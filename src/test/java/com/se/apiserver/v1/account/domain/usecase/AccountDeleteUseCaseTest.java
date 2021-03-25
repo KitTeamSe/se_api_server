@@ -7,7 +7,6 @@ import com.se.apiserver.v1.account.domain.entity.Question;
 import com.se.apiserver.v1.account.infra.dto.AccountDeleteDto;
 import com.se.apiserver.v1.account.infra.repository.AccountJpaRepository;
 import com.se.apiserver.v1.account.infra.repository.QuestionJpaRepository;
-import com.se.apiserver.v1.common.exception.BusinessException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,12 +35,12 @@ public class AccountDeleteUseCaseTest {
     void 회원_삭제_본인_성공() {
         //given
         createAccount();
-        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("test",
-                "test", Arrays.asList(new SimpleGrantedAuthority("ACCOUNT_ACCESS"))));
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("1",
+                "1", Arrays.asList(new SimpleGrantedAuthority("ACCOUNT_ACCESS"))));
         //when
-        accountDeleteUseCase.delete(new AccountDeleteDto.Request("test"));
+        accountDeleteUseCase.delete(new AccountDeleteDto.Request("user"));
         //then
-        Assertions.assertThat(accountJpaRepository.findByIdString("test").isPresent()).isEqualTo(false);
+        Assertions.assertThat(accountJpaRepository.findByIdString("user").isPresent()).isEqualTo(false);
     }
 
     @Test

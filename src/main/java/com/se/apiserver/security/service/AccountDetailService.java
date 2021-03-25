@@ -4,7 +4,7 @@ import com.se.apiserver.v1.account.domain.entity.Account;
 import com.se.apiserver.v1.account.domain.error.AccountErrorCode;
 import com.se.apiserver.v1.account.infra.repository.AccountJpaRepository;
 import com.se.apiserver.v1.authority.infra.repository.AuthorityJpaRepository;
-import com.se.apiserver.v1.common.exception.BusinessException;
+import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
@@ -18,6 +18,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -40,7 +41,7 @@ public class AccountDetailService implements UserDetailsService {
 
     Set<GrantedAuthority> grantedAuthorities = new HashSet<>(
         authorityJpaRepository.findByAccountId(account.getAccountId()));
-    return new User(account.getIdString(), account.getPassword(), grantedAuthorities);
+    return new User(String.valueOf(account.getAccountId()), account.getPassword(), grantedAuthorities);
   }
 
   public UserDetails loadDefaultGroupAuthorities(String groupName) throws UsernameNotFoundException {
@@ -63,7 +64,7 @@ public class AccountDetailService implements UserDetailsService {
 
     if(id.equals(ANONYMOUS_ID))
       return false;
-    if(!id.equals(account.getIdString()))
+    if(!id.equals(String.valueOf(account.getAccountId())))
       return false;
     return true;
   }
