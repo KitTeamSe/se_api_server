@@ -1,6 +1,9 @@
 package com.se.apiserver.v1.menu.domain.usecase;
 
+import com.se.apiserver.v1.authority.domain.entity.Authority;
 import com.se.apiserver.v1.authority.domain.usecase.AuthorityCreateUseCase;
+import com.se.apiserver.v1.authority.infra.dto.AuthorityCreateDto;
+import com.se.apiserver.v1.authority.infra.repository.AuthorityJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.common.domain.usecase.UseCase;
 import com.se.apiserver.v1.menu.domain.entity.Menu;
@@ -19,6 +22,8 @@ public class MenuCreateUseCase {
     private final MenuJpaRepository menuJpaRepository;
 
     private final AuthorityCreateUseCase authorityCreateUseCase;
+
+    private final AuthorityJpaRepository authorityJpaRepository;
 
     @Transactional
     public MenuCreateDto.Response create(MenuCreateDto.Request request) {
@@ -48,9 +53,15 @@ public class MenuCreateUseCase {
             menu.updateParent(parent);
         }
 
+
+        Authority authority = authorityCreateUseCase.create(AuthorityCreateDto.Request.builder()
+        .nameEng(menu.getNameEng())
+        .nameKor(menu.getNameKor())
+        .menu(menu).build());
+
+        menu.updateAuthority(authority);
         menuJpaRepository.save(menu);
 
-        authorityCreateUseCase.createMenuAuthority(menu);
         return MenuCreateDto.Response.fromEntity(menu);
     }
 }

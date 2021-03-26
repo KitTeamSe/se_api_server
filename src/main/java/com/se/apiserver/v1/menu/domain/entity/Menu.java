@@ -23,7 +23,7 @@ public class Menu extends AccountGenerateEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long menuId;
 
-  @Column(length = 20, nullable = false, unique = true)
+  @Column(length = 40, nullable = false, unique = true)
   @Size(min = 2, max = 20)
   private String nameEng;
 
@@ -31,15 +31,15 @@ public class Menu extends AccountGenerateEntity {
   @Size(min = 2, max = 255)
   private String url;
 
-  @Column(length = 20, nullable = false, unique = true)
+  @Column(length = 40, nullable = false, unique = true)
   @Size(min = 2, max = 20)
   private String nameKor;
 
   @Column(nullable = false)
   private Integer menuOrder;
 
-  @Column(length = 50, nullable = false)
-  @Size(min = 2, max = 50)
+  @Column(length = 255, nullable = false)
+  @Size(min = 2, max = 255)
   private String description;
 
   @Column(length = 20, nullable = false)
@@ -52,7 +52,7 @@ public class Menu extends AccountGenerateEntity {
   @OneToMany(mappedBy = "parent",fetch = FetchType.LAZY)
   private List<Menu> child = new ArrayList<>();
 
-  @OneToOne(mappedBy = "menu", fetch = FetchType.LAZY, orphanRemoval = true)
+  @OneToOne(mappedBy = "menu", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
   private Authority authority;
 
   @Builder
@@ -100,5 +100,7 @@ public class Menu extends AccountGenerateEntity {
 
   public void updateAuthority(Authority authority){
     this.authority = authority;
+    if(authority.getMenu() != this)
+      authority.updateMenu(this);
   }
 }

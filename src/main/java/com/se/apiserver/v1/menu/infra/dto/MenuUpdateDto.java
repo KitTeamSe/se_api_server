@@ -29,27 +29,22 @@ public class MenuUpdateDto {
 
         @Size(min = 2, max = 20)
         @ApiModelProperty(notes = "영어명, 링크로 사용될거임", example = "freeboard")
-        @NotEmpty
         private String nameEng;
 
         @Size(min = 2, max = 20)
         @ApiModelProperty(notes = "한글명, 실제 출력", example = "자유게시판")
-        @NotEmpty
         private String nameKor;
 
         @Size(min = 2, max = 255)
         @ApiModelProperty(notes = "url", example = "freeboard")
-        @NotEmpty
         private String url;
 
         @Min(1)
         @ApiModelProperty(notes = "메뉴 출력 순서", example = "1")
-        @NotEmpty
         private Integer menuOrder;
 
         @Size(min = 2, max = 50)
         @ApiModelProperty(notes = "설명", example = "자유게시판 입니다.")
-        @NotEmpty
         private String description;
 
         private MenuType menuType;

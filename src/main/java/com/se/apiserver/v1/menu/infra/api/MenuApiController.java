@@ -68,8 +68,8 @@ public class MenuApiController {
 
     @GetMapping(path = "/menu")
     @ResponseStatus(value = HttpStatus.OK)
-    @ApiOperation(value = "메뉴 정보 조회")
-    public SuccessResponse<List<MenuReadDto.ReadAllResponse>> readAllMenu(@PathVariable(value = "id")  @Min(1) @NotEmpty Long id) {
-        return new SuccessResponse(HttpStatus.CREATED.value(), "성공적조회되었습니다.", menuReadUseCase.readAll());
+    @ApiOperation(value = "메뉴 전체 조회")
+    public SuccessResponse<List<MenuReadDto.ReadAllResponse>> readAllMenu() {
+        return new SuccessResponse(HttpStatus.CREATED.value(), "성공적으로 조회되었습니다.", menuReadUseCase.readAll());
     }
 }
