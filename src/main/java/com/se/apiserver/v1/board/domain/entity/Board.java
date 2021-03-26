@@ -16,41 +16,37 @@ import javax.validation.constraints.Size;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DiscriminatorValue(value = "BOARD")
-public class Board extends BaseEntity {
+public class Board extends AccountGenerateEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long boardId;
 
-    @Column(length = 10, nullable = false)
-    @Size(min = 2, max = 10)
-    private String name;
+    @Column(length = 20, nullable = false)
+    @Size(min = 2, max = 20)
+    private String nameEng;
 
-    @Column(length = 10, nullable = false)
-    @Enumerated(EnumType.STRING)
-    @Size(min = 2, max = 10)
-    private BoardStatus status;
+    @Column(length = 20, nullable = false)
+    @Size(min = 2, max = 20)
+    private String nameKor;
 
-    @Column(nullable = false)
-    private Integer menuOrder;
-
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "registrant_id", referencedColumnName = "accountId", nullable = false)
-    private Account registrantAccount;
-
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "last_modified_account_id", referencedColumnName = "accountId")
-    private Account lastModifiedAccount;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "menu_id")
+    private Menu menu;
 
     @Builder
-    public Board(Long boardId, @Size(min = 2, max = 10) String name, @Size(min = 2, max = 10) BoardStatus status,
-                 Integer menuOrder, Account registrantAccount, Account lastModifiedAccount) {
+    public Board(Long boardId, @Size(min = 2, max = 20) String nameEng, @Size(min = 2, max = 20) String nameKor, Menu menu) {
         this.boardId = boardId;
-        this.name = name;
-        this.status = status;
-        this.menuOrder = menuOrder;
-        this.registrantAccount = registrantAccount;
-        this.lastModifiedAccount = lastModifiedAccount;
+        this.nameEng = nameEng;
+        this.nameKor = nameKor;
+        this.menu = menu;
     }
 
+    public void updateNameEng(String nameEng) {
+        this.nameEng = nameEng;
+    }
+
+    public void updateNameKor(String nameKor) {
+        this.nameKor = nameKor;
+    }
 }

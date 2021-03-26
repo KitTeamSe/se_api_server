@@ -1,5 +1,7 @@
 package com.se.apiserver.v1.menu.domain.usecase;
 
+import com.se.apiserver.v1.authority.domain.entity.Authority;
+import com.se.apiserver.v1.authority.infra.repository.AuthorityJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.menu.domain.entity.Menu;
 import com.se.apiserver.v1.menu.domain.entity.MenuType;
@@ -27,6 +29,8 @@ class MenuUpdateUseCaseTest {
     MenuJpaRepository menuJpaRepository;
     @Autowired
     MenuUpdateUseCase menuUpdateUseCase;
+    @Autowired
+    AuthorityJpaRepository authorityJpaRepository;
 
 
     @BeforeEach
@@ -56,6 +60,13 @@ class MenuUpdateUseCaseTest {
 
         Menu menu = createData("freeboard", "자유게시판", "자유게시판입니다", 1, MenuType.BOARD, "freeboard").build();
         menuJpaRepository.save(menu);
+
+        Authority authority = Authority.builder()
+                .nameEng("MENU_freeboard_ACCESS")
+                .nameKor("자유게시판 접근").build();
+        authority.updateMenu(menu);
+        authorityJpaRepository.save(authority);
+
         //when
         menuUpdateUseCase.update(MenuUpdateDto.Request.builder()
         .description("가나다라")
@@ -72,6 +83,10 @@ class MenuUpdateUseCaseTest {
         Assertions.assertThat(updated.getNameKor()).isEqualTo("교수게시판");
         Assertions.assertThat(updated.getNameEng()).isEqualTo("teacher");
         Assertions.assertThat(updated.getMenuOrder()).isEqualTo(3);
+
+        Authority authority2 = updated.getAuthority();
+        Assertions.assertThat(authority2.getNameKor()).isEqualTo("교수게시판 접근");
+        Assertions.assertThat(authority2.getNameEng()).isEqualTo("MENU_teacher_ACCESS");
     }
 
     @Test
@@ -79,6 +94,11 @@ class MenuUpdateUseCaseTest {
         //given
         Menu menu1 = createData("freeboard", "자유게시판", "자유게시판입니다", 1, MenuType.FOLDER, "freeboard").build();
         menuJpaRepository.save(menu1);
+        Authority authority = Authority.builder()
+                .nameEng("MENU_freeboard_ACCESS")
+                .nameKor("자유게시판 접근")
+                .build();
+        authority.updateMenu(menu1);
         Menu menu2 = createData("freeboard1", "자유", "자유게시판입니다", 2, MenuType.BOARD, "freeboard1").build();
         menu2.updateParent(menu1);
         menuJpaRepository.save(menu2);
@@ -103,6 +123,12 @@ class MenuUpdateUseCaseTest {
         Menu menu1 = createData("freeboard", "자유게시판", "자유게시판입니다", 1, MenuType.FOLDER, "freeboard").build();
         menuJpaRepository.save(menu1);
         Menu menu2 = createData("freeboard1", "자유게시판1", "자유게시판입니다", 2, MenuType.BOARD, "freeboard1").build();
+        Authority authority = Authority.builder()
+                .nameEng("MENU_freeboard_ACCESS")
+                .nameKor("자유게시판 접근")
+                .build();
+        authority.updateMenu(menu1);
+        authorityJpaRepository.save(authority);
         menu2.updateParent(menu1);
         menuJpaRepository.save(menu2);
         //when

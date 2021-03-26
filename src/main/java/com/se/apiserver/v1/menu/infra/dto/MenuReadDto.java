@@ -2,6 +2,7 @@ package com.se.apiserver.v1.menu.infra.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.se.apiserver.v1.menu.domain.entity.Menu;
+import com.se.apiserver.v1.menu.domain.entity.MenuType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,15 +31,19 @@ public class MenuReadDto {
 
         private String description;
 
+        private MenuType menuType;
+
+        @JsonInclude(JsonInclude.Include.NON_NULL)
         private List<ReadAllResponse> child;
 
         public static MenuReadDto.ReadAllResponse fromEntity(Menu menu, Set<String> authorities){
-            MenuReadDto.ReadAllResponse.ReadAllResponseBuilder responseBuilder = MenuReadDto.ReadAllResponse.builder()
+            MenuReadDto.ReadAllResponse.ReadAllResponseBuilder responseBuilder = ReadAllResponse.builder()
                     .menuId(menu.getMenuId())
                     .menuOrder(menu.getMenuOrder())
                     .description(menu.getDescription())
                     .nameEng(menu.getNameEng())
-                    .nameKor(menu.getNameKor());
+                    .nameKor(menu.getNameKor())
+                    .menuType(menu.getMenuType());
 
             List<ReadAllResponse> tmp = new ArrayList<>();
             for(Menu child : menu.getChild()){

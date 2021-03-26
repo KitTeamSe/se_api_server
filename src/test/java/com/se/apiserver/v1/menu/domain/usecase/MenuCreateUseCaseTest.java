@@ -1,5 +1,8 @@
 package com.se.apiserver.v1.menu.domain.usecase;
 
+import com.se.apiserver.v1.authority.domain.entity.Authority;
+import com.se.apiserver.v1.authority.domain.error.AuthorityErrorCode;
+import com.se.apiserver.v1.authority.infra.repository.AuthorityJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.menu.domain.entity.Menu;
 import com.se.apiserver.v1.menu.domain.entity.MenuType;
@@ -30,6 +33,9 @@ class MenuCreateUseCaseTest {
 
     @Autowired
     MenuCreateUseCase menuCreateUseCase;
+
+    @Autowired
+    AuthorityJpaRepository authorityJpaRepository;
 
     @BeforeEach
     void setAuthentication() {
@@ -69,6 +75,8 @@ class MenuCreateUseCaseTest {
         Assertions.assertThat(menu.getNameKor()).isEqualTo("자유게시판");
         Assertions.assertThat(menu.getNameEng()).isEqualTo("freeboard");
         Assertions.assertThat(menu.getMenuOrder()).isEqualTo(1);
+        Assertions.assertThat(menu.getAuthority().getNameEng()).isEqualTo("MENU_freeboard_ACCESS");
+        Assertions.assertThat(menu.getAuthority().getNameKor()).isEqualTo("자유게시판 접근");
     }
 
     @Test
@@ -164,9 +172,54 @@ class MenuCreateUseCaseTest {
                     .nameEng("freeboard1")
                     .nameKor("자유게시판1")
                     .menuOrder(1)
+                    .menuType(MenuType.BOARD)
                     .description("자유게시판입니다.")
                     .parentId(1L)
                     .build());
         }).isInstanceOf(BusinessException.class).hasMessage(MenuErrorCode.NO_SUCH_MENU.getMessage());
+    }
+
+    @Test
+    void 메뉴_이미_존재하는_영문_권한명_실패() {
+        //given
+        Authority authority = Authority.builder()
+                .nameEng("MENU_freeboard1_ACCESS")
+                .nameKor("테스트")
+                .build();
+        authorityJpaRepository.save(authority);
+        //when
+        //then
+        Assertions.assertThatThrownBy(() -> {
+            menuCreateUseCase.create(MenuCreateDto.Request.builder()
+                    .nameEng("freeboard1")
+                    .nameKor("자유게시판1")
+                    .menuOrder(1)
+                    .menuType(MenuType.BOARD)
+                    .description("자유게시판입니다.")
+                    .url("freeboard1")
+                    .build());
+        }).isInstanceOf(BusinessException.class).hasMessage(AuthorityErrorCode.DUPLICATED_NAME_ENG.getMessage());
+    }
+
+    @Test
+    void 메뉴_이미_존재하는_한글_권한명_실패() {
+        //given
+        Authority authority = Authority.builder()
+                .nameEng("MENU_freeboard_ACCESS")
+                .nameKor("자유게시판1 접근")
+                .build();
+        authorityJpaRepository.save(authority);
+        //when
+        //then
+        Assertions.assertThatThrownBy(() -> {
+            menuCreateUseCase.create(MenuCreateDto.Request.builder()
+                    .nameEng("freeboard1")
+                    .nameKor("자유게시판1")
+                    .menuOrder(1)
+                    .menuType(MenuType.BOARD)
+                    .description("자유게시판입니다.")
+                    .url("freeboard1")
+                    .build());
+        }).isInstanceOf(BusinessException.class).hasMessage(AuthorityErrorCode.DUPLICATED_NAME_KOR.getMessage());
     }
 }

@@ -1,5 +1,7 @@
 package com.se.apiserver.v1.menu.domain.usecase;
 
+import com.se.apiserver.v1.authority.domain.entity.Authority;
+import com.se.apiserver.v1.authority.infra.repository.AuthorityJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.menu.domain.entity.Menu;
 import com.se.apiserver.v1.menu.domain.entity.MenuType;
@@ -20,6 +22,8 @@ class MenuDeleteUseCaseTest {
     MenuJpaRepository menuJpaRepository;
     @Autowired
     MenuDeleteUseCase menuDeleteUseCase;
+    @Autowired
+    AuthorityJpaRepository authorityJpaRepository;
 
     private Menu.MenuBuilder createData(String nameEng, String nameKor, String description, Integer order, MenuType menuType, String url) {
         Menu.MenuBuilder menuBuilder = Menu.builder()
@@ -37,13 +41,20 @@ class MenuDeleteUseCaseTest {
     void 메뉴_삭제_성공() {
         //given
         Menu menu = createData("freeboard1", "자유게시판1", "자유게시판입니다", 2, MenuType.BOARD, "freeboard1").build();
+        Authority authority = Authority.builder()
+                .nameKor("자유게시판1 접근")
+                .nameEng("MENU_freeboard1_ACCESS").build();
+        authority.updateMenu(menu);
+        authorityJpaRepository.save(authority);
         menuJpaRepository.save(menu);
-        Long id = menu.getMenuId();
+        Long menuId = menu.getMenuId();
+        Long authorityId = authority.getAuthorityId();
 
         //when
         menuDeleteUseCase.delete(menu.getMenuId());
         //then
-        Assertions.assertThat(menuJpaRepository.findById(id).isEmpty()).isEqualTo(true);
+        Assertions.assertThat(menuJpaRepository.findById(menuId).isEmpty()).isEqualTo(true);
+        Assertions.assertThat(authorityJpaRepository.findById(authorityId).isEmpty()).isEqualTo(true);
     }
 
     @Test

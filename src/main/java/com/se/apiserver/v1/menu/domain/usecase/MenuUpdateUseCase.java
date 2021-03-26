@@ -1,5 +1,7 @@
 package com.se.apiserver.v1.menu.domain.usecase;
 
+import com.se.apiserver.v1.authority.domain.usecase.AuthorityUpdateUseCase;
+import com.se.apiserver.v1.authority.infra.dto.AuthorityUpdateDto;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.common.domain.usecase.UseCase;
 import com.se.apiserver.v1.menu.domain.entity.Menu;
@@ -16,6 +18,8 @@ public class MenuUpdateUseCase {
 
     private final MenuJpaRepository menuJpaRepository;
 
+    private final AuthorityUpdateUseCase authorityUpdateUseCase;
+
     @Transactional
     public MenuUpdateDto.Response update(MenuUpdateDto.Request request) {
 
@@ -23,14 +27,22 @@ public class MenuUpdateUseCase {
         if (request.getNameEng() != null && menuJpaRepository.findByNameEng(request.getNameEng()).isPresent())
             throw new BusinessException(MenuErrorCode.DUPLICATED_MENU_NAME_ENG);
 
-        if(request.getNameEng() != null)
+        if(request.getNameEng() != null) {
             menu.updateNameEng(request.getNameEng());
+            authorityUpdateUseCase.update(AuthorityUpdateDto.Request.builder()
+                    .id(menu.getAuthority().getAuthorityId())
+                    .nameEng(request.getNameEng()).build());
+        }
 
         if (request.getNameKor() != null && menuJpaRepository.findByNameKor(request.getNameKor()).isPresent())
             throw new BusinessException(MenuErrorCode.DUPLICATED_MENU_NAME_KOR);
 
-        if(request.getNameKor() != null)
+        if(request.getNameKor() != null) {
             menu.updateNameKor(request.getNameKor());
+            authorityUpdateUseCase.update(AuthorityUpdateDto.Request.builder()
+                    .id(menu.getAuthority().getAuthorityId())
+                    .nameKor(request.getNameKor()).build());
+        }
 
         if(request.getUrl() != null && menuJpaRepository.findByUrl(request.getUrl()).isPresent())
             throw new BusinessException(MenuErrorCode.DUPLICATED_URL);
