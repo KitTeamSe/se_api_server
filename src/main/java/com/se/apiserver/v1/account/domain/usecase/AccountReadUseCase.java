@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.se.apiserver.v1.account.infra.dto.AccountReadDto.*;
@@ -61,8 +62,8 @@ public class AccountReadUseCase {
         return responseBuilder.build();
     }
 
-    public PageImpl readAll(PageRequest pageRequest) {
-        Page<Account> accountPage = accountJpaRepository.findAll(pageRequest.of());
+    public PageImpl readAll(Pageable pageable) {
+        Page<Account> accountPage = accountJpaRepository.findAll(pageable);
         List<Response> res = accountPage.get().map(account -> buildResponseDto(account, false, true))
             .collect(Collectors.toList());
         return new PageImpl(res, accountPage.getPageable(), accountPage.getTotalElements());

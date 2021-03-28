@@ -7,10 +7,12 @@ import com.se.apiserver.v1.blacklist.domain.usecase.BlacklistReadUseCase;
 import com.se.apiserver.v1.blacklist.infra.dto.BlacklistCreateDto;
 import com.se.apiserver.v1.blacklist.infra.dto.BlacklistReadDto;
 import com.se.apiserver.v1.board.infra.dto.BoardCreateDto;
+import com.se.apiserver.v1.common.infra.dto.PageRequest;
 import com.se.apiserver.v1.common.infra.dto.SuccessResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -40,8 +42,8 @@ public class BlacklistApiController {
     @GetMapping("/blacklist")
     @ApiOperation("블랙리스트 전체 조회")
     @ResponseStatus(value = HttpStatus.OK)
-    public SuccessResponse<List<BlacklistReadDto.Response>> readAll(){
-        return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", blacklistReadUseCase.readAll());
+    public SuccessResponse<PageImpl> readAll(@Validated PageRequest pageRequest){
+        return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", blacklistReadUseCase.readAll(pageRequest.of()));
     }
 
     @PreAuthorize("hasAuthority('ACCESS_MANAGE')")

@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
-@Api("권한 관리")
+@Api(tags = "권한 관리")
 public class AuthorityApiController {
     private final AuthorityReadUseCase authorityReadUseCase;
 
     @GetMapping("/authority/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "권한 조회")
-    @PreAuthorize("hasAuthority('AUTORITY_MANAGE')")
+    @PreAuthorize("hasAuthority('AUTHORITY_MANAGE')")
     public SuccessResponse<AuthorityReadDto.Response> read(@PathVariable(value = "id") Long id){
         return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다", authorityReadUseCase.read(id));
     }
@@ -31,8 +31,8 @@ public class AuthorityApiController {
     @GetMapping("/authority")
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "권한 목록 조회")
-    @PreAuthorize("hasAuthority('AUTORITY_MANAGE')")
-    public SuccessResponse<PageImpl> readAll(@RequestBody @Validated PageRequest pageRequest){
+    @PreAuthorize("hasAuthority('AUTHORITY_MANAGE')")
+    public SuccessResponse<PageImpl> readAll(@Validated PageRequest pageRequest){
         return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다", authorityReadUseCase.readAll(pageRequest.of()));
     }
 }

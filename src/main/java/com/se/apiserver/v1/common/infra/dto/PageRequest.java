@@ -25,7 +25,6 @@ public class PageRequest {
   private int size;
 
   @ApiModelProperty(example = "ASC", notes = "정렬 방향, 기준(생성일)")
-  @NotEmpty
   private Sort.Direction direction;
 
   public void setPage(int page) {

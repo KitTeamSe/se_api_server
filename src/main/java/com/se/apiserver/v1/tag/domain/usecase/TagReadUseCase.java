@@ -7,6 +7,9 @@ import com.se.apiserver.v1.tag.domain.error.TagErrorCode;
 import com.se.apiserver.v1.tag.infra.dto.TagReadDto;
 import com.se.apiserver.v1.tag.infra.repository.TagJpaRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -29,8 +32,11 @@ public class TagReadUseCase {
         return tags.stream().map(a -> TagReadDto.Response.fromEntity(a)).collect(Collectors.toList());
     }
 
-    public List<TagReadDto.Response> readAll() {
-        List<Tag> tags = tagJpaRepository.findAll();
-        return tags.stream().map(a -> TagReadDto.Response.fromEntity(a)).collect(Collectors.toList());
+    public PageImpl readAll(Pageable pageable) {
+        Page<Tag> tags = tagJpaRepository.findAll(pageable);
+        List<TagReadDto.Response> responseList = tags.stream()
+                .map(t -> TagReadDto.Response.fromEntity(t))
+                .collect(Collectors.toList());
+        return new PageImpl(responseList, tags.getPageable(), tags.getTotalElements());
     }
 }

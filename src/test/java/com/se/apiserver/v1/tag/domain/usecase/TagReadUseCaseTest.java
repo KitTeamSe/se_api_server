@@ -1,6 +1,7 @@
 package com.se.apiserver.v1.tag.domain.usecase;
 
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
+import com.se.apiserver.v1.common.infra.dto.PageRequest;
 import com.se.apiserver.v1.tag.domain.entity.Tag;
 import com.se.apiserver.v1.tag.domain.error.TagErrorCode;
 import com.se.apiserver.v1.tag.infra.repository.TagJpaRepository;
@@ -8,6 +9,8 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -61,7 +64,12 @@ class TagReadUseCaseTest {
         tagJpaRepository.save(tag2);
         //when
         //then
-        Assertions.assertThat(tagReadUseCase.readAll().size()).isEqualTo(2);
+        PageImpl responses = tagReadUseCase.readAll(PageRequest.builder()
+                .size(10)
+                .direction(Sort.Direction.ASC)
+                .page(1)
+                .build().of());
+        Assertions.assertThat(responses.getTotalElements()).isEqualTo(2);
     }
 
     @Test
