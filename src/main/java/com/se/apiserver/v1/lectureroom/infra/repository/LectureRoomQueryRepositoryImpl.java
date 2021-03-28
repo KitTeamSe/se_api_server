@@ -18,7 +18,7 @@ public class LectureRoomQueryRepositoryImpl extends QuerydslRepositorySupport im
   public Optional<LectureRoom> findByRoomNumberWithBuilding(String building, Integer roomNumber){
     QLectureRoom qLectureRoom = QLectureRoom.lectureRoom;
 
-    JPQLQuery query = from(qLectureRoom);
+    JPQLQuery<LectureRoom> query = from(qLectureRoom);
 
     if(building != null){
       query.where(qLectureRoom.building.eq(building));
@@ -27,8 +27,6 @@ public class LectureRoomQueryRepositoryImpl extends QuerydslRepositorySupport im
     if(roomNumber != null){
       query.where(qLectureRoom.roomNumber.eq(roomNumber));
     }
-
-    List<LectureRoom> a = query.fetch();
 
     LectureRoom result = (LectureRoom)query.fetchOne();
     return Optional.ofNullable(result);
