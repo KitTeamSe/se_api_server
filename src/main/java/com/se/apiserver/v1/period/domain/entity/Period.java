@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Getter;
 
 @Entity
@@ -33,4 +34,15 @@ public class Period {
   @Size(min = 2, max = 255)
   private String note;
 
+  @Builder
+  public Period(Long periodId, Integer periodOrder,
+      @Size(min = 2, max = 20) String name, LocalDateTime startTime, LocalDateTime endTime,
+      @Size(min = 2, max = 255) String note) {
+    this.periodId = periodId;
+    this.periodOrder = periodOrder;
+    this.name = name;
+    this.startTime = startTime;
+    this.endTime = endTime;
+    this.note = note;
+  }
 }

@@ -17,6 +17,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import lombok.Builder;
 import lombok.Getter;
 
 @Entity
@@ -58,4 +59,21 @@ public class Placement {
   @JoinColumn(name = "end_period_id", referencedColumnName = "periodId", nullable = false)
   private Period endPeriod;
 
+  @Builder
+  public Placement(Long placementId, TimeTable timeTable,
+      OpenSubject openSubject,
+      UsableLectureRoom usableLectureRoom,
+      ParticipatedTeacher participatedTeacherId,
+      DayOfWeek dayOfWeek, Integer division,
+      Period startPeriod, Period endPeriod) {
+    this.placementId = placementId;
+    this.timeTable = timeTable;
+    this.openSubject = openSubject;
+    this.usableLectureRoom = usableLectureRoom;
+    this.participatedTeacherId = participatedTeacherId;
+    this.dayOfWeek = dayOfWeek;
+    this.division = division;
+    this.startPeriod = startPeriod;
+    this.endPeriod = endPeriod;
+  }
 }

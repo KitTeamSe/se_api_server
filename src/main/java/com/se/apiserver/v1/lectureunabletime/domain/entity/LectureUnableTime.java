@@ -17,6 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.Size;
 
+import lombok.Builder;
 import lombok.Getter;
 
 @Entity
@@ -46,4 +47,17 @@ public class LectureUnableTime extends BaseEntity {
 
   @Size(min = 2, max = 255)
   private String note;
+
+  @Builder
+  public LectureUnableTime(Long lectureUnableTimeId,
+      ParticipatedTeacher participatedTeacher,
+      DayOfWeek dayOfWeek, Period startPeriod,
+      Period endPeriod, @Size(min = 2, max = 255) String note) {
+    this.lectureUnableTimeId = lectureUnableTimeId;
+    this.participatedTeacher = participatedTeacher;
+    this.dayOfWeek = dayOfWeek;
+    this.startPeriod = startPeriod;
+    this.endPeriod = endPeriod;
+    this.note = note;
+  }
 }

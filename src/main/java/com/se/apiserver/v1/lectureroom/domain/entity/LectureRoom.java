@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.Size;
 
+import lombok.Builder;
 import lombok.Getter;
 
 @Entity
@@ -27,4 +28,12 @@ public class LectureRoom {
   @Column(nullable = false)
   private Integer capacity;
 
+  @Builder
+  public LectureRoom(Long lectureRoomId,
+      @Size(min = 1, max = 30) String building, Integer roomNumber, Integer capacity) {
+    this.lectureRoomId = lectureRoomId;
+    this.building = building;
+    this.roomNumber = roomNumber;
+    this.capacity = capacity;
+  }
 }

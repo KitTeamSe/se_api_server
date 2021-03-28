@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import lombok.Builder;
 import lombok.Getter;
 
 @Entity
@@ -33,4 +34,15 @@ public class OpenSubject {
 
   @Column(nullable = false)
   private Integer teachingTimePerWeek;
+
+  @Builder
+  public OpenSubject(Long openSubjectId,
+      TimeTable timeTableId, Subject subject, Integer numberOfDivision,
+      Integer teachingTimePerWeek) {
+    this.openSubjectId = openSubjectId;
+    this.timeTableId = timeTableId;
+    this.subject = subject;
+    this.numberOfDivision = numberOfDivision;
+    this.teachingTimePerWeek = teachingTimePerWeek;
+  }
 }

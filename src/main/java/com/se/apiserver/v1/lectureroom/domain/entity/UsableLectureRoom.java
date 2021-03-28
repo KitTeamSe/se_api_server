@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import lombok.Builder;
 import lombok.Getter;
 
 @Entity
@@ -28,4 +29,12 @@ public class UsableLectureRoom extends BaseEntity {
   @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
   @JoinColumn(name = "lecture_room_id", referencedColumnName = "lectureRoomId", nullable = false)
   private LectureRoom lectureRoom;
+
+  @Builder
+  public UsableLectureRoom(Long usableLectureRoomId,
+      TimeTable timeTable, LectureRoom lectureRoom) {
+    this.usableLectureRoomId = usableLectureRoomId;
+    this.timeTable = timeTable;
+    this.lectureRoom = lectureRoom;
+  }
 }

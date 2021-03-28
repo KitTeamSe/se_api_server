@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import lombok.Builder;
 import lombok.Getter;
 
 @Entity
@@ -28,4 +29,11 @@ public class ParticipatedTeacher extends BaseEntity {
   @JoinColumn(name = "time_table_id", referencedColumnName = "timeTableId", nullable = false)
   private TimeTable timeTable;
 
+  @Builder
+  public ParticipatedTeacher(Long participatedTeacherId,
+      Teacher teacher, TimeTable timeTable) {
+    this.participatedTeacherId = participatedTeacherId;
+    this.teacher = teacher;
+    this.timeTable = timeTable;
+  }
 }
