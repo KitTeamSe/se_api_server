@@ -1,12 +1,11 @@
-package com.se.apiserver.v1.authority.domain.usecase;
+package com.se.apiserver.v1.authority.domain.usecase.authority;
 
 import com.se.apiserver.v1.authority.domain.entity.Authority;
 import com.se.apiserver.v1.authority.domain.error.AuthorityErrorCode;
-import com.se.apiserver.v1.authority.infra.dto.AuthorityUpdateDto;
+import com.se.apiserver.v1.authority.infra.dto.authority.AuthorityCreateDto;
 import com.se.apiserver.v1.authority.infra.repository.AuthorityJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.common.domain.usecase.UseCase;
-import com.se.apiserver.v1.menu.domain.entity.Menu;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @UseCase
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class AuthorityUpdateUseCase {
+public class AuthorityCreateUseCase {
 
     @Value("${spring.authority.menu.eng.prefix}")
     private String nameEngPrefix;
@@ -28,24 +27,24 @@ public class AuthorityUpdateUseCase {
     private final AuthorityJpaRepository authorityJpaRepository;
 
     @Transactional
-    public boolean update(AuthorityUpdateDto.Request request){
-        Authority authority = authorityJpaRepository.findById(request.getId()).orElseThrow(() -> new BusinessException(AuthorityErrorCode.NO_SUCH_AUTHORITY));
-        if(request.getNameEng() != null){
-            String beNameEng = buildAuthorityNameEng(request.getNameEng());
-            if(authorityJpaRepository.findByNameEng(beNameEng).isPresent())
-                throw new BusinessException(AuthorityErrorCode.DUPLICATED_NAME_ENG);
-            authority.updateNameEng(beNameEng);
-        }
+    public Authority create(AuthorityCreateDto.Request request){
+        if(authorityJpaRepository.findByNameEng(buildAuthorityNameEng(request.getNameEng())).isPresent())
+            throw new BusinessException(AuthorityErrorCode.DUPLICATED_NAME_ENG);
 
-        if(request.getNameKor() != null){
-            String beNameKor = buildAuthorityNameKor(request.getNameKor());
-            if(authorityJpaRepository.findByNameKor(beNameKor).isPresent())
-                throw new BusinessException(AuthorityErrorCode.DUPLICATED_NAME_KOR);
-            authority.updateNameKor(beNameKor);
-        }
+        if(authorityJpaRepository.findByNameKor(buildAuthorityNameKor(request.getNameKor())).isPresent())
+            throw new BusinessException(AuthorityErrorCode.DUPLICATED_NAME_KOR);
+
+
+        Authority authority = Authority.builder()
+                .nameEng(buildAuthorityNameEng(request.getNameEng()))
+                .nameKor(buildAuthorityNameKor(request.getNameKor()))
+                .build();
+
+        if(request.getMenu() != null)
+            authority.updateMenu(request.getMenu());
 
         authorityJpaRepository.save(authority);
-        return true;
+        return authority;
     }
 
     private String buildAuthorityNameEng(String menuName) {
