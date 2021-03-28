@@ -1,16 +1,15 @@
-package com.se.apiserver.v1.tag.domain.usecase;
+package com.se.apiserver.v1.tag.domain.usecase.tag;
 
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.tag.domain.entity.Tag;
 import com.se.apiserver.v1.tag.domain.error.TagErrorCode;
+import com.se.apiserver.v1.tag.domain.usecase.tag.TagDeleteUseCase;
 import com.se.apiserver.v1.tag.infra.repository.TagJpaRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional

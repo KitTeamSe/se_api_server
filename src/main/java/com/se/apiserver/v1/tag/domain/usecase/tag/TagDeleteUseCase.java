@@ -1,4 +1,4 @@
-package com.se.apiserver.v1.tag.domain.usecase;
+package com.se.apiserver.v1.tag.domain.usecase.tag;
 
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.common.domain.usecase.UseCase;

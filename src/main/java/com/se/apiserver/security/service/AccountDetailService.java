@@ -68,4 +68,9 @@ public class AccountDetailService implements UserDetailsService {
       return false;
     return true;
   }
+
+  public boolean isOwner(Long accountId) {
+      Account account = accountJpaRepository.findById(accountId).orElseThrow(() -> new BusinessException(AccountErrorCode.NO_SUCH_ACCOUNT));
+      return isOwner(account);
+  }
 }
