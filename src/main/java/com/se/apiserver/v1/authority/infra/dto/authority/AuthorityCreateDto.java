@@ -1,4 +1,4 @@
-package com.se.apiserver.v1.authority.infra.dto;
+package com.se.apiserver.v1.authority.infra.dto.authority;
 
 import com.se.apiserver.v1.menu.domain.entity.Menu;
 import lombok.Builder;

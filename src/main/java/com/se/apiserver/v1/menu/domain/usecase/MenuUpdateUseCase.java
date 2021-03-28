@@ -1,7 +1,7 @@
 package com.se.apiserver.v1.menu.domain.usecase;
 
-import com.se.apiserver.v1.authority.domain.usecase.AuthorityUpdateUseCase;
-import com.se.apiserver.v1.authority.infra.dto.AuthorityUpdateDto;
+import com.se.apiserver.v1.authority.domain.usecase.authority.AuthorityUpdateUseCase;
+import com.se.apiserver.v1.authority.infra.dto.authority.AuthorityUpdateDto;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.common.domain.usecase.UseCase;
 import com.se.apiserver.v1.menu.domain.entity.Menu;
