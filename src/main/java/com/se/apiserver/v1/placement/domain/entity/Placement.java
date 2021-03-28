@@ -1,11 +1,22 @@
 package com.se.apiserver.v1.placement.domain.entity;
 
+import com.se.apiserver.v1.lectureroom.domain.entity.UsableLectureRoom;
 import com.se.apiserver.v1.lectureunabletime.domain.entity.DayOfWeek;
+import com.se.apiserver.v1.period.domain.entity.Period;
+import com.se.apiserver.v1.subject.domain.entity.OpenSubject;
+import com.se.apiserver.v1.teacher.domain.entity.ParticipatedTeacher;
+import com.se.apiserver.v1.timetable.domain.entity.TimeTable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import lombok.Getter;
 
 @Entity
@@ -16,28 +27,35 @@ public class Placement {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long placementId;
 
-  @Column(nullable = false)
-  private Long timeTableId;
+  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+  @JoinColumn(name = "time_table_id", referencedColumnName = "timeTableId", nullable = false)
+  private TimeTable timeTable;
+
+  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+  @JoinColumn(name = "open_subject_id", referencedColumnName = "openSubjectId", nullable = false)
+  private OpenSubject openSubject;
+
+  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+  @JoinColumn(name = "usable_lecture_room_id", referencedColumnName = "usableLectureRoomId", nullable = false)
+  private UsableLectureRoom usableLectureRoom;
+
+  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+  @JoinColumn(name = "participated_teacher_id", referencedColumnName = "participatedTeacherId", nullable = false)
+  private ParticipatedTeacher participatedTeacherId;
 
   @Column(nullable = false)
-  private Long openSubjectId;
-
-  @Column(nullable = false)
-  private Long lectureRoomId;
-
-  @Column(nullable = false)
-  private Long participatedTeacherId;
-
-  @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
   private DayOfWeek dayOfWeek;
 
   @Column(nullable = false)
   private Integer division;
 
-  @Column(nullable = false)
-  private Long startPeriodId;
+  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+  @JoinColumn(name = "start_period_id", referencedColumnName = "periodId", nullable = false)
+  private Period startPeriod;
 
-  @Column(nullable = false)
-  private Long endPeriodId;
+  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+  @JoinColumn(name = "end_period_id", referencedColumnName = "periodId", nullable = false)
+  private Period endPeriod;
 
 }

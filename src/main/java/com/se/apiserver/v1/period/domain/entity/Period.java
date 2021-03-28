@@ -15,7 +15,7 @@ public class Period {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long accountId;
+  private Long periodId;
 
   @Column(nullable = false, unique = true)
   private Integer periodOrder;
@@ -31,7 +31,6 @@ public class Period {
   private LocalDateTime endTime;
 
   @Size(min = 2, max = 255)
-  @Column(nullable = true)
   private String note;
 
 }

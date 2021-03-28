@@ -1,11 +1,18 @@
 package com.se.apiserver.v1.timetable.domain.entity;
 
+import com.se.apiserver.v1.account.domain.entity.Account;
 import com.se.apiserver.v1.common.domain.entity.BaseEntity;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.Size;
 import lombok.Getter;
 
@@ -27,10 +34,12 @@ public class TimeTable extends BaseEntity {
   @Column(nullable = false)
   private int semester;
 
-  //Foreign Key
-  @Column(nullable = false)
-  private Long accountId;
+  // 시간표 생성자(MASTER)
+  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+  @JoinColumn(name = "account_id", referencedColumnName = "accountId", nullable = false)
+  private Account account;
 
   @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
   private TimeTableStatus status;
 }

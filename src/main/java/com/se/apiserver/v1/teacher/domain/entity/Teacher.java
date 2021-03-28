@@ -1,6 +1,6 @@
 package com.se.apiserver.v1.teacher.domain.entity;
 
-import com.se.apiserver.v1.common.domain.entity.BaseEntity;;
+import com.se.apiserver.v1.common.domain.entity.BaseEntity;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -20,7 +20,7 @@ public class Teacher extends BaseEntity{
 
   @Column(nullable = false, length = 30)
   @Enumerated(EnumType.STRING)
-  private String type;
+  private TeacherType type;
 
   @Size(min = 2, max = 30)
   @Column(nullable = false)

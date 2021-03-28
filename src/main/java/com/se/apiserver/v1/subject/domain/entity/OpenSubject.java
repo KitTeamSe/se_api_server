@@ -1,10 +1,15 @@
 package com.se.apiserver.v1.subject.domain.entity;
 
+import com.se.apiserver.v1.timetable.domain.entity.TimeTable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import lombok.Getter;
 
 @Entity
@@ -15,11 +20,13 @@ public class OpenSubject {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long openSubjectId;
 
-  @Column(nullable = false)
-  private Long timeTableId;
+  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+  @JoinColumn(name = "time_table_id", referencedColumnName = "timeTableId", nullable = false)
+  private TimeTable timeTableId;
 
-  @Column(nullable = false)
-  private Long subjectId;
+  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+  @JoinColumn(name = "subject_id", referencedColumnName = "subjectId", nullable = false)
+  private Subject subject;
 
   @Column(nullable = false)
   private Integer numberOfDivision;
