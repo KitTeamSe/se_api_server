@@ -125,12 +125,12 @@ public class AccountApiController {
     }
 
     //TODO 페이징 리퀘스트, 리스폰스 샘플 코드, 추후 삭제 요망
-    @PostMapping(path = "/account")
+    @GetMapping(path = "/account")
     @PreAuthorize("hasAnyAuthority('ACCOUNT_MANAGE')")
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "사용자 목록 조회")
-    public SuccessResponse<Pageable> readAllAccount(@RequestBody @Validated PageRequest pageRequest) {
-        return new SuccessResponse(HttpStatus.OK.value(), "조회 성공", accountReadUseCase.readAll(pageRequest));
+    public SuccessResponse<Pageable> readAllAccount(@Validated PageRequest pageRequest) {
+        return new SuccessResponse(HttpStatus.OK.value(), "조회 성공", accountReadUseCase.readAll(pageRequest.of()));
     }
 
 

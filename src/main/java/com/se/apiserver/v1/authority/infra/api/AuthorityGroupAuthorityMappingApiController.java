@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
-@Api("권한그룹 권한 매핑 관리")
+@Api(tags = "권한-권한그룹 매핑 관리")
 public class AuthorityGroupAuthorityMappingApiController {
 
     private final AuthorityGroupAuthorityMappingReadUseCase authorityGroupAuthorityMappingReadUseCase;
@@ -31,7 +31,7 @@ public class AuthorityGroupAuthorityMappingApiController {
     @GetMapping("/authority-group-authority/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "권한 그룹, 권한 매핑 조회")
-    @PreAuthorize("hasAuthority('AUTORITY_MANAGE')")
+    @PreAuthorize("hasAuthority('AUTHORITY_MANAGE')")
     public SuccessResponse<AuthorityGroupAuthorityMappingReadDto.Response> read(@PathVariable(value = "id") Long id){
         return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다", authorityGroupAuthorityMappingReadUseCase.read(id));
     }
@@ -39,15 +39,15 @@ public class AuthorityGroupAuthorityMappingApiController {
     @GetMapping("/authority-group-authority")
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "권한 그룹, 권한 매핑 목록 조회")
-    @PreAuthorize("hasAuthority('AUTORITY_MANAGE')")
-    public SuccessResponse<PageImpl> readAll(@RequestBody @Validated PageRequest pageRequest){
+    @PreAuthorize("hasAuthority('AUTHORITY_MANAGE')")
+    public SuccessResponse<PageImpl> readAll(@Validated PageRequest pageRequest){
         return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다", authorityGroupAuthorityMappingReadUseCase.readAll(pageRequest.of()));
     }
 
     @PostMapping("/authority-group-authority")
     @ResponseStatus(value = HttpStatus.CREATED)
     @ApiOperation(value = "권한 그룹, 권한 매핑 등록")
-    @PreAuthorize("hasAuthority('AUTORITY_MANAGE')")
+    @PreAuthorize("hasAuthority('AUTHORITY_MANAGE')")
     public SuccessResponse<AuthorityGroupAuthorityMappingReadDto.Response> create(
             @RequestBody @Validated AuthorityGroupAuthorityMappingCreateDto.Request request){
         return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 생성되었습니다", authorityGroupAuthorityMappingCreateUseCase.create(request));
@@ -56,7 +56,7 @@ public class AuthorityGroupAuthorityMappingApiController {
     @DeleteMapping("/authority-group-authority/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "권한 그룹, 권한 매핑 삭제")
-    @PreAuthorize("hasAuthority('AUTORITY_MANAGE')")
+    @PreAuthorize("hasAuthority('AUTHORITY_MANAGE')")
     public SuccessResponse delete(@PathVariable(value = "id") Long id){
         authorityGroupAuthorityMappingDeleteUseCase.delete(id);
         return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 삭제되었습니다");

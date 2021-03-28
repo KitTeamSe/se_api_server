@@ -53,7 +53,7 @@ public class MenuApiController {
     @DeleteMapping(path = "/menu/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "메뉴 삭제")
-    public SuccessResponse updateMenu(@PathVariable(value = "id")  @Min(1) @NotEmpty Long id) {
+    public SuccessResponse updateMenu(@PathVariable(value = "id")  @Min(1) Long id) {
         menuDeleteUseCase.delete(id);
         return new SuccessResponse(HttpStatus.CREATED.value(), "성공적으로 삭제되었습니다.");
     }
@@ -62,7 +62,7 @@ public class MenuApiController {
     @GetMapping(path = "/menu/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "메뉴 정보 조회")
-    public SuccessResponse<MenuReadDto.ReadResponse> readMenu(@PathVariable(value = "id")  @Min(1) @NotEmpty Long id) {
+    public SuccessResponse<MenuReadDto.ReadResponse> readMenu(@PathVariable(value = "id")  @Min(1) Long id) {
         return new SuccessResponse(HttpStatus.CREATED.value(), "성공적으로 삭제되었습니다.", menuReadUseCase.read(id));
     }
 

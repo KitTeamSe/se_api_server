@@ -5,10 +5,13 @@ import com.se.apiserver.v1.blacklist.domain.error.BlacklistErrorCode;
 import com.se.apiserver.v1.blacklist.infra.dto.BlacklistReadDto;
 import com.se.apiserver.v1.blacklist.infra.repository.BlacklistJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
+import com.se.apiserver.v1.common.infra.dto.PageRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -60,8 +63,12 @@ class BlacklistReadUseCaseTest {
                 .reason("비정상적접근")
                 .build());
         //when
-        List<BlacklistReadDto.Response> responses = blacklistReadUseCase.readAll();
+        PageImpl responses = blacklistReadUseCase.readAll(PageRequest.builder()
+        .size(10)
+        .direction(Sort.Direction.ASC)
+        .page(1)
+        .build().of());
         //then
-        Assertions.assertThat(responses.size()).isEqualTo(2);
+        Assertions.assertThat(responses.getTotalElements()).isEqualTo(2);
     }
 }

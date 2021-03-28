@@ -4,10 +4,12 @@ import com.se.apiserver.v1.blacklist.domain.entity.Blacklist;
 import com.se.apiserver.v1.blacklist.domain.error.BlacklistErrorCode;
 import com.se.apiserver.v1.blacklist.infra.dto.BlacklistReadDto;
 import com.se.apiserver.v1.blacklist.infra.repository.BlacklistJpaRepository;
-import com.se.apiserver.v1.board.domain.error.BoardErrorCode;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.common.domain.usecase.UseCase;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -26,8 +28,12 @@ public class BlacklistReadUseCase {
 
     }
 
-    public List<BlacklistReadDto.Response> readAll() {
-        List<Blacklist> blacklists = blacklistJpaRepository.findAll();
-        return blacklists.stream().map(b -> {return BlacklistReadDto.Response.fromEntity(b);}).collect(Collectors.toList());
+    public PageImpl readAll(Pageable pageable) {
+        Page<Blacklist> all = blacklistJpaRepository.findAll(pageable);
+        List<BlacklistReadDto.Response> responseList = all.stream()
+                .map(b -> BlacklistReadDto.Response.fromEntity(b))
+                .collect(Collectors.toList());
+
+        return new PageImpl(responseList, all.getPageable(), all.getTotalElements());
     }
 }

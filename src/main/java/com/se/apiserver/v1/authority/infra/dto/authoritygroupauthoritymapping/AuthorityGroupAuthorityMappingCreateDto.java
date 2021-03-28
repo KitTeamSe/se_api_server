@@ -13,7 +13,7 @@ public class AuthorityGroupAuthorityMappingCreateDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    @ApiModel("그룹-사용자 매핑 추가 요청")
+    @ApiModel("그룹-권한 매핑 추가 요청")
     static public class Request{
 
         @ApiModelProperty(notes = "권한 그룹 아이디(pk)", example = "1")
