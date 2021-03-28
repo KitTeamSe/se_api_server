@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 
 @SpringBootTest
-@Transactional(readOnly = true)
+@Transactional
 public class AccountReadUseCaseTest {
 
     @Autowired
@@ -36,7 +36,6 @@ public class AccountReadUseCaseTest {
     QuestionJpaRepository questionJpaRepository;
 
     @Test
-
     public void 본인_조회_성공() {
         //given
 
