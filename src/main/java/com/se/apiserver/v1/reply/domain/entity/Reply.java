@@ -3,7 +3,9 @@ package com.se.apiserver.v1.reply.domain.entity;
 import com.se.apiserver.v1.common.domain.entity.BaseEntity;
 import com.se.apiserver.v1.account.domain.entity.Account;
 import com.se.apiserver.v1.common.domain.entity.Anonymous;
+import com.se.apiserver.v1.post.domain.entity.Attach;
 import com.se.apiserver.v1.post.domain.entity.Post;
+import java.util.ArrayList;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -43,7 +45,7 @@ public class Reply extends BaseEntity {
   @Column(length = 10, nullable = false)
   @Size(min = 2, max = 10)
   @Enumerated(EnumType.STRING)
-  private ReplyStatus status;
+  private ReplyIsDelete status;
 
   @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
   @JoinColumn(name = "parent_id")
@@ -52,7 +54,7 @@ public class Reply extends BaseEntity {
   @OneToMany(mappedBy = "parent", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, orphanRemoval = true)
   private List<Reply> child;
 
-  @Column(nullable = false)
-  private Integer depth;
+  @OneToMany(mappedBy = "reply", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, orphanRemoval = true)
+  private List<Attach> attaches = new ArrayList<>();
 
 }

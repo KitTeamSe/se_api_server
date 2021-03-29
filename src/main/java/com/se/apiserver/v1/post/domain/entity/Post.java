@@ -23,11 +23,11 @@ public class Post {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long postId;
 
-  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
   @JoinColumn(name = "board_id", referencedColumnName = "boardId", nullable = false)
   private Board board;
 
-  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
   @JoinColumn(name = "account_id", referencedColumnName = "accountId")
   private Account account;
 
@@ -42,41 +42,42 @@ public class Post {
   @Embedded
   private Anonymous anonymous;
 
-  @Column(length = 20, nullable = false)
-  @Size(min = 4, max = 20)
-  private String ip;
-
   @Column(length = 10, nullable = false)
-  @Size(min = 2, max = 10)
   @Enumerated(EnumType.STRING)
-  private PostType isNotice;
+  private PostIsNotice isNotice;
 
   @Column(nullable = false)
   private Integer views;
 
   @Column(length = 10, nullable = false)
-  @Size(min = 2, max = 10)
   @Enumerated(EnumType.STRING)
-  private PostStatus status;
+  private PostIsDeleted isDeleted;
+
+  @Column(length = 10, nullable = false)
+  @Enumerated(EnumType.STRING)
+  private PostIsSecret isSecret;
 
   @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, orphanRemoval = true)
   private List<Reply> replies = new ArrayList<>();
 
+  @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, orphanRemoval = true)
+  private List<Attach> attaches = new ArrayList<>();
+
   @Builder
-  public Post(Long postId, Board board, Account account, @Size(min = 3, max = 50) String title,
-      @Size(min = 5, max = 2000) String text, Anonymous anonymous, @Size(min = 4, max = 20) String ip,
-      @Size(min = 2, max = 10) PostType isNotice, Integer views, @Size(min = 2, max = 10) PostStatus status,
-      List<Reply> replies) {
-    this.postId = postId;
+  public Post(Board board, Account account, @Size(min = 3, max = 50) String title,
+      @Size(min = 5, max = 2000) String text, Anonymous anonymous,
+      PostIsNotice isNotice, Integer views, PostIsDeleted isDeleted,
+      PostIsSecret isSecret, List<Reply> replies, List<Attach> attaches) {
     this.board = board;
     this.account = account;
     this.title = title;
     this.text = text;
     this.anonymous = anonymous;
-    this.ip = ip;
     this.isNotice = isNotice;
     this.views = views;
-    this.status = status;
+    this.isDeleted = isDeleted;
+    this.isSecret = isSecret;
     this.replies = replies;
+    this.attaches = attaches;
   }
 }
