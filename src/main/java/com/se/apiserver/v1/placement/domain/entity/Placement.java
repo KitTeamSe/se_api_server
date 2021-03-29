@@ -1,5 +1,6 @@
 package com.se.apiserver.v1.placement.domain.entity;
 
+import com.se.apiserver.v1.common.domain.entity.BaseEntity;
 import com.se.apiserver.v1.lectureroom.domain.entity.UsableLectureRoom;
 import com.se.apiserver.v1.lectureunabletime.domain.entity.DayOfWeek;
 import com.se.apiserver.v1.period.domain.entity.Period;
@@ -22,7 +23,7 @@ import lombok.Getter;
 
 @Entity
 @Getter
-public class Placement {
+public class Placement extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,5 +1,6 @@
 package com.se.apiserver.v1.subject.domain.entity;
 
+import com.se.apiserver.v1.common.domain.entity.BaseEntity;
 import com.se.apiserver.v1.timetable.domain.entity.TimeTable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,7 +16,7 @@ import lombok.Getter;
 
 @Entity
 @Getter
-public class OpenSubject {
+public class OpenSubject extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
