@@ -1,5 +1,6 @@
 package com.se.apiserver.v1.period.domain.entity;
 
+import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
 import com.se.apiserver.v1.common.domain.entity.BaseEntity;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
@@ -13,7 +14,7 @@ import lombok.Getter;
 
 @Entity
 @Getter
-public class Period extends BaseEntity {
+public class Period extends AccountGenerateEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

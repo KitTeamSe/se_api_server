@@ -1,5 +1,6 @@
 package com.se.apiserver.v1.lectureunabletime.domain.entity;
 
+import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
 import com.se.apiserver.v1.common.domain.entity.BaseEntity;
 import com.se.apiserver.v1.period.domain.entity.Period;
 import com.se.apiserver.v1.teacher.domain.entity.ParticipatedTeacher;
@@ -22,7 +23,7 @@ import lombok.Getter;
 
 @Entity
 @Getter
-public class LectureUnableTime extends BaseEntity {
+public class LectureUnableTime extends AccountGenerateEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

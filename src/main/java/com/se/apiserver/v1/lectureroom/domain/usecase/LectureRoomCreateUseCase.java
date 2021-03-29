@@ -1,7 +1,7 @@
 package com.se.apiserver.v1.lectureroom.domain.usecase;
 
+import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.common.domain.usecase.UseCase;
-import com.se.apiserver.v1.common.exception.BusinessException;
 import com.se.apiserver.v1.lectureroom.domain.entity.LectureRoom;
 import com.se.apiserver.v1.lectureroom.domain.error.LectureRoomErrorCode;
 import com.se.apiserver.v1.lectureroom.infra.dto.LectureRoomCreateDto;

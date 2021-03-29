@@ -1,5 +1,6 @@
 package com.se.apiserver.v1.teacher.domain.entity;
 
+import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
 import com.se.apiserver.v1.common.domain.entity.BaseEntity;
 import com.se.apiserver.v1.timetable.domain.entity.TimeTable;
 import javax.persistence.CascadeType;
@@ -16,7 +17,7 @@ import lombok.Getter;
 
 @Entity
 @Getter
-public class ParticipatedTeacher extends BaseEntity {
+public class ParticipatedTeacher extends AccountGenerateEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long participatedTeacherId;

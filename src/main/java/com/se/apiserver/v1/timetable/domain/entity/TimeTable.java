@@ -1,6 +1,7 @@
 package com.se.apiserver.v1.timetable.domain.entity;
 
 import com.se.apiserver.v1.account.domain.entity.Account;
+import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
 import com.se.apiserver.v1.common.domain.entity.BaseEntity;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -19,7 +20,7 @@ import lombok.Getter;
 
 @Entity
 @Getter
-public class TimeTable extends BaseEntity {
+public class TimeTable extends AccountGenerateEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

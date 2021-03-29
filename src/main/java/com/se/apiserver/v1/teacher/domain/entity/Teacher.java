@@ -1,5 +1,6 @@
 package com.se.apiserver.v1.teacher.domain.entity;
 
+import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
 import com.se.apiserver.v1.common.domain.entity.BaseEntity;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,7 +10,7 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Getter
-public class Teacher extends BaseEntity{
+public class Teacher extends AccountGenerateEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

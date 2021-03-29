@@ -1,5 +1,6 @@
 package com.se.apiserver.v1.subject.domain.entity;
 
+import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
 import com.se.apiserver.v1.common.domain.entity.BaseEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,7 +15,7 @@ import lombok.Getter;
 
 @Entity
 @Getter
-public class Subject extends BaseEntity {
+public class Subject extends AccountGenerateEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
