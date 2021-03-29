@@ -12,10 +12,10 @@ import lombok.NoArgsConstructor;
 public class LectureRoomDeleteDto {
   @Data
   @AllArgsConstructor
+  @NoArgsConstructor
   @ApiModel("강의실 삭제 요청")
   static public class Request{
-    @NotEmpty
-    @ApiModelProperty(example = "1", notes = "건물 pk")
+    @ApiModelProperty(example = "1", notes = "삭제할 강의실 pk")
     private Long lectureRoomId;
   }
 }

@@ -1,5 +1,6 @@
 package com.se.apiserver.v1.lectureroom.domain.entity;
 
+import com.se.apiserver.v1.common.domain.entity.BaseEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -7,12 +8,15 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.Size;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-public class LectureRoom {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class LectureRoom extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,5 +1,6 @@
 package com.se.apiserver.v1.subject.domain.entity;
 
+import com.se.apiserver.v1.common.domain.entity.BaseEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -13,7 +14,7 @@ import lombok.Getter;
 
 @Entity
 @Getter
-public class Subject {
+public class Subject extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
