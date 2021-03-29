@@ -10,6 +10,7 @@ public enum LectureRoomErrorCode implements ErrorCode {
   DUPLICATED_LECTURE_ROOM(401, "LRE02", "강의실 중복");
 
 
+
   private final int status;
   private final String code;
   private final String message;

@@ -10,11 +10,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 public class LectureRoomReadDto {
+
   @Data
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
   static public class Response{
+
+    @ApiModelProperty(notes = "강의실 id", example = "1")
+    private Long lectureRoomId;
 
     @ApiModelProperty(notes = "건물명", example = "DB")
     private String building;
@@ -27,6 +31,7 @@ public class LectureRoomReadDto {
 
     public static Response fromEntity(LectureRoom lectureRoom){
       return Response.builder()
+          .lectureRoomId(lectureRoom.getLectureRoomId())
           .building(lectureRoom.getBuilding())
           .roomNumber(lectureRoom.getRoomNumber())
           .capacity(lectureRoom.getCapacity())
