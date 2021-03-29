@@ -7,6 +7,7 @@ import javax.validation.constraints.Min;
 import lombok.*;
 import org.springframework.data.domain.Sort;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 @ApiModel("페이지 요청")

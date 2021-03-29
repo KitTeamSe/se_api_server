@@ -1,4 +1,4 @@
-package com.se.apiserver.v1.common.exception;
+package com.se.apiserver.v1.common.domain.exception;
 
 import com.se.apiserver.v1.common.domain.error.ErrorCode;
 

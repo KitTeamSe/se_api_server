@@ -19,10 +19,6 @@ public class Blacklist extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long blacklistId;
 
-  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
-  @JoinColumn(name = "accountId", nullable = false)
-  private Account registrant;
-
   @Column(length = 20, nullable = false)
   @Size(min = 4, max = 20)
   private String ip;
@@ -32,10 +28,7 @@ public class Blacklist extends BaseEntity {
   private String reason;
 
   @Builder
-  public Blacklist(Long blacklistId, Account registrant, @Size(min = 4, max = 20) String ip,
-      @Size(min = 4, max = 20) String reason) {
-    this.blacklistId = blacklistId;
-    this.registrant = registrant;
+  public Blacklist(@Size(min = 4, max = 20) String ip, @Size(min = 4, max = 20) String reason) {
     this.ip = ip;
     this.reason = reason;
   }

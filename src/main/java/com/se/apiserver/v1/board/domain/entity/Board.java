@@ -1,7 +1,9 @@
 package com.se.apiserver.v1.board.domain.entity;
 
-import com.se.apiserver.v1.common.domain.entity.BaseEntity;
 import com.se.apiserver.v1.account.domain.entity.Account;
+import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
+import com.se.apiserver.v1.common.domain.entity.BaseEntity;
+import com.se.apiserver.v1.menu.domain.entity.Menu;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,40 +15,38 @@ import javax.validation.constraints.Size;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Board extends BaseEntity {
+@DiscriminatorValue(value = "BOARD")
+public class Board extends AccountGenerateEntity {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long boardId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long boardId;
 
-  @Column(length = 10, nullable = false)
-  @Size(min = 2, max = 10)
-  private String name;
+    @Column(length = 20, nullable = false)
+    @Size(min = 2, max = 20)
+    private String nameEng;
 
-  @Column(length = 10, nullable = false)
-  @Enumerated(EnumType.STRING)
-  @Size(min = 2, max = 10)
-  private BoardStatus status;
+    @Column(length = 20, nullable = false)
+    @Size(min = 2, max = 20)
+    private String nameKor;
 
-  @Column(nullable = false)
-  private Integer menuOrder;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "menu_id")
+    private Menu menu;
 
-  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
-  @JoinColumn(name = "registrant_id", referencedColumnName = "accountId", nullable = false)
-  private Account registrantAccount;
+    @Builder
+    public Board(Long boardId, @Size(min = 2, max = 20) String nameEng, @Size(min = 2, max = 20) String nameKor, Menu menu) {
+        this.boardId = boardId;
+        this.nameEng = nameEng;
+        this.nameKor = nameKor;
+        this.menu = menu;
+    }
 
-  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
-  @JoinColumn(name = "last_modified_account_id", referencedColumnName = "accountId")
-  private Account lastModifiedAccount;
+    public void updateNameEng(String nameEng) {
+        this.nameEng = nameEng;
+    }
 
-  @Builder
-  public Board(Long boardId, @Size(min = 2, max = 10) String name, @Size(min = 2, max = 10) BoardStatus status,
-      Integer menuOrder, Account registrantAccount, Account lastModifiedAccount) {
-    this.boardId = boardId;
-    this.name = name;
-    this.status = status;
-    this.menuOrder = menuOrder;
-    this.registrantAccount = registrantAccount;
-    this.lastModifiedAccount = lastModifiedAccount;
-  }
+    public void updateNameKor(String nameKor) {
+        this.nameKor = nameKor;
+    }
 }

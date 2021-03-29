@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 
 @SpringBootTest
-@Transactional(readOnly = true)
+@Transactional
 public class AccountReadUseCaseTest {
 
     @Autowired
@@ -36,7 +36,6 @@ public class AccountReadUseCaseTest {
     QuestionJpaRepository questionJpaRepository;
 
     @Test
-
     public void 본인_조회_성공() {
         //given
 
@@ -59,8 +58,8 @@ public class AccountReadUseCaseTest {
                 .build();
         accountJpaRepository.save(account);
 
-        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("test",
-                "test", Arrays.asList(new SimpleGrantedAuthority("ACCOUNT_ACCESS"))));
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(String.valueOf(account.getAccountId()),
+                "3", Arrays.asList(new SimpleGrantedAuthority("ACCOUNT_ACCESS"))));
 
         //when
         AccountReadDto.Response dto = accountReadUseCase.read("test");

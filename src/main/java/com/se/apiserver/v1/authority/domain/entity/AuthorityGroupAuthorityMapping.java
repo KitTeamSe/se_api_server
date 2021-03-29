@@ -9,8 +9,6 @@ import lombok.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
-@AllArgsConstructor
 public class AuthorityGroupAuthorityMapping extends BaseEntity {
 
   @Id
@@ -24,4 +22,11 @@ public class AuthorityGroupAuthorityMapping extends BaseEntity {
   @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
   @JoinColumn(name = "authority_group_id", referencedColumnName = "authorityGroupId")
   private AuthorityGroup authorityGroup;
+
+  @Builder
+  public AuthorityGroupAuthorityMapping(Long authorityGroupAuthorityMappingId, Authority authority, AuthorityGroup authorityGroup) {
+    this.authorityGroupAuthorityMappingId = authorityGroupAuthorityMappingId;
+    this.authority = authority;
+    this.authorityGroup = authorityGroup;
+  }
 }
