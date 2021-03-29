@@ -25,4 +25,5 @@ public class LectureRoomDeleteUseCase {
 
     lectureRoomJpaRepository.delete(lectureRoom);
   }
+
 }
