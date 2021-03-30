@@ -8,9 +8,11 @@ import com.se.apiserver.v1.subject.domain.usecase.SubjectReadUseCase;
 import com.se.apiserver.v1.subject.domain.usecase.SubjectUpdateUseCase;
 import com.se.apiserver.v1.subject.infra.dto.SubjectCreateDto;
 import com.se.apiserver.v1.subject.infra.dto.SubjectReadDto;
+import com.se.apiserver.v1.subject.infra.dto.SubjectReadDto.Response;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -53,7 +55,7 @@ public class SubjectApiController {
   @GetMapping(path = "/subject")
   @ApiOperation("교과 전체 조회")
   @ResponseStatus(value = HttpStatus.OK)
-  public SuccessResponse<SubjectReadDto.Response> readAll(@Validated PageRequest pageRequest){
-    return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", subjectReadUseCase.readAll(pageRequest.of()));
+  public SuccessResponse<PageImpl<Response>> readAll(@Validated PageRequest pageRequest){
+    return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", subjectReadUseCase.readAll(pageRequest.of()));
   }
 }

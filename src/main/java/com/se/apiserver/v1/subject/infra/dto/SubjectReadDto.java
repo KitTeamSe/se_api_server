@@ -2,6 +2,7 @@ package com.se.apiserver.v1.subject.infra.dto;
 
 import com.se.apiserver.v1.subject.domain.entity.Subject;
 import com.se.apiserver.v1.subject.domain.entity.SubjectType;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -14,6 +15,7 @@ public class SubjectReadDto {
   @Data
   @NoArgsConstructor
   @AllArgsConstructor
+  @ApiModel("교과 조회 요청")
   @Builder
   static public class Response{
 
