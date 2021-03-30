@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,7 +35,7 @@ public class TeacherApiController {
   private final TeacherCreateUseCase teacherCreateUseCase;
   private final TeacherReadUseCase teacherReadUseCase;
   private final TeacherUpdateUseCase teacherUpdateUseCase;
-//  private final TeacherDeleteUseCase teacherDeleteUseCase;
+  private final TeacherDeleteUseCase teacherDeleteUseCase;
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
   @PostMapping(path = "/teacher")
@@ -66,5 +67,14 @@ public class TeacherApiController {
   @ResponseStatus(value = HttpStatus.OK)
   public SuccessResponse<TeacherReadDto.Response> update(@RequestBody @Validated TeacherUpdateDto.Request request){
     return new SuccessResponse(HttpStatus.OK.value(), "교원 수정에 성공했습니다.", teacherUpdateUseCase.update(request));
+  }
+
+  @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
+  @DeleteMapping(path = "/teacher/{id}")
+  @ResponseStatus(value = HttpStatus.OK)
+  @ApiOperation(value = "교원 삭제")
+  public SuccessResponse delete(@PathVariable(value = "id") Long id){
+    teacherDeleteUseCase.delete(id);
+    return new SuccessResponse(HttpStatus.OK.value(), "교원 삭제에 성공했습니다.");
   }
 }
