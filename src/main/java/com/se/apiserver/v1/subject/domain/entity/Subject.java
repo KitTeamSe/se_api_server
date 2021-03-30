@@ -32,7 +32,7 @@ public class Subject extends AccountGenerateEntity {
   private SubjectType type;
 
   @Size(min = 2, max = 30)
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
   private String code;
 
   @Size(min = 2, max = 30)

@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,7 +36,7 @@ public class SubjectApiController {
   private final SubjectCreateUseCase subjectCreateUseCase;
   private final SubjectReadUseCase subjectReadUseCase;
   private final SubjectUpdateUseCase subjectUpdateUseCase;
-//  private final SubjectDeleteUseCase subjectDeleteUseCase;
+  private final SubjectDeleteUseCase subjectDeleteUseCase;
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
   @PostMapping(path = "/subject")
@@ -67,5 +68,14 @@ public class SubjectApiController {
   @ApiOperation(value = "교과 수정")
   public SuccessResponse<SubjectReadDto.Response> update(@RequestBody @Validated SubjectUpdateDto.Request request){
     return new SuccessResponse<>(HttpStatus.OK.value(), "교과 수정에 성공했습니다.", subjectUpdateUseCase.update(request));
+  }
+
+  @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
+  @DeleteMapping(path = "/subject/{id}")
+  @ResponseStatus(value = HttpStatus.OK)
+  @ApiOperation(value = "강의실 삭제")
+  public SuccessResponse delete(@PathVariable(value = "id") Long id){
+    subjectDeleteUseCase.delete(id);
+    return new SuccessResponse<>(HttpStatus.OK.value(), "교과 삭제에 성공했습니다.");
   }
 }

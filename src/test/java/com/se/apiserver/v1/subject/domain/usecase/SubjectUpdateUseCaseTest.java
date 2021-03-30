@@ -52,6 +52,37 @@ public class SubjectUpdateUseCaseTest {
   }
 
   @Test
+  void 교과_수정_코드_동일_성공(){
+    // Given
+    Subject subject = subjectJpaRepository.save(Subject.builder()
+        .curriculum("컴퓨터소프트웨어공학")
+        .type(SubjectType.MAJOR)
+        .code("CS00001")
+        .name("과목 1")
+        .grade(1)
+        .semester(1)
+        .credit(3)
+        .build()
+    );
+
+    Long id = subject.getSubjectId();
+
+    // When
+    SubjectUpdateDto.Request request = SubjectUpdateDto.Request.builder()
+        .subjectId(id)
+        .code("CS00001")
+        .name("수정된 과목명")
+        .build();
+
+    SubjectReadDto.Response response = subjectUpdateUseCase.update(request);
+
+    // Then
+    Assertions.assertThat(response.getName()).isEqualTo("수정된 과목명");
+  }
+
+
+
+  @Test
   void 교과_수정_코드_변경_성공(){
     // Given
     Subject subject = subjectJpaRepository.save(Subject.builder()

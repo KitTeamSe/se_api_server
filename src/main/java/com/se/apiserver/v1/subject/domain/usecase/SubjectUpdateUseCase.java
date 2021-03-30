@@ -8,6 +8,7 @@ import com.se.apiserver.v1.subject.infra.dto.SubjectReadDto;
 import com.se.apiserver.v1.subject.infra.dto.SubjectReadDto.Response;
 import com.se.apiserver.v1.subject.infra.dto.SubjectUpdateDto;
 import com.se.apiserver.v1.subject.infra.repository.SubjectJpaRepository;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,8 +26,9 @@ public class SubjectUpdateUseCase {
         .orElseThrow(() -> new BusinessException(SubjectErrorCode.NO_SUCH_SUBJECT));
 
     if(request.getCode() != null){
-      if(subjectJpaRepository.findByCode(request.getCode()).isPresent())
-        throw new BusinessException(SubjectErrorCode.DUPLICATED_SUBJECT);
+      Optional<Subject> optionalSubject = subjectJpaRepository.findByCode(request.getCode());
+        if(optionalSubject.isPresent() && !optionalSubject.get().getSubjectId().equals(request.getSubjectId()))
+          throw new BusinessException(SubjectErrorCode.DUPLICATED_SUBJECT);
 
       subject.updateCode(request.getCode());
     }
