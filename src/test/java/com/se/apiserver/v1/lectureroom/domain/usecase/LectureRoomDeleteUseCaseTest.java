@@ -42,10 +42,9 @@ public class LectureRoomDeleteUseCaseTest {
   @Test
   void 강의실_미존재_삭제_실패(){
     // Given
-
-    // When
     Long id = 999L;
 
+    // When
     // Then
     Assertions.assertThatThrownBy(() -> {
       lectureRoomDeleteUseCase.delete(id);

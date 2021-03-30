@@ -16,14 +16,14 @@ public class LectureRoomCreateDto {
   @ApiModel("강의실 생성 요청")
   @Builder
   static public class Request{
-    @ApiModelProperty(example = "DB", notes = "건물명")
+    @ApiModelProperty(notes = "건물명", example = "DB")
     @Size(min = 1, max = 30)
     private String building;
 
-    @ApiModelProperty(example = "107", notes = "호수(방 번호)")
+    @ApiModelProperty(notes = "호수(방 번호)", example = "107")
     private Integer roomNumber;
 
-    @ApiModelProperty(example = "50", notes = "정원")
+    @ApiModelProperty(notes = "정원", example = "50")
     private Integer capacity;
   }
 
@@ -31,7 +31,7 @@ public class LectureRoomCreateDto {
   @AllArgsConstructor
   @ApiModel("강의실 생성 응답")
   static public class Response{
-    @ApiModelProperty(example = "1", notes = "강의실 pk")
+    @ApiModelProperty(notes = "강의실 pk", example = "1")
     private Long lectureRoomId;
   }
 }
