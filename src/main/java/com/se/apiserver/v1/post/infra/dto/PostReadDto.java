@@ -5,15 +5,12 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.se.apiserver.v1.account.domain.entity.Account;
 import com.se.apiserver.v1.board.domain.entity.Board;
 import com.se.apiserver.v1.common.domain.entity.Anonymous;
-import com.se.apiserver.v1.post.domain.entity.Attach;
-import com.se.apiserver.v1.post.domain.entity.Post;
-import com.se.apiserver.v1.post.domain.entity.PostIsDeleted;
-import com.se.apiserver.v1.post.domain.entity.PostIsNotice;
-import com.se.apiserver.v1.post.domain.entity.PostIsSecret;
+import com.se.apiserver.v1.post.domain.entity.*;
 import com.se.apiserver.v1.reply.domain.entity.Reply;
 import io.swagger.annotations.ApiModel;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -38,9 +35,9 @@ import lombok.NoArgsConstructor;
 public class PostReadDto {
 
   @Data
-  @Builder
   @NoArgsConstructor
   @AllArgsConstructor
+  @Builder
   static public class Response {
 
     private Long postId;
@@ -63,13 +60,20 @@ public class PostReadDto {
     @Size(min = 2, max = 20)
     private String anonymousNickname;
 
-
     @JsonInclude(Include.NON_NULL)
     private String title;
 
     @JsonInclude(Include.NON_NULL)
     private String text;
 
+//    @JsonInclude(Include.NON_NULL)
+//    private List<Reply> replies = new ArrayList<>();
+
+    @JsonInclude(Include.NON_NULL)
+    private List<AttachDto.Response> attaches;
+
+    @JsonInclude(Include.NON_NULL)
+    private List<TagDto.Response> tags;
 
     public static Response fromEntity(Post post, boolean isOwnerOrManager) {
       ResponseBuilder builder = Response.builder()
@@ -79,7 +83,23 @@ public class PostReadDto {
           .isSecret(post.getIsSecret())
           .isNotice(post.getIsNotice());
 
-      buildWriterInfo(builder, post);
+      if (post.getAccount() != null) {
+        builder.accountId(post.getAccount().getAccountId());
+        builder.accountNickname(post.getAccount().getNickname());
+      }
+
+      if(post.getAnonymous() != null)
+        builder.anonymousNickname(post.getAnonymous().getAnonymousNickname());
+
+      builder.attaches(post.getAttaches().stream()
+          .map(a -> AttachDto.Response.fromEntity(a))
+          .collect(Collectors.toList())
+      );
+
+      builder.tags(post.getTags().stream()
+          .map(t -> TagDto.Response.fromEntity(t))
+          .collect(Collectors.toList())
+      );
 
       if (post.getIsSecret() == PostIsSecret.SECRET && !isOwnerOrManager) {
         return builder.build();
@@ -91,15 +111,6 @@ public class PostReadDto {
           .build();
     }
 
-    private static void buildWriterInfo(ResponseBuilder builder, Post post) {
-      if (post.getAccount() != null) {
-        builder.accountId(post.getAccount().getAccountId());
-        builder.accountNickname(post.getAccount().getNickname());
-        return;
-      }
-
-      builder.anonymousNickname(post.getAnonymous().getAnonymousNickname());
-    }
   }
 
 }

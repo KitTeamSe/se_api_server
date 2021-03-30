@@ -3,7 +3,10 @@ package com.se.apiserver.v1.post.domain.entity;
 import com.se.apiserver.v1.account.domain.entity.Account;
 import com.se.apiserver.v1.board.domain.entity.Board;
 import com.se.apiserver.v1.common.domain.entity.Anonymous;
+import com.se.apiserver.v1.common.domain.entity.BaseEntity;
+import com.se.apiserver.v1.post.infra.dto.AttachDto;
 import com.se.apiserver.v1.reply.domain.entity.Reply;
+import com.se.apiserver.v1.tag.domain.entity.Tag;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,7 +20,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Post {
+public class Post extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,6 +52,9 @@ public class Post {
   @Column(nullable = false)
   private Integer views;
 
+  @Column(nullable = false)
+  private Integer numReply;
+
   @Column(length = 10, nullable = false)
   @Enumerated(EnumType.STRING)
   private PostIsDeleted isDeleted;
@@ -63,11 +69,13 @@ public class Post {
   @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, orphanRemoval = true)
   private List<Attach> attaches = new ArrayList<>();
 
+  @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, orphanRemoval = true)
+  private List<PostTagMapping> tags = new ArrayList<>();
+
   @Builder
   public Post(Board board, Account account, @Size(min = 3, max = 50) String title,
-      @Size(min = 5, max = 2000) String text, Anonymous anonymous,
-      PostIsNotice isNotice, Integer views, PostIsDeleted isDeleted,
-      PostIsSecret isSecret, List<Reply> replies, List<Attach> attaches) {
+              @Size(min = 5, max = 2000) String text, Anonymous anonymous, PostIsNotice isNotice,
+              Integer views, Integer numReply, PostIsDeleted isDeleted, PostIsSecret isSecret) {
     this.board = board;
     this.account = account;
     this.title = title;
@@ -75,9 +83,26 @@ public class Post {
     this.anonymous = anonymous;
     this.isNotice = isNotice;
     this.views = views;
+    this.numReply = numReply;
     this.isDeleted = isDeleted;
     this.isSecret = isSecret;
-    this.replies = replies;
-    this.attaches = attaches;
+  }
+
+  public void addAttaches(List<Attach> attachList) {
+    attachList.stream()
+            .forEach(a -> a.setPost(this));
+  }
+
+  public void addAttache(Attach attach) {
+    this.attaches.add(attach);
+  }
+
+  public void addTags(List<PostTagMapping> postTagMappings) {
+    postTagMappings.stream()
+            .forEach(t -> t.setPost(this));
+  }
+
+  public void addTag(PostTagMapping postTagMapping) {
+    this.tags.add(postTagMapping);
   }
 }

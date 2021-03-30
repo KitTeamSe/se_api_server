@@ -12,6 +12,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PostCreateDto {
   @Data
   @Builder
@@ -37,10 +40,6 @@ public class PostCreateDto {
     private String text;
 
     @Size(min = 2, max = 20)
-    @ApiModelProperty(notes = "익명 사용자 아이디", example = "test1")
-    private String anonymousId;
-
-    @Size(min = 2, max = 20)
     @ApiModelProperty(notes = "익명 사용자 별명", example = "테스트유저")
     private String anonymousNickname;
 
@@ -55,6 +54,12 @@ public class PostCreateDto {
     @NotNull
     @ApiModelProperty(notes = "비밀글로 설정할 것인지(관리자용)", example = "NORMAL")
     private PostIsSecret isSecret;
+
+    @ApiModelProperty(notes = "첨부 파일들")
+    private List<AttachDto.Request> attachmentList;
+
+    @ApiModelProperty(notes = "태그들")
+    private List<TagDto.Request> tagList;
   }
 
 }

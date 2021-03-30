@@ -70,6 +70,8 @@ public class AccountDetailService implements UserDetailsService {
   }
 
   public boolean isOwner(Long accountId) {
+      if(accountId == null)
+        return false;
       Account account = accountJpaRepository.findById(accountId).orElseThrow(() -> new BusinessException(AccountErrorCode.NO_SUCH_ACCOUNT));
       return isOwner(account);
   }
