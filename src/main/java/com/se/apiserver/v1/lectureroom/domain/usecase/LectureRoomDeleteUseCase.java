@@ -19,8 +19,9 @@ public class LectureRoomDeleteUseCase {
 
   @Transactional
   public void delete(Long lectureRoomId){
-    LectureRoom lectureRoom = lectureRoomJpaRepository.findById(lectureRoomId).orElseThrow(()->
-        new BusinessException(LectureRoomErrorCode.NO_SUCH_LECTURE_ROOM)
+    LectureRoom lectureRoom = lectureRoomJpaRepository
+        .findById(lectureRoomId)
+        .orElseThrow(()-> new BusinessException(LectureRoomErrorCode.NO_SUCH_LECTURE_ROOM)
     );
 
     lectureRoomJpaRepository.delete(lectureRoom);
