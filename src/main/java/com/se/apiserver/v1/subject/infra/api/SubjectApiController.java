@@ -9,6 +9,7 @@ import com.se.apiserver.v1.subject.domain.usecase.SubjectUpdateUseCase;
 import com.se.apiserver.v1.subject.infra.dto.SubjectCreateDto;
 import com.se.apiserver.v1.subject.infra.dto.SubjectReadDto;
 import com.se.apiserver.v1.subject.infra.dto.SubjectReadDto.Response;
+import com.se.apiserver.v1.subject.infra.dto.SubjectUpdateDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -32,7 +34,7 @@ public class SubjectApiController {
 
   private final SubjectCreateUseCase subjectCreateUseCase;
   private final SubjectReadUseCase subjectReadUseCase;
-//  private final SubjectUpdateUseCase subjectUpdateUseCase;
+  private final SubjectUpdateUseCase subjectUpdateUseCase;
 //  private final SubjectDeleteUseCase subjectDeleteUseCase;
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
@@ -57,5 +59,13 @@ public class SubjectApiController {
   @ResponseStatus(value = HttpStatus.OK)
   public SuccessResponse<PageImpl<Response>> readAll(@Validated PageRequest pageRequest){
     return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", subjectReadUseCase.readAll(pageRequest.of()));
+  }
+
+  @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
+  @PutMapping(path = "/subject")
+  @ResponseStatus(value = HttpStatus.OK)
+  @ApiOperation(value = "교과 수정")
+  public SuccessResponse<SubjectReadDto.Response> update(@RequestBody @Validated SubjectUpdateDto.Request request){
+    return new SuccessResponse<>(HttpStatus.OK.value(), "교과 수정에 성공했습니다.", subjectUpdateUseCase.update(request));
   }
 }

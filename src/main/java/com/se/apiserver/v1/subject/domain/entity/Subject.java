@@ -62,4 +62,32 @@ public class Subject extends AccountGenerateEntity {
     this.semester = semester;
     this.credit = credit;
   }
+
+  public void updateCurriculum(String curriculum){
+    this.curriculum = curriculum;
+  }
+
+  public void updateType(SubjectType subjectType){
+    this.type = subjectType;
+  }
+
+  public void updateCode(String code){
+    this.code = code;
+  }
+
+  public void updateName(String name){
+    this.name = name;
+  }
+
+  public void updateGrade(Integer grade){
+    this.grade = grade;
+  }
+
+  public void updateSemester(Integer semester){
+    this.semester = semester;
+  }
+
+  public void updateCredit(Integer credit){
+    this.credit = credit;
+  }
 }
