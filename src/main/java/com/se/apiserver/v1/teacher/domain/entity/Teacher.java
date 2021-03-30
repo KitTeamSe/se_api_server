@@ -41,4 +41,16 @@ public class Teacher extends AccountGenerateEntity {
     this.type = type;
     this.department = department;
   }
+
+  public void updateName(String name){
+    this.name = name;
+  }
+
+  public void updateType(TeacherType type){
+    this.type = type;
+  }
+
+  public void updateDepartment(String department){
+    this.department = department;
+  }
 }
