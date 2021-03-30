@@ -18,6 +18,11 @@ public class SubjectReadUseCaseTest {
 
   @Test
   void 교과_조회_성공(){
+    // Given
+
+    // When
+
+    // Then
 
   }
   

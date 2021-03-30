@@ -9,4 +9,6 @@ public interface SubjectJpaRepository extends JpaRepository<Subject, Long> {
   @Override
   Optional<Subject> findById(Long id);
 
+  Optional<Subject> findByCode(String code);
+
 }

@@ -18,6 +18,11 @@ public class SubjectUpdateUseCaseTest {
 
   @Test
   void 교과_수정_성공(){
+    // Given
+
+    // When
+
+    // Then
 
   }
 }

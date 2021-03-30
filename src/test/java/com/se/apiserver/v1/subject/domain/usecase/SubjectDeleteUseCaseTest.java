@@ -18,6 +18,11 @@ public class SubjectDeleteUseCaseTest {
 
   @Test
   void 교과_삭제_성공(){
+    // Given
+
+    // When
+
+    // Then
 
   }
 }
