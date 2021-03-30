@@ -33,19 +33,19 @@ public class LectureRoomUpdateUseCaseTest {
     Long id = lectureRoom.getLectureRoomId();
 
     // When
-    LectureRoomUpdateDto.Request req = LectureRoomUpdateDto.Request.builder()
+    LectureRoomUpdateDto.Request request = LectureRoomUpdateDto.Request.builder()
         .lectureRoomId(id)
         .building("D")
         .roomNumber(330)
         .capacity(50)
         .build();
 
-    LectureRoomReadDto.Response res = lectureRoomUpdateUseCase.update(req);
+    LectureRoomReadDto.Response response = lectureRoomUpdateUseCase.update(request);
 
     // Then
-    Assertions.assertThat(res.getBuilding()).isEqualTo("D");
-    Assertions.assertThat(res.getRoomNumber()).isEqualTo(330);
-    Assertions.assertThat(res.getCapacity()).isEqualTo(50);
+    Assertions.assertThat(response.getBuilding()).isEqualTo("D");
+    Assertions.assertThat(response.getRoomNumber()).isEqualTo(330);
+    Assertions.assertThat(response.getCapacity()).isEqualTo(50);
   }
 
   @Test
@@ -60,19 +60,19 @@ public class LectureRoomUpdateUseCaseTest {
     Long id = lectureRoom.getLectureRoomId();
 
     // When
-    LectureRoomUpdateDto.Request req = LectureRoomUpdateDto.Request.builder()
+    LectureRoomUpdateDto.Request request = LectureRoomUpdateDto.Request.builder()
         .lectureRoomId(id)
         .building("DB")
         .roomNumber(330)
         .capacity(30)
         .build();
 
-    LectureRoomReadDto.Response res = lectureRoomUpdateUseCase.update(req);
+    LectureRoomReadDto.Response response = lectureRoomUpdateUseCase.update(request);
 
     // Then
-    Assertions.assertThat(res.getBuilding()).isEqualTo("DB");
-    Assertions.assertThat(res.getRoomNumber()).isEqualTo(330);
-    Assertions.assertThat(res.getCapacity()).isEqualTo(30);
+    Assertions.assertThat(response.getBuilding()).isEqualTo("DB");
+    Assertions.assertThat(response.getRoomNumber()).isEqualTo(330);
+    Assertions.assertThat(response.getCapacity()).isEqualTo(30);
   }
 
   @Test
@@ -87,19 +87,19 @@ public class LectureRoomUpdateUseCaseTest {
     Long id = lectureRoom.getLectureRoomId();
 
     // When
-    LectureRoomUpdateDto.Request req = LectureRoomUpdateDto.Request.builder()
+    LectureRoomUpdateDto.Request request = LectureRoomUpdateDto.Request.builder()
         .lectureRoomId(id)
         .building("D")
         .roomNumber(331)
         .capacity(30)
         .build();
 
-    LectureRoomReadDto.Response res = lectureRoomUpdateUseCase.update(req);
+    LectureRoomReadDto.Response response = lectureRoomUpdateUseCase.update(request);
 
     // Then
-    Assertions.assertThat(res.getBuilding()).isEqualTo("D");
-    Assertions.assertThat(res.getRoomNumber()).isEqualTo(331);
-    Assertions.assertThat(res.getCapacity()).isEqualTo(30);
+    Assertions.assertThat(response.getBuilding()).isEqualTo("D");
+    Assertions.assertThat(response.getRoomNumber()).isEqualTo(331);
+    Assertions.assertThat(response.getCapacity()).isEqualTo(30);
   }
 
   @Test
@@ -114,19 +114,19 @@ public class LectureRoomUpdateUseCaseTest {
     Long id = lectureRoom.getLectureRoomId();
 
     // When
-    LectureRoomUpdateDto.Request req = LectureRoomUpdateDto.Request.builder()
+    LectureRoomUpdateDto.Request request = LectureRoomUpdateDto.Request.builder()
         .lectureRoomId(id)
         .building("D")
         .roomNumber(330)
         .capacity(30)
         .build();
 
-    LectureRoomReadDto.Response res = lectureRoomUpdateUseCase.update(req);
+    LectureRoomReadDto.Response response = lectureRoomUpdateUseCase.update(request);
 
     // Then
-    Assertions.assertThat(res.getBuilding()).isEqualTo("D");
-    Assertions.assertThat(res.getRoomNumber()).isEqualTo(330);
-    Assertions.assertThat(res.getCapacity()).isEqualTo(30);
+    Assertions.assertThat(response.getBuilding()).isEqualTo("D");
+    Assertions.assertThat(response.getRoomNumber()).isEqualTo(330);
+    Assertions.assertThat(response.getCapacity()).isEqualTo(30);
   }
 
   @Test
@@ -151,7 +151,7 @@ public class LectureRoomUpdateUseCaseTest {
   @Test
   void 강의실_수정_강의실_중복_실패(){
     // Given
-    LectureRoom DB107 = lectureRoomJpaRepository.save(LectureRoom.builder()
+    lectureRoomJpaRepository.save(LectureRoom.builder()
         .building("DB")
         .roomNumber(107)
         .capacity(30)
@@ -166,7 +166,7 @@ public class LectureRoomUpdateUseCaseTest {
     Long id = lectureRoom.getLectureRoomId();
 
     // When
-    LectureRoomUpdateDto.Request req = LectureRoomUpdateDto.Request.builder()
+    LectureRoomUpdateDto.Request request = LectureRoomUpdateDto.Request.builder()
         .lectureRoomId(id)
         .building("DB")
         .roomNumber(107)
@@ -175,7 +175,7 @@ public class LectureRoomUpdateUseCaseTest {
 
     // Then
     Assertions.assertThatThrownBy(() -> {
-      lectureRoomUpdateUseCase.update(req);
+      lectureRoomUpdateUseCase.update(request);
     }).hasMessage(LectureRoomErrorCode.DUPLICATED_LECTURE_ROOM.getMessage());
   }
 }

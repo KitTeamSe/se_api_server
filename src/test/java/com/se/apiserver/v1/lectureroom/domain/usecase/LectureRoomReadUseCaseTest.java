@@ -35,12 +35,12 @@ public class LectureRoomReadUseCaseTest {
         .build());
 
     // When
-    LectureRoomReadDto.Response read = lectureRoomReadUseCase.read(lectureRoom.getLectureRoomId());
+    LectureRoomReadDto.Response response = lectureRoomReadUseCase.read(lectureRoom.getLectureRoomId());
 
     // Then
-    Assertions.assertThat(lectureRoom.getBuilding()).isEqualTo(read.getBuilding());
-    Assertions.assertThat(lectureRoom.getRoomNumber()).isEqualTo(read.getRoomNumber());
-    Assertions.assertThat(lectureRoom.getCapacity()).isEqualTo(read.getCapacity());
+    Assertions.assertThat(lectureRoom.getBuilding()).isEqualTo(response.getBuilding());
+    Assertions.assertThat(lectureRoom.getRoomNumber()).isEqualTo(response.getRoomNumber());
+    Assertions.assertThat(lectureRoom.getCapacity()).isEqualTo(response.getCapacity());
   }
 
   @Test
@@ -49,7 +49,6 @@ public class LectureRoomReadUseCaseTest {
     Long id = 99999L;
 
     // When
-
     // Then
     Assertions.assertThatThrownBy(() ->{
       lectureRoomReadUseCase.read(id);
