@@ -1,12 +1,11 @@
 package com.se.apiserver.v1.post.domain.entity;
 
 import com.se.apiserver.v1.account.domain.entity.Account;
+import com.se.apiserver.v1.attach.domain.entity.Attach;
 import com.se.apiserver.v1.board.domain.entity.Board;
 import com.se.apiserver.v1.common.domain.entity.Anonymous;
 import com.se.apiserver.v1.common.domain.entity.BaseEntity;
-import com.se.apiserver.v1.post.infra.dto.AttachDto;
 import com.se.apiserver.v1.reply.domain.entity.Reply;
-import com.se.apiserver.v1.tag.domain.entity.Tag;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

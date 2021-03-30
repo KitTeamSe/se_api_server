@@ -3,7 +3,7 @@ package com.se.apiserver.v1.reply.domain.entity;
 import com.se.apiserver.v1.common.domain.entity.BaseEntity;
 import com.se.apiserver.v1.account.domain.entity.Account;
 import com.se.apiserver.v1.common.domain.entity.Anonymous;
-import com.se.apiserver.v1.post.domain.entity.Attach;
+import com.se.apiserver.v1.attach.domain.entity.Attach;
 import com.se.apiserver.v1.post.domain.entity.Post;
 import java.util.ArrayList;
 import lombok.AccessLevel;
@@ -57,4 +57,8 @@ public class Reply extends BaseEntity {
   @OneToMany(mappedBy = "reply", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, orphanRemoval = true)
   private List<Attach> attaches = new ArrayList<>();
 
+  public void addAttach(Attach attach) {
+    attaches.add(attach);
+  }
+  
 }

@@ -10,6 +10,7 @@ import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
@@ -56,10 +57,29 @@ public class PostCreateDto {
     private PostIsSecret isSecret;
 
     @ApiModelProperty(notes = "첨부 파일들")
-    private List<AttachDto.Request> attachmentList;
+    private List<AttachDto> attachmentList;
 
     @ApiModelProperty(notes = "태그들")
-    private List<TagDto.Request> tagList;
+    private List<TagDto> tagList;
+  }
+
+  @ApiModel("첨부 파일")
+  @Getter
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @Builder
+  static public class AttachDto{
+    private Long attachId;
+  }
+
+  @ApiModel("게시글 태그 등록")
+  @Getter
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @Builder
+  static public class TagDto{
+    @ApiModelProperty(notes = "태그 아이디", example = "1")
+    private Long tagId;
   }
 
 }

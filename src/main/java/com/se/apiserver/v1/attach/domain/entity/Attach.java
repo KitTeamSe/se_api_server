@@ -1,7 +1,8 @@
-package com.se.apiserver.v1.post.domain.entity;
+package com.se.apiserver.v1.attach.domain.entity;
 
 import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
 import com.se.apiserver.v1.common.domain.entity.BaseEntity;
+import com.se.apiserver.v1.post.domain.entity.Post;
 import com.se.apiserver.v1.reply.domain.entity.Reply;
 
 import javax.persistence.Column;
@@ -52,5 +53,15 @@ public class Attach extends BaseEntity {
     public void setPost(Post post) {
         this.post = post;
         post.addAttache(this);
+    }
+
+    public void updatePost(Post post) {
+        this.post = post;
+        post.addAttache(this);
+    }
+
+    public void updateReply(Reply reply) {
+        this.reply = reply;
+        reply.addAttach(this);
     }
 }
