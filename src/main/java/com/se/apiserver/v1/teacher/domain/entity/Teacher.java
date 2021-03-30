@@ -2,14 +2,17 @@ package com.se.apiserver.v1.teacher.domain.entity;
 
 import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
 import com.se.apiserver.v1.common.domain.entity.BaseEntity;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Teacher extends AccountGenerateEntity {
 
   @Id
