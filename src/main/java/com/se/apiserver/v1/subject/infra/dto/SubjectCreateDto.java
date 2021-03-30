@@ -13,8 +13,8 @@ public class SubjectCreateDto {
   @Data
   @NoArgsConstructor
   @AllArgsConstructor
-  @ApiModel("교과 생성 요청")
   @Builder
+  @ApiModel("교과 생성 요청")
   static public class Request{
 
     @ApiModelProperty(notes = "교육과정", example = "컴퓨터소프트웨어공학")

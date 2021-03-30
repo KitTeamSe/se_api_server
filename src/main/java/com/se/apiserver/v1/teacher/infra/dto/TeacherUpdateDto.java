@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 
 public class TeacherUpdateDto {
   @Data
-  @ApiModel("교원 수정 요청")
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
+  @ApiModel("교원 수정 요청")
   static public class Request{
 
     @ApiModelProperty(notes = "교원 id", example = "1")

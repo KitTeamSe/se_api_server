@@ -14,8 +14,8 @@ public class TeacherCreateDto {
   @Data
   @NoArgsConstructor
   @AllArgsConstructor
-  @ApiModel("교원 생성 요청")
   @Builder
+  @ApiModel("교원 생성 요청")
   static public class Request{
 
     @ApiModelProperty(notes = "이름", example = "홍길동")

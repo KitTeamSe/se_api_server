@@ -15,8 +15,8 @@ public class SubjectReadDto {
   @Data
   @NoArgsConstructor
   @AllArgsConstructor
-  @ApiModel("교과 조회 요청")
   @Builder
+  @ApiModel("교과 조회 요청")
   static public class Response{
 
     @ApiModelProperty(notes = "교과 id", example = "1")

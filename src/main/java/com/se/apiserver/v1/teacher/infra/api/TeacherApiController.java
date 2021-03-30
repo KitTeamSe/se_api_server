@@ -50,15 +50,15 @@ public class TeacherApiController {
   @ApiOperation("교원 조회")
   @ResponseStatus(value = HttpStatus.OK)
   public SuccessResponse<TeacherReadDto.Response> read(@PathVariable(value = "id") Long id){
-    return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", teacherReadUseCase.read(id));
+    return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", teacherReadUseCase.read(id));
   }
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
   @GetMapping(path = "/teacher")
   @ApiOperation("교원 전체 조회")
   @ResponseStatus(value = HttpStatus.OK)
-  public SuccessResponse<PageImpl> readAll(@Validated PageRequest pageRequest){
-    return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", teacherReadUseCase.readAll(pageRequest.of()));
+  public SuccessResponse<PageImpl<TeacherReadDto.Response>> readAll(@Validated PageRequest pageRequest){
+    return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", teacherReadUseCase.readAll(pageRequest.of()));
   }
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
@@ -66,7 +66,7 @@ public class TeacherApiController {
   @ApiOperation("교원 수정")
   @ResponseStatus(value = HttpStatus.OK)
   public SuccessResponse<TeacherReadDto.Response> update(@RequestBody @Validated TeacherUpdateDto.Request request){
-    return new SuccessResponse(HttpStatus.OK.value(), "교원 수정에 성공했습니다.", teacherUpdateUseCase.update(request));
+    return new SuccessResponse<>(HttpStatus.OK.value(), "교원 수정에 성공했습니다.", teacherUpdateUseCase.update(request));
   }
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
@@ -75,6 +75,6 @@ public class TeacherApiController {
   @ApiOperation(value = "교원 삭제")
   public SuccessResponse delete(@PathVariable(value = "id") Long id){
     teacherDeleteUseCase.delete(id);
-    return new SuccessResponse(HttpStatus.OK.value(), "교원 삭제에 성공했습니다.");
+    return new SuccessResponse<>(HttpStatus.OK.value(), "교원 삭제에 성공했습니다.");
   }
 }

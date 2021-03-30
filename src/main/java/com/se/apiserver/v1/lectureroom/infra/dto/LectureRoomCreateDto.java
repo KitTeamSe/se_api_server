@@ -13,8 +13,8 @@ public class LectureRoomCreateDto {
   @Data
   @NoArgsConstructor
   @AllArgsConstructor
-  @ApiModel("강의실 생성 요청")
   @Builder
+  @ApiModel("강의실 생성 요청")
   static public class Request{
     @ApiModelProperty(notes = "건물명", example = "DB")
     @Size(min = 1, max = 30)
