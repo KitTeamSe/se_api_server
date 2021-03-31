@@ -49,4 +49,24 @@ public class Period extends AccountGenerateEntity {
     this.endTime = endTime;
     this.note = note;
   }
+
+  public void updatePeriodOrder(Integer periodOrder){
+    this.periodOrder = periodOrder;
+  }
+
+  public void updateName(String name){
+    this.name = name;
+  }
+
+  public void updateStartTime(LocalTime startTime){
+    this.startTime = startTime;
+  }
+
+  public void updateEndTime(LocalTime endTime){
+    this.endTime = endTime;
+  }
+
+  public void updateNote(String note){
+    this.note = note;
+  }
 }

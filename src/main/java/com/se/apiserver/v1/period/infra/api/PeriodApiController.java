@@ -9,6 +9,7 @@ import com.se.apiserver.v1.period.domain.usecase.PeriodUpdateUseCase;
 import com.se.apiserver.v1.period.infra.dto.PeriodCreateDto;
 import com.se.apiserver.v1.period.infra.dto.PeriodReadDto;
 import com.se.apiserver.v1.period.infra.dto.PeriodReadDto.Response;
+import com.se.apiserver.v1.period.infra.dto.PeriodUpdateDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -32,7 +34,7 @@ public class PeriodApiController {
 
   private final PeriodCreateUseCase periodCreateUseCase;
   private final PeriodReadUseCase periodReadUseCase;
-//  private final PeriodUpdateUseCase periodUpdateUseCase;
+  private final PeriodUpdateUseCase periodUpdateUseCase;
 //  private final PeriodDeleteUseCase periodDeleteUseCase;
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
@@ -57,5 +59,15 @@ public class PeriodApiController {
   @ResponseStatus(value = HttpStatus.OK)
   public SuccessResponse<PageImpl<Response>> readAll(@Validated PageRequest pageRequest){
     return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", periodReadUseCase.readAll(pageRequest.of()));
+  }
+
+  @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
+  @PutMapping(path = "/period")
+  @ResponseStatus(value = HttpStatus.OK)
+  @ApiOperation(value = "강의실 수정")
+  public SuccessResponse<PeriodReadDto.Response> update(@RequestBody @Validated
+      PeriodUpdateDto.Request request){
+    periodUpdateUseCase.update(request);
+    return new SuccessResponse<>(HttpStatus.OK.value(), "교시 수정에 성공했습니다.");
   }
 }
