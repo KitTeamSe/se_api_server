@@ -30,9 +30,9 @@ public class TeacherCreateUseCaseTest {
 
     // When
     Long id = teacherCreateUseCase.create(request);
-    // Then
 
-    Assertions.assertThat(teacherJpaRepository.findById(id).isPresent());
+    // Then
+    Assertions.assertThat(teacherJpaRepository.findById(id).isPresent()).isEqualTo(true);
   }
 
 }

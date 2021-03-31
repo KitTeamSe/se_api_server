@@ -2,6 +2,7 @@ package com.se.apiserver.v1.teacher.infra.dto;
 
 import com.se.apiserver.v1.teacher.domain.entity.Teacher;
 import com.se.apiserver.v1.teacher.domain.entity.TeacherType;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,6 +15,7 @@ public class TeacherReadDto {
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
+  @ApiModel("교원 조회 응답")
   static public class Response{
 
     @ApiModelProperty(notes = "교원 id", example = "1")

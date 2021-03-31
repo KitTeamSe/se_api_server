@@ -15,6 +15,7 @@ public class LectureRoomReadDto {
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
+  @ApiModel("강의실 조회 응답")
   static public class Response{
 
     @ApiModelProperty(notes = "강의실 id", example = "1")

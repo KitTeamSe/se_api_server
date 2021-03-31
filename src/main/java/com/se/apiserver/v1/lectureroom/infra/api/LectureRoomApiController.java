@@ -39,46 +39,46 @@ public class LectureRoomApiController {
   private final LectureRoomDeleteUseCase lectureRoomDeleteUseCase;
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
+  @PostMapping(path = "/lecture-room")
+  @ResponseStatus(value = HttpStatus.CREATED)
+  @ApiOperation(value = "강의실 추가")
+  public SuccessResponse<Long> create(@RequestBody @Validated LectureRoomCreateDto.Request request){
+    return new SuccessResponse<>(HttpStatus.CREATED.value(), "강의실 생성에 성공했습니다.", lectureRoomCreateUseCase.create(request));
+  }
+
+  @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
   @GetMapping(path = "/lecture-room/{id}")
   @ApiOperation("강의실 조회")
   @ResponseStatus(value = HttpStatus.OK)
   public SuccessResponse<LectureRoomReadDto.Response> read(@PathVariable(value = "id") Long id){
-    return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", lectureRoomReadUseCase.read(id));
+    return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", lectureRoomReadUseCase.read(id));
   }
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
   @GetMapping(path = "/lecture-room")
   @ApiOperation("강의실 전체 조회")
   @ResponseStatus(value = HttpStatus.OK)
-  public SuccessResponse<PageImpl> readAll(@Validated PageRequest pageRequest){
-    return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", lectureRoomReadUseCase.readAll(pageRequest.of()));
-  }
-
-  @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
-  @PostMapping(path = "/lecture-room")
-  @ResponseStatus(value = HttpStatus.CREATED)
-  @ApiOperation(value = "강의실 추가")
-  public SuccessResponse<Long> createLectureRoom(@RequestBody @Validated LectureRoomCreateDto.Request request){
-    return new SuccessResponse<>(HttpStatus.CREATED.value(), "강의실 생성에 성공했습니다.", lectureRoomCreateUseCase.create(request));
+  public SuccessResponse<PageImpl<LectureRoomReadDto.Response>> readAll(@Validated PageRequest pageRequest){
+    return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", lectureRoomReadUseCase.readAll(pageRequest.of()));
   }
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
   @PutMapping(path = "/lecture-room")
   @ResponseStatus(value = HttpStatus.OK)
   @ApiOperation(value = "강의실 수정")
-  public SuccessResponse<LectureRoomReadDto.Response> updateLectureRoom(@RequestBody @Validated
+  public SuccessResponse<LectureRoomReadDto.Response> update(@RequestBody @Validated
       LectureRoomUpdateDto.Request request){
     lectureRoomUpdateUseCase.update(request);
-    return new SuccessResponse(HttpStatus.OK.value(), "강의실 수정에 성공했습니다.");
+    return new SuccessResponse<>(HttpStatus.OK.value(), "강의실 수정에 성공했습니다.");
   }
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
   @DeleteMapping(path = "/lecture-room/{id}")
   @ResponseStatus(value = HttpStatus.OK)
   @ApiOperation(value = "강의실 삭제")
-  public SuccessResponse deleteLectureRoom(@PathVariable(value = "id") Long id){
+  public SuccessResponse delete(@PathVariable(value = "id") Long id){
     lectureRoomDeleteUseCase.delete(id);
-    return new SuccessResponse(HttpStatus.OK.value(), "강의실 삭제에 성공했습니다.");
+    return new SuccessResponse<>(HttpStatus.OK.value(), "강의실 삭제에 성공했습니다.");
   }
 
 

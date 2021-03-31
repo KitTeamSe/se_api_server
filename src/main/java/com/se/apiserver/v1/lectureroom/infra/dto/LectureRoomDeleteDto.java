@@ -15,7 +15,7 @@ public class LectureRoomDeleteDto {
   @NoArgsConstructor
   @ApiModel("강의실 삭제 요청")
   static public class Request{
-    @ApiModelProperty(notes = "삭제할 강의실 pk", example = "1")
+    @ApiModelProperty(notes = "삭제할 강의실 id", example = "1")
     private Long lectureRoomId;
   }
 }

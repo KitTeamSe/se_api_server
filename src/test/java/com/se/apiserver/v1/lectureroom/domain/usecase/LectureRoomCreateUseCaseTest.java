@@ -32,10 +32,10 @@ public class LectureRoomCreateUseCaseTest {
         .build();
 
     // When
-    Long savedLectureRoomPk = lectureRoomCreateUseCase.create(req);
+    Long id = lectureRoomCreateUseCase.create(req);
 
     // Then
-    Assertions.assertThat(lectureRoomJpaRepository.findById(savedLectureRoomPk).isPresent()).isEqualTo(true);
+    Assertions.assertThat(lectureRoomJpaRepository.findById(id).isPresent()).isEqualTo(true);
   }
 
   @Test
@@ -74,10 +74,10 @@ public class LectureRoomCreateUseCaseTest {
         .capacity(30)
         .build();
 
-    Long savedLectureRoomPk = lectureRoomCreateUseCase.create(req);
+    Long id = lectureRoomCreateUseCase.create(req);
 
     // Then
-    Assertions.assertThat(lectureRoomJpaRepository.findById(savedLectureRoomPk).isPresent()).isEqualTo(true);
+    Assertions.assertThat(lectureRoomJpaRepository.findById(id).isPresent()).isEqualTo(true);
   }
 
   @Test
@@ -96,10 +96,10 @@ public class LectureRoomCreateUseCaseTest {
         .capacity(30)
         .build();
 
-    Long savedLectureRoomPk = lectureRoomCreateUseCase.create(req);
+    Long id = lectureRoomCreateUseCase.create(req);
 
     // Then
-    Assertions.assertThat(lectureRoomJpaRepository.findById(savedLectureRoomPk).isPresent()).isEqualTo(true);
+    Assertions.assertThat(lectureRoomJpaRepository.findById(id).isPresent()).isEqualTo(true);
   }
 
 

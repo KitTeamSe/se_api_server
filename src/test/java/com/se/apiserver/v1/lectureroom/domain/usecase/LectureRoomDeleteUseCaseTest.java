@@ -31,8 +31,9 @@ public class LectureRoomDeleteUseCaseTest {
         .capacity(30)
         .build());
 
-    // When
     Long id = lectureRoom.getLectureRoomId();
+
+    // When
     lectureRoomDeleteUseCase.delete(id);
 
     // Then

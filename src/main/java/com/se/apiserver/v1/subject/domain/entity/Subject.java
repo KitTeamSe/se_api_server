@@ -1,7 +1,6 @@
 package com.se.apiserver.v1.subject.domain.entity;
 
 import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
-import com.se.apiserver.v1.common.domain.entity.BaseEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -10,11 +9,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.Size;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Subject extends AccountGenerateEntity {
 
   @Id
@@ -30,7 +32,7 @@ public class Subject extends AccountGenerateEntity {
   private SubjectType type;
 
   @Size(min = 2, max = 30)
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
   private String code;
 
   @Size(min = 2, max = 30)
@@ -58,6 +60,34 @@ public class Subject extends AccountGenerateEntity {
     this.name = name;
     this.grade = grade;
     this.semester = semester;
+    this.credit = credit;
+  }
+
+  public void updateCurriculum(String curriculum){
+    this.curriculum = curriculum;
+  }
+
+  public void updateType(SubjectType subjectType){
+    this.type = subjectType;
+  }
+
+  public void updateCode(String code){
+    this.code = code;
+  }
+
+  public void updateName(String name){
+    this.name = name;
+  }
+
+  public void updateGrade(Integer grade){
+    this.grade = grade;
+  }
+
+  public void updateSemester(Integer semester){
+    this.semester = semester;
+  }
+
+  public void updateCredit(Integer credit){
     this.credit = credit;
   }
 }

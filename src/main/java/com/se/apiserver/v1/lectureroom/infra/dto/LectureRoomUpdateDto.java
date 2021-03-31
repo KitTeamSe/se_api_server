@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 
 public class LectureRoomUpdateDto {
   @Data
-  @ApiModel("강의실 수정 요청")
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
+  @ApiModel("강의실 수정 요청")
   static public class Request{
     @ApiModelProperty(notes = "강의실 id", example = "1")
     private Long lectureRoomId;
