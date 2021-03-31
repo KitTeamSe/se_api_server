@@ -19,7 +19,7 @@ public class PeriodCreateDto {
   static public class Request{
 
     @ApiModelProperty(notes = "순서", example = "1")
-    private Integer period_order;
+    private Integer periodOrder;
 
     @ApiModelProperty(notes = "이름(1~9,A,B,C,D...)", example = "1")
     @Size(min = 1, max = 20)
