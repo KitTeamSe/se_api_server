@@ -11,6 +11,7 @@ import com.se.apiserver.v1.period.infra.repository.PeriodJpaRepository;
 import java.time.LocalTime;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 @UseCase
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class PeriodUpdateUseCase {
 
+  @Autowired
   PeriodJpaRepository periodJpaRepository;
 
   @Transactional

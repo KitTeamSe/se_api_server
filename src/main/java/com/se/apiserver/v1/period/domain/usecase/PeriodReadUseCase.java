@@ -10,6 +10,7 @@ import com.se.apiserver.v1.period.infra.repository.PeriodJpaRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class PeriodReadUseCase {
 
+  @Autowired
   private final PeriodJpaRepository periodJpaRepository;
 
   public PeriodReadDto.Response read(Long id){
