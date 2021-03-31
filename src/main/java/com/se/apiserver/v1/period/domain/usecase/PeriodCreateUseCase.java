@@ -21,7 +21,7 @@ public class PeriodCreateUseCase {
   public Long create(PeriodCreateDto.Request request){
 
     // 교시 순서가 유니크한지 검사
-    checkUniquePeriodOrder(request.getPeriod_order());
+    checkUniquePeriodOrder(request.getPeriodOrder());
 
     // 교시 이름이 유니크한지 검사
     checkUniqueName(request.getName());
@@ -32,7 +32,7 @@ public class PeriodCreateUseCase {
     checkTimeCrossing(request.getStartTime(), request.getEndTime());
 
     Period period = Period.builder()
-        .periodOrder(request.getPeriod_order())
+        .periodOrder(request.getPeriodOrder())
         .name(request.getName())
         .startTime(request.getStartTime())
         .endTime(request.getEndTime())

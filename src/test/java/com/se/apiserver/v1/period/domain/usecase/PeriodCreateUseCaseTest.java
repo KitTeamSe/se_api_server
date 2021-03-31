@@ -26,7 +26,7 @@ public class PeriodCreateUseCaseTest {
   void 교시_생성_성공(){
     // Given
     PeriodCreateDto.Request request = PeriodCreateDto.Request.builder()
-        .period_order(1)
+        .periodOrder(1)
         .name("1")
         .startTime(LocalTime.of(9, 0, 0))
         .endTime(LocalTime.of(9, 50, 0))
@@ -44,7 +44,7 @@ public class PeriodCreateUseCaseTest {
   void 교시_생성_시작시간_종료시간_교차_실패(){
     // Given
     PeriodCreateDto.Request request = PeriodCreateDto.Request.builder()
-        .period_order(1)
+        .periodOrder(1)
         .name("1")
         .startTime(LocalTime.of(9, 50, 0))
         .endTime(LocalTime.of(9, 0, 0))
@@ -69,7 +69,7 @@ public class PeriodCreateUseCaseTest {
         .build());
 
     PeriodCreateDto.Request request = PeriodCreateDto.Request.builder()
-        .period_order(1)
+        .periodOrder(1)
         .name("2")
         .startTime(LocalTime.of(9, 0, 0))
         .endTime(LocalTime.of(9, 50, 0))
@@ -93,7 +93,7 @@ public class PeriodCreateUseCaseTest {
         .build());
 
     PeriodCreateDto.Request request = PeriodCreateDto.Request.builder()
-        .period_order(2)
+        .periodOrder(2)
         .name("1")
         .startTime(LocalTime.of(10, 0, 0))
         .endTime(LocalTime.of(10, 50, 0))
