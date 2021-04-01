@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,7 +36,7 @@ public class PeriodApiController {
   private final PeriodCreateUseCase periodCreateUseCase;
   private final PeriodReadUseCase periodReadUseCase;
   private final PeriodUpdateUseCase periodUpdateUseCase;
-//  private final PeriodDeleteUseCase periodDeleteUseCase;
+  private final PeriodDeleteUseCase periodDeleteUseCase;
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
   @PostMapping(path = "/period")
@@ -64,10 +65,19 @@ public class PeriodApiController {
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
   @PutMapping(path = "/period")
   @ResponseStatus(value = HttpStatus.OK)
-  @ApiOperation(value = "강의실 수정")
+  @ApiOperation(value = "교시 수정")
   public SuccessResponse<PeriodReadDto.Response> update(@RequestBody @Validated
       PeriodUpdateDto.Request request){
     periodUpdateUseCase.update(request);
     return new SuccessResponse<>(HttpStatus.OK.value(), "교시 수정에 성공했습니다.");
+  }
+
+  @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
+  @DeleteMapping(path = "/period/{id}")
+  @ResponseStatus(value = HttpStatus.OK)
+  @ApiOperation(value = "교시 삭제")
+  public SuccessResponse delete(@PathVariable(value = "id") Long id){
+    periodDeleteUseCase.delete(id);
+    return new SuccessResponse<>(HttpStatus.OK.value(), "교시 삭제에 성공했습니다.");
   }
 }
