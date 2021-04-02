@@ -32,7 +32,7 @@ public class AuthorityApiController {
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "권한 목록 조회")
     @PreAuthorize("hasAuthority('AUTHORITY_MANAGE')")
-    public SuccessResponse<PageImpl> readAll(@Validated PageRequest pageRequest){
+    public SuccessResponse<PageImpl<AuthorityReadDto.Response>> readAll(@Validated PageRequest pageRequest){
         return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다", authorityReadUseCase.readAll(pageRequest.of()));
     }
 }

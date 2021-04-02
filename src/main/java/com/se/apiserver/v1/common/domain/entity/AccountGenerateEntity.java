@@ -21,8 +21,8 @@ import java.time.LocalDateTime;
 public class AccountGenerateEntity extends BaseEntity{
 
   @CreatedBy
-  private Long createdBy;
+  private Long createdAccountBy;
 
   @LastModifiedBy
-  private Long lastModifiedBy;
+  private Long lastModifiedAccountBy;
 }

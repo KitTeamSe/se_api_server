@@ -32,4 +32,10 @@ public class PostTagMapping extends BaseEntity {
     this.post = post;
     this.tag = tag;
   }
+
+  public void setPost(Post post) {
+    this.post = post;
+    if(!post.getTags().contains(this))
+      post.addTag(this);
+  }
 }

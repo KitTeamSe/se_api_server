@@ -1,5 +1,9 @@
 package com.se.apiserver.v1.common.domain.entity;
 
+import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
@@ -14,25 +18,19 @@ import javax.validation.constraints.Email;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Anonymous {
 
-  @Column(length = 20)
-  private String anonymousId;
-
   @Column(length = 10)
+  @Size(min = 2, max = 20)
   private String anonymousNickname;
 
-  @Column(length = 20)
+  @Column(length = 255)
+  @Size(min = 2, max = 255)
+  @JsonIgnore
   private String anonymousPassword;
 
-  @Column(length = 30)
-  @Email
-  private String anonymousEmail;
 
   @Builder
-  public Anonymous(String anonymousId, String anonymousNickname, String anonymousPassword,
-      @Email String anonymousEmail) {
-    this.anonymousId = anonymousId;
+  public Anonymous(String anonymousNickname, String anonymousPassword) {
     this.anonymousNickname = anonymousNickname;
     this.anonymousPassword = anonymousPassword;
-    this.anonymousEmail = anonymousEmail;
   }
 }

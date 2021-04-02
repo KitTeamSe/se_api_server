@@ -17,7 +17,8 @@ public enum AccountErrorCode implements ErrorCode {
     DUPLICATED_STUDENT_ID(408,"ME09", "학번 중복"),
     QNA_INVALID_INPUT(409,"ME10", "올바르지 않은 QnA 질문 응답 쌍"),
     DUPLICATED_EMAIL(410,"ME11", "이메일 중복"),
-    DUPLICATED_ID(411,"ME12", "아이디 중복");
+    DUPLICATED_ID(411,"ME12", "아이디 중복"),
+    CAN_NOT_ACCESS_ACCOUNT(412,"ME13", "해당 계정에 접근할 수 없습니다");
     private int status;
     private final String code;
     private final String message;
