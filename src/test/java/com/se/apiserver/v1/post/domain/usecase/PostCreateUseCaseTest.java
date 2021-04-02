@@ -10,16 +10,18 @@ import com.se.apiserver.v1.authority.domain.entity.Authority;
 import com.se.apiserver.v1.authority.infra.repository.AuthorityJpaRepository;
 import com.se.apiserver.v1.board.domain.entity.Board;
 import com.se.apiserver.v1.board.infra.repository.BoardJpaRepository;
+import com.se.apiserver.v1.common.domain.entity.Anonymous;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.menu.domain.entity.Menu;
 import com.se.apiserver.v1.menu.domain.entity.MenuType;
 import com.se.apiserver.v1.menu.infra.repository.MenuJpaRepository;
 import com.se.apiserver.v1.attach.domain.entity.Attach;
+import com.se.apiserver.v1.post.domain.entity.Post;
+import com.se.apiserver.v1.post.domain.entity.PostContent;
 import com.se.apiserver.v1.post.domain.entity.PostIsNotice;
 import com.se.apiserver.v1.post.domain.entity.PostIsSecret;
 import com.se.apiserver.v1.post.domain.error.PostErrorCode;
 import com.se.apiserver.v1.post.infra.dto.PostCreateDto;
-import com.se.apiserver.v1.post.infra.dto.PostReadDto;
 import com.se.apiserver.v1.post.infra.repository.AttachJpaRepository;
 import com.se.apiserver.v1.post.infra.repository.PostJpaRepository;
 import com.se.apiserver.v1.tag.domain.entity.Tag;
@@ -28,7 +30,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -152,13 +153,11 @@ class PostCreateUseCaseTest {
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user.getAccountId(),
                 "1", Arrays.asList(new SimpleGrantedAuthority("BOARD_freeeboard_ACCESS"))));
         //when
-        PostReadDto.Response res = postCreateUseCase.create(PostCreateDto.Request.builder()
-                .accountId(user.getAccountId())
+        Long id = postCreateUseCase.create(PostCreateDto.Request.builder()
                 .boardId(board.getBoardId())
                 .isNotice(PostIsNotice.NORMAL)
                 .isSecret(PostIsSecret.SECRET)
-                .text("내용...")
-                .title("제목...")
+                .postContent(new PostContent("제목...", "내용..."))
                 .attachmentList(Arrays.asList(PostCreateDto.AttachDto.builder()
                         .attachId(attach.getAttachId())
                         .build()))
@@ -166,18 +165,19 @@ class PostCreateUseCaseTest {
                         .tagId(tag.getTagId())
                         .build()))
                 .build());
+        Post post = postJpaRepository.findById(id).get();
         //then
-        Assertions.assertThat(res.getAccountId()).isEqualTo(user.getAccountId());
-        Assertions.assertThat(res.getBoardId()).isEqualTo(board.getBoardId());
-        Assertions.assertThat(res.getIsNotice()).isEqualTo(PostIsNotice.NORMAL);
-        Assertions.assertThat(res.getIsSecret()).isEqualTo(PostIsSecret.SECRET);
-        Assertions.assertThat(res.getText()).isEqualTo("내용...");
-        Assertions.assertThat(res.getTitle()).isEqualTo("제목...");
-        Assertions.assertThat(res.getViews()).isEqualTo(0);
-        Assertions.assertThat(res.getTags().size()).isEqualTo(1);
-        Assertions.assertThat(res.getAttaches().size()).isEqualTo(1);
-        Assertions.assertThat(res.getAttaches().get(0).getFileName()).isEqualTo("testfile");
-        Assertions.assertThat(res.getTags().get(0).getTag()).isEqualTo("태그1");
+        Assertions.assertThat(post.getAccount().getAccountId()).isEqualTo(user.getAccountId());
+        Assertions.assertThat(post.getBoard().getBoardId()).isEqualTo(board.getBoardId());
+        Assertions.assertThat(post.getIsNotice()).isEqualTo(PostIsNotice.NORMAL);
+        Assertions.assertThat(post.getIsSecret()).isEqualTo(PostIsSecret.SECRET);
+        Assertions.assertThat(post.getPostContent().getText()).isEqualTo("내용...");
+        Assertions.assertThat(post.getPostContent().getTitle()).isEqualTo("제목...");
+        Assertions.assertThat(post.getViews()).isEqualTo(0);
+        Assertions.assertThat(post.getTags().size()).isEqualTo(1);
+        Assertions.assertThat(post.getAttaches().size()).isEqualTo(1);
+        Assertions.assertThat(post.getAttaches().get(0).getFileName()).isEqualTo("testfile");
+        Assertions.assertThat(post.getTags().get(0).getTag().getText()).isEqualTo("태그1");
     }
 
     @Test
@@ -187,32 +187,31 @@ class PostCreateUseCaseTest {
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(admin.getAccountId(),
                 "1", Arrays.asList(new SimpleGrantedAuthority("MENU_MANAGE"))));
         //when
-        PostReadDto.Response res = postCreateUseCase.create(PostCreateDto.Request.builder()
-                .accountId(admin.getAccountId())
+        Long id = postCreateUseCase.create(PostCreateDto.Request.builder()
                 .boardId(board.getBoardId())
                 .isNotice(PostIsNotice.NOTICE)
                 .isSecret(PostIsSecret.SECRET)
-                .text("내용...")
-                .title("제목...")
-            .attachmentList(Arrays.asList(PostCreateDto.AttachDto.builder()
-                .attachId(attach.getAttachId())
-                .build()))
-            .tagList(Arrays.asList(PostCreateDto.TagDto.builder()
-                .tagId(tag.getTagId())
-                .build()))
+                .postContent(new PostContent("제목...", "내용..."))
+                .attachmentList(Arrays.asList(PostCreateDto.AttachDto.builder()
+                        .attachId(attach.getAttachId())
+                        .build()))
+                .tagList(Arrays.asList(PostCreateDto.TagDto.builder()
+                        .tagId(tag.getTagId())
+                        .build()))
                 .build());
+        Post post = postJpaRepository.findById(id).get();
         //then
-        Assertions.assertThat(res.getAccountId()).isEqualTo(admin.getAccountId());
-        Assertions.assertThat(res.getBoardId()).isEqualTo(board.getBoardId());
-        Assertions.assertThat(res.getIsNotice()).isEqualTo(PostIsNotice.NOTICE);
-        Assertions.assertThat(res.getIsSecret()).isEqualTo(PostIsSecret.SECRET);
-        Assertions.assertThat(res.getText()).isEqualTo("내용...");
-        Assertions.assertThat(res.getTitle()).isEqualTo("제목...");
-        Assertions.assertThat(res.getViews()).isEqualTo(0);
-        Assertions.assertThat(res.getTags().size()).isEqualTo(1);
-        Assertions.assertThat(res.getAttaches().size()).isEqualTo(1);
-        Assertions.assertThat(res.getAttaches().get(0).getFileName()).isEqualTo("testfile");
-        Assertions.assertThat(res.getTags().get(0).getTag()).isEqualTo("태그1");
+        Assertions.assertThat(post.getAccount().getAccountId()).isEqualTo(admin.getAccountId());
+        Assertions.assertThat(post.getBoard().getBoardId()).isEqualTo(board.getBoardId());
+        Assertions.assertThat(post.getIsNotice()).isEqualTo(PostIsNotice.NOTICE);
+        Assertions.assertThat(post.getIsSecret()).isEqualTo(PostIsSecret.SECRET);
+        Assertions.assertThat(post.getPostContent().getText()).isEqualTo("내용...");
+        Assertions.assertThat(post.getPostContent().getTitle()).isEqualTo("제목...");
+        Assertions.assertThat(post.getViews()).isEqualTo(0);
+        Assertions.assertThat(post.getTags().size()).isEqualTo(1);
+        Assertions.assertThat(post.getAttaches().size()).isEqualTo(1);
+        Assertions.assertThat(post.getAttaches().get(0).getFileName()).isEqualTo("testfile");
+        Assertions.assertThat(post.getTags().get(0).getTag().getText()).isEqualTo("태그1");
     }
 
     @Test
@@ -220,111 +219,57 @@ class PostCreateUseCaseTest {
         initData();
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(0,
                 "1", Arrays.asList(new SimpleGrantedAuthority("BOARD_freeeboard_ACCESS"))));
+
         //when
 
-        PostReadDto.Response res = postCreateUseCase.create(PostCreateDto.Request.builder()
-                .anonymousNickname("익명1")
-                .anonymousPassword("password")
+        Long id = postCreateUseCase.create(PostCreateDto.Request.builder()
+                .anonymous(new Anonymous("익명1","test2"))
                 .boardId(board.getBoardId())
                 .isNotice(PostIsNotice.NORMAL)
                 .isSecret(PostIsSecret.SECRET)
-                .text("내용...")
-                .title("제목...")
-            .attachmentList(Arrays.asList(PostCreateDto.AttachDto.builder()
-                .attachId(attach.getAttachId())
-                .build()))
-            .tagList(Arrays.asList(PostCreateDto.TagDto.builder()
-                .tagId(tag.getTagId())
-                .build()))
+                .postContent(new PostContent("제목...", "내용..."))
+                .attachmentList(Arrays.asList(PostCreateDto.AttachDto.builder()
+                        .attachId(attach.getAttachId())
+                        .build()))
+                .tagList(Arrays.asList(PostCreateDto.TagDto.builder()
+                        .tagId(tag.getTagId())
+                        .build()))
                 .build());
+        Post post = postJpaRepository.findById(id).get();
         //then
-        Assertions.assertThat(res.getAccountId()).isEqualTo(null);
-        Assertions.assertThat(res.getAnonymousNickname()).isEqualTo("익명1");
-        Assertions.assertThat(res.getBoardId()).isEqualTo(board.getBoardId());
-        Assertions.assertThat(res.getIsNotice()).isEqualTo(PostIsNotice.NORMAL);
-        Assertions.assertThat(res.getIsSecret()).isEqualTo(PostIsSecret.SECRET);
-        Assertions.assertThat(res.getText()).isEqualTo("내용...");
-        Assertions.assertThat(res.getTitle()).isEqualTo("제목...");
-        Assertions.assertThat(res.getViews()).isEqualTo(0);
-        Assertions.assertThat(res.getTags().size()).isEqualTo(1);
-        Assertions.assertThat(res.getAttaches().size()).isEqualTo(1);
-        Assertions.assertThat(res.getAttaches().get(0).getFileName()).isEqualTo("testfile");
-        Assertions.assertThat(res.getTags().get(0).getTag()).isEqualTo("태그1");
+        Assertions.assertThat(post.getAnonymous().getAnonymousNickname()).isEqualTo("익명1");
+        Assertions.assertThat(post.getBoard().getBoardId()).isEqualTo(board.getBoardId());
+        Assertions.assertThat(post.getIsNotice()).isEqualTo(PostIsNotice.NORMAL);
+        Assertions.assertThat(post.getIsSecret()).isEqualTo(PostIsSecret.SECRET);
+        Assertions.assertThat(post.getPostContent().getText()).isEqualTo("내용...");
+        Assertions.assertThat(post.getPostContent().getTitle()).isEqualTo("제목...");
+        Assertions.assertThat(post.getViews()).isEqualTo(0);
+        Assertions.assertThat(post.getTags().size()).isEqualTo(1);
+        Assertions.assertThat(post.getAttaches().size()).isEqualTo(1);
+        Assertions.assertThat(post.getAttaches().get(0).getFileName()).isEqualTo("testfile");
+        Assertions.assertThat(post.getTags().get(0).getTag().getText()).isEqualTo("태그1");
     }
-
-    @Test
-    void 게시글_입력오류_실패() {
-        initData();
-        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user.getAccountId(),
-                "1", Arrays.asList(new SimpleGrantedAuthority("BOARD_freeeboard_ACCESS"))));
-        //when
-        //then
-        Assertions.assertThatThrownBy(() -> {
-            PostReadDto.Response res = postCreateUseCase.create(PostCreateDto.Request.builder()
-                    .accountId(user.getAccountId())
-                    .anonymousNickname("익명1")
-                    .anonymousPassword("password")
-                    .boardId(board.getBoardId())
-                    .isNotice(PostIsNotice.NORMAL)
-                    .isSecret(PostIsSecret.SECRET)
-                    .text("내용...")
-                    .title("제목...")
-                .attachmentList(Arrays.asList(PostCreateDto.AttachDto.builder()
-                    .attachId(attach.getAttachId())
-                    .build()))
-                .tagList(Arrays.asList(PostCreateDto.TagDto.builder()
-                    .tagId(tag.getTagId())
-                    .build()))
-                    .build());
-        }).isInstanceOf(BusinessException.class).hasMessage(PostErrorCode.INVALID_INPUT.getMessage());
-    }
-    @Test
-    void 게시글_요청계정과_다른계정으로_등록_실패() {
-        initData();
-        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(admin.getAccountId(),
-                "1", Arrays.asList(new SimpleGrantedAuthority("BOARD_freeeboard_ACCESS"))));
-        //when
-        //then
-        Assertions.assertThatThrownBy(() -> {
-            PostReadDto.Response res = postCreateUseCase.create(PostCreateDto.Request.builder()
-                    .accountId(user.getAccountId())
-                    .boardId(board.getBoardId())
-                    .isNotice(PostIsNotice.NOTICE)
-                    .isSecret(PostIsSecret.SECRET)
-                    .text("내용...")
-                    .title("제목...")
-                .attachmentList(Arrays.asList(PostCreateDto.AttachDto.builder()
-                    .attachId(attach.getAttachId())
-                    .build()))
-                .tagList(Arrays.asList(PostCreateDto.TagDto.builder()
-                    .tagId(tag.getTagId())
-                    .build()))
-                    .build());
-        }).isInstanceOf(AccessDeniedException.class);
-    }
-
 
     @Test
     void 게시글_일반사용자_공지등록_실패() {
+        //given
         initData();
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user.getAccountId(),
                 "1", Arrays.asList(new SimpleGrantedAuthority("BOARD_freeeboard_ACCESS"))));
         //when
         //then
         Assertions.assertThatThrownBy(() -> {
-            PostReadDto.Response res = postCreateUseCase.create(PostCreateDto.Request.builder()
-                    .accountId(user.getAccountId())
+            postCreateUseCase.create(PostCreateDto.Request.builder()
                     .boardId(board.getBoardId())
                     .isNotice(PostIsNotice.NOTICE)
                     .isSecret(PostIsSecret.SECRET)
-                    .text("내용...")
-                    .title("제목...")
-                .attachmentList(Arrays.asList(PostCreateDto.AttachDto.builder()
-                    .attachId(attach.getAttachId())
-                    .build()))
-                .tagList(Arrays.asList(PostCreateDto.TagDto.builder()
-                    .tagId(tag.getTagId())
-                    .build()))
+                    .postContent(new PostContent("제목...", "내용..."))
+                    .attachmentList(Arrays.asList(PostCreateDto.AttachDto.builder()
+                            .attachId(attach.getAttachId())
+                            .build()))
+                    .tagList(Arrays.asList(PostCreateDto.TagDto.builder()
+                            .tagId(tag.getTagId())
+                            .build()))
                     .build());
         }).isInstanceOf(BusinessException.class).hasMessage(PostErrorCode.ONLY_ADMIN_SET_NOTICE.getMessage());
     }
@@ -334,24 +279,47 @@ class PostCreateUseCaseTest {
         initData();
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(0,
                 "1", Arrays.asList(new SimpleGrantedAuthority("BOARD_freeeboard_ACCESS"))));
+
         //when
         //then
         Assertions.assertThatThrownBy(() -> {
-            PostReadDto.Response res = postCreateUseCase.create(PostCreateDto.Request.builder()
-                    .anonymousNickname("익명1")
-                    .anonymousPassword("testest")
+            postCreateUseCase.create(PostCreateDto.Request.builder()
+                    .anonymous(new Anonymous("익명1","test2"))
                     .boardId(board.getBoardId())
                     .isNotice(PostIsNotice.NOTICE)
                     .isSecret(PostIsSecret.SECRET)
-                    .text("내용...")
-                    .title("제목...")
-                .attachmentList(Arrays.asList(PostCreateDto.AttachDto.builder()
-                    .attachId(attach.getAttachId())
-                    .build()))
-                .tagList(Arrays.asList(PostCreateDto.TagDto.builder()
-                    .tagId(tag.getTagId())
-                    .build()))
+                    .postContent(new PostContent("제목...", "내용..."))
+                    .attachmentList(Arrays.asList(PostCreateDto.AttachDto.builder()
+                            .attachId(attach.getAttachId())
+                            .build()))
+                    .tagList(Arrays.asList(PostCreateDto.TagDto.builder()
+                            .tagId(tag.getTagId())
+                            .build()))
                     .build());
         }).isInstanceOf(BusinessException.class).hasMessage(PostErrorCode.ONLY_ADMIN_SET_NOTICE.getMessage());
+    }
+
+    @Test
+    void 게시글_익명사용자_입력값오류_실패() {
+        initData();
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(0,
+                "1", Arrays.asList(new SimpleGrantedAuthority("BOARD_freeeboard_ACCESS"))));
+
+        //when
+        //then
+        Assertions.assertThatThrownBy(() -> {
+            postCreateUseCase.create(PostCreateDto.Request.builder()
+                    .boardId(board.getBoardId())
+                    .isNotice(PostIsNotice.NOTICE)
+                    .isSecret(PostIsSecret.SECRET)
+                    .postContent(new PostContent("제목...", "내용..."))
+                    .attachmentList(Arrays.asList(PostCreateDto.AttachDto.builder()
+                            .attachId(attach.getAttachId())
+                            .build()))
+                    .tagList(Arrays.asList(PostCreateDto.TagDto.builder()
+                            .tagId(tag.getTagId())
+                            .build()))
+                    .build());
+        }).isInstanceOf(BusinessException.class).hasMessage(PostErrorCode.INVALID_INPUT.getMessage());
     }
 }

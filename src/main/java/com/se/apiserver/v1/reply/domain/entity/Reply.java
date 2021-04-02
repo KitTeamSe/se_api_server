@@ -7,6 +7,7 @@ import com.se.apiserver.v1.attach.domain.entity.Attach;
 import com.se.apiserver.v1.post.domain.entity.Post;
 import java.util.ArrayList;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -39,11 +40,6 @@ public class Reply extends BaseEntity {
   private Anonymous anonymous;
 
   @Column(length = 20, nullable = false)
-  @Size(min = 4, max = 20)
-  private String ip;
-
-  @Column(length = 10, nullable = false)
-  @Size(min = 2, max = 10)
   @Enumerated(EnumType.STRING)
   private ReplyIsDelete status;
 
@@ -60,5 +56,13 @@ public class Reply extends BaseEntity {
   public void addAttach(Attach attach) {
     attaches.add(attach);
   }
-  
+
+  @Builder
+  public Reply(Post post, @Size(min = 4, max = 500) String text, Account account, Anonymous anonymous, @Size(min = 2, max = 10) ReplyIsDelete status) {
+    this.post = post;
+    this.text = text;
+    this.account = account;
+    this.anonymous = anonymous;
+    this.status = status;
+  }
 }

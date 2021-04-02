@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@Api("첨부파일 관리")
+@Api(tags = "첨부파일 관리")
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class AttachApiController {
@@ -62,7 +62,7 @@ public class AttachApiController {
     return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다", attachReadUseCase.readAllByPostId(postId));
   }
 
-  @GetMapping("/attach/post/{id}")
+  @GetMapping("/attach/reply/{id}")
   @ResponseStatus(HttpStatus.OK)
   @ApiOperation("댓글 아이디로 댓글의 첨부파일 목록 조회")
   public SuccessResponse<List<AttachReadDto.Response>> readAllByReplyId(@PathVariable(value = "id") Long replyId){

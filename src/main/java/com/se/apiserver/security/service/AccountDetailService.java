@@ -51,9 +51,28 @@ public class AccountDetailService implements UserDetailsService {
   }
 
   public boolean hasAuthority(String auth) {
-    Set<String> authorities = AuthorityUtils
-        .authorityListToSet(SecurityContextHolder.getContext().getAuthentication().getAuthorities());
+    Set<String> authorities = getContextAuthorities();
     return authorities.contains(auth);
+  }
+
+  public Set<String> getContextAuthorities(){
+    return AuthorityUtils
+            .authorityListToSet(SecurityContextHolder.getContext().getAuthentication().getAuthorities());
+  }
+
+  public Account getContextAccount(){
+    return accountJpaRepository.findById(getCurrentAccountId())
+            .orElseThrow(() -> new BusinessException(AccountErrorCode.NO_SUCH_ACCOUNT));
+  }
+
+  private Long getCurrentAccountId() {
+    return Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
+  }
+
+  public boolean isSignIn(){
+    if(String.valueOf(getCurrentAccountId()).equals(ANONYMOUS_ID))
+      return false;
+    return true;
   }
 
   public boolean isOwner(Account account) {

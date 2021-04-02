@@ -2,7 +2,9 @@ package com.se.apiserver.v1.post.infra.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.se.apiserver.v1.common.domain.entity.Anonymous;
 import com.se.apiserver.v1.post.domain.entity.Post;
+import com.se.apiserver.v1.post.domain.entity.PostContent;
 import com.se.apiserver.v1.post.domain.entity.PostIsNotice;
 import com.se.apiserver.v1.post.domain.entity.PostIsSecret;
 import io.swagger.annotations.ApiModel;
@@ -16,6 +18,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PostUpdateDto {
   @Data
   @Builder
@@ -25,7 +30,7 @@ public class PostUpdateDto {
   static public class Request{
     @NotNull
     @Min(1)
-    @ApiModelProperty(notes = "게시글 아이디", example = "1")
+    @ApiModelProperty(notes = "게시판 아이디", example = "1")
     private Long postId;
 
     @NotNull
@@ -33,28 +38,10 @@ public class PostUpdateDto {
     @ApiModelProperty(notes = "게시판 아이디", example = "1")
     private Long boardId;
 
-    @Min(1)
-    @ApiModelProperty(notes = "사용자 아이디(익명시 생략) ", example = "1")
-    private Long accountId;
+    @NotNull
+    private PostContent postContent;
 
-    @Size(min = 3, max = 50)
-    @ApiModelProperty(notes = "제목", example = "게시글 제목")
-    private String title;
-
-    @Size(min = 5, max = 2000)
-    @ApiModelProperty(notes = "내용", example = "게시글 내용")
-    private String text;
-
-    @Size(min = 2, max = 20)
-    @ApiModelProperty(notes = "익명 사용자 아이디", example = "test1")
-    private String anonymousId;
-
-    @Size(min = 2, max = 20)
-    @ApiModelProperty(notes = "익명 사용자 별명", example = "테스트유저")
-    private String anonymousNickname;
-
-    @Size(min = 2, max = 20)
-    @ApiModelProperty(notes = "익명 사용자 비밀번호", example = "testest")
+    @ApiModelProperty(notes = "익명 사용자 비밀번호, 회원으로 등록일 경우 생략")
     private String anonymousPassword;
 
     @NotNull
@@ -64,6 +51,12 @@ public class PostUpdateDto {
     @NotNull
     @ApiModelProperty(notes = "비밀글로 설정할 것인지(관리자용)", example = "NORMAL")
     private PostIsSecret isSecret;
+
+    @ApiModelProperty(notes = "첨부 파일들")
+    private List<PostCreateDto.AttachDto> attachmentList = new ArrayList<>();
+
+    @ApiModelProperty(notes = "태그들")
+    private List<PostCreateDto.TagDto> tagList = new ArrayList<>();
   }
 
 }

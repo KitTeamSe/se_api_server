@@ -3,7 +3,10 @@ package com.se.apiserver.v1.post.infra.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.se.apiserver.v1.attach.domain.entity.Attach;
+import com.se.apiserver.v1.common.domain.entity.Anonymous;
 import com.se.apiserver.v1.post.domain.entity.*;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.constraints.Size;
@@ -13,6 +16,42 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 public class PostReadDto {
+
+  @Data
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @Builder
+  static public class ListResponse{
+    private Long postId;
+
+    private Long boardId;
+
+    private Integer views;
+
+    private Integer numReply;
+
+    private PostIsSecret isSecret;
+
+    private PostIsNotice isNotice;
+
+    private String title;
+
+    private LocalDateTime createAt;
+
+    public static ListResponse fromEntity(Post post){
+      return ListResponse.builder()
+              .postId(post.getPostId())
+              .boardId(post.getBoard().getBoardId())
+              .views(post.getViews())
+              .numReply(post.getNumReply())
+              .isNotice(post.getIsNotice())
+              .isSecret(post.getIsSecret())
+              .title(post.getPostContent().getTitle())
+              .createAt(post.getCreatedAt())
+              .build();
+    }
+  }
+
 
   @Data
   @NoArgsConstructor
@@ -31,20 +70,15 @@ public class PostReadDto {
     private PostIsNotice isNotice;
 
     @JsonInclude(Include.NON_NULL)
-    private Long accountId;
-
-    @JsonInclude(Include.NON_NULL)
     private String accountNickname;
 
     @JsonInclude(Include.NON_NULL)
-    @Size(min = 2, max = 20)
-    private String anonymousNickname;
+    private Anonymous anonymous;
 
     @JsonInclude(Include.NON_NULL)
-    private String title;
+    private PostContent postContent;
 
-    @JsonInclude(Include.NON_NULL)
-    private String text;
+    private LocalDateTime createdAt;
 
 //    @JsonInclude(Include.NON_NULL)
 //    private List<Reply> replies = new ArrayList<>();
@@ -61,15 +95,15 @@ public class PostReadDto {
           .boardId(post.getBoard().getBoardId())
           .views(post.getViews())
           .isSecret(post.getIsSecret())
-          .isNotice(post.getIsNotice());
+          .isNotice(post.getIsNotice())
+          .createdAt(post.getCreatedAt());
 
       if (post.getAccount() != null) {
-        builder.accountId(post.getAccount().getAccountId());
         builder.accountNickname(post.getAccount().getNickname());
       }
 
       if(post.getAnonymous() != null)
-        builder.anonymousNickname(post.getAnonymous().getAnonymousNickname());
+        builder.anonymous(post.getAnonymous());
 
       builder.attaches(post.getAttaches().stream()
           .map(a -> AttachDto.fromEntity(a))
@@ -86,8 +120,7 @@ public class PostReadDto {
       }
 
       return builder
-          .title(post.getTitle())
-          .text(post.getText())
+          .postContent(post.getPostContent())
           .build();
     }
   }

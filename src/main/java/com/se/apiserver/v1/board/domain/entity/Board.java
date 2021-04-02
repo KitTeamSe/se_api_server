@@ -1,6 +1,7 @@
 package com.se.apiserver.v1.board.domain.entity;
 
 import com.se.apiserver.v1.account.domain.entity.Account;
+import com.se.apiserver.v1.authority.domain.entity.Authority;
 import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
 import com.se.apiserver.v1.common.domain.entity.BaseEntity;
 import com.se.apiserver.v1.menu.domain.entity.Menu;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -48,5 +50,9 @@ public class Board extends AccountGenerateEntity {
 
     public void updateNameKor(String nameKor) {
         this.nameKor = nameKor;
+    }
+
+    public void validateAccessAuthority(Set<String> authorities) {
+        menu.validateAccessAuthority(authorities);
     }
 }

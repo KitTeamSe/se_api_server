@@ -29,7 +29,7 @@ public class AuthorityReadUseCase {
         return AuthorityReadDto.Response.fromEntity(authority);
     }
 
-    public PageImpl readAll(Pageable pageable){
+    public PageImpl<AuthorityReadDto.Response> readAll(Pageable pageable){
         Page<Authority> authorities = authorityJpaRepository.findAll(pageable);
 
         List<AuthorityReadDto.Response> responseList = authorities.stream()

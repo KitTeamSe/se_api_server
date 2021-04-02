@@ -52,7 +52,8 @@ public class Attach extends BaseEntity {
 
     public void setPost(Post post) {
         this.post = post;
-        post.addAttache(this);
+        if(!post.getAttaches().contains(this))
+            post.addAttache(this);
     }
 
     public void updatePost(Post post) {
@@ -63,5 +64,22 @@ public class Attach extends BaseEntity {
     public void updateReply(Reply reply) {
         this.reply = reply;
         reply.addAttach(this);
+    }
+
+    public void remove() {
+        if(post != null)
+            deleteFromPost();
+        if(reply != null)
+            deleteFromReply();
+    }
+
+    private void deleteFromReply() {
+        if(this.reply.getAttaches().contains(this))
+            this.reply.getAttaches().remove(this);
+    }
+
+    private void deleteFromPost() {
+        if(this.post.getAttaches().contains(this))
+            this.post.getAttaches().remove(this);
     }
 }

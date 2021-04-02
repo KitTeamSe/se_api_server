@@ -6,18 +6,21 @@ import com.se.apiserver.v1.common.domain.entity.BaseEntity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.menu.domain.error.MenuErrorCode;
 import lombok.*;
+import org.springframework.security.access.AccessDeniedException;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(exclude = "parent")
 public class Menu extends AccountGenerateEntity {
+  static private final String MANAGE_AUTHORITY = "MENU_MANAGE";
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -102,5 +105,10 @@ public class Menu extends AccountGenerateEntity {
     this.authority = authority;
     if(authority.getMenu() != this)
       authority.updateMenu(this);
+  }
+
+  public void validateAccessAuthority(Set<String> authorities) {
+    if(!authorities.contains(this.getAuthority().getAuthority()) && !authorities.contains(MANAGE_AUTHORITY))
+      throw new AccessDeniedException("권한이 없습니다");
   }
 }

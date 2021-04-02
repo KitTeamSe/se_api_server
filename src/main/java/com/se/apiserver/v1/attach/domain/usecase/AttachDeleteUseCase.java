@@ -18,6 +18,7 @@ public class AttachDeleteUseCase {
   public boolean delete(Long id) {
     Attach attach = attachJpaRepository.findById(id)
         .orElseThrow(() -> new BusinessException(AttachErrorCode.NO_SUCH_ATTACH));
+    attach.remove();
     attachJpaRepository.delete(attach);
     return true;
   }

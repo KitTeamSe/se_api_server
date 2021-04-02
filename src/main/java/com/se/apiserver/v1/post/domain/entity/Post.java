@@ -1,25 +1,32 @@
 package com.se.apiserver.v1.post.domain.entity;
 
 import com.se.apiserver.v1.account.domain.entity.Account;
+import com.se.apiserver.v1.account.domain.error.AccountErrorCode;
 import com.se.apiserver.v1.attach.domain.entity.Attach;
+import com.se.apiserver.v1.authority.domain.entity.Authority;
 import com.se.apiserver.v1.board.domain.entity.Board;
 import com.se.apiserver.v1.common.domain.entity.Anonymous;
 import com.se.apiserver.v1.common.domain.entity.BaseEntity;
+import com.se.apiserver.v1.common.domain.exception.BusinessException;
+import com.se.apiserver.v1.post.domain.error.PostErrorCode;
 import com.se.apiserver.v1.reply.domain.entity.Reply;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post extends BaseEntity {
+  public static final String MANAGE_AUTHORITY = "MENU_MANAGE";
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,13 +40,8 @@ public class Post extends BaseEntity {
   @JoinColumn(name = "account_id", referencedColumnName = "accountId")
   private Account account;
 
-  @Column(length = 50, nullable = false)
-  @Size(min = 3, max = 50)
-  private String title;
-
-  @Column(length = 2000, nullable = false)
-  @Size(min = 5, max = 2000)
-  private String text;
+  @Embedded
+  private PostContent postContent;
 
   @Embedded
   private Anonymous anonymous;
@@ -48,19 +50,15 @@ public class Post extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private PostIsNotice isNotice;
 
+  @Column(length = 10, nullable = false)
+  @Enumerated(EnumType.STRING)
+  private PostIsSecret isSecret;
+
   @Column(nullable = false)
   private Integer views;
 
   @Column(nullable = false)
   private Integer numReply;
-
-  @Column(length = 10, nullable = false)
-  @Enumerated(EnumType.STRING)
-  private PostIsDeleted isDeleted;
-
-  @Column(length = 10, nullable = false)
-  @Enumerated(EnumType.STRING)
-  private PostIsSecret isSecret;
 
   @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, orphanRemoval = true)
   private List<Reply> replies = new ArrayList<>();
@@ -71,20 +69,63 @@ public class Post extends BaseEntity {
   @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, orphanRemoval = true)
   private List<PostTagMapping> tags = new ArrayList<>();
 
-  @Builder
-  public Post(Board board, Account account, @Size(min = 3, max = 50) String title,
-              @Size(min = 5, max = 2000) String text, Anonymous anonymous, PostIsNotice isNotice,
-              Integer views, Integer numReply, PostIsDeleted isDeleted, PostIsSecret isSecret) {
+  public Post(Board board, PostContent postContent, PostIsNotice isNotice,
+              PostIsSecret isSecret, Set<String> authorities, List<Attach> attaches,
+              List<PostTagMapping> tags ) {
+    validateBoardAccessAuthority(board, authorities);
     this.board = board;
-    this.account = account;
-    this.title = title;
-    this.text = text;
-    this.anonymous = anonymous;
-    this.isNotice = isNotice;
-    this.views = views;
-    this.numReply = numReply;
-    this.isDeleted = isDeleted;
+    this.postContent = postContent;
+    updateNotice(isNotice, authorities);
     this.isSecret = isSecret;
+    this.views = 0;
+    this.numReply = 0;
+    addAttaches(attaches);
+    addTags(tags);
+  }
+
+  private void updateNotice(PostIsNotice isNotice, Set<String> authorities) {
+    validateNoticeAccess(isNotice, authorities);
+    this.isNotice = isNotice;
+  }
+
+  public void updateBoard(Board board, Set<String> authorities) {
+    hasManageAuthority(authorities);
+    this.board = board;
+  }
+
+
+  public Post(Account account, Board board,  PostContent postContent,
+              PostIsNotice isNotice, PostIsSecret isSecret, Set<String> authorities,
+              List<Attach> attaches, List<PostTagMapping> tags) {
+    this(board, postContent, isNotice, isSecret, authorities, attaches, tags);
+    validateBoardAccessAuthority(board, authorities);
+    this.account = account;
+  }
+
+  public Post(Anonymous anonymous, Board board,  PostContent postContent,
+              PostIsNotice isNotice, PostIsSecret isSecret, Set<String> authorities,
+              List<Attach> attaches, List<PostTagMapping> tags) {
+    this(board, postContent, isNotice, isSecret, authorities, attaches, tags);
+    this.anonymous = anonymous;
+  }
+
+  public void validateNoticeAccess(PostIsNotice isNotice, Set<String> authorities) {
+    if(isNotice == PostIsNotice.NOTICE && !hasManageAuthority(authorities))
+      throw new BusinessException(PostErrorCode.ONLY_ADMIN_SET_NOTICE);
+  }
+
+  public boolean hasManageAuthority(Set<String> authorities) {
+    return authorities.contains(MANAGE_AUTHORITY);
+  }
+
+  public void validateAccountAccess(Account contextAccount, Set<String> authorities) {
+    if(!account.equals(contextAccount) && !hasManageAuthority(authorities))
+      throw new BusinessException(AccountErrorCode.CAN_NOT_ACCESS_ACCOUNT);
+  }
+
+
+  public void validateBoardAccessAuthority(Board board, Set<String> authorities) {
+    board.validateAccessAuthority(authorities);
   }
 
   public void addAttaches(List<Attach> attachList) {
@@ -103,5 +144,59 @@ public class Post extends BaseEntity {
 
   public void addTag(PostTagMapping postTagMapping) {
     this.tags.add(postTagMapping);
+  }
+
+  public void updateContent(PostContent postContent) {
+    this.postContent = postContent;
+  }
+
+
+  public void updateIsNotice(PostIsNotice isNotice, Set<String> authorities) {
+    validateNoticeAccess(isNotice, authorities);
+    this.isNotice = isNotice;
+  }
+
+  public void updateIsSecret(PostIsSecret isSecret) {
+    this.isSecret = isSecret;
+  }
+
+  public void updateAttaches(List<Attach> attachList) {
+    attachList.stream()
+            .forEach(a -> {
+              if(!this.attaches.contains(a)) {
+                addAttache(a);
+              }
+            });
+  }
+
+  public void updateTags(List<PostTagMapping> tags) {
+    tags.stream()
+            .forEach(t -> {
+              if(!this.tags.contains(t)){
+                addTag(t);
+              }
+            });
+  }
+
+  public void update(Board board, PostContent postContent, PostIsNotice isNotice,
+                     PostIsSecret isSecret, List<Attach> attachList, List<PostTagMapping> tags, Set<String> authorities) {
+    updateBoard(board, authorities);
+    updateContent(postContent);
+    updateIsNotice(isNotice, authorities);
+    updateIsSecret(isSecret);
+    updateAttaches(attachList);
+    updateTags(tags);
+  }
+
+  public boolean isOwner(Account contextAccount) {
+    if(this.account == contextAccount)
+      return true;
+    return false;
+  }
+
+  public String getAnonymousPassword() {
+    if(this.anonymous == null)
+      throw new BusinessException(PostErrorCode.NOT_ANONYMOUS_POST);
+    return anonymous.getAnonymousPassword();
   }
 }
