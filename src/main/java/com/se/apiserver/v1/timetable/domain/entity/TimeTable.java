@@ -39,24 +39,17 @@ public class TimeTable extends AccountGenerateEntity {
   @Column(nullable = false)
   private Integer semester;
 
-  // 생성자 계정 (MASTER)
-  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
-  @JoinColumn(name = "account_id", referencedColumnName = "accountId", nullable = false)
-  private Account account;
-
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
   private TimeTableStatus status;
 
   @Builder
   public TimeTable(Long timeTableId,
-      @Size(min = 2, max = 20) String name, Integer year, Integer semester,
-      Account account, TimeTableStatus status) {
+      @Size(min = 2, max = 20) String name, Integer year, Integer semester, TimeTableStatus status) {
     this.timeTableId = timeTableId;
     this.name = name;
     this.year = year;
     this.semester = semester;
-    this.account = account;
     this.status = status;
   }
 }

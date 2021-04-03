@@ -27,12 +27,6 @@ public class TimeTableCreateDto {
 
     @ApiModelProperty(notes = "학기", example = "1")
     private Integer semester;
-
-//    @ApiModelProperty(notes = "생성한 사용자", example = "1")
-//    private Account creatorAccount;
-
-    @ApiModelProperty(notes = "상태", example = "CREATION")
-    private TimeTableStatus status;
   }
 
   @Data
