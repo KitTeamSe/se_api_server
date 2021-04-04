@@ -45,7 +45,7 @@ public class TimeTableCreateUseCaseTest {
         .name("중복 테스트 시간표 1")
         .year(2021)
         .semester(2)
-        .status(TimeTableStatus.CREATION)
+        .status(TimeTableStatus.CREATED)
         .build());
 
     // When

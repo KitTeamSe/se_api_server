@@ -33,11 +33,12 @@ public class TimeTableReadDto {
     @ApiModelProperty(notes = "작성자 id", example = "1")
     private Long createdBy;
 
-    @ApiModelProperty(notes = "상태", example = "CREATION")
+    @ApiModelProperty(notes = "상태", example = "CREATED")
     private TimeTableStatus status;
 
     public static Response fromEntity(TimeTable timeTable){
       return Response.builder()
+          .timeTableId(timeTable.getTimeTableId())
           .name(timeTable.getName())
           .year(timeTable.getYear())
           .semester(timeTable.getSemester())

@@ -28,7 +28,7 @@ public class TimeTableCreateUseCase {
         .name(request.getName())
         .year(request.getYear())
         .semester(request.getSemester())
-        .status(TimeTableStatus.CREATION)
+        .status(TimeTableStatus.CREATED)
         .build();
 
     timeTableJpaRepository.save(timeTable);
