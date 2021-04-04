@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,7 +34,7 @@ public class TimeTableApiController {
   private final TimeTableCreateUseCase timeTableCreateUseCase;
   private final TimeTableReadUseCase timeTableReadUseCase;
 //  private final TimeTableUpdateUseCase timeTableUpdateUseCase;
-//  private final TimeTableDeleteUseCase timeTableDeleteUseCase;
+  private final TimeTableDeleteUseCase timeTableDeleteUseCase;
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
   @PostMapping(path = "/time-table")
@@ -57,6 +58,15 @@ public class TimeTableApiController {
   @ResponseStatus(value = HttpStatus.OK)
   public SuccessResponse<PageImpl<Response>> readAll(@Validated PageRequest pageRequest){
     return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", timeTableReadUseCase.readAll(pageRequest.of()));
+  }
+
+  @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
+  @DeleteMapping(path = "/time-table/{id}")
+  @ResponseStatus(value = HttpStatus.OK)
+  @ApiOperation(value = "시간표 삭제")
+  public SuccessResponse delete(@PathVariable(value = "id") Long id){
+    timeTableDeleteUseCase.delete(id);
+    return new SuccessResponse<>(HttpStatus.OK.value(), "시간표 삭제에 성공했습니다.");
   }
 
 }
