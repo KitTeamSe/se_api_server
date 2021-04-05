@@ -1,4 +1,4 @@
-package com.se.apiserver.v1.teacher.infra.dto;
+package com.se.apiserver.v1.teacher.infra.dto.teacher;
 
 import com.se.apiserver.v1.teacher.domain.entity.TeacherType;
 import io.swagger.annotations.ApiModel;
