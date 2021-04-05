@@ -114,7 +114,7 @@ public class ParticipatedTeacherReadUseCaseTest {
         .size(100)
         .direction(Direction.ASC)
         .page(1)
-        .build().of());
+        .build().of(), timeTable.getTimeTableId());
 
     // Then
     Assertions.assertThat(responses.getTotalElements()).isEqualTo(2);
