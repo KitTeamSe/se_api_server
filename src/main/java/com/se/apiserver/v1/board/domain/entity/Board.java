@@ -1,13 +1,9 @@
 package com.se.apiserver.v1.board.domain.entity;
 
-import com.se.apiserver.v1.account.domain.entity.Account;
-import com.se.apiserver.v1.authority.domain.entity.Authority;
 import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
-import com.se.apiserver.v1.common.domain.entity.BaseEntity;
 import com.se.apiserver.v1.menu.domain.entity.Menu;
 import com.se.apiserver.v1.menu.domain.entity.MenuType;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

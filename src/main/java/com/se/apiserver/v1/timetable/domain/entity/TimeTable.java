@@ -1,19 +1,14 @@
 package com.se.apiserver.v1.timetable.domain.entity;
 
-import com.se.apiserver.v1.account.domain.entity.Account;
 import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
-import com.se.apiserver.v1.common.domain.entity.BaseEntity;
-import javax.persistence.CascadeType;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Builder;

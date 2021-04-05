@@ -2,10 +2,10 @@ package com.se.apiserver.v1.post.infra.api;
 
 import com.se.apiserver.v1.common.infra.dto.PageRequest;
 import com.se.apiserver.v1.common.infra.dto.SuccessResponse;
-import com.se.apiserver.v1.post.domain.usecase.PostCreateUseCase;
-import com.se.apiserver.v1.post.domain.usecase.PostDeleteUseCase;
-import com.se.apiserver.v1.post.domain.usecase.PostReadUseCase;
-import com.se.apiserver.v1.post.domain.usecase.PostUpdateUseCase;
+import com.se.apiserver.v1.post.application.service.PostCreateService;
+import com.se.apiserver.v1.post.application.service.PostDeleteService;
+import com.se.apiserver.v1.post.application.service.PostReadService;
+import com.se.apiserver.v1.post.application.service.PostUpdateService;
 import com.se.apiserver.v1.post.infra.dto.PostCreateDto;
 import com.se.apiserver.v1.post.infra.dto.PostReadDto;
 import com.se.apiserver.v1.post.infra.dto.PostUpdateDto;
@@ -23,30 +23,30 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class PostApiController {
 
-    private final PostCreateUseCase postCreateUseCase;
-    private final PostUpdateUseCase postUpdateUseCase;
-    private final PostReadUseCase postReadUseCase;
-    private final PostDeleteUseCase postDeleteUseCase;
+    private final PostCreateService postCreateService;
+    private final PostUpdateService postUpdateService;
+    private final PostReadService postReadService;
+    private final PostDeleteService postDeleteService;
 
     @PostMapping("/post")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation("게시글 생성")
     public SuccessResponse<Long> create(@RequestBody @Validated PostCreateDto.Request request){
-        return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 등록되었습니다", postCreateUseCase.create(request));
+        return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 등록되었습니다", postCreateService.create(request));
     }
 
     @PutMapping("/post")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation("게시글 수정")
     public SuccessResponse<Long> update(@RequestBody @Validated PostUpdateDto.Request request){
-        return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 수정되었습니다", postUpdateUseCase.update(request));
+        return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 수정되었습니다", postUpdateService.update(request));
     }
 
     @DeleteMapping("/post/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation("게시글 삭제")
     public SuccessResponse delete(@PathVariable(value = "id") Long postId){
-        postDeleteUseCase.delete(postId);
+        postDeleteService.delete(postId);
         return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 삭제되었습니다");
     }
 
@@ -54,7 +54,7 @@ public class PostApiController {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation("게시글 조회")
     public SuccessResponse<PostReadDto.Response> read(@PathVariable(value = "id") Long postId){
-        return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 조회되었습니다", postReadUseCase.read(postId));
+        return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 조회되었습니다", postReadService.read(postId));
     }
 
     @GetMapping("/post/secret")
@@ -62,7 +62,7 @@ public class PostApiController {
     @ApiOperation("게시글 조회")
     public SuccessResponse<PostReadDto.Response> readSecret(Long postId, String password){
         return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 조회되었습니다",
-                postReadUseCase.readAnonymousSecretPost(postId,password));
+                postReadService.readAnonymousSecretPost(postId,password));
     }
 
     @GetMapping("/post")
@@ -70,6 +70,6 @@ public class PostApiController {
     @ApiOperation("게시글 조회")
     public SuccessResponse<PageImpl<PostReadDto.ListResponse>> readSecret(PageRequest pageRequest, Long boardId){
         return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 조회되었습니다",
-                postReadUseCase.readBoardPostList(pageRequest.of(),boardId));
+                postReadService.readBoardPostList(pageRequest.of(),boardId));
     }
 }

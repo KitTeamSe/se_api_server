@@ -1,23 +1,19 @@
 package com.se.apiserver.v1.post.domain.entity;
 
 import com.se.apiserver.v1.account.domain.entity.Account;
-import com.se.apiserver.v1.account.domain.error.AccountErrorCode;
+import com.se.apiserver.v1.account.application.error.AccountErrorCode;
 import com.se.apiserver.v1.attach.domain.entity.Attach;
-import com.se.apiserver.v1.authority.domain.entity.Authority;
 import com.se.apiserver.v1.board.domain.entity.Board;
 import com.se.apiserver.v1.common.domain.entity.Anonymous;
 import com.se.apiserver.v1.common.domain.entity.BaseEntity;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
-import com.se.apiserver.v1.post.domain.error.PostErrorCode;
+import com.se.apiserver.v1.post.application.error.PostErrorCode;
 import com.se.apiserver.v1.reply.domain.entity.Reply;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;

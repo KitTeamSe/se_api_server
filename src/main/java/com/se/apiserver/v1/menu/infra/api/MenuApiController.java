@@ -1,14 +1,13 @@
 package com.se.apiserver.v1.menu.infra.api;
 
-import com.se.apiserver.v1.account.infra.dto.AccountCreateDto;
 import com.se.apiserver.v1.common.infra.dto.SuccessResponse;
-import com.se.apiserver.v1.menu.domain.usecase.MenuCreateUseCase;
-import com.se.apiserver.v1.menu.domain.usecase.MenuDeleteUseCase;
-import com.se.apiserver.v1.menu.domain.usecase.MenuReadUseCase;
-import com.se.apiserver.v1.menu.domain.usecase.MenuUpdateUseCase;
-import com.se.apiserver.v1.menu.infra.dto.MenuCreateDto;
-import com.se.apiserver.v1.menu.infra.dto.MenuReadDto;
-import com.se.apiserver.v1.menu.infra.dto.MenuUpdateDto;
+import com.se.apiserver.v1.menu.application.service.MenuCreateService;
+import com.se.apiserver.v1.menu.application.service.MenuDeleteService;
+import com.se.apiserver.v1.menu.application.service.MenuReadService;
+import com.se.apiserver.v1.menu.application.service.MenuUpdateService;
+import com.se.apiserver.v1.menu.application.dto.MenuCreateDto;
+import com.se.apiserver.v1.menu.application.dto.MenuReadDto;
+import com.se.apiserver.v1.menu.application.dto.MenuUpdateDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +17,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 @RestController
@@ -26,17 +24,17 @@ import java.util.List;
 @RequestMapping("/api/v1")
 @Api(tags = "메뉴 관리")
 public class MenuApiController {
-    private final MenuCreateUseCase menuCreateUseCase;
-    private final MenuUpdateUseCase menuUpdateUseCase;
-    private final MenuDeleteUseCase menuDeleteUseCase;
-    private final MenuReadUseCase menuReadUseCase;
+    private final MenuCreateService menuCreateService;
+    private final MenuUpdateService menuUpdateService;
+    private final MenuDeleteService menuDeleteService;
+    private final MenuReadService menuReadService;
 
     @PreAuthorize("hasAuthority('MENU_MANAGE')")
     @PostMapping(path = "/menu")
     @ResponseStatus(value = HttpStatus.CREATED)
     @ApiOperation(value = "메뉴 생성")
     public SuccessResponse<Long> createMenu(@RequestBody @Validated MenuCreateDto.Request request) {
-        return new SuccessResponse(HttpStatus.CREATED.value(), "메뉴 등록에 성공했습니다", menuCreateUseCase.create(request));
+        return new SuccessResponse(HttpStatus.CREATED.value(), "메뉴 등록에 성공했습니다", menuCreateService.create(request));
     }
 
     @PreAuthorize("hasAuthority('MENU_MANAGE')")
@@ -45,7 +43,7 @@ public class MenuApiController {
     @ApiOperation(value = "메뉴 수정")
     public SuccessResponse<Long> updateMenu(@RequestBody @Validated MenuUpdateDto.Request request) {
         return new SuccessResponse(HttpStatus.CREATED.value(), "메뉴 수정에 성공했습니다",
-                menuUpdateUseCase.update(request));
+                menuUpdateService.update(request));
     }
 
     @PreAuthorize("hasAuthority('MENU_MANAGE')")
@@ -53,7 +51,7 @@ public class MenuApiController {
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "메뉴 삭제")
     public SuccessResponse deleteMenu(@PathVariable(value = "id")  @Min(1) Long id) {
-        menuDeleteUseCase.delete(id);
+        menuDeleteService.delete(id);
         return new SuccessResponse(HttpStatus.CREATED.value(), "성공적으로 삭제되었습니다.");
     }
 
@@ -62,13 +60,13 @@ public class MenuApiController {
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "메뉴 정보 조회")
     public SuccessResponse<MenuReadDto.ReadResponse> readMenu(@PathVariable(value = "id")  @Min(1) Long id) {
-        return new SuccessResponse(HttpStatus.CREATED.value(), "성공적으로 삭제되었습니다.", menuReadUseCase.read(id));
+        return new SuccessResponse(HttpStatus.CREATED.value(), "성공적으로 삭제되었습니다.", menuReadService.read(id));
     }
 
     @GetMapping(path = "/menu")
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "메뉴 전체 조회")
     public SuccessResponse<List<MenuReadDto.ReadAllResponse>> readAllMenu() {
-        return new SuccessResponse(HttpStatus.CREATED.value(), "성공적으로 조회되었습니다.", menuReadUseCase.readAll());
+        return new SuccessResponse(HttpStatus.CREATED.value(), "성공적으로 조회되었습니다.", menuReadService.readAll());
     }
 }

@@ -2,13 +2,13 @@ package com.se.apiserver.v1.teacher.infra.api;
 
 import com.se.apiserver.v1.common.infra.dto.PageRequest;
 import com.se.apiserver.v1.common.infra.dto.SuccessResponse;
-import com.se.apiserver.v1.teacher.domain.usecase.teacher.TeacherCreateUseCase;
-import com.se.apiserver.v1.teacher.domain.usecase.teacher.TeacherDeleteUseCase;
-import com.se.apiserver.v1.teacher.domain.usecase.teacher.TeacherReadUseCase;
-import com.se.apiserver.v1.teacher.domain.usecase.teacher.TeacherUpdateUseCase;
-import com.se.apiserver.v1.teacher.infra.dto.teacher.TeacherCreateDto;
-import com.se.apiserver.v1.teacher.infra.dto.teacher.TeacherReadDto;
-import com.se.apiserver.v1.teacher.infra.dto.teacher.TeacherUpdateDto;
+import com.se.apiserver.v1.teacher.application.service.TeacherCreateService;
+import com.se.apiserver.v1.teacher.application.service.TeacherDeleteService;
+import com.se.apiserver.v1.teacher.application.service.TeacherReadService;
+import com.se.apiserver.v1.teacher.application.service.TeacherUpdateService;
+import com.se.apiserver.v1.teacher.application.dto.TeacherCreateDto;
+import com.se.apiserver.v1.teacher.application.dto.TeacherReadDto;
+import com.se.apiserver.v1.teacher.application.dto.TeacherUpdateDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -32,17 +32,17 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(tags = "교원 관리")
 public class TeacherApiController {
 
-  private final TeacherCreateUseCase teacherCreateUseCase;
-  private final TeacherReadUseCase teacherReadUseCase;
-  private final TeacherUpdateUseCase teacherUpdateUseCase;
-  private final TeacherDeleteUseCase teacherDeleteUseCase;
+  private final TeacherCreateService teacherCreateService;
+  private final TeacherReadService teacherReadService;
+  private final TeacherUpdateService teacherUpdateService;
+  private final TeacherDeleteService teacherDeleteService;
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
   @PostMapping(path = "/teacher")
   @ResponseStatus(value = HttpStatus.CREATED)
   @ApiOperation(value = "교원 생성")
   public SuccessResponse<Long> create(@RequestBody @Validated TeacherCreateDto.Request request){
-    return new SuccessResponse<>(HttpStatus.CREATED.value(), "교원 생성에 성공했습니다.", teacherCreateUseCase.create(request));
+    return new SuccessResponse<>(HttpStatus.CREATED.value(), "교원 생성에 성공했습니다.", teacherCreateService.create(request));
   }
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
@@ -50,7 +50,7 @@ public class TeacherApiController {
   @ApiOperation("교원 조회")
   @ResponseStatus(value = HttpStatus.OK)
   public SuccessResponse<TeacherReadDto.Response> read(@PathVariable(value = "id") Long id){
-    return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", teacherReadUseCase.read(id));
+    return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", teacherReadService.read(id));
   }
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
@@ -58,7 +58,7 @@ public class TeacherApiController {
   @ApiOperation("교원 전체 조회")
   @ResponseStatus(value = HttpStatus.OK)
   public SuccessResponse<PageImpl<TeacherReadDto.Response>> readAll(@Validated PageRequest pageRequest){
-    return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", teacherReadUseCase.readAll(pageRequest.of()));
+    return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", teacherReadService.readAll(pageRequest.of()));
   }
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
@@ -66,7 +66,7 @@ public class TeacherApiController {
   @ApiOperation("교원 수정")
   @ResponseStatus(value = HttpStatus.OK)
   public SuccessResponse<TeacherReadDto.Response> update(@RequestBody @Validated TeacherUpdateDto.Request request){
-    return new SuccessResponse<>(HttpStatus.OK.value(), "교원 수정에 성공했습니다.", teacherUpdateUseCase.update(request));
+    return new SuccessResponse<>(HttpStatus.OK.value(), "교원 수정에 성공했습니다.", teacherUpdateService.update(request));
   }
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
@@ -74,7 +74,7 @@ public class TeacherApiController {
   @ResponseStatus(value = HttpStatus.OK)
   @ApiOperation(value = "교원 삭제")
   public SuccessResponse delete(@PathVariable(value = "id") Long id){
-    teacherDeleteUseCase.delete(id);
+    teacherDeleteService.delete(id);
     return new SuccessResponse<>(HttpStatus.OK.value(), "교원 삭제에 성공했습니다.");
   }
 }

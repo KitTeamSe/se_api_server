@@ -2,14 +2,14 @@ package com.se.apiserver.v1.period.infra.api;
 
 import com.se.apiserver.v1.common.infra.dto.PageRequest;
 import com.se.apiserver.v1.common.infra.dto.SuccessResponse;
-import com.se.apiserver.v1.period.domain.usecase.PeriodCreateUseCase;
-import com.se.apiserver.v1.period.domain.usecase.PeriodDeleteUseCase;
-import com.se.apiserver.v1.period.domain.usecase.PeriodReadUseCase;
-import com.se.apiserver.v1.period.domain.usecase.PeriodUpdateUseCase;
-import com.se.apiserver.v1.period.infra.dto.PeriodCreateDto;
-import com.se.apiserver.v1.period.infra.dto.PeriodReadDto;
-import com.se.apiserver.v1.period.infra.dto.PeriodReadDto.Response;
-import com.se.apiserver.v1.period.infra.dto.PeriodUpdateDto;
+import com.se.apiserver.v1.period.application.service.PeriodCreateService;
+import com.se.apiserver.v1.period.application.service.PeriodDeleteService;
+import com.se.apiserver.v1.period.application.service.PeriodReadService;
+import com.se.apiserver.v1.period.application.service.PeriodUpdateService;
+import com.se.apiserver.v1.period.application.dto.PeriodCreateDto;
+import com.se.apiserver.v1.period.application.dto.PeriodReadDto;
+import com.se.apiserver.v1.period.application.dto.PeriodReadDto.Response;
+import com.se.apiserver.v1.period.application.dto.PeriodUpdateDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -33,17 +33,17 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(tags = "교시 관리")
 public class PeriodApiController {
 
-  private final PeriodCreateUseCase periodCreateUseCase;
-  private final PeriodReadUseCase periodReadUseCase;
-  private final PeriodUpdateUseCase periodUpdateUseCase;
-  private final PeriodDeleteUseCase periodDeleteUseCase;
+  private final PeriodCreateService periodCreateService;
+  private final PeriodReadService periodReadService;
+  private final PeriodUpdateService periodUpdateService;
+  private final PeriodDeleteService periodDeleteService;
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
   @PostMapping(path = "/period")
   @ResponseStatus(value = HttpStatus.CREATED)
   @ApiOperation(value = "교시 추가")
   public SuccessResponse<Long> create(@RequestBody @Validated PeriodCreateDto.Request request){
-    return new SuccessResponse<>(HttpStatus.CREATED.value(), "교시 생성에 성공했습니다.", periodCreateUseCase.create(request));
+    return new SuccessResponse<>(HttpStatus.CREATED.value(), "교시 생성에 성공했습니다.", periodCreateService.create(request));
   }
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
@@ -51,7 +51,7 @@ public class PeriodApiController {
   @ApiOperation("교시 조회")
   @ResponseStatus(value = HttpStatus.OK)
   public SuccessResponse<PeriodReadDto.Response> read(@PathVariable(value = "id") Long id) {
-    return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", periodReadUseCase.read(id));
+    return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", periodReadService.read(id));
   }
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
@@ -59,7 +59,7 @@ public class PeriodApiController {
   @ApiOperation("교시 전체 조회")
   @ResponseStatus(value = HttpStatus.OK)
   public SuccessResponse<PageImpl<Response>> readAll(@Validated PageRequest pageRequest){
-    return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", periodReadUseCase.readAll(pageRequest.of()));
+    return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", periodReadService.readAll(pageRequest.of()));
   }
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
@@ -68,7 +68,7 @@ public class PeriodApiController {
   @ApiOperation(value = "교시 수정")
   public SuccessResponse<PeriodReadDto.Response> update(@RequestBody @Validated
       PeriodUpdateDto.Request request){
-    periodUpdateUseCase.update(request);
+    periodUpdateService.update(request);
     return new SuccessResponse<>(HttpStatus.OK.value(), "교시 수정에 성공했습니다.");
   }
 
@@ -77,7 +77,7 @@ public class PeriodApiController {
   @ResponseStatus(value = HttpStatus.OK)
   @ApiOperation(value = "교시 삭제")
   public SuccessResponse delete(@PathVariable(value = "id") Long id){
-    periodDeleteUseCase.delete(id);
+    periodDeleteService.delete(id);
     return new SuccessResponse<>(HttpStatus.OK.value(), "교시 삭제에 성공했습니다.");
   }
 }

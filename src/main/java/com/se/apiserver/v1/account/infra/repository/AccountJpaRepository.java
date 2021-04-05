@@ -2,7 +2,6 @@ package com.se.apiserver.v1.account.infra.repository;
 
 import com.se.apiserver.v1.account.domain.entity.Account;
 
-import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,11 +1,10 @@
 package com.se.apiserver.v1.authority.infra.api;
 
-import com.se.apiserver.v1.authority.domain.usecase.authoritygroupaccountmapping.AuthorityGroupAccountMappingCreateUseCase;
-import com.se.apiserver.v1.authority.domain.usecase.authoritygroupaccountmapping.AuthorityGroupAccountMappingDeleteUseCase;
-import com.se.apiserver.v1.authority.domain.usecase.authoritygroupaccountmapping.AuthorityGroupAccountMappingReadUseCase;
-import com.se.apiserver.v1.authority.infra.dto.authority.AuthorityReadDto;
-import com.se.apiserver.v1.authority.infra.dto.authoritygroupaccountmapping.AuthorityGroupAccountMappingCreateDto;
-import com.se.apiserver.v1.authority.infra.dto.authoritygroupaccountmapping.AuthorityGroupAccountMappingReadDto;
+import com.se.apiserver.v1.authority.application.service.authoritygroupaccountmapping.AuthorityGroupAccountMappingCreateService;
+import com.se.apiserver.v1.authority.application.service.authoritygroupaccountmapping.AuthorityGroupAccountMappingDeleteService;
+import com.se.apiserver.v1.authority.application.service.authoritygroupaccountmapping.AuthorityGroupAccountMappingReadService;
+import com.se.apiserver.v1.authority.application.dto.authoritygroupaccountmapping.AuthorityGroupAccountMappingCreateDto;
+import com.se.apiserver.v1.authority.application.dto.authoritygroupaccountmapping.AuthorityGroupAccountMappingReadDto;
 import com.se.apiserver.v1.common.infra.dto.PageRequest;
 import com.se.apiserver.v1.common.infra.dto.SuccessResponse;
 import io.swagger.annotations.Api;
@@ -23,16 +22,16 @@ import org.springframework.web.bind.annotation.*;
 @Api(tags = "사용자-권한그룹 매핑 관리")
 public class AuthorityGroupAccountMappingApiController {
 
-    private final AuthorityGroupAccountMappingReadUseCase authorityGroupAccountMappingReadUseCase;
-    private final AuthorityGroupAccountMappingCreateUseCase authorityGroupAccountMappingCreateUseCase;
-    private final AuthorityGroupAccountMappingDeleteUseCase authorityGroupAccountMappingDeleteUseCase;
+    private final AuthorityGroupAccountMappingReadService authorityGroupAccountMappingReadService;
+    private final AuthorityGroupAccountMappingCreateService authorityGroupAccountMappingCreateService;
+    private final AuthorityGroupAccountMappingDeleteService authorityGroupAccountMappingDeleteService;
 
     @GetMapping("/authority-group-account/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "권한 그룹, 사용자 매핑 조회")
     @PreAuthorize("hasAuthority('AUTHORITY_MANAGE')")
     public SuccessResponse<AuthorityGroupAccountMappingReadDto.Response> read(@PathVariable(value = "id") Long id){
-        return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다", authorityGroupAccountMappingReadUseCase.read(id));
+        return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다", authorityGroupAccountMappingReadService.read(id));
     }
 
     @GetMapping("/authority-group-account")
@@ -40,7 +39,7 @@ public class AuthorityGroupAccountMappingApiController {
     @ApiOperation(value = "권한 그룹, 사용자 매핑 목록 조회")
     @PreAuthorize("hasAuthority('AUTHORITY_MANAGE')")
     public SuccessResponse<PageImpl> readAll(@Validated PageRequest pageRequest){
-        return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다", authorityGroupAccountMappingReadUseCase.readAll(pageRequest.of()));
+        return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다", authorityGroupAccountMappingReadService.readAll(pageRequest.of()));
     }
 
     @PostMapping("/authority-group-account")
@@ -49,7 +48,7 @@ public class AuthorityGroupAccountMappingApiController {
     @PreAuthorize("hasAuthority('AUTHORITY_MANAGE')")
     public SuccessResponse<Long> create(
             @RequestBody @Validated AuthorityGroupAccountMappingCreateDto.Request request){
-        return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 생성되었습니다", authorityGroupAccountMappingCreateUseCase.create(request));
+        return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 생성되었습니다", authorityGroupAccountMappingCreateService.create(request));
     }
 
     @DeleteMapping("/authority-group-account/{id}")
@@ -57,7 +56,7 @@ public class AuthorityGroupAccountMappingApiController {
     @ApiOperation(value = "권한 그룹, 사용자 매핑 삭제")
     @PreAuthorize("hasAuthority('AUTHORITY_MANAGE')")
     public SuccessResponse delete(@PathVariable(value = "id") Long id){
-        authorityGroupAccountMappingDeleteUseCase.delete(id);
+        authorityGroupAccountMappingDeleteService.delete(id);
         return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 삭제되었습니다");
     }
 

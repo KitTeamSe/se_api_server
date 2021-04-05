@@ -1,12 +1,10 @@
 package com.se.apiserver.v1.blacklist.domain.entity;
 
 import com.se.apiserver.v1.common.domain.entity.BaseEntity;
-import com.se.apiserver.v1.account.domain.entity.Account;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

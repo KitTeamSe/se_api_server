@@ -1,19 +1,12 @@
 package com.se.apiserver.v1.tag.domain.entity;
 
 import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
-import com.se.apiserver.v1.common.domain.entity.BaseEntity;
-import com.se.apiserver.v1.account.domain.entity.Account;
-import com.se.apiserver.v1.account.domain.entity.AccountReceiveTagMapping;
-import com.se.apiserver.v1.post.domain.entity.PostTagMapping;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
