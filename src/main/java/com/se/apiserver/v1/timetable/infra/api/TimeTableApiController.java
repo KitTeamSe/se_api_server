@@ -43,7 +43,7 @@ public class TimeTableApiController {
   @ResponseStatus(value = HttpStatus.CREATED)
   @ApiOperation(value = "시간표 추가")
   public SuccessResponse<Long> create(@RequestBody @Validated TimeTableCreateDto.Request request){
-    return new SuccessResponse<>(HttpStatus.CREATED.value(), "강의실 생성에 성공했습니다.", timeTableCreateUseCase.create(request));
+    return new SuccessResponse<>(HttpStatus.CREATED.value(), "시간표 생성에 성공했습니다.", timeTableCreateUseCase.create(request));
   }
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")

@@ -19,7 +19,7 @@ public class TimeTableCreateUseCase {
 
   @Transactional
   public Long create(TimeTableCreateDto.Request request){
-    // 건물명과 호수가 겹치는 강의실이 있는지 검사
+    // 이름이 중복되는 시간표가 있는지 검사
     if(timeTableJpaRepository.findByName(request.getName()).isPresent()){
       throw new BusinessException(TimeTableErrorCode.DUPLICATED_TIME_TABLE_NAME);
     }
