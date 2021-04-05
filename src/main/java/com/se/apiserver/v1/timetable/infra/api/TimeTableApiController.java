@@ -9,6 +9,7 @@ import com.se.apiserver.v1.timetable.domain.usecase.TimeTableUpdateUseCase;
 import com.se.apiserver.v1.timetable.infra.dto.TimeTableCreateDto;
 import com.se.apiserver.v1.timetable.infra.dto.TimeTableReadDto;
 import com.se.apiserver.v1.timetable.infra.dto.TimeTableReadDto.Response;
+import com.se.apiserver.v1.timetable.infra.dto.TimeTableUpdateDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -33,7 +35,7 @@ public class TimeTableApiController {
 
   private final TimeTableCreateUseCase timeTableCreateUseCase;
   private final TimeTableReadUseCase timeTableReadUseCase;
-//  private final TimeTableUpdateUseCase timeTableUpdateUseCase;
+  private final TimeTableUpdateUseCase timeTableUpdateUseCase;
   private final TimeTableDeleteUseCase timeTableDeleteUseCase;
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
@@ -58,6 +60,16 @@ public class TimeTableApiController {
   @ResponseStatus(value = HttpStatus.OK)
   public SuccessResponse<PageImpl<Response>> readAll(@Validated PageRequest pageRequest){
     return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", timeTableReadUseCase.readAll(pageRequest.of()));
+  }
+
+  @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
+  @PutMapping(path = "/time-table")
+  @ResponseStatus(value = HttpStatus.OK)
+  @ApiOperation(value = "시간표 수정")
+  public SuccessResponse<Long> update(@RequestBody @Validated
+      TimeTableUpdateDto.Request request){
+
+    return new SuccessResponse<>(HttpStatus.OK.value(), "시간표 수정에 성공했습니다.", timeTableUpdateUseCase.update(request));
   }
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")

@@ -52,4 +52,20 @@ public class TimeTable extends AccountGenerateEntity {
     this.semester = semester;
     this.status = status;
   }
+
+  public void updateName(String name){
+    this.name = name;
+  }
+
+  public void updateYear(Integer year){
+    this.year = year;
+  }
+
+  public void updateSemester(Integer semester){
+    this.semester = semester;
+  }
+
+  public void updateStatus(TimeTableStatus status){
+    this.status = status;
+  }
 }
