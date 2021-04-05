@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,7 +32,7 @@ public class ParticipatedTeacherApiController {
 
   private final ParticipatedTeacherCreateUseCase participatedTeacherCreateUseCase;
   private final ParticipatedTeacherReadUseCase participatedTeacherReadUseCase;
-//  private final ParticipatedTeacherDeleteUseCase participatedTeacherDeleteUseCase;
+  private final ParticipatedTeacherDeleteUseCase participatedTeacherDeleteUseCase;
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
   @PostMapping(path = "/participated-teacher")
@@ -55,5 +56,14 @@ public class ParticipatedTeacherApiController {
   @ResponseStatus(value = HttpStatus.OK)
   public SuccessResponse<PageImpl<Response>> readAll(@Validated PageRequest pageRequest){
     return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", participatedTeacherReadUseCase.readAll(pageRequest.of()));
+  }
+
+  @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
+  @DeleteMapping(path = "/participated-teacher/{id}")
+  @ResponseStatus(value = HttpStatus.OK)
+  @ApiOperation(value = "참여 교원 삭제")
+  public SuccessResponse delete(@PathVariable(value = "id") Long id){
+    participatedTeacherDeleteUseCase.delete(id);
+    return new SuccessResponse<>(HttpStatus.OK.value(), "참여 교원 삭제에 성공했습니다.");
   }
 }
