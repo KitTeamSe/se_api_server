@@ -9,12 +9,14 @@ import com.se.apiserver.v1.menu.domain.error.MenuErrorCode;
 import com.se.apiserver.v1.menu.infra.dto.MenuReadDto;
 import com.se.apiserver.v1.menu.infra.repository.MenuJpaRepository;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.procedure.spi.ParameterRegistrationImplementor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @UseCase
 @RequiredArgsConstructor
@@ -22,24 +24,19 @@ import java.util.*;
 public class MenuReadUseCase {
 
     private final MenuJpaRepository menuJpaRepository;
-
+    private final AccountDetailService accountDetailService;
     public MenuReadDto.ReadResponse read(Long id) {
         Menu menu = menuJpaRepository.findById(id).orElseThrow(() -> new BusinessException(MenuErrorCode.NO_SUCH_MENU));
         return MenuReadDto.ReadResponse.fromEntity(menu);
     }
 
     public List<MenuReadDto.ReadAllResponse> readAll() {
-        Set<String> authoritySet = AuthorityUtils.authorityListToSet(SecurityContextHolder.getContext().getAuthentication().getAuthorities());
-        System.out.println(authoritySet.stream().findFirst().get());
-        List<Menu> menus = menuJpaRepository.findIncludeAuthorities(authoritySet);
-        System.out.println(menus.size());
-        List<MenuReadDto.ReadAllResponse> res = new ArrayList<>();
-
-        for(Menu menu : menus){
-            if(authoritySet.contains(menu.getAuthority().getAuthority()))
-                res.add(MenuReadDto.ReadAllResponse.fromEntity(menu, authoritySet));
-        }
-
+        Set<String> authorities = accountDetailService.getContextAuthorities();
+        List<Menu> menus = menuJpaRepository.findAllRootMenu();
+        List<MenuReadDto.ReadAllResponse> res = menus.stream()
+                .filter(m -> m.canAccess(authorities) == true)
+                .map(m -> MenuReadDto.ReadAllResponse.fromEntity(m, authorities))
+                .collect(Collectors.toList());
         return res;
     }
 }

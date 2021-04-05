@@ -17,7 +17,5 @@ public class TagListeningCreateDto {
     static public class Request{
         @Min(1)
         private Long tagId;
-        @Min(1)
-        private Long accountId;
     }
 }

@@ -59,8 +59,6 @@ class PostDeleteUseCaseTest {
     Board board;
     Post postAccount;
     Post postAnonymous;
-    Authority authority;
-
 
     private void initData() {
         Question question = Question.builder().text("질문1").build();
@@ -79,28 +77,10 @@ class PostDeleteUseCaseTest {
                 .answer("dasdasd")
                 .build();
 
-        authority = Authority.builder()
-                .nameKor("권한1")
-                .nameEng("auth1")
-                .build();
-        authorityJpaRepository.save(authority);
-
-        menu = Menu.builder()
-                .url("testurl")
-                .nameEng("testname")
-                .nameKor("테스트이름")
-                .description("테스트 설명")
-                .menuType(MenuType.BOARD)
-                .menuOrder(1)
-                .build();
-        menu.updateAuthority(authority);
+        menu = new Menu("testname", "testurl", "테스트이름", 1, "테스트 설명", MenuType.BOARD);
         menuJpaRepository.save(menu);
 
-        board = Board.builder()
-                .menu(menu)
-                .nameEng("testname")
-                .nameKor("테스트이름")
-                .build();
+        board = new Board("freeboard", "자유게시판");
         boardJpaRepository.save(board);
 
 

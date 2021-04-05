@@ -23,9 +23,7 @@ public class AuthorityGroupAuthorityMapping extends BaseEntity {
   @JoinColumn(name = "authority_group_id", referencedColumnName = "authorityGroupId")
   private AuthorityGroup authorityGroup;
 
-  @Builder
-  public AuthorityGroupAuthorityMapping(Long authorityGroupAuthorityMappingId, Authority authority, AuthorityGroup authorityGroup) {
-    this.authorityGroupAuthorityMappingId = authorityGroupAuthorityMappingId;
+  public AuthorityGroupAuthorityMapping(Authority authority, AuthorityGroup authorityGroup) {
     this.authority = authority;
     this.authorityGroup = authorityGroup;
   }

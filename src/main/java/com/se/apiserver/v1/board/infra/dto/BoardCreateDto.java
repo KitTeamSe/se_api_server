@@ -25,9 +25,5 @@ public class BoardCreateDto {
         @ApiModelProperty(notes = "한글명", example = "자유게시판")
         @Size(min = 2, max = 20)
         private String nameKor;
-
-        @ApiModelProperty(notes = "자동생성될 메뉴의 순서", example = "1")
-        Integer menuOrder;
-
     }
 }

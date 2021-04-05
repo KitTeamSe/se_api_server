@@ -22,13 +22,7 @@ public class AuthorityGroupDeleteUseCase {
     public boolean delete(Long id) {
         AuthorityGroup authorityGroup = authorityGroupJpaRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(AuthorityGroupErrorCode.NO_SUCH_AUTHORITY_GROUP));
-
-        if(authorityGroup.getType() == AuthorityGroupType.ANONYMOUS)
-            throw new BusinessException(AuthorityGroupErrorCode.CAN_NOT_DELETE_ANONYMOUS_GROUP);
-
-        if(authorityGroup.getType() == AuthorityGroupType.DEFAULT)
-            throw new BusinessException(AuthorityGroupErrorCode.CAN_NOT_DELETE_DEFAULT_GROUP);
-
+        authorityGroup.remove();
         authorityGroupJpaRepository.delete(authorityGroup);
         return true;
     }

@@ -22,7 +22,7 @@ public class BlacklistDetailService {
 
     public boolean isBaned(String ip){
         Set<String> blacklist = new HashSet<>(blacklistJpaRepository.findAll()
-        .stream().map(b -> {return b.getIp();}).collect(Collectors.toList()));
+        .stream().map(b -> b.getIp()).collect(Collectors.toList()));
         return blacklist.contains(ip);
     }
 

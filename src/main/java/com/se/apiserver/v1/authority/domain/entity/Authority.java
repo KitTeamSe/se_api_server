@@ -8,6 +8,7 @@ import javax.validation.constraints.Size;
 
 import com.se.apiserver.v1.menu.domain.entity.Menu;
 import lombok.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 
 @Entity
@@ -27,27 +28,14 @@ public class Authority extends AccountGenerateEntity implements GrantedAuthority
   @Size(min = 2, max = 40)
   private String nameKor;
 
-  @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-  @JoinColumn(name = "menu_id",referencedColumnName = "menuId")
-  private Menu menu;
-
-
   @Override
   public String getAuthority() {
     return nameEng;
   }
 
-  @Builder
-  public Authority(Long authorityId, String nameEng, String nameKor) {
-    this.authorityId = authorityId;
+  public Authority(@Size(min = 2, max = 40) String nameEng, @Size(min = 2, max = 40) String nameKor) {
     this.nameEng = nameEng;
     this.nameKor = nameKor;
-  }
-
-  public void updateMenu(Menu menu) {
-    this.menu = menu;
-    if(menu.getAuthority() != this)
-      menu.updateAuthority(this);
   }
 
   public void updateNameEng(String nameEng) {

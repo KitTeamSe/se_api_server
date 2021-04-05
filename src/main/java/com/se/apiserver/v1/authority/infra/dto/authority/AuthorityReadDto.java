@@ -29,21 +29,11 @@ public class AuthorityReadDto {
 
         private String nameKor;
 
-        @JsonInclude(JsonInclude.Include.NON_NULL)
-        private String menuNameKor;
-
-        @JsonInclude(JsonInclude.Include.NON_NULL)
-        private String menuNameEng;
-
         public static Response fromEntity(Authority authority) {
             ResponseBuilder responseBuilder = Response.builder()
                     .authorityId(authority.getAuthorityId())
                     .nameEng(authority.getNameEng())
                     .nameKor(authority.getNameKor());
-            if(authority.getMenu() != null) {
-                responseBuilder.menuNameKor(authority.getMenu().getNameKor());
-                responseBuilder.menuNameEng(authority.getMenu().getNameEng());
-            }
             return responseBuilder.build();
         }
     }

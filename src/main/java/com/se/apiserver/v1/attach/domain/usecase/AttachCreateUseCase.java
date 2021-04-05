@@ -26,29 +26,30 @@ public class AttachCreateUseCase {
   private final ReplyJpaRepository replyJpaRepository;
 
   public AttachReadDto.Response create(AttachCreateDto.Request request){
-    if(request.getPostId() != null & request.getReplyId() != null)
-        throw new BusinessException(AttachErrorCode.INVALID_INPUT);
+    validateInvalidInput(request.getPostId(), request.getReplyId());
+    Attach attach = getAttach(request);
+    Attach save = attachJpaRepository.save(attach);
+    return Response.fromEntity(save);
+  }
 
-    Attach attach = Attach.builder()
-        .downloadUrl(request.getDownloadUrl())
-        .fileName(request.getFileName())
-        .build();
+  private void validateInvalidInput(Long postId, Long replyId) {
+    if(postId != null & replyId != null)
+      throw new BusinessException(AttachErrorCode.INVALID_INPUT);
+  }
 
+  private Attach getAttach(AttachCreateDto.Request request) {
     if(request.getPostId() != null) {
       Post post = postJpaRepository.findById(request.getPostId())
-          .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));
-      attach.updatePost(post);
+              .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));
+      return new Attach(request.getDownloadUrl(), request.getFileName(), post);
     }
 
     if(request.getReplyId() != null) {
       Reply reply = replyJpaRepository.findById(request.getReplyId())
-          .orElseThrow(() -> new BusinessException(ReplyErrorCode.NO_SUCH_REPLY));
-      attach.updateReply(reply);
+              .orElseThrow(() -> new BusinessException(ReplyErrorCode.NO_SUCH_REPLY));
+      return new Attach(request.getDownloadUrl(), request.getFileName(), reply);
     }
 
-    Attach save = attachJpaRepository.save(attach);
-    return Response.fromEntity(save);
-
+    return new Attach(request.getDownloadUrl(), request.getFileName());
   }
-
 }

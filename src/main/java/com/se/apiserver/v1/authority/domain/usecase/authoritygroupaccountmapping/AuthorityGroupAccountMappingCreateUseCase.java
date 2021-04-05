@@ -24,9 +24,8 @@ public class AuthorityGroupAccountMappingCreateUseCase {
     private final AccountJpaRepository accountJpaRepository;
     private final AuthorityGroupJpaRepository authorityGroupJpaRepository;
 
-    public AuthorityGroupAccountMappingReadDto.Response create(AuthorityGroupAccountMappingCreateDto.Request request){
-        if(authorityGroupAccountMappingJpaRepository.findByAccountIdAndAuthorityGroupId(request.getAccountId(), request.getGroupId()).isPresent())
-            throw new BusinessException(AuthorityGroupAccountMappingErrorCode.ALREADY_EXIST);
+    public Long create(AuthorityGroupAccountMappingCreateDto.Request request){
+        validateAlreadyExistMapping(request.getAccountId(), request.getGroupId());
 
         Account account = accountJpaRepository.findById(request.getAccountId())
                 .orElseThrow(() -> new BusinessException(AccountErrorCode.NO_SUCH_ACCOUNT));
@@ -34,14 +33,15 @@ public class AuthorityGroupAccountMappingCreateUseCase {
         AuthorityGroup authorityGroup = authorityGroupJpaRepository.findById(request.getGroupId())
                 .orElseThrow(() -> new BusinessException(AuthorityGroupErrorCode.NO_SUCH_AUTHORITY_GROUP));
 
-        AuthorityGroupAccountMapping authorityGroupAccountMapping = AuthorityGroupAccountMapping.builder()
-                .authorityGroup(authorityGroup)
-                .account(account)
-                .build();
-
+        AuthorityGroupAccountMapping authorityGroupAccountMapping = new AuthorityGroupAccountMapping(account, authorityGroup);
         authorityGroupAccountMappingJpaRepository.save(authorityGroupAccountMapping);
 
-        return AuthorityGroupAccountMappingReadDto.Response.fromEntity(authorityGroupAccountMapping);
+        return authorityGroupAccountMapping.getAuthorityGroupAccountMappingId();
+    }
+
+    private void validateAlreadyExistMapping(Long accountId, Long groupId) {
+        if(authorityGroupAccountMappingJpaRepository.findByAccountIdAndAuthorityGroupId(accountId, groupId).isPresent())
+            throw new BusinessException(AuthorityGroupAccountMappingErrorCode.ALREADY_EXIST);
     }
 
 }

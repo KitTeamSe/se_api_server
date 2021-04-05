@@ -29,9 +29,7 @@ public class Tag extends AccountGenerateEntity {
   @Size(min = 1, max = 30)
   private String text;
 
-  @Builder
-  public Tag(Long tagId, @Size(min = 1, max = 30) String text) {
-    this.tagId = tagId;
+  public Tag(@Size(min = 1, max = 30) String text) {
     this.text = text;
   }
 

@@ -80,11 +80,7 @@ class AuthorityGroupAccountMappingReadUseCaseTest {
 
         accountJpaRepository.save(account2);
 
-        authorityGroup = AuthorityGroup.builder()
-                .name("권한그룹1")
-                .description("권한설명1")
-                .type(AuthorityGroupType.NORMAL)
-                .build();
+        authorityGroup = new AuthorityGroup("권한그룹1"," 권한설명1", AuthorityGroupType.NORMAL);
         authorityGroupJpaRepository.save(authorityGroup);
     }
 
@@ -92,10 +88,7 @@ class AuthorityGroupAccountMappingReadUseCaseTest {
     void 권한그룹_사용자_조회_성공() {
         //given
         initData();
-        AuthorityGroupAccountMapping authorityGroupAccountMapping = AuthorityGroupAccountMapping.builder()
-                .authorityGroup(authorityGroup)
-                .account(account1)
-                .build();
+        AuthorityGroupAccountMapping authorityGroupAccountMapping = new AuthorityGroupAccountMapping(account1,authorityGroup);
         authorityGroupAccountMappingJpaRepository.save(authorityGroupAccountMapping);
         //when
         AuthorityGroupAccountMappingReadDto.Response read = authorityGroupAccountMappingReadUseCase.read(authorityGroupAccountMapping.getAuthorityGroupAccountMappingId());
@@ -112,15 +105,9 @@ class AuthorityGroupAccountMappingReadUseCaseTest {
         //given
         Long exist = authorityGroupAccountMappingJpaRepository.count();
         initData();
-        AuthorityGroupAccountMapping authorityGroupAccountMapping1 = AuthorityGroupAccountMapping.builder()
-                .authorityGroup(authorityGroup)
-                .account(account1)
-                .build();
+        AuthorityGroupAccountMapping authorityGroupAccountMapping1 =  new AuthorityGroupAccountMapping(account1,authorityGroup);
         authorityGroupAccountMappingJpaRepository.save(authorityGroupAccountMapping1);
-        AuthorityGroupAccountMapping authorityGroupAccountMapping2 = AuthorityGroupAccountMapping.builder()
-                .authorityGroup(authorityGroup)
-                .account(account2)
-                .build();
+        AuthorityGroupAccountMapping authorityGroupAccountMapping2 = new AuthorityGroupAccountMapping(account2,authorityGroup);
         authorityGroupAccountMappingJpaRepository.save(authorityGroupAccountMapping2);
         //when
         PageImpl page = authorityGroupAccountMappingReadUseCase.readAll(PageRequest.builder()

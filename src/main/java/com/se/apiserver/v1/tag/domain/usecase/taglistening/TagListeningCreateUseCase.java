@@ -24,29 +24,23 @@ import org.springframework.transaction.annotation.Transactional;
 public class TagListeningCreateUseCase {
     private final TagListeningJpaRepository tagListeningJpaRepository;
     private final TagJpaRepository tagJpaRepository;
-    private final AccountJpaRepository accountJpaRepository;
     private final AccountDetailService accountDetailService;
 
-    public TagListeningReadDto.Response create(TagListeningCreateDto.Request request){
-
+    public Long create(TagListeningCreateDto.Request request){
         Tag tag = tagJpaRepository.findById(request.getTagId())
                 .orElseThrow(() -> new BusinessException(TagErrorCode.NO_SUCH_TAG));
+        Account account = accountDetailService.getContextAccount();
 
-        Account account = accountJpaRepository.findById(request.getAccountId())
-                .orElseThrow(() -> new BusinessException(AccountErrorCode.NO_SUCH_ACCOUNT));
+        validateDuplicateTagListening(account, tag);
 
-        if(!accountDetailService.isOwner(account) && !accountDetailService.hasAuthority("TAG_MANAGE"))
-            throw new AccessDeniedException("권한 없음");
-
-        if(tagListeningJpaRepository.findByAccountIdAndTagId(request.getAccountId(), request.getTagId()).isPresent())
-            throw new BusinessException(TagListeningErrorCode.DUPLICATED);
-
-        TagListening tagListening = TagListening.builder()
-                .tag(tag)
-                .account(account)
-                .build();
+        TagListening tagListening = new TagListening(account,tag);
         tagListeningJpaRepository.save(tagListening);
-        return TagListeningReadDto.Response.fromEntity(tagListening);
+        return tagListening.getTagListeningId();
+    }
+
+    private void validateDuplicateTagListening(Account account, Tag tag) {
+        if(tagListeningJpaRepository.findByAccountIdAndTagId(account.getAccountId(), tag.getTagId()).isPresent())
+            throw new BusinessException(TagListeningErrorCode.DUPLICATED);
     }
 
 }

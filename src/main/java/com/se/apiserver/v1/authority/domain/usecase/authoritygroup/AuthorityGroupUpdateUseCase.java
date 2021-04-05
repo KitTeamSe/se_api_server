@@ -20,21 +20,28 @@ public class AuthorityGroupUpdateUseCase {
 
     @Transactional
     public AuthorityGroupReadDto.Response update(AuthorityGroupUpdateDto.Request request) {
-        if (authorityGroupJpaRepository.findByName(request.getName()).isPresent())
-            throw new BusinessException(AuthorityGroupErrorCode.DUPLICATED_GROUP_NAME);
-
+        validateDuplicateGroupName(request.getName());
         AuthorityGroup authorityGroup = authorityGroupJpaRepository.findById(request.getId())
                 .orElseThrow(() -> new BusinessException(AuthorityGroupErrorCode.NO_SUCH_AUTHORITY_GROUP));
-
-        if(request.getDescription() != null)
-            authorityGroup.updateDescription(request.getDescription());
-
-        if(request.getName() != null)
-            authorityGroup.updateName(request.getName());
-
+        updateDescriptionIfExist(authorityGroup, request.getDescription());
+        updateNameIfExist(authorityGroup, request.getName());
         authorityGroupJpaRepository.save(authorityGroup);
-
         return AuthorityGroupReadDto.Response.fromEntity(authorityGroup);
+    }
+
+    private void updateNameIfExist(AuthorityGroup authorityGroup, String name) {
+        if(name != null)
+            authorityGroup.updateName(name);
+    }
+
+    private void updateDescriptionIfExist(AuthorityGroup authorityGroup, String description) {
+        if(description != null)
+            authorityGroup.updateDescription(description);
+    }
+
+    private void validateDuplicateGroupName(String name) {
+        if (authorityGroupJpaRepository.findByName(name).isPresent())
+            throw new BusinessException(AuthorityGroupErrorCode.DUPLICATED_GROUP_NAME);
     }
 
 }

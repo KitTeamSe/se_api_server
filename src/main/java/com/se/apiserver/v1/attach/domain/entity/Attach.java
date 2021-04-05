@@ -44,26 +44,31 @@ public class Attach extends BaseEntity {
     @Size(min = 2, max = 255)
     private String fileName;
 
-    @Builder
     public Attach(@Size(min = 2, max = 255) String downloadUrl, @Size(min = 2, max = 255) String fileName) {
         this.downloadUrl = downloadUrl;
         this.fileName = fileName;
     }
 
-    public void setPost(Post post) {
+    public Attach(@Size(min = 2, max = 255) String downloadUrl, @Size(min = 2, max = 255) String fileName, Post post) {
+        this(downloadUrl, fileName);
+        updatePost(post);
+    }
+
+    public Attach(@Size(min = 2, max = 255) String downloadUrl, @Size(min = 2, max = 255) String fileName, Reply reply) {
+        this(downloadUrl, fileName);
+        updateReply(reply);
+    }
+
+    public void updatePost(Post post) {
         this.post = post;
         if(!post.getAttaches().contains(this))
             post.addAttache(this);
     }
 
-    public void updatePost(Post post) {
-        this.post = post;
-        post.addAttache(this);
-    }
-
     public void updateReply(Reply reply) {
         this.reply = reply;
-        reply.addAttach(this);
+        if(!reply.getAttaches().contains(this))
+            reply.addAttach(this);
     }
 
     public void remove() {

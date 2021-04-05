@@ -80,9 +80,7 @@ class TagListeningDeleteUseCaseTest {
         accountJpaRepository.save(account2);
 
 
-        tag1 = Tag.builder()
-                .text("새로운태그")
-                .build();
+        tag1 = new Tag("새로운 태그");
         tagJpaRepository.save(tag1);
     }
 
@@ -92,10 +90,7 @@ class TagListeningDeleteUseCaseTest {
         initData();
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(String.valueOf(account1.getAccountId()),
                 "3", Arrays.asList(new SimpleGrantedAuthority("ACCOUNT_ACCESS"))));
-        TagListening tagListening = TagListening.builder()
-                .tag(tag1)
-                .account(account1)
-                .build();
+        TagListening tagListening = new TagListening(account1, tag1);
         tagListeningJpaRepository.save(tagListening);
         Long id = tagListening.getTagListeningId();
         //when
@@ -110,10 +105,7 @@ class TagListeningDeleteUseCaseTest {
         initData();
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(String.valueOf(account2.getAccountId()),
                 "3", Arrays.asList(new SimpleGrantedAuthority("TAG_MANAGE"))));
-        TagListening tagListening = TagListening.builder()
-                .tag(tag1)
-                .account(account1)
-                .build();
+        TagListening tagListening = new TagListening(account1,tag1);
         tagListeningJpaRepository.save(tagListening);
         Long id = tagListening.getTagListeningId();
         //when
@@ -128,10 +120,7 @@ class TagListeningDeleteUseCaseTest {
         initData();
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(String.valueOf(account1.getAccountId()),
                 "3", Arrays.asList(new SimpleGrantedAuthority("ACCOUNT_ACCESS"))));
-        TagListening tagListening = TagListening.builder()
-                .tag(tag1)
-                .account(account1)
-                .build();
+        TagListening tagListening = new TagListening(account1,tag1);
         tagListeningJpaRepository.save(tagListening);
         Long id = tagListening.getTagListeningId();
         //when
@@ -148,10 +137,7 @@ class TagListeningDeleteUseCaseTest {
         initData();
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(String.valueOf(account2.getAccountId()),
                 "3", Arrays.asList(new SimpleGrantedAuthority("TAG_ACCESS"))));
-        TagListening tagListening = TagListening.builder()
-                .tag(tag1)
-                .account(account1)
-                .build();
+        TagListening tagListening = new TagListening(account1,tag1);
         tagListeningJpaRepository.save(tagListening);
         Long id = tagListening.getTagListeningId();
         //when

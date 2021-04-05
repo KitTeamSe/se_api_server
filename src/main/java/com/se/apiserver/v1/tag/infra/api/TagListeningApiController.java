@@ -32,7 +32,7 @@ public class TagListeningApiController {
     @ResponseStatus(value = HttpStatus.CREATED)
     @ApiOperation(value = "수신 태그 등록")
     @PreAuthorize("hasAnyAuthority('TAG_ACCESS', 'TAG_MANAGE')")
-    public SuccessResponse<TagListeningReadDto.Response> create(@RequestBody @Validated TagListeningCreateDto.Request request){
+    public SuccessResponse<Long> create(@RequestBody @Validated TagListeningCreateDto.Request request){
         return new SuccessResponse<>(HttpStatus.CREATED.value(), "등록에 성공했습니다", tagListeningCreateUseCase.create(request));
     }
 

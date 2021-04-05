@@ -32,24 +32,22 @@ public class AuthorityGroupAuthorityMappingCreateUseCase {
     private final AuthorityJpaRepository authorityJpaRepository;
     private final AuthorityGroupJpaRepository authorityGroupJpaRepository;
 
-    public AuthorityGroupAuthorityMappingReadDto.Response create(AuthorityGroupAuthorityMappingCreateDto.Request request){
-        if(authorityGroupAuthorityMappingJpaRepository.findByAuthorityAndAuthorityGroupId(request.getAuthorityId(), request.getGroupId()).isPresent())
-            throw new BusinessException(AuthorityGroupAuthorityMappingErrorCode.ALREADY_EXIST);
-
+    public Long create(AuthorityGroupAuthorityMappingCreateDto.Request request){
+        validateAlreadyExistMapping(request.getAuthorityId(), request.getGroupId());
         Authority authority = authorityJpaRepository.findById(request.getAuthorityId())
                 .orElseThrow(() -> new BusinessException(AuthorityErrorCode.NO_SUCH_AUTHORITY));
-
         AuthorityGroup authorityGroup = authorityGroupJpaRepository.findById(request.getGroupId())
                 .orElseThrow(() -> new BusinessException(AuthorityGroupErrorCode.NO_SUCH_AUTHORITY_GROUP));
 
-        AuthorityGroupAuthorityMapping authorityGroupAuthorityMapping = AuthorityGroupAuthorityMapping.builder()
-                .authorityGroup(authorityGroup)
-                .authority(authority)
-                .build();
-
+        AuthorityGroupAuthorityMapping authorityGroupAuthorityMapping = new AuthorityGroupAuthorityMapping(authority, authorityGroup);
         authorityGroupAuthorityMappingJpaRepository.save(authorityGroupAuthorityMapping);
 
-        return AuthorityGroupAuthorityMappingReadDto.Response.fromEntity(authorityGroupAuthorityMapping);
+        return authorityGroupAuthorityMapping.getAuthorityGroupAuthorityMappingId();
+    }
+
+    private void validateAlreadyExistMapping(Long authorityId, Long groupId) {
+        if(authorityGroupAuthorityMappingJpaRepository.findByAuthorityAndAuthorityGroupId(authorityId, groupId).isPresent())
+            throw new BusinessException(AuthorityGroupAuthorityMappingErrorCode.ALREADY_EXIST);
     }
 
 }

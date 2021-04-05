@@ -35,16 +35,15 @@ public class MenuApiController {
     @PostMapping(path = "/menu")
     @ResponseStatus(value = HttpStatus.CREATED)
     @ApiOperation(value = "메뉴 생성")
-    public SuccessResponse<MenuCreateDto.Response> createMenu(@RequestBody @Validated MenuCreateDto.Request request) {
-        return new SuccessResponse(HttpStatus.CREATED.value(), "메뉴 등록에 성공했습니다",
-                menuCreateUseCase.create(request));
+    public SuccessResponse<Long> createMenu(@RequestBody @Validated MenuCreateDto.Request request) {
+        return new SuccessResponse(HttpStatus.CREATED.value(), "메뉴 등록에 성공했습니다", menuCreateUseCase.create(request));
     }
 
     @PreAuthorize("hasAuthority('MENU_MANAGE')")
     @PutMapping(path = "/menu")
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "메뉴 수정")
-    public SuccessResponse<MenuUpdateDto.Response> updateMenu(@RequestBody @Validated MenuUpdateDto.Request request) {
+    public SuccessResponse<Long> updateMenu(@RequestBody @Validated MenuUpdateDto.Request request) {
         return new SuccessResponse(HttpStatus.CREATED.value(), "메뉴 수정에 성공했습니다",
                 menuUpdateUseCase.update(request));
     }
@@ -53,7 +52,7 @@ public class MenuApiController {
     @DeleteMapping(path = "/menu/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "메뉴 삭제")
-    public SuccessResponse updateMenu(@PathVariable(value = "id")  @Min(1) Long id) {
+    public SuccessResponse deleteMenu(@PathVariable(value = "id")  @Min(1) Long id) {
         menuDeleteUseCase.delete(id);
         return new SuccessResponse(HttpStatus.CREATED.value(), "성공적으로 삭제되었습니다.");
     }

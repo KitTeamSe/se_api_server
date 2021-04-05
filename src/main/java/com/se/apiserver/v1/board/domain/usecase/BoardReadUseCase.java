@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @UseCase
 @RequiredArgsConstructor
@@ -19,20 +20,16 @@ public class BoardReadUseCase {
 
     private final BoardJpaRepository boardJpaRepository;
 
-    public BoardReadDto.ReadResponse read(Long id){
+    public BoardReadDto.ReadResponse read(Long id) {
         Board board = boardJpaRepository.findById(id).orElseThrow(() -> new BusinessException(BoardErrorCode.NO_SUCH_BOARD));
         return BoardReadDto.ReadResponse.fromEntity(board);
     }
 
-    public List<BoardReadDto.ReadResponse> readAll(){
+    public List<BoardReadDto.ReadResponse> readAll() {
         List<Board> all = boardJpaRepository.findAll();
-
-        List<BoardReadDto.ReadResponse> responses = new ArrayList<>();
-
-        for(Board board : all){
-            responses.add(BoardReadDto.ReadResponse.fromEntity(board));
-        }
+        List<BoardReadDto.ReadResponse> responses = all.stream()
+                .map(b -> BoardReadDto.ReadResponse.fromEntity(b))
+                .collect(Collectors.toList());
         return responses;
     }
-
 }

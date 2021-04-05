@@ -33,23 +33,13 @@ class AuthorityGroupAuthorityMappingDeleteUseCaseTest {
     AuthorityGroupAuthorityMapping authorityGroupAuthorityMapping;
 
     void initData(){
-        authorityGroup = AuthorityGroup.builder()
-                .name("그룹1")
-                .description("그룹1 설명")
-                .type(AuthorityGroupType.NORMAL)
-                .build();
+        authorityGroup = new AuthorityGroup("그룹1", "그룹1 설명", AuthorityGroupType.NORMAL);
         authorityGroupJpaRepository.save(authorityGroup);
 
-        authority = Authority.builder()
-                .nameEng("auth1")
-                .nameKor("권한1")
-                .build();
+        authority = new Authority("newAuth", "새로운권한");
         authorityJpaRepository.save(authority);
         
-        authorityGroupAuthorityMapping = AuthorityGroupAuthorityMapping.builder()
-                .authority(authority)
-                .authorityGroup(authorityGroup)
-                .build();
+        authorityGroupAuthorityMapping = new AuthorityGroupAuthorityMapping(authority,authorityGroup);
         authorityGroupAuthorityMappingJpaRepository.save(authorityGroupAuthorityMapping);
     }
 

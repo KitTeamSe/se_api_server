@@ -44,17 +44,12 @@ class MenuCreateUseCaseTest {
     }
 
 
-
-    private Menu.MenuBuilder createData(String nameEng, String nameKor, String description, Integer order, MenuType menuType, String url) {
-        Menu.MenuBuilder menuBuilder = Menu.builder()
-                .nameEng(nameEng)
-                .nameKor(nameKor)
-                .description(description)
-                .menuOrder(order)
-                .menuType(menuType)
-                .url(url);
-        return menuBuilder;
+    private Menu createData(String nameEng, String nameKor, String description, Integer order, MenuType menuType, String url){
+        Menu menu = new Menu(nameEng, url, nameKor,order, description, menuType);
+        menuJpaRepository.save(menu);
+        return menu;
     }
+
 
 
     @Test
@@ -75,15 +70,14 @@ class MenuCreateUseCaseTest {
         Assertions.assertThat(menu.getNameKor()).isEqualTo("자유게시판");
         Assertions.assertThat(menu.getNameEng()).isEqualTo("freeboard");
         Assertions.assertThat(menu.getMenuOrder()).isEqualTo(1);
-        Assertions.assertThat(menu.getAuthority().getNameEng()).isEqualTo("MENU_freeboard_ACCESS");
-        Assertions.assertThat(menu.getAuthority().getNameKor()).isEqualTo("자유게시판 접근");
+        Assertions.assertThat(menu.getAuthority().getNameEng()).isEqualTo("freeboard");
+        Assertions.assertThat(menu.getAuthority().getNameKor()).isEqualTo("자유게시판");
     }
 
     @Test
     void 메뉴_등록_영문명_중복_실패() {
         //given
-        Menu menu = createData("freeboard", "자유게시판", "자유게시판입니다", 1, MenuType.BOARD, "freeboard").build();
-        menuJpaRepository.save(menu);
+        Menu menu = createData("freeboard", "자유게시판", "자유게시판입니다", 1, MenuType.BOARD, "freeboard");
         //when
         //then
         Assertions.assertThatThrownBy(() -> {
@@ -101,8 +95,7 @@ class MenuCreateUseCaseTest {
     @Test
     void 메뉴_등록_한국명_중복_실패() {
         //given
-        Menu menu = createData("freeboard", "자유게시판", "자유게시판입니다", 1, MenuType.BOARD, "freeboard").build();
-        menuJpaRepository.save(menu);
+        Menu menu = createData("freeboard", "자유게시판", "자유게시판입니다", 1, MenuType.BOARD, "freeboard");
         //when
         //then
         Assertions.assertThatThrownBy(() -> {
@@ -120,8 +113,7 @@ class MenuCreateUseCaseTest {
     @Test
     void 메뉴_부모_성공() {
         //given
-        Menu menu = createData("freeboard", "자유게시판", "자유게시판입니다", 1, MenuType.FOLDER, "freeboard").build();
-        menuJpaRepository.save(menu);
+        Menu menu = createData("freeboard", "자유게시판", "자유게시판입니다", 1, MenuType.FOLDER, "freeboard");
         //when
         menuCreateUseCase.create(MenuCreateDto.Request.builder()
                 .nameEng("freeboard1")
@@ -144,8 +136,7 @@ class MenuCreateUseCaseTest {
     @Test
     void 메뉴_상위폴더아님_실패() {
         //given
-        Menu menu = createData("freeboard", "자유게시판", "자유게시판입니다", 1, MenuType.BOARD, "freeboard").build();
-        menuJpaRepository.save(menu);
+        Menu menu = createData("freeboard", "자유게시판", "자유게시판입니다", 1, MenuType.BOARD, "freeboard");
         //when
         //then
         Assertions.assertThatThrownBy(() -> {
@@ -182,10 +173,7 @@ class MenuCreateUseCaseTest {
     @Test
     void 메뉴_이미_존재하는_영문_권한명_실패() {
         //given
-        Authority authority = Authority.builder()
-                .nameEng("MENU_freeboard1_ACCESS")
-                .nameKor("테스트")
-                .build();
+        Authority authority = new Authority("freeboard1", "자유게시판2");
         authorityJpaRepository.save(authority);
         //when
         //then
@@ -198,16 +186,13 @@ class MenuCreateUseCaseTest {
                     .description("자유게시판입니다.")
                     .url("freeboard1")
                     .build());
-        }).isInstanceOf(BusinessException.class).hasMessage(AuthorityErrorCode.DUPLICATED_NAME_ENG.getMessage());
+        }).isInstanceOf(BusinessException.class).hasMessage(MenuErrorCode.CAN_NOT_USE_NAME_ENG.getMessage());
     }
 
     @Test
     void 메뉴_이미_존재하는_한글_권한명_실패() {
         //given
-        Authority authority = Authority.builder()
-                .nameEng("MENU_freeboard_ACCESS")
-                .nameKor("자유게시판1 접근")
-                .build();
+        Authority authority = new Authority("freeboard2", "자유게시판1");
         authorityJpaRepository.save(authority);
         //when
         //then
@@ -220,6 +205,6 @@ class MenuCreateUseCaseTest {
                     .description("자유게시판입니다.")
                     .url("freeboard1")
                     .build());
-        }).isInstanceOf(BusinessException.class).hasMessage(AuthorityErrorCode.DUPLICATED_NAME_KOR.getMessage());
+        }).isInstanceOf(BusinessException.class).hasMessage(MenuErrorCode.CAN_NOT_USE_NAME_KOR.getMessage());
     }
 }

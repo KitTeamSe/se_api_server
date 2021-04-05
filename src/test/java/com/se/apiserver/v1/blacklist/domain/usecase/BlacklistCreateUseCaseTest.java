@@ -37,10 +37,10 @@ class BlacklistCreateUseCaseTest {
     void 등록_중복_실패() {
         //given
         //when
-        blacklistJpaRepository.save(Blacklist.builder().ip("127.0.0.1").reason("광고성댓글").build());
+        blacklistJpaRepository.save( new Blacklist("128.0.0.1", "광고성댓글"));
         //then
         Assertions.assertThatThrownBy(() -> {
-            BlacklistReadDto.Response response = blacklistCreateUseCase.create(BlacklistCreateDto.Request.builder().ip("127.0.0.1").build());
+            BlacklistReadDto.Response response = blacklistCreateUseCase.create(BlacklistCreateDto.Request.builder().ip("128.0.0.1").build());
         }).isInstanceOf(BusinessException.class).hasMessage(BlacklistErrorCode.DUPLICATED_BLACKLIST.getMessage());
     }
 }

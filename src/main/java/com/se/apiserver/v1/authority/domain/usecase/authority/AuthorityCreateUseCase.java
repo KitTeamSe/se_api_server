@@ -15,42 +15,24 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class AuthorityCreateUseCase {
 
-    @Value("${spring.authority.menu.eng.prefix}")
-    private String nameEngPrefix;
-
-    @Value("${spring.authority.menu.eng.postfix}")
-    private String nameEngPostfix;
-
-    @Value("${spring.authority.menu.kor.postfix}")
-    private String nameKorPostfix;
-
     private final AuthorityJpaRepository authorityJpaRepository;
 
     @Transactional
     public Authority create(AuthorityCreateDto.Request request){
-        if(authorityJpaRepository.findByNameEng(buildAuthorityNameEng(request.getNameEng())).isPresent())
-            throw new BusinessException(AuthorityErrorCode.DUPLICATED_NAME_ENG);
-
-        if(authorityJpaRepository.findByNameKor(buildAuthorityNameKor(request.getNameKor())).isPresent())
-            throw new BusinessException(AuthorityErrorCode.DUPLICATED_NAME_KOR);
-
-
-        Authority authority = Authority.builder()
-                .nameEng(buildAuthorityNameEng(request.getNameEng()))
-                .nameKor(buildAuthorityNameKor(request.getNameKor()))
-                .build();
-
-        if(request.getMenu() != null)
-            authority.updateMenu(request.getMenu());
-
+        validateDuplicateNameEng(request.getNameEng());
+        validateDuplicateNameKor(request.getNameKor());
+        Authority authority = new Authority(request.getNameEng(), request.getNameKor());
         authorityJpaRepository.save(authority);
         return authority;
     }
 
-    private String buildAuthorityNameEng(String menuName) {
-        return nameEngPrefix + "_" + menuName + "_" + nameEngPostfix;
+    private void validateDuplicateNameEng(String nameEng) {
+        if(authorityJpaRepository.findByNameEng(nameEng).isPresent())
+            throw new BusinessException(AuthorityErrorCode.DUPLICATED_NAME_ENG);
     }
-    private String buildAuthorityNameKor(String menuName) {
-        return menuName + " " + nameKorPostfix;
+
+    private void validateDuplicateNameKor(String nameKor) {
+        if(authorityJpaRepository.findByNameKor(nameKor).isPresent())
+            throw new BusinessException(AuthorityErrorCode.DUPLICATED_NAME_KOR);
     }
 }

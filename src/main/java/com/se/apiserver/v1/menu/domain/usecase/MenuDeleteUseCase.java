@@ -14,13 +14,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class MenuDeleteUseCase {
     private final MenuJpaRepository menuJpaRepository;
 
-    public boolean delete(Long id){
+    public boolean delete(Long id) {
         Menu menu = menuJpaRepository.findById(id).orElseThrow(() -> new BusinessException(MenuErrorCode.NO_SUCH_MENU));
-
-        if(menu.getChild().size() != 0)
-            throw new BusinessException(MenuErrorCode.CHILD_REMOVE_FIRST);
-
+        validateIsRemovable(menu);
         menuJpaRepository.delete(menu);
         return true;
+    }
+
+    private void validateIsRemovable(Menu menu) {
+        if (!menu.isRemovable())
+            throw new BusinessException(MenuErrorCode.CHILD_REMOVE_FIRST);
     }
 }

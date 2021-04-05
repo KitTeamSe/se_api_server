@@ -25,9 +25,7 @@ class TagReadUseCaseTest {
     @Test
     void 태그_조회_성공() {
         //given
-        Tag tag = Tag.builder()
-                .text("태그명")
-                .build();
+        Tag tag = new Tag("태그 내용");
         tagJpaRepository.save(tag);
         //when
         //then
@@ -37,13 +35,9 @@ class TagReadUseCaseTest {
     @Test
     void 태그_매칭_성공() {
         //given
-        Tag tag = Tag.builder()
-                .text("태그명")
-                .build();
+        Tag tag = new Tag("태그 내용");
         tagJpaRepository.save(tag);
-        Tag tag2 = Tag.builder()
-                .text("태그명2")
-                .build();
+        Tag tag2 = new Tag("태그 내용2");
         tagJpaRepository.save(tag2);
         //when
         //then
@@ -53,13 +47,9 @@ class TagReadUseCaseTest {
     @Test
     void 태그_전체검색_성공() {
         //given
-        Tag tag = Tag.builder()
-                .text("태그명")
-                .build();
+        Tag tag = new Tag("태그 내용");
         tagJpaRepository.save(tag);
-        Tag tag2 = Tag.builder()
-                .text("태그명2")
-                .build();
+        Tag tag2 = new Tag("태그 내용2");
         tagJpaRepository.save(tag2);
         //when
         //then
@@ -74,9 +64,7 @@ class TagReadUseCaseTest {
     @Test
     void 태그_해당태그없음_실패() {
         //given
-        Tag tag = Tag.builder()
-                .text("태그명")
-                .build();
+        Tag tag = new Tag("태그 내용");
         tagJpaRepository.save(tag);
         //when
         //then

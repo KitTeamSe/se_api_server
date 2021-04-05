@@ -130,7 +130,7 @@ public class Post extends BaseEntity {
 
   public void addAttaches(List<Attach> attachList) {
     attachList.stream()
-            .forEach(a -> a.setPost(this));
+            .forEach(a -> a.updatePost(this));
   }
 
   public void addAttache(Attach attach) {

@@ -39,17 +39,10 @@ class AuthorityGroupAuthorityMappingCreateUseCaseTest {
     Authority authority;
 
     void initData(){
-        authorityGroup = AuthorityGroup.builder()
-                .name("그룹1")
-                .description("그룹1 설명")
-                .type(AuthorityGroupType.NORMAL)
-                .build();
+        authorityGroup = new AuthorityGroup("그룹1", "그룹1 설명", AuthorityGroupType.NORMAL);
         authorityGroupJpaRepository.save(authorityGroup);
 
-        authority = Authority.builder()
-                .nameEng("auth1")
-                .nameKor("권한1")
-                .build();
+        authority = new Authority("newAuth", "새로운권한");
         authorityJpaRepository.save(authority);
     }
 
@@ -58,16 +51,17 @@ class AuthorityGroupAuthorityMappingCreateUseCaseTest {
         //given
         initData();
         //when
-        AuthorityGroupAuthorityMappingReadDto.Response response = authorityGroupAuthorityMappingCreateUseCase.create(AuthorityGroupAuthorityMappingCreateDto.Request.builder()
+        Long id = authorityGroupAuthorityMappingCreateUseCase.create(AuthorityGroupAuthorityMappingCreateDto.Request.builder()
                 .authorityId(authority.getAuthorityId())
                 .groupId(authorityGroup.getAuthorityGroupId())
                 .build());
+        AuthorityGroupAuthorityMapping response = authorityGroupAuthorityMappingJpaRepository.findById(id).get();
         //then
-        Assertions.assertThat(response.getAuthorityId()).isEqualTo(authority.getAuthorityId());
-        Assertions.assertThat(response.getAuthorityIdNameEng()).isEqualTo(authority.getNameEng());
-        Assertions.assertThat(response.getAuthorityIdNameKor()).isEqualTo(authority.getNameKor());
-        Assertions.assertThat(response.getGroupId()).isEqualTo(authorityGroup.getAuthorityGroupId());
-        Assertions.assertThat(response.getGroupName()).isEqualTo(authorityGroup.getName());
+        Assertions.assertThat(response.getAuthority().getAuthorityId()).isEqualTo(authority.getAuthorityId());
+        Assertions.assertThat(response.getAuthority().getNameEng()).isEqualTo(authority.getNameEng());
+        Assertions.assertThat(response.getAuthority().getNameKor()).isEqualTo(authority.getNameKor());
+        Assertions.assertThat(response.getAuthorityGroup().getAuthorityGroupId()).isEqualTo(authorityGroup.getAuthorityGroupId());
+        Assertions.assertThat(response.getAuthorityGroup().getName()).isEqualTo(authorityGroup.getName());
     }
 
     @Test
@@ -77,8 +71,8 @@ class AuthorityGroupAuthorityMappingCreateUseCaseTest {
         //when
         //then
         Assertions.assertThatThrownBy(() -> {
-            AuthorityGroupAuthorityMappingReadDto.Response response = authorityGroupAuthorityMappingCreateUseCase.create(AuthorityGroupAuthorityMappingCreateDto.Request.builder()
-                    .authorityId(authority.getAuthorityId() + 1)
+            Long id = authorityGroupAuthorityMappingCreateUseCase.create(AuthorityGroupAuthorityMappingCreateDto.Request.builder()
+                    .authorityId(authority.getAuthorityId()+1)
                     .groupId(authorityGroup.getAuthorityGroupId())
                     .build());
         }).isInstanceOf(BusinessException.class).hasMessage(AuthorityErrorCode.NO_SUCH_AUTHORITY.getMessage());
@@ -91,7 +85,7 @@ class AuthorityGroupAuthorityMappingCreateUseCaseTest {
         //when
         //then
         Assertions.assertThatThrownBy(() -> {
-            AuthorityGroupAuthorityMappingReadDto.Response response = authorityGroupAuthorityMappingCreateUseCase.create(AuthorityGroupAuthorityMappingCreateDto.Request.builder()
+            Long id = authorityGroupAuthorityMappingCreateUseCase.create(AuthorityGroupAuthorityMappingCreateDto.Request.builder()
                     .authorityId(authority.getAuthorityId())
                     .groupId(authorityGroup.getAuthorityGroupId()+1)
                     .build());
@@ -103,14 +97,11 @@ class AuthorityGroupAuthorityMappingCreateUseCaseTest {
         //given
         initData();
         //when
-        AuthorityGroupAuthorityMapping authorityGroupAuthorityMapping = AuthorityGroupAuthorityMapping.builder()
-                .authorityGroup(authorityGroup)
-                .authority(authority)
-                .build();
+        AuthorityGroupAuthorityMapping authorityGroupAuthorityMapping = new AuthorityGroupAuthorityMapping(authority,authorityGroup);
         authorityGroupAuthorityMappingJpaRepository.save(authorityGroupAuthorityMapping);
         //then
         Assertions.assertThatThrownBy(() -> {
-            AuthorityGroupAuthorityMappingReadDto.Response response = authorityGroupAuthorityMappingCreateUseCase.create(AuthorityGroupAuthorityMappingCreateDto.Request.builder()
+            Long id = authorityGroupAuthorityMappingCreateUseCase.create(AuthorityGroupAuthorityMappingCreateDto.Request.builder()
                     .authorityId(authority.getAuthorityId())
                     .groupId(authorityGroup.getAuthorityGroupId())
                     .build());

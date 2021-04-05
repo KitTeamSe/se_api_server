@@ -84,14 +84,10 @@ class TagListeningReadUseCaseTest {
         accountJpaRepository.save(account2);
 
 
-        tag1 = Tag.builder()
-                .text("새로운태그")
-                .build();
+        tag1 = new Tag("새로은태그");
         tagJpaRepository.save(tag1);
 
-        tag2 = Tag.builder()
-                .text("새로운태그2")
-                .build();
+        tag2 = new Tag("새로운태그2");
         tagJpaRepository.save(tag2);
     }
 
@@ -99,10 +95,7 @@ class TagListeningReadUseCaseTest {
     void 수신태그_조회_본인_성공() {
         //given
         initData();
-        TagListening tagListening = TagListening.builder()
-                .tag(tag1)
-                .account(account1)
-                .build();
+        TagListening tagListening = new TagListening(account1, tag1);
         tagListeningJpaRepository.save(tagListening);
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(String.valueOf(account1.getAccountId()),
                 "3", Arrays.asList(new SimpleGrantedAuthority("ACCOUNT_ACCESS"))));
@@ -119,10 +112,7 @@ class TagListeningReadUseCaseTest {
     void 수신태그_조회_관리자_성공() {
         //given
         initData();
-        TagListening tagListening = TagListening.builder()
-                .tag(tag1)
-                .account(account1)
-                .build();
+        TagListening tagListening = new TagListening(account1, tag1);
         tagListeningJpaRepository.save(tagListening);
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(String.valueOf(account2.getAccountId()),
                 "3", Arrays.asList(new SimpleGrantedAuthority("TAG_MANAGE"))));
@@ -139,10 +129,7 @@ class TagListeningReadUseCaseTest {
     void 수신태그_조회_본인아님_실패() {
         //given
         initData();
-        TagListening tagListening = TagListening.builder()
-                .tag(tag1)
-                .account(account1)
-                .build();
+        TagListening tagListening = new TagListening(account1, tag1);
         tagListeningJpaRepository.save(tagListening);
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(String.valueOf(account2.getAccountId()),
                 "3", Arrays.asList(new SimpleGrantedAuthority("ACCOUNT_ACCESS"))));
@@ -159,15 +146,9 @@ class TagListeningReadUseCaseTest {
     void 사용자의_수신_태그_목록_조회_본인_성공() {
         //given
         initData();
-        TagListening tagListening1 = TagListening.builder()
-                .tag(tag1)
-                .account(account1)
-                .build();
+        TagListening tagListening1 = new TagListening(account1, tag1);
         tagListeningJpaRepository.save(tagListening1);
-        TagListening tagListening2 = TagListening.builder()
-                .tag(tag2)
-                .account(account1)
-                .build();
+        TagListening tagListening2 = new TagListening(account1, tag2);
         tagListeningJpaRepository.save(tagListening2);
 
 
@@ -183,15 +164,9 @@ class TagListeningReadUseCaseTest {
     void 사용자의_수신_태그_목록_조회_관리자_성공() {
         //given
         initData();
-        TagListening tagListening1 = TagListening.builder()
-                .tag(tag1)
-                .account(account1)
-                .build();
+        TagListening tagListening1 = new TagListening(account1, tag1);
         tagListeningJpaRepository.save(tagListening1);
-        TagListening tagListening2 = TagListening.builder()
-                .tag(tag2)
-                .account(account1)
-                .build();
+        TagListening tagListening2 = new TagListening(account1, tag2);
         tagListeningJpaRepository.save(tagListening2);
 
 
@@ -207,15 +182,9 @@ class TagListeningReadUseCaseTest {
     void 사용자의_수신_태그_목록_조회_본인아님_실패() {
         //given
         initData();
-        TagListening tagListening1 = TagListening.builder()
-                .tag(tag1)
-                .account(account1)
-                .build();
+        TagListening tagListening1 = new TagListening(account1, tag1);
         tagListeningJpaRepository.save(tagListening1);
-        TagListening tagListening2 = TagListening.builder()
-                .tag(tag2)
-                .account(account1)
-                .build();
+        TagListening tagListening2 = new TagListening(account1, tag2);
         tagListeningJpaRepository.save(tagListening2);
 
 
@@ -234,15 +203,9 @@ class TagListeningReadUseCaseTest {
     void 수신태그_전체목록_관리자_성공() {
         //given
         initData();
-        TagListening tagListening1 = TagListening.builder()
-                .tag(tag1)
-                .account(account1)
-                .build();
+        TagListening tagListening1 = new TagListening(account1, tag1);
         tagListeningJpaRepository.save(tagListening1);
-        TagListening tagListening2 = TagListening.builder()
-                .tag(tag2)
-                .account(account1)
-                .build();
+        TagListening tagListening2 = new TagListening(account1, tag2);
         tagListeningJpaRepository.save(tagListening2);
 
 

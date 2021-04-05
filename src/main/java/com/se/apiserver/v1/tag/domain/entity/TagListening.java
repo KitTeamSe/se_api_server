@@ -25,9 +25,7 @@ public class TagListening extends AccountGenerateEntity {
     @JoinColumn(name = "tag_id", referencedColumnName = "tagId", nullable = false)
     private Tag tag;
 
-    @Builder
-    public TagListening(Long tagListeningId, Account account, Tag tag) {
-        this.tagListeningId = tagListeningId;
+    public TagListening(Account account, Tag tag) {
         this.account = account;
         this.tag = tag;
     }

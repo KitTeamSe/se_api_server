@@ -34,7 +34,6 @@ public class AuthorityGroupReadUseCase {
 
     public PageImpl readAll(Pageable pageable){
         Page<AuthorityGroup> authorityGroups = authorityGroupJpaRepository.findAll(pageable);
-
         List<AuthorityGroupReadDto.Response> responseList = authorityGroups.stream()
                 .map(a -> AuthorityGroupReadDto.Response.fromEntity(a))
                 .collect(Collectors.toList());

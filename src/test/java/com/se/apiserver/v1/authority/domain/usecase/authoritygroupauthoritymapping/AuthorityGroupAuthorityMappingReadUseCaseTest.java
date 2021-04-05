@@ -40,35 +40,19 @@ class AuthorityGroupAuthorityMappingReadUseCaseTest {
     AuthorityGroupAuthorityMapping authorityGroupAuthorityMapping2;
 
     void initData(){
-        authorityGroup = AuthorityGroup.builder()
-                .name("그룹1")
-                .description("그룹1 설명")
-                .type(AuthorityGroupType.NORMAL)
-                .build();
+        authorityGroup = new AuthorityGroup("그룹1", "그룹1 설명", AuthorityGroupType.NORMAL);
         authorityGroupJpaRepository.save(authorityGroup);
 
-        authority1 = Authority.builder()
-                .nameEng("auth1")
-                .nameKor("권한1")
-                .build();
+        authority1 = new Authority("auth1", "권한1");
         authorityJpaRepository.save(authority1);
 
-        authority2 = Authority.builder()
-                .nameEng("auth2")
-                .nameKor("권한2")
-                .build();
+        authority2 = new Authority("auth2", "권한2");
         authorityJpaRepository.save(authority2);
 
-        authorityGroupAuthorityMapping1 = AuthorityGroupAuthorityMapping.builder()
-                .authority(authority1)
-                .authorityGroup(authorityGroup)
-                .build();
+        authorityGroupAuthorityMapping1 = new AuthorityGroupAuthorityMapping(authority1,authorityGroup);
         authorityGroupAuthorityMappingJpaRepository.save(authorityGroupAuthorityMapping1);
 
-        authorityGroupAuthorityMapping2 = AuthorityGroupAuthorityMapping.builder()
-                .authority(authority2)
-                .authorityGroup(authorityGroup)
-                .build();
+        authorityGroupAuthorityMapping2 = new AuthorityGroupAuthorityMapping(authority2,authorityGroup);
         authorityGroupAuthorityMappingJpaRepository.save(authorityGroupAuthorityMapping2);
     }
 

@@ -18,14 +18,11 @@ public class TagCreateUseCase {
     private final TagJpaRepository tagJpaRepository;
 
     @Transactional
-    public TagReadDto.Response create(TagCreateDto.Request request) {
+    public Long create(TagCreateDto.Request request) {
         if(tagJpaRepository.findByText(request.getText()).isPresent())
             throw new BusinessException(TagErrorCode.DUPLICATED_TAG);
-
-        Tag tag = Tag.builder()
-                .text(request.getText())
-                .build();
+        Tag tag = new Tag(request.getText());
         tagJpaRepository.save(tag);
-        return TagReadDto.Response.fromEntity(tag);
+        return tag.getTagId();
     }
 }

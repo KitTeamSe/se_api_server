@@ -25,31 +25,19 @@ class MenuDeleteUseCaseTest {
     @Autowired
     AuthorityJpaRepository authorityJpaRepository;
 
-    private Menu.MenuBuilder createData(String nameEng, String nameKor, String description, Integer order, MenuType menuType, String url) {
-        Menu.MenuBuilder menuBuilder = Menu.builder()
-                .nameEng(nameEng)
-                .nameKor(nameKor)
-                .description(description)
-                .menuOrder(order)
-                .menuType(menuType)
-                .url(url);
-
-        return menuBuilder;
+    private Menu createData(String nameEng, String nameKor, String description, Integer order, MenuType menuType, String url){
+        Menu menu = new Menu(nameEng, url, nameKor,order, description, menuType);
+        menuJpaRepository.save(menu);
+        return menu;
     }
 
     @Test
     void 메뉴_삭제_성공() {
         //given
-        Menu menu = createData("freeboard1", "자유게시판1", "자유게시판입니다", 2, MenuType.BOARD, "freeboard1").build();
-        Authority authority = Authority.builder()
-                .nameKor("자유게시판1 접근")
-                .nameEng("MENU_freeboard1_ACCESS").build();
-        authority.updateMenu(menu);
-        authorityJpaRepository.save(authority);
-        menuJpaRepository.save(menu);
-        Long menuId = menu.getMenuId();
-        Long authorityId = authority.getAuthorityId();
+        Menu menu = createData("freeboard1", "자유게시판1", "자유게시판입니다", 2, MenuType.BOARD, "freeboard1");
 
+        Long menuId = menu.getMenuId();
+        Long authorityId = menu.getAuthority().getAuthorityId();
         //when
         menuDeleteUseCase.delete(menu.getMenuId());
         //then
@@ -60,10 +48,8 @@ class MenuDeleteUseCaseTest {
     @Test
     void 메뉴_삭제_자식있을때_실패() {
         //given
-        Menu menu2 = createData("freeboard1", "자유게시판1", "자유게시판입니다", 2, MenuType.FOLDER, "freeboard1").build();
-        menuJpaRepository.save(menu2);
-
-        Menu menu = createData("freeboard", "자유게시판", "자유게시판입니다", 1, MenuType.BOARD, "freeboard2").build();
+        Menu menu2 = createData("freeboard1", "자유게시판1", "자유게시판입니다", 2, MenuType.FOLDER, "freeboard1");
+        Menu menu = createData("freeboard", "자유게시판", "자유게시판입니다", 1, MenuType.BOARD, "freeboard2");
         menu.updateParent(menu2);
         menuJpaRepository.save(menu);
         //when

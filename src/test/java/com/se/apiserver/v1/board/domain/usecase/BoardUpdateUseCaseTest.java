@@ -30,38 +30,33 @@ class BoardUpdateUseCaseTest {
     @Test
     void 게시판_수정_성공() {
         //given
-        BoardReadDto.ReadResponse readResponse = boardCreateUseCase.create(BoardCreateDto.Request.builder()
-                .menuOrder(1)
-                .nameKor("자유게시판")
-                .nameEng("freeboard")
-                .build());
+        Board board = new Board("freeboard", "자유게시판");
+        boardJpaRepository.save(board);
         //when
         boardUpdateUseCase.update(BoardUpdateDto.Request.builder()
-        .boardId(readResponse.getBoardId())
+        .boardId(board.getBoardId())
         .nameEng("freeboard1")
         .nameKor("자유게시판1")
         .build());
         //then
-        Board board = boardJpaRepository.findById(readResponse.getBoardId()).get();
-        Assertions.assertThat(board.getNameKor()).isEqualTo("자유게시판1");
-        Assertions.assertThat(board.getNameEng()).isEqualTo("freeboard1");
-        Assertions.assertThat(board.getMenu().getNameKor()).isEqualTo("자유게시판1");
-        Assertions.assertThat(board.getMenu().getNameEng()).isEqualTo("freeboard1");
-        Assertions.assertThat(board.getMenu().getAuthority().getNameEng()).isEqualTo("MENU_freeboard1_ACCESS");
-        Assertions.assertThat(board.getMenu().getAuthority().getNameKor()).isEqualTo("자유게시판1 접근");
+        Board updated = boardJpaRepository.findById(board.getBoardId()).get();
+        Assertions.assertThat(updated.getNameKor()).isEqualTo("자유게시판1");
+        Assertions.assertThat(updated.getNameEng()).isEqualTo("freeboard1");
+        Assertions.assertThat(updated.getMenu().getNameKor()).isEqualTo("자유게시판1");
+        Assertions.assertThat(updated.getMenu().getNameEng()).isEqualTo("freeboard1");
+        Assertions.assertThat(updated.getMenu().getAuthority().getNameEng()).isEqualTo("freeboard1");
+        Assertions.assertThat(updated.getMenu().getAuthority().getNameKor()).isEqualTo("자유게시판1");
     }
 
     @Test
     void 게시판_이미존재하는_게시판_영문명_실패() {
         //given
-        BoardReadDto.ReadResponse readResponse = boardCreateUseCase.create(BoardCreateDto.Request.builder()
-                .menuOrder(1)
+        Long id = boardCreateUseCase.create(BoardCreateDto.Request.builder()
                 .nameKor("자유게시판")
                 .nameEng("freeboard")
                 .build());
 
         boardCreateUseCase.create(BoardCreateDto.Request.builder()
-                .menuOrder(1)
                 .nameKor("자유게시판1")
                 .nameEng("freeboard1")
                 .build());
@@ -69,7 +64,7 @@ class BoardUpdateUseCaseTest {
         //then
         Assertions.assertThatThrownBy(() -> {
             boardUpdateUseCase.update(BoardUpdateDto.Request.builder()
-                    .boardId(readResponse.getBoardId())
+                    .boardId(id)
                     .nameEng("freeboard1")
                     .nameKor("테스트")
                     .build());

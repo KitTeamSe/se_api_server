@@ -1,7 +1,7 @@
 package com.se.apiserver.v1.menu.domain.usecase;
 
 import com.se.apiserver.v1.authority.domain.usecase.authority.AuthorityUpdateUseCase;
-import com.se.apiserver.v1.authority.infra.dto.authority.AuthorityUpdateDto;
+import com.se.apiserver.v1.authority.infra.repository.AuthorityJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.common.domain.usecase.UseCase;
 import com.se.apiserver.v1.menu.domain.entity.Menu;
@@ -17,72 +17,79 @@ import org.springframework.transaction.annotation.Transactional;
 public class MenuUpdateUseCase {
 
     private final MenuJpaRepository menuJpaRepository;
-
-    private final AuthorityUpdateUseCase authorityUpdateUseCase;
-
+    private final AuthorityJpaRepository authorityJpaRepository;
     @Transactional
-    public MenuUpdateDto.Response update(MenuUpdateDto.Request request) {
-
+    public Long update(MenuUpdateDto.Request request) {
         Menu menu = menuJpaRepository.findById(request.getMenuId()).orElseThrow(() -> new BusinessException(MenuErrorCode.NO_SUCH_MENU));
-        if (request.getNameEng() != null && menuJpaRepository.findByNameEng(request.getNameEng()).isPresent())
-            throw new BusinessException(MenuErrorCode.DUPLICATED_MENU_NAME_ENG);
 
-        if(request.getNameEng() != null) {
-            menu.updateNameEng(request.getNameEng());
-            authorityUpdateUseCase.update(AuthorityUpdateDto.Request.builder()
-                    .id(menu.getAuthority().getAuthorityId())
-                    .nameEng(request.getNameEng()).build());
-        }
-
-        if (request.getNameKor() != null && menuJpaRepository.findByNameKor(request.getNameKor()).isPresent())
-            throw new BusinessException(MenuErrorCode.DUPLICATED_MENU_NAME_KOR);
-
-        if(request.getNameKor() != null) {
-            menu.updateNameKor(request.getNameKor());
-            authorityUpdateUseCase.update(AuthorityUpdateDto.Request.builder()
-                    .id(menu.getAuthority().getAuthorityId())
-                    .nameKor(request.getNameKor()).build());
-        }
-
-        if(request.getUrl() != null && menuJpaRepository.findByUrl(request.getUrl()).isPresent())
-            throw new BusinessException(MenuErrorCode.DUPLICATED_URL);
-
-        if(request.getUrl() != null)
-            menu.updateUrl(request.getUrl());
-
-        //TODO 게시판이랑 연관관계 생기면 수정해야함
-        if(request.getMenuType() != null){
-           menu.updateMenuType(request.getMenuType());
-        }
-
-        if(request.getParentId() != null){
-            Menu parent = menuJpaRepository.findById(request.getParentId()).orElseThrow(() -> new BusinessException(MenuErrorCode.NO_SUCH_MENU));
-            checkCycle(menu,parent);
-            menu.updateParent(parent);
-        }
-
-        if(request.getDescription() != null)
-            menu.updateDescription(request.getDescription());
-
-        if(request.getMenuOrder() != null)
-            menu.updateMenuOrder(request.getMenuOrder());
-
+        updateNameEngIfExist(menu, request.getNameEng());
+        updateNameKorIfExist(menu, request.getNameKor());
+        updateUrlIfExist(menu, request.getUrl());
+        updateParentIfExist(menu, request.getParentId());
+        updateDescriptionIfExist(menu, request.getDescription());
+        updateMenuOrderIfExist(menu, request.getMenuOrder());
         menuJpaRepository.save(menu);
-
-        return MenuUpdateDto.Response.fromEntity(menu);
+        return menu.getMenuId();
     }
 
-    private void checkCycle(Menu menu, Menu noChild) {
-        if(dfs(menu, noChild))
-            throw new BusinessException(MenuErrorCode.OCCUR_CYCLE);
+    private void updateMenuOrderIfExist(Menu menu, Integer menuOrder) {
+        if (menuOrder == null)
+            return;
+        menu.updateMenuOrder(menuOrder);
     }
 
-    private boolean dfs(Menu now, Menu noChild) {
-        if(now == noChild)
-            return true;
-        for(Menu child : now.getChild()){
-            return dfs(child, noChild);
-        }
-        return false;
+    private void updateDescriptionIfExist(Menu menu, String description) {
+        if (description == null)
+            return;
+        menu.updateDescription(description);
     }
+
+    private void updateParentIfExist(Menu menu, Long parentId) {
+        if (parentId == null)
+            return;
+        Menu parent = menuJpaRepository.findById(parentId).orElseThrow(() -> new BusinessException(MenuErrorCode.NO_SUCH_MENU));
+        menu.updateParent(parent);
+    }
+
+    private void updateUrlIfExist(Menu menu, String url) {
+        if (url == null)
+            return;
+        validateDuplicateUrl(url);
+        menu.updateUrl(url);
+    }
+
+    private void updateNameKorIfExist(Menu menu, String nameKor) {
+        if (nameKor == null)
+            return;
+        validateDuplicateNameKor(nameKor);
+        menu.updateNameKor(nameKor);
+    }
+
+    private void updateNameEngIfExist(Menu menu, String nameEng) {
+        if (nameEng == null)
+            return;
+        validateDuplicateNameEng(nameEng);
+        menu.updateNameEng(nameEng);
+    }
+
+    private void validateDuplicateUrl(String url) {
+        if (menuJpaRepository.findByUrl(url).isPresent())
+            throw new BusinessException(MenuErrorCode.DUPLICATED_URL);
+    }
+
+    private void validateDuplicateNameEng(String nameEng) {
+        if (menuJpaRepository.findByNameEng(nameEng).isPresent())
+            throw new BusinessException(MenuErrorCode.DUPLICATED_MENU_NAME_ENG);
+        if (authorityJpaRepository.findByNameEng(nameEng).isPresent())
+            throw new BusinessException(MenuErrorCode.CAN_NOT_USE_NAME_ENG);
+    }
+
+    private void validateDuplicateNameKor(String nameKor) {
+        if (menuJpaRepository.findByNameKor(nameKor).isPresent())
+            throw new BusinessException(MenuErrorCode.DUPLICATED_MENU_NAME_KOR);
+        if (authorityJpaRepository.findByNameKor(nameKor).isPresent())
+            throw new BusinessException(MenuErrorCode.CAN_NOT_USE_NAME_KOR);
+    }
+
+
 }

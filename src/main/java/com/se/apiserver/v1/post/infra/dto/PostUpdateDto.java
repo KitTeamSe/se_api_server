@@ -13,10 +13,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,10 +51,12 @@ public class PostUpdateDto {
     private PostIsSecret isSecret;
 
     @ApiModelProperty(notes = "첨부 파일들")
-    private List<PostCreateDto.AttachDto> attachmentList = new ArrayList<>();
+    @Singular("attachmentList")
+    private List<PostCreateDto.AttachDto> attachmentList;
 
     @ApiModelProperty(notes = "태그들")
-    private List<PostCreateDto.TagDto> tagList = new ArrayList<>();
+    @Singular("tagList")
+    private List<PostCreateDto.TagDto> tagList;
   }
 
 }
