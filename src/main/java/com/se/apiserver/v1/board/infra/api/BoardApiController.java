@@ -50,7 +50,7 @@ public class BoardApiController {
     @PreAuthorize("hasAuthority('MENU_MANAGE')")
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "게시판 수정")
-    public SuccessResponse<BoardReadDto.ReadResponse> update(@RequestBody @Validated BoardUpdateDto.Request request){
+    public SuccessResponse<Long> update(@RequestBody @Validated BoardUpdateDto.Request request){
         return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 조회되었습니다", boardUpdateUseCase.update(request));
     }
 
@@ -67,7 +67,7 @@ public class BoardApiController {
     @PreAuthorize("hasAuthority('MENU_MANAGE')")
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "게시판 등록")
-    public SuccessResponse<BoardReadDto.ReadResponse> update(@RequestBody @Validated BoardCreateDto.Request request){
+    public SuccessResponse<Long> update(@RequestBody @Validated BoardCreateDto.Request request){
         return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 등록되었습니다", boardCreateUseCase.create(request));
     }
 }

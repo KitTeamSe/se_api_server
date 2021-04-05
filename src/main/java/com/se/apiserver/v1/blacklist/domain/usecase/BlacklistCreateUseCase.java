@@ -20,14 +20,14 @@ public class BlacklistCreateUseCase {
 
     @Transactional
     public BlacklistReadDto.Response create(BlacklistCreateDto.Request request) {
-        if(blacklistJpaRepository.findByIp(request.getIp()).isPresent())
-            throw new BusinessException(BlacklistErrorCode.DUPLICATED_BLACKLIST);
-        Blacklist blacklist = Blacklist.builder()
-                .ip(request.getIp())
-                .reason(request.getReason())
-                .build();
-
+        validateDuplicateIp(request.getIp());
+        Blacklist blacklist = new Blacklist(request.getIp(), request.getReason());
         blacklistJpaRepository.save(blacklist);
         return BlacklistReadDto.Response.fromEntity(blacklist);
+    }
+
+    private void validateDuplicateIp(String ip) {
+        if(blacklistJpaRepository.findByIp(ip).isPresent())
+            throw new BusinessException(BlacklistErrorCode.DUPLICATED_BLACKLIST);
     }
 }

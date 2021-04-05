@@ -61,11 +61,7 @@ class AuthorityGroupAccountMappingDeleteUseCaseTest {
 
         accountJpaRepository.save(account);
 
-        authorityGroup = AuthorityGroup.builder()
-                .name("권한그룹1")
-                .description("권한설명1")
-                .type(AuthorityGroupType.NORMAL)
-                .build();
+        authorityGroup = new AuthorityGroup("권한그룹1", "권한설명1", AuthorityGroupType.NORMAL);
         authorityGroupJpaRepository.save(authorityGroup);
     }
 
@@ -73,10 +69,7 @@ class AuthorityGroupAccountMappingDeleteUseCaseTest {
     void 삭제_성공() {
         //given
         initData();
-        AuthorityGroupAccountMapping authorityGroupAccountMapping = AuthorityGroupAccountMapping.builder()
-                .account(account)
-                .authorityGroup(authorityGroup)
-                .build();
+        AuthorityGroupAccountMapping authorityGroupAccountMapping = new AuthorityGroupAccountMapping(account,authorityGroup);
         AuthorityGroupAccountMapping save = authorityGroupAccountMappingJpaRepository.save(authorityGroupAccountMapping);
         Long id = save.getAuthorityGroupAccountMappingId();
         //when
@@ -89,10 +82,7 @@ class AuthorityGroupAccountMappingDeleteUseCaseTest {
     void 삭제_실패_미존재() {
         //given
         initData();
-        AuthorityGroupAccountMapping authorityGroupAccountMapping = AuthorityGroupAccountMapping.builder()
-                .account(account)
-                .authorityGroup(authorityGroup)
-                .build();
+        AuthorityGroupAccountMapping authorityGroupAccountMapping = new AuthorityGroupAccountMapping(account,authorityGroup);
         AuthorityGroupAccountMapping save = authorityGroupAccountMappingJpaRepository.save(authorityGroupAccountMapping);
         Long id = save.getAuthorityGroupAccountMappingId();
         //when

@@ -15,5 +15,5 @@ public interface MenuJpaRepository extends JpaRepository<Menu, Long> {
     Optional<Menu> findByUrl(String url);
 
     @Query("select m from Menu m where m.parent is null")
-    List<Menu> findIncludeAuthorities(Set<String> authoritySet);
+    List<Menu> findAllRootMenu();
 }

@@ -82,9 +82,7 @@ class TagListeningCreateUseCaseTest {
         accountJpaRepository.save(account2);
 
 
-        tag1 = Tag.builder()
-                .text("새로운태그")
-                .build();
+        tag1 = new Tag("새로운 태그");
         tagJpaRepository.save(tag1);
     }
 
@@ -97,35 +95,16 @@ class TagListeningCreateUseCaseTest {
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(String.valueOf(account1.getAccountId()),
                 "3", Arrays.asList(new SimpleGrantedAuthority("ACCOUNT_ACCESS"))));
         //when
-        TagListeningReadDto.Response response = tagListeningCreateUseCase.create(TagListeningCreateDto.Request.builder()
-                .accountId(account1.getAccountId())
+        Long id = tagListeningCreateUseCase.create(TagListeningCreateDto.Request.builder()
                 .tagId(tag1.getTagId())
                 .build());
+        TagListening response = tagListeningJpaRepository.getOne(id);
         //then
-        Assertions.assertThat(response.getAccountId()).isEqualTo(account1.getAccountId());
-        Assertions.assertThat(response.getAccountIdString()).isEqualTo(account1.getIdString());
-        Assertions.assertThat(response.getTagId()).isEqualTo(tag1.getTagId());
-        Assertions.assertThat(response.getTagName()).isEqualTo(tag1.getText());
+        Assertions.assertThat(response.getAccount().getAccountId()).isEqualTo(account1.getAccountId());
+        Assertions.assertThat(response.getAccount().getIdString()).isEqualTo(account1.getIdString());
+        Assertions.assertThat(response.getTag().getTagId()).isEqualTo(tag1.getTagId());
+        Assertions.assertThat(response.getTag().getText()).isEqualTo(tag1.getText());
     }
-
-    @Test
-    void 수신태그_등록_관리자_성공() {
-        //given
-        initData();
-        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(String.valueOf(account2.getAccountId()),
-                "3", Arrays.asList(new SimpleGrantedAuthority("TAG_MANAGE"))));
-        //when
-        TagListeningReadDto.Response response = tagListeningCreateUseCase.create(TagListeningCreateDto.Request.builder()
-                .accountId(account1.getAccountId())
-                .tagId(tag1.getTagId())
-                .build());
-        //then
-        Assertions.assertThat(response.getAccountId()).isEqualTo(account1.getAccountId());
-        Assertions.assertThat(response.getAccountIdString()).isEqualTo(account1.getIdString());
-        Assertions.assertThat(response.getTagId()).isEqualTo(tag1.getTagId());
-        Assertions.assertThat(response.getTagName()).isEqualTo(tag1.getText());
-    }
-
 
     @Test
     void 수신태그_중복_실패() {
@@ -133,36 +112,15 @@ class TagListeningCreateUseCaseTest {
         initData();
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(String.valueOf(account1.getAccountId()),
                 "3", Arrays.asList(new SimpleGrantedAuthority("ACCOUNT_ACCESS"))));
-        TagListening tagListening = TagListening.builder()
-                .account(account1)
-                .tag(tag1)
-                .build();
+        TagListening tagListening = new TagListening(account1, tag1);
         tagListeningJpaRepository.save(tagListening);
         //when
         //then
         Assertions.assertThatThrownBy(() -> {
-            TagListeningReadDto.Response response = tagListeningCreateUseCase.create(TagListeningCreateDto.Request.builder()
-                    .accountId(account1.getAccountId())
+            tagListeningCreateUseCase.create(TagListeningCreateDto.Request.builder()
                     .tagId(tag1.getTagId())
                     .build());
         }).isInstanceOf(BusinessException.class).hasMessage(TagListeningErrorCode.DUPLICATED.getMessage());
     }
 
-
-    @Test
-    void 수신태그_등록_본인아님_실패() {
-        //given
-        initData();
-        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(String.valueOf(account2.getAccountId()),
-                "3", Arrays.asList(new SimpleGrantedAuthority("ACCOUNT_ACCESS"))));
-        //when
-        //then
-        Assertions.assertThatThrownBy(() ->
-        {
-            TagListeningReadDto.Response response = tagListeningCreateUseCase.create(TagListeningCreateDto.Request.builder()
-                .accountId(account1.getAccountId())
-                .tagId(tag1.getTagId())
-                .build());
-        }).isInstanceOf(AccessDeniedException.class);
-    }
 }

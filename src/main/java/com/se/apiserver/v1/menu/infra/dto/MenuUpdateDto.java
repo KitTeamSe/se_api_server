@@ -47,8 +47,6 @@ public class MenuUpdateDto {
         @ApiModelProperty(notes = "설명", example = "자유게시판 입니다.")
         private String description;
 
-        private MenuType menuType;
-
         @Min(1)
         @ApiModelProperty(notes = "상위 메뉴 pk, null 가능", example = "2")
         private Long parentId;

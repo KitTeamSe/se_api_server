@@ -50,7 +50,7 @@ public class BlacklistApiController {
     @PostMapping("/blacklist")
     @ApiOperation("블랙리스트 등록")
     @ResponseStatus(value = HttpStatus.OK)
-    public SuccessResponse<BlacklistReadDto.Response> create(@RequestBody @Validated BlacklistCreateDto.Request request){
+    public SuccessResponse<Long> create(@RequestBody @Validated BlacklistCreateDto.Request request){
         return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 등록되었습니다.", blacklistCreateUseCase.create(request));
     }
 

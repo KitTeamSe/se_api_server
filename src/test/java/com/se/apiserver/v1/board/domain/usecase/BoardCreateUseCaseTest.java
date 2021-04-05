@@ -36,99 +36,79 @@ class BoardCreateUseCaseTest {
     void 게시판_생성_성공() {
         //given
         //when
-        BoardReadDto.ReadResponse readResponse = boardCreateUseCase.create(BoardCreateDto.Request.builder()
+        Long id = boardCreateUseCase.create(BoardCreateDto.Request.builder()
                 .nameEng("freeboard")
                 .nameKor("자유게시판")
-                .menuOrder(1).build());
+                .build());
         //then
-        Board board = boardJpaRepository.findById(readResponse.getBoardId()).get();
+        Board board = boardJpaRepository.findById(id).get();
         Assertions.assertThat(board.getNameEng()).isEqualTo("freeboard");
         Assertions.assertThat(board.getNameKor()).isEqualTo("자유게시판");
         Assertions.assertThat(board.getMenu().getNameEng()).isEqualTo("freeboard");
         Assertions.assertThat(board.getMenu().getNameKor()).isEqualTo("자유게시판");
         Assertions.assertThat(board.getMenu().getMenuOrder()).isEqualTo(1);
-        Assertions.assertThat(board.getMenu().getAuthority().getNameEng()).isEqualTo("MENU_freeboard_ACCESS");
-        Assertions.assertThat(board.getMenu().getAuthority().getNameKor()).isEqualTo("자유게시판 접근");
+        Assertions.assertThat(board.getMenu().getAuthority().getNameEng()).isEqualTo("freeboard");
+        Assertions.assertThat(board.getMenu().getAuthority().getNameKor()).isEqualTo("자유게시판");
     }
 
     @Test
     void 게시판_이미존재하는_영문명_실패() {
-        Board board = Board.builder()
-                .nameKor("테스트")
-                .nameEng("freeboard")
-                .build();
+        Board board = new Board("freeboard", "자유게시판1");
         boardJpaRepository.save(board);
         //given
         //when
 
         //then
         Assertions.assertThatThrownBy(() -> {
-            BoardReadDto.ReadResponse readResponse = boardCreateUseCase.create(BoardCreateDto.Request.builder()
+            boardCreateUseCase.create(BoardCreateDto.Request.builder()
                     .nameEng("freeboard")
                     .nameKor("자유게시판")
-                    .menuOrder(1).build());
+                    .build());
         }).isInstanceOf(BusinessException.class).hasMessage(BoardErrorCode.DUPLICATED_NAME_ENG.getMessage());
     }
 
     @Test
     void 게시판_이미존재하는_한글명_실패() {
         //given
-        Board board = Board.builder()
-                .nameKor("자유게시판")
-                .nameEng("test")
-                .build();
+        Board board = new Board("freeboard1", "자유게시판");
         boardJpaRepository.save(board);
         //when
         //then
         Assertions.assertThatThrownBy(() -> {
-            BoardReadDto.ReadResponse readResponse = boardCreateUseCase.create(BoardCreateDto.Request.builder()
+            boardCreateUseCase.create(BoardCreateDto.Request.builder()
                     .nameEng("freeboard")
                     .nameKor("자유게시판")
-                    .menuOrder(1).build());
+                    .build());
         }).isInstanceOf(BusinessException.class).hasMessage(BoardErrorCode.DUPLICATED_NAME_KOR.getMessage());
     }
 
     @Test
     void 게시판_이미존재하는_몌뉴_영문명_실패() {
-        Menu menu = Menu.builder()
-                .nameEng("freeboard")
-                .nameKor("테스트")
-                .description("dasdasdsa")
-                .menuOrder(1)
-                .menuType(MenuType.BOARD)
-                .url("dasdas").build();
-        menuJpaRepository.save(menu);
         //given
+        Menu menu = new Menu("freeboard", "testurl", "자유게시판1", 1, "테스트 설명", MenuType.BOARD);
+        menuJpaRepository.save(menu);
         //when
-
         //then
         Assertions.assertThatThrownBy(() -> {
-            BoardReadDto.ReadResponse readResponse = boardCreateUseCase.create(BoardCreateDto.Request.builder()
+            boardCreateUseCase.create(BoardCreateDto.Request.builder()
                     .nameEng("freeboard")
                     .nameKor("자유게시판")
-                    .menuOrder(1).build());
-        }).isInstanceOf(BusinessException.class).hasMessage(MenuErrorCode.DUPLICATED_MENU_NAME_ENG.getMessage());
+                    .build());
+        }).isInstanceOf(BusinessException.class).hasMessage(BoardErrorCode.CAN_NOT_USE_NAME_ENG.getMessage());
     }
 
     @Test
     void 게시판_이미존재하는_몌뉴_한글명_실패() {
-        Menu menu = Menu.builder()
-                .nameEng("test")
-                .nameKor("자유게시판")
-                .description("dasdasdsa")
-                .menuOrder(1)
-                .menuType(MenuType.BOARD)
-                .url("dasdas").build();
-        menuJpaRepository.save(menu);
         //given
+        Menu menu = new Menu("freeboard1", "testurl", "자유게시판", 1, "테스트 설명", MenuType.BOARD);
+        menuJpaRepository.save(menu);
         //when
-
         //then
         Assertions.assertThatThrownBy(() -> {
-            BoardReadDto.ReadResponse readResponse = boardCreateUseCase.create(BoardCreateDto.Request.builder()
+            boardCreateUseCase.create(BoardCreateDto.Request.builder()
                     .nameEng("freeboard")
                     .nameKor("자유게시판")
-                    .menuOrder(1).build());
-        }).isInstanceOf(BusinessException.class).hasMessage(MenuErrorCode.DUPLICATED_MENU_NAME_KOR.getMessage());
+                    .build());
+        }).isInstanceOf(BusinessException.class).hasMessage(BoardErrorCode.CAN_NOT_USE_NAME_KOR.getMessage());
     }
 }

@@ -21,11 +21,7 @@ class AuthorityGroupDeleteUseCaseTest {
     AuthorityGroupDeleteUseCase authorityGroupDeleteUseCase;
     AuthorityGroup authorityGroup;
     void createData(AuthorityGroupType type){
-        authorityGroup = AuthorityGroup.builder()
-                .name("권한그룹")
-                .description("권한그룹설명")
-                .type(type)
-                .build();
+        authorityGroup = new AuthorityGroup("권한그룹","권한 그룹 설명", type);
         authorityGroupJpaRepository.save(authorityGroup);
     }
     @Test

@@ -38,16 +38,16 @@ class BoardDeleteUseCaseTest {
     @Test
     void 게시판_삭제_성공() {
         //given
-        BoardReadDto.ReadResponse readResponse = boardCreateUseCase.create(BoardCreateDto.Request.builder()
+        Long id = boardCreateUseCase.create(BoardCreateDto.Request.builder()
                 .nameEng("freeboard")
                 .nameKor("자유게시판")
-                .menuOrder(1).build());
+                .build());
         //when
-        Board board = boardJpaRepository.findById(readResponse.getBoardId()).get();
+        Board board = boardJpaRepository.findById(id).get();
         Long boardId = board.getBoardId();
         Long menuId = board.getMenu().getMenuId();
         Long authorityId = board.getMenu().getAuthority().getAuthorityId();
-        boardDeleteUseCase.delete(readResponse.getBoardId());
+        boardDeleteUseCase.delete(id);
         //then
         Assertions.assertThat(boardJpaRepository.findById(boardId).isEmpty()).isEqualTo(true);
         Assertions.assertThat(authorityJpaRepository.findById(authorityId).isEmpty()).isEqualTo(true);
@@ -57,10 +57,10 @@ class BoardDeleteUseCaseTest {
     @Test
     void 게시판_미존재_실패() {
         //given
-        BoardReadDto.ReadResponse readResponse = boardCreateUseCase.create(BoardCreateDto.Request.builder()
+        Long id = boardCreateUseCase.create(BoardCreateDto.Request.builder()
                 .nameEng("freeboard")
                 .nameKor("자유게시판")
-                .menuOrder(1).build());
+                .build());
         //when
         //then
         Assertions.assertThatThrownBy(() -> {

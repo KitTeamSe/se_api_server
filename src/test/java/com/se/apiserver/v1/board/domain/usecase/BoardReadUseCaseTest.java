@@ -22,10 +22,7 @@ class BoardReadUseCaseTest {
     @Test
     void 게시판_읽기_성공() {
         //given
-        Board board = Board.builder()
-                .nameEng("freeboard")
-                .nameKor("자유게시판")
-                .build();
+        Board board = new Board("freeboard", "새로운게시판");
         boardJpaRepository.save(board);
         //when
         BoardReadDto.ReadResponse read = boardReadUseCase.read(board.getBoardId());

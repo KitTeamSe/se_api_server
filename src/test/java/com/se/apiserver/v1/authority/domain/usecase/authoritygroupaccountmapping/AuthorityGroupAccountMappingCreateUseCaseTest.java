@@ -64,11 +64,7 @@ class AuthorityGroupAccountMappingCreateUseCaseTest {
 
         accountJpaRepository.save(account);
 
-        authorityGroup = AuthorityGroup.builder()
-                .name("권한그룹1")
-                .description("권한설명1")
-                .type(AuthorityGroupType.NORMAL)
-                .build();
+        authorityGroup = new AuthorityGroup("권한1", "권한설명1", AuthorityGroupType.NORMAL);
         authorityGroupJpaRepository.save(authorityGroup);
     }
 
@@ -77,20 +73,20 @@ class AuthorityGroupAccountMappingCreateUseCaseTest {
         //given
         initData();
         //when
-        AuthorityGroupAccountMappingReadDto.Response response = authorityGroupAccountMappingCreateUseCase.create(AuthorityGroupAccountMappingCreateDto.Request.builder()
+        Long id = authorityGroupAccountMappingCreateUseCase.create(AuthorityGroupAccountMappingCreateDto.Request.builder()
                 .accountId(account.getAccountId())
                 .groupId(authorityGroup.getAuthorityGroupId())
                 .build());
         //then
-        AuthorityGroupAccountMapping authorityGroupAccountMapping = authorityGroupAccountMappingJpaRepository.findById(response.getId()).get();
+        AuthorityGroupAccountMapping authorityGroupAccountMapping = authorityGroupAccountMappingJpaRepository.findById(id).get();
 
         Assertions.assertThat(authorityGroupAccountMapping.getAccount().getIdString()).isEqualTo("test");
-        Assertions.assertThat(authorityGroupAccountMapping.getAuthorityGroup().getName()).isEqualTo("권한그룹1");
+        Assertions.assertThat(authorityGroupAccountMapping.getAuthorityGroup().getName()).isEqualTo("권한1");
 
-        Assertions.assertThat(authorityGroupAccountMapping.getAuthorityGroup().getName()).isEqualTo(response.getGroupName());
-        Assertions.assertThat(authorityGroupAccountMapping.getAuthorityGroup().getAuthorityGroupId()).isEqualTo(response.getGroupId());
-        Assertions.assertThat(authorityGroupAccountMapping.getAccount().getAccountId()).isEqualTo(response.getAccountId());
-        Assertions.assertThat(authorityGroupAccountMapping.getAccount().getIdString()).isEqualTo(response.getAccountIdString());
+        Assertions.assertThat(authorityGroupAccountMapping.getAuthorityGroup().getDescription()).isEqualTo("권한설명1");
+        Assertions.assertThat(authorityGroupAccountMapping.getAuthorityGroup().getAuthorityGroupId()).isEqualTo(authorityGroup.getAuthorityGroupId());
+        Assertions.assertThat(authorityGroupAccountMapping.getAccount().getAccountId()).isEqualTo(account.getAccountId());
+        Assertions.assertThat(authorityGroupAccountMapping.getAccount().getIdString()).isEqualTo(account.getIdString());
     }
 
     @Test
@@ -98,10 +94,7 @@ class AuthorityGroupAccountMappingCreateUseCaseTest {
         //given
         initData();
         //when
-        AuthorityGroupAccountMapping authorityGroupAccountMapping = AuthorityGroupAccountMapping.builder()
-                .account(account)
-                .authorityGroup(authorityGroup)
-                .build();
+        AuthorityGroupAccountMapping authorityGroupAccountMapping = new AuthorityGroupAccountMapping(account,authorityGroup);
         authorityGroupAccountMappingJpaRepository.save(authorityGroupAccountMapping);
         //then
         Assertions.assertThatThrownBy(() -> {

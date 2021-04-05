@@ -27,7 +27,6 @@ public class IpBlacklistFilters extends GenericFilterBean {
       throws IOException, ServletException {
     HttpServletRequest req = (HttpServletRequest) request;
     HttpServletResponse res = (HttpServletResponse) response;
-    System.out.println("Dasdas");
     String ip = request.getRemoteAddr();
     if(blacklistDetailService.isBaned(ip)){
       res.sendError(HttpStatus.BAD_REQUEST.value(), "차단된 사용자입니다");

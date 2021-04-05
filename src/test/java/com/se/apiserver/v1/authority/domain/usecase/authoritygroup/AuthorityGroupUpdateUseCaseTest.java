@@ -25,11 +25,7 @@ class AuthorityGroupUpdateUseCaseTest {
     AuthorityGroup authorityGroup1;
 
     private void initData() {
-        authorityGroup1 = AuthorityGroup.builder()
-                .name("권한1")
-                .description("권한설명1")
-                .type(AuthorityGroupType.NORMAL)
-                .build();
+        authorityGroup1 = new AuthorityGroup("권한1", "권한설명1", AuthorityGroupType.NORMAL);
         authorityGroupJpaRepository.save(authorityGroup1);
     }
     @Test

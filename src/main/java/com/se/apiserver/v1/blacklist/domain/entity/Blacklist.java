@@ -27,7 +27,6 @@ public class Blacklist extends BaseEntity {
   @Size(min = 4, max = 20)
   private String reason;
 
-  @Builder
   public Blacklist(@Size(min = 4, max = 20) String ip, @Size(min = 4, max = 20) String reason) {
     this.ip = ip;
     this.reason = reason;

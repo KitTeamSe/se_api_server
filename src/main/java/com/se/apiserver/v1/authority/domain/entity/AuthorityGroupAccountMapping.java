@@ -26,9 +26,7 @@ public class AuthorityGroupAccountMapping extends AccountGenerateEntity {
   @JoinColumn(name = "authority_group_id", referencedColumnName = "authorityGroupId", nullable = false)
   private AuthorityGroup authorityGroup;
 
-  @Builder
-  public AuthorityGroupAccountMapping(Long authorityGroupAccountMappingId, Account account, AuthorityGroup authorityGroup) {
-    this.authorityGroupAccountMappingId = authorityGroupAccountMappingId;
+  public AuthorityGroupAccountMapping(Account account, AuthorityGroup authorityGroup) {
     this.account = account;
     this.authorityGroup = authorityGroup;
   }

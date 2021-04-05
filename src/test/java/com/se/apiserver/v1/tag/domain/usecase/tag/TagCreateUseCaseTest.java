@@ -27,19 +27,16 @@ class TagCreateUseCaseTest {
     void 태그_등록_성공() {
         //given
         //when
-        TagReadDto.Response tag = tagCreateUseCase.create(TagCreateDto.Request.builder()
-                .text("새로운 태그").build());
+        Long id = tagCreateUseCase.create(TagCreateDto.Request.builder().text("새로운 태그").build());
         //then
-        Assertions.assertThat(tagJpaRepository.findById(tag.getTagId()).get().getText()).isEqualTo("새로운 태그");
+        Assertions.assertThat(tagJpaRepository.findById(id).get().getText()).isEqualTo("새로운 태그");
     }
 
 
     @Test
     void 태그_이름_중복_실패() {
         //given
-        Tag tag1 = Tag.builder()
-                .text("새로운태그")
-                .build();
+        Tag tag1 = new Tag("새로운태그");
         //when
         tagJpaRepository.save(tag1);
         //when

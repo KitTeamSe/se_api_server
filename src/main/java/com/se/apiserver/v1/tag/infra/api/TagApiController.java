@@ -35,7 +35,7 @@ public class TagApiController {
     @ResponseStatus(value = HttpStatus.CREATED)
     @ApiOperation(value = "태그 등록")
     @PreAuthorize("hasAuthority('TAG_MANAGE')")
-    public SuccessResponse<TagReadDto.Response> create(@RequestBody @Validated TagCreateDto.Request request) {
+    public SuccessResponse<Long> create(@RequestBody @Validated TagCreateDto.Request request) {
         return new SuccessResponse(HttpStatus.CREATED.value(), "태그 등록에 성공했습니다.", tagCreateUseCase.create(request));
     }
 
@@ -67,7 +67,7 @@ public class TagApiController {
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "태그 수정")
     @PreAuthorize("hasAuthority('TAG_MANAGE')")
-    public SuccessResponse<TagReadDto.Response> update(@RequestBody @Validated TagUpdateDto.Request request) {
+    public SuccessResponse<Long> update(@RequestBody @Validated TagUpdateDto.Request request) {
         return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 수정되었습니다.", tagUpdateUseCase.update(request));
     }
 

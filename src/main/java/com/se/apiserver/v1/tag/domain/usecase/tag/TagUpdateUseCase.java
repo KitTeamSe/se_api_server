@@ -18,12 +18,12 @@ public class TagUpdateUseCase {
     private final TagJpaRepository tagJpaRepository;
 
     @Transactional
-    public TagReadDto.Response update(TagUpdateDto.Request request) {
+    public Long update(TagUpdateDto.Request request) {
         if(tagJpaRepository.findByText(request.getText()).isPresent())
             throw new BusinessException(TagErrorCode.DUPLICATED_TAG);
         Tag tag = tagJpaRepository.findById(request.getTagId()).orElseThrow(() -> new BusinessException(TagErrorCode.NO_SUCH_TAG));
         tag.updateText(request.getText());
         tagJpaRepository.save(tag);
-        return TagReadDto.Response.fromEntity(tag);
+        return tag.getTagId();
     }
 }

@@ -23,10 +23,7 @@ class BlacklistDeleteUseCaseTest {
     @Test
     void 삭제_성공() {
         //given
-        Blacklist blacklist = blacklistJpaRepository.save(Blacklist.builder()
-                .ip("127.0.0.1")
-                .reason("광고성댓글")
-                .build());
+        Blacklist blacklist = blacklistJpaRepository.save( new Blacklist("128.0.0.1", "광고성댓글"));
         //when
         Long id = blacklist.getBlacklistId();
         blacklistDeleteUseCase.delete(id);

@@ -25,9 +25,7 @@ class TagUpdateUseCaseTest {
     @Test
     void 태그_수정_성공() {
         //given
-        Tag tag = Tag.builder()
-                .text("태그내용")
-                .build();
+        Tag tag = new Tag("태그 내용");
         tagJpaRepository.save(tag);
         //when
         tagUpdateUseCase.update(TagUpdateDto.Request.builder()
@@ -41,20 +39,16 @@ class TagUpdateUseCaseTest {
     @Test
     void 태그_닉네임_중복_실패() {
         //given
-        Tag tag1 = Tag.builder()
-                .text("태그내용")
-                .build();
+        Tag tag1 = new Tag("태그 내용");
         tagJpaRepository.save(tag1);
-        Tag tag2 = Tag.builder()
-                .text("태그내용2")
-                .build();
+        Tag tag2 = new Tag("태그 내용2");
         tagJpaRepository.save(tag2);
         //when
         //then
         Assertions.assertThatThrownBy(() -> {
             tagUpdateUseCase.update(TagUpdateDto.Request.builder()
                     .tagId(tag1.getTagId())
-                    .text("태그내용2")
+                    .text("태그 내용2")
                     .build());
         }).isInstanceOf(BusinessException.class).hasMessage(TagErrorCode.DUPLICATED_TAG.getMessage());
     }

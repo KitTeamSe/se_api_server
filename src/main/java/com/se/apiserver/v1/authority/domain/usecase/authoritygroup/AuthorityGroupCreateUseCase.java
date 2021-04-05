@@ -27,17 +27,16 @@ public class AuthorityGroupCreateUseCase {
 
     @Transactional
     public AuthorityGroupReadDto.Response create(AuthorityGroupCreateDto.Request request) {
-        if (authorityGroupJpaRepository.findByName(request.getName()).isPresent())
-            throw new BusinessException(AuthorityGroupErrorCode.DUPLICATED_GROUP_NAME);
-
-        AuthorityGroup authorityGroup = AuthorityGroup.builder()
-                .description(request.getDescription())
-                .name(request.getName())
-                .type(AuthorityGroupType.NORMAL)
-                .build();
+        validateDuplicateGroupName(request.getName());
+        AuthorityGroup authorityGroup = new AuthorityGroup(request.getName(), request.getDescription(), AuthorityGroupType.NORMAL);
         authorityGroupJpaRepository.save(authorityGroup);
 
         return AuthorityGroupReadDto.Response.fromEntity(authorityGroup);
+    }
+
+    private void validateDuplicateGroupName(String name) {
+        if (authorityGroupJpaRepository.findByName(name).isPresent())
+            throw new BusinessException(AuthorityGroupErrorCode.DUPLICATED_GROUP_NAME);
     }
 
 }

@@ -13,54 +13,57 @@ import com.se.apiserver.v1.menu.infra.repository.MenuJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @UseCase
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class MenuCreateUseCase {
 
     private final MenuJpaRepository menuJpaRepository;
-
-    private final AuthorityCreateUseCase authorityCreateUseCase;
-
     private final AuthorityJpaRepository authorityJpaRepository;
 
     @Transactional
-    public MenuCreateDto.Response create(MenuCreateDto.Request request) {
-        Menu.MenuBuilder menuBuilder = Menu.builder();
+    public Long create(MenuCreateDto.Request request) {
+        validateDuplicateNameKor(request.getNameKor());
+        validateDuplicateNameEng(request.getNameEng());
+        validateDuplicateUrl(request.getUrl());
 
-        menuBuilder.description(request.getDescription());
-        menuBuilder.menuOrder(request.getMenuOrder());
-        menuBuilder.menuType(request.getMenuType());
+        boolean hasParent = (request.getParentId() != null);
+        Menu menu = generateMenu(request, hasParent);
 
-        if(menuJpaRepository.findByNameKor(request.getNameKor()).isPresent())
-            throw new BusinessException(MenuErrorCode.DUPLICATED_MENU_NAME_KOR);
-        menuBuilder.nameKor(request.getNameKor());
+        menuJpaRepository.save(menu);
+        return menu.getMenuId();
+    }
 
-        if(menuJpaRepository.findByNameEng(request.getNameEng()).isPresent())
-            throw new BusinessException(MenuErrorCode.DUPLICATED_MENU_NAME_ENG);
-        menuBuilder.nameEng(request.getNameEng());
-
-        if(menuJpaRepository.findByUrl(request.getUrl()).isPresent())
-            throw new BusinessException(MenuErrorCode.DUPLICATED_URL);
-        menuBuilder.url(request.getUrl());
-
-
-        Menu menu = menuBuilder.build();
-
-        if(request.getParentId() != null){
-            Menu parent = menuJpaRepository.findById(request.getParentId()).orElseThrow(() -> new BusinessException(MenuErrorCode.NO_SUCH_MENU));
-            menu.updateParent(parent);
+    private Menu generateMenu(MenuCreateDto.Request request, boolean hasParent) {
+        if(hasParent){
+            Menu parent = menuJpaRepository.findById(request.getParentId())
+                    .orElseThrow(() -> new BusinessException(MenuErrorCode.NO_SUCH_MENU));
+            return new Menu(request.getNameEng(), request.getUrl(), request.getNameKor(),
+            request.getMenuOrder(), request.getDescription(), request.getMenuType(), parent);
         }
 
+        return new Menu(request.getNameEng(), request.getUrl(), request.getNameKor(),
+                request.getMenuOrder(), request.getDescription(), request.getMenuType());
+    }
 
-        Authority authority = authorityCreateUseCase.create(AuthorityCreateDto.Request.builder()
-        .nameEng(menu.getNameEng())
-        .nameKor(menu.getNameKor())
-        .menu(menu).build());
+    private void validateDuplicateUrl(String url) {
+        if (menuJpaRepository.findByUrl(url).isPresent())
+            throw new BusinessException(MenuErrorCode.DUPLICATED_URL);
+    }
 
-        menu.updateAuthority(authority);
-        menuJpaRepository.save(menu);
+    private void validateDuplicateNameEng(String nameEng) {
+        if (menuJpaRepository.findByNameEng(nameEng).isPresent())
+            throw new BusinessException(MenuErrorCode.DUPLICATED_MENU_NAME_ENG);
+        if (authorityJpaRepository.findByNameEng(nameEng).isPresent())
+            throw new BusinessException(MenuErrorCode.CAN_NOT_USE_NAME_ENG);
+    }
 
-        return MenuCreateDto.Response.fromEntity(menu);
+    private void validateDuplicateNameKor(String nameKor) {
+        if (menuJpaRepository.findByNameKor(nameKor).isPresent())
+            throw new BusinessException(MenuErrorCode.DUPLICATED_MENU_NAME_KOR);
+        if (authorityJpaRepository.findByNameKor(nameKor).isPresent())
+            throw new BusinessException(MenuErrorCode.CAN_NOT_USE_NAME_KOR);
     }
 }

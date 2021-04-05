@@ -29,10 +29,7 @@ class BlacklistReadUseCaseTest {
     @Test
     void 조회_성공() {
         //given
-        Blacklist blacklist = blacklistJpaRepository.save(Blacklist.builder()
-                .ip("127.0.0.1")
-                .reason("비정상적접근")
-                .build());
+        Blacklist blacklist = blacklistJpaRepository.save( new Blacklist("128.0.0.1", "광고성댓글"));
         //when
         BlacklistReadDto.Response read = blacklistReadUseCase.read(blacklist.getBlacklistId());
         //then
@@ -54,14 +51,8 @@ class BlacklistReadUseCaseTest {
     @Test
     void 전체_조회_성공() {
         //given
-        Blacklist blacklist = blacklistJpaRepository.save(Blacklist.builder()
-                .ip("127.0.0.1")
-                .reason("비정상적접근")
-                .build());
-        Blacklist blacklist2 = blacklistJpaRepository.save(Blacklist.builder()
-                .ip("127.0.0.2")
-                .reason("비정상적접근")
-                .build());
+        Blacklist blacklist = blacklistJpaRepository.save( new Blacklist("128.0.0.1", "광고성댓글"));
+        Blacklist blacklist2 = blacklistJpaRepository.save( new Blacklist("128.0.0.2", "광고성댓글"));
         //when
         PageImpl responses = blacklistReadUseCase.readAll(PageRequest.builder()
         .size(10)

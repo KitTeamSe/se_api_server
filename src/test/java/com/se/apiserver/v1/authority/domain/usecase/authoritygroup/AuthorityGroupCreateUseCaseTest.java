@@ -33,10 +33,7 @@ class AuthorityGroupCreateUseCaseTest {
     Authority authority;
 
     void createData(){
-        authority = Authority.builder()
-                .nameKor("새로운권한")
-                .nameEng("newAuth")
-                .build();
+        authority = new Authority("newAuth", "새로운권한");
         authorityJpaRepository.save(authority);
     }
 
@@ -63,11 +60,7 @@ class AuthorityGroupCreateUseCaseTest {
     @Test
     void 권한그룹_이름중복_실패() {
         //given
-        AuthorityGroup authorityGroup = AuthorityGroup.builder()
-                .name("권한그룹")
-                .description("권한그룹 설명")
-                .type(AuthorityGroupType.ANONYMOUS)
-                .build();
+        AuthorityGroup authorityGroup = new AuthorityGroup("권한그룹","권한 그룹 설명", AuthorityGroupType.ANONYMOUS);
         authorityGroupJpaRepository.save(authorityGroup);
         //when
         //then

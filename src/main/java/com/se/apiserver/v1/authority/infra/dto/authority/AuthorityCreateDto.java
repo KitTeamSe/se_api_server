@@ -16,9 +16,5 @@ public class AuthorityCreateDto {
 
         @Size(min = 2, max = 20)
         private String nameKor;
-
-        private Menu menu;
-
-
     }
 }

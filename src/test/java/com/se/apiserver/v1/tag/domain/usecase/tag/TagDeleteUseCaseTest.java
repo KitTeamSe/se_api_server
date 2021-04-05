@@ -22,9 +22,7 @@ class TagDeleteUseCaseTest {
     @Test
     void 태그_삭제_성공() {
         //given
-        Tag tag = Tag.builder()
-                .text("태그내용")
-                .build();
+        Tag tag = new Tag("태그 내용");
         tagJpaRepository.save(tag);
         Long id = tag.getTagId();
         //when

@@ -48,7 +48,7 @@ public class AuthorityGroupAuthorityMappingApiController {
     @ResponseStatus(value = HttpStatus.CREATED)
     @ApiOperation(value = "권한 그룹, 권한 매핑 등록")
     @PreAuthorize("hasAuthority('AUTHORITY_MANAGE')")
-    public SuccessResponse<AuthorityGroupAuthorityMappingReadDto.Response> create(
+    public SuccessResponse<Long> create(
             @RequestBody @Validated AuthorityGroupAuthorityMappingCreateDto.Request request){
         return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 생성되었습니다", authorityGroupAuthorityMappingCreateUseCase.create(request));
     }

@@ -60,40 +60,18 @@ class AttachCreateUseCaseTest {
   Post post;
   Account account;
   Reply reply;
-  Menu menu;
   Board board;
-  Authority authority;
 
   private void initData() {
     SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(1,
-            "1", Arrays.asList(new SimpleGrantedAuthority("BOARD_freeboard_ACCESS"))));
-    authority = Authority.builder()
-            .nameEng("BOARD_freeboard_ACCESS")
-            .nameKor("자유게시판 접근")
-            .build();
-    authorityJpaRepository.save(authority);
+            "1", Arrays.asList(new SimpleGrantedAuthority("freeboard"))));
 
-    menu = Menu.builder()
-            .url("testurl")
-            .nameEng("testname")
-            .nameKor("테스트이름")
-            .description("테스트 설명")
-            .menuType(MenuType.BOARD)
-            .menuOrder(1)
-            .build();
-    menu.updateAuthority(authority);
-    menuJpaRepository.save(menu);
-
-    board = Board.builder()
-            .menu(menu)
-            .nameEng("testname")
-            .nameKor("테스트이름")
-            .build();
+    board = new Board("freeboard", "자유게시판");
     boardJpaRepository.save(board);
 
     post = new Post(new Anonymous("익명1", "testtest"), board,
             new PostContent("test.....", "title..."), PostIsNotice.NORMAL, PostIsSecret.NORMAL
-            ,new HashSet<>(Arrays.asList("BOARD_freeboard_ACCESS")) ,
+            ,new HashSet<>(Arrays.asList("freeboard")) ,
             new ArrayList<>(), new ArrayList<>());
 
     postJpaRepository.save(post);

@@ -33,14 +33,8 @@ class MenuReadUseCaseTest {
     @Autowired
     MenuJpaRepository menuJpaRepository;
 
-    //TODO 등록을 repo 이용으로 변경
-    @BeforeEach
     public void init() {
-        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("2",
-                "2", Arrays.asList(new SimpleGrantedAuthority("MENU_folder2_ACCESS"),new SimpleGrantedAuthority("MENU_freeboard2_ACCESS"))));
-
-
-        MenuCreateDto.Response response = menuCreateUseCase.create(MenuCreateDto.Request.builder()
+        Long id1 = menuCreateUseCase.create(MenuCreateDto.Request.builder()
                 .nameKor("폴더")
                 .nameEng("folder")
                 .description("폴더입니다")
@@ -49,7 +43,7 @@ class MenuReadUseCaseTest {
                 .menuType(MenuType.FOLDER)
                 .build());
 
-        MenuCreateDto.Response response2 = menuCreateUseCase.create(MenuCreateDto.Request.builder()
+        Long id2 = menuCreateUseCase.create(MenuCreateDto.Request.builder()
                 .nameKor("폴더2")
                 .nameEng("folder2")
                 .description("폴더2입니다")
@@ -66,7 +60,7 @@ class MenuReadUseCaseTest {
                 .url("freeboard")
                 .menuOrder(1)
                 .menuType(MenuType.BOARD)
-                .parentId(response.getMenuId())
+                .parentId(id1)
                 .build());
 
         menuCreateUseCase.create(MenuCreateDto.Request.builder()
@@ -76,13 +70,16 @@ class MenuReadUseCaseTest {
                 .url("freeboard2")
                 .menuOrder(2)
                 .menuType(MenuType.BOARD)
-                .parentId(response2.getMenuId())
+                .parentId(id2)
                 .build());
     }
 
     @Test
     void 메뉴_조회_성공() {
+        init();
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("2",
+                "2", Arrays.asList(new SimpleGrantedAuthority("folder"),new SimpleGrantedAuthority("folder2"))));
         List<MenuReadDto.ReadAllResponse> responses = menuReadUseCase.readAll();
-        Assertions.assertThat(responses.size()).isEqualTo(1);
+        Assertions.assertThat(responses.size()).isEqualTo(2);
     }
 }

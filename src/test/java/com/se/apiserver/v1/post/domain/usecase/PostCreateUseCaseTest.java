@@ -65,8 +65,6 @@ class PostCreateUseCaseTest {
     Account user;
     Account admin;
     Attach attach;
-    Menu menu;
-    Authority authority;
 
     Board board;
     Tag tag;
@@ -106,42 +104,13 @@ class PostCreateUseCaseTest {
         accountJpaRepository.save(admin);
         accountJpaRepository.save(user);
 
-
-
-        menu = Menu.builder()
-                .menuType(MenuType.BOARD)
-                .menuOrder(1)
-                .description("일반메뉴")
-                .nameKor("자유게시판")
-                .nameEng("freeboard")
-                .url("test")
-                .build();
-        menuJpaRepository.save(menu);
-
-        authority = Authority.builder()
-            .nameEng("BOARD_freeeboard_ACCESS")
-            .nameKor("자유게시판 접근")
-            .build();
-        authority.updateMenu(menu);
-        authorityJpaRepository.save(authority);
-
-
-        board = Board.builder()
-                .nameKor("자유게시판")
-                .nameEng("freeboard")
-                .menu(menu)
-                .build();
+        board = new Board("freeboard", "자유게시판");
         boardJpaRepository.save(board);
 
-        tag = Tag.builder()
-                .text("태그1")
-                .build();
+        tag = new Tag("태그1");
         tagJpaRepository.save(tag);
 
-        attach = Attach.builder()
-            .downloadUrl("testurl")
-            .fileName("testfile")
-            .build();
+        attach = new Attach("testurl", "testfile");
         attachJpaRepository.save(attach);
     }
 
@@ -151,7 +120,7 @@ class PostCreateUseCaseTest {
         //given
         initData();
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user.getAccountId(),
-                "1", Arrays.asList(new SimpleGrantedAuthority("BOARD_freeeboard_ACCESS"))));
+                "1", Arrays.asList(new SimpleGrantedAuthority("freeboard"))));
         //when
         Long id = postCreateUseCase.create(PostCreateDto.Request.builder()
                 .boardId(board.getBoardId())
@@ -218,7 +187,7 @@ class PostCreateUseCaseTest {
     void 게시글_익명_등록_성공() {
         initData();
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(0,
-                "1", Arrays.asList(new SimpleGrantedAuthority("BOARD_freeeboard_ACCESS"))));
+                "1", Arrays.asList(new SimpleGrantedAuthority("freeboard"))));
 
         //when
 
@@ -255,7 +224,7 @@ class PostCreateUseCaseTest {
         //given
         initData();
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user.getAccountId(),
-                "1", Arrays.asList(new SimpleGrantedAuthority("BOARD_freeeboard_ACCESS"))));
+                "1", Arrays.asList(new SimpleGrantedAuthority("freeboard"))));
         //when
         //then
         Assertions.assertThatThrownBy(() -> {
@@ -278,7 +247,7 @@ class PostCreateUseCaseTest {
     void 게시글_익명사용자_공지등록_실패() {
         initData();
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(0,
-                "1", Arrays.asList(new SimpleGrantedAuthority("BOARD_freeeboard_ACCESS"))));
+                "1", Arrays.asList(new SimpleGrantedAuthority("freeboard"))));
 
         //when
         //then
@@ -303,7 +272,7 @@ class PostCreateUseCaseTest {
     void 게시글_익명사용자_입력값오류_실패() {
         initData();
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(0,
-                "1", Arrays.asList(new SimpleGrantedAuthority("BOARD_freeeboard_ACCESS"))));
+                "1", Arrays.asList(new SimpleGrantedAuthority("freeboard"))));
 
         //when
         //then

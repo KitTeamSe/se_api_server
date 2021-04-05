@@ -18,6 +18,7 @@ public class AuthorityGroupAuthorityMappingDeleteUseCase {
     public boolean delete(Long id){
         AuthorityGroupAuthorityMapping authorityGroupAuthorityMapping = authorityGroupAuthorityMappingJpaRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(AuthorityGroupAuthorityMappingErrorCode.NO_SUCH_MAPPING));
+
         authorityGroupAuthorityMappingJpaRepository.delete(authorityGroupAuthorityMapping);
         return true;
     }

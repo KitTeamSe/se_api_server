@@ -54,47 +54,21 @@ class AttachDeleteUseCaseTest {
     Post post;
     Account account;
     Reply reply;
-    Menu menu;
     Board board;
     Attach attachNoParent;
     Attach attachPost;
     Attach attachReply;
-    Authority authority;
 
     private void initData() {
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(1,
-                "1", Arrays.asList(new SimpleGrantedAuthority("BOARD_freeeboard_ACCESS"))));
-        authority = Authority.builder()
-                .nameEng("BOARD_freeeboard_ACCESS")
-                .nameKor("자유게시판 접근")
-                .build();
-        authorityJpaRepository.save(authority);
+                "1", Arrays.asList(new SimpleGrantedAuthority("freeboard"))));
 
-        menu = Menu.builder()
-                .url("testurl")
-                .nameEng("testname")
-                .nameKor("테스트이름")
-                .description("테스트 설명")
-                .menuType(MenuType.BOARD)
-                .menuOrder(1)
-                .build();
-        menu.updateAuthority(authority);
-        menuJpaRepository.save(menu);
-
-        board = Board.builder()
-                .menu(menu)
-                .nameEng("testname")
-                .nameKor("테스트이름")
-                .build();
-        boardJpaRepository.save(board);
-
+        board = new Board("freeboard", "자유게시판");
 
         post = new Post(new Anonymous("익명1", "testtest"), board,
                 new PostContent("test.....", "title..."), PostIsNotice.NORMAL, PostIsSecret.NORMAL,
-                new HashSet<>(Arrays.asList("BOARD_freeeboard_ACCESS")) ,
+                new HashSet<>(Arrays.asList("freeboard")) ,
                 new ArrayList<>(), new ArrayList<>());
-
-
         postJpaRepository.save(post);
         reply = Reply.builder()
                 .account(account)
@@ -110,23 +84,9 @@ class AttachDeleteUseCaseTest {
                 .build();
         replyJpaRepository.save(reply);
 
-        attachNoParent = Attach.builder()
-                .downloadUrl("testurl")
-                .fileName("testfilename")
-                .build();
-
-        attachPost = Attach.builder()
-                .downloadUrl("testurl")
-                .fileName("testfilename")
-                .build();
-        attachPost.updatePost(post);
-
-        attachReply = Attach.builder()
-                .downloadUrl("testurl")
-                .fileName("testfilename")
-                .build();
-        attachReply.updateReply(reply);
-
+        attachNoParent = new Attach("testurl", "testfilename");
+        attachPost = new Attach("testurl", "testfilename", post);
+        attachReply = new Attach("testurl", "testfilename", reply);
         attachJpaRepository.save(attachNoParent);
         attachJpaRepository.save(attachPost);
         attachJpaRepository.save(attachReply);
