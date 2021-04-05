@@ -1,9 +1,7 @@
 package com.se.apiserver.v1.menu.domain.entity;
 
 import com.se.apiserver.v1.authority.domain.entity.Authority;
-import com.se.apiserver.v1.board.domain.entity.Board;
 import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
-import com.se.apiserver.v1.common.domain.entity.BaseEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +10,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Size;
 
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
-import com.se.apiserver.v1.menu.domain.error.MenuErrorCode;
+import com.se.apiserver.v1.menu.application.error.MenuErrorCode;
 import lombok.*;
 import org.springframework.security.access.AccessDeniedException;
 

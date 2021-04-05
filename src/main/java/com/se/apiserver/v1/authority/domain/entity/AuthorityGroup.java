@@ -1,6 +1,6 @@
 package com.se.apiserver.v1.authority.domain.entity;
 
-import com.se.apiserver.v1.authority.domain.error.AuthorityGroupErrorCode;
+import com.se.apiserver.v1.authority.application.error.AuthorityGroupErrorCode;
 import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import lombok.*;

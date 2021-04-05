@@ -2,14 +2,14 @@ package com.se.apiserver.v1.subject.infra.api;
 
 import com.se.apiserver.v1.common.infra.dto.PageRequest;
 import com.se.apiserver.v1.common.infra.dto.SuccessResponse;
-import com.se.apiserver.v1.subject.domain.usecase.SubjectCreateUseCase;
-import com.se.apiserver.v1.subject.domain.usecase.SubjectDeleteUseCase;
-import com.se.apiserver.v1.subject.domain.usecase.SubjectReadUseCase;
-import com.se.apiserver.v1.subject.domain.usecase.SubjectUpdateUseCase;
-import com.se.apiserver.v1.subject.infra.dto.SubjectCreateDto;
-import com.se.apiserver.v1.subject.infra.dto.SubjectReadDto;
-import com.se.apiserver.v1.subject.infra.dto.SubjectReadDto.Response;
-import com.se.apiserver.v1.subject.infra.dto.SubjectUpdateDto;
+import com.se.apiserver.v1.subject.application.service.SubjectCreateService;
+import com.se.apiserver.v1.subject.application.service.SubjectDeleteService;
+import com.se.apiserver.v1.subject.application.service.SubjectReadService;
+import com.se.apiserver.v1.subject.application.service.SubjectUpdateService;
+import com.se.apiserver.v1.subject.application.dto.SubjectCreateDto;
+import com.se.apiserver.v1.subject.application.dto.SubjectReadDto;
+import com.se.apiserver.v1.subject.application.dto.SubjectReadDto.Response;
+import com.se.apiserver.v1.subject.application.dto.SubjectUpdateDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -33,17 +33,17 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(tags = "교과 관리")
 public class SubjectApiController {
 
-  private final SubjectCreateUseCase subjectCreateUseCase;
-  private final SubjectReadUseCase subjectReadUseCase;
-  private final SubjectUpdateUseCase subjectUpdateUseCase;
-  private final SubjectDeleteUseCase subjectDeleteUseCase;
+  private final SubjectCreateService subjectCreateService;
+  private final SubjectReadService subjectReadService;
+  private final SubjectUpdateService subjectUpdateService;
+  private final SubjectDeleteService subjectDeleteService;
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
   @PostMapping(path = "/subject")
   @ResponseStatus(value = HttpStatus.CREATED)
   @ApiOperation(value = "교과 추가")
   public SuccessResponse<Long> create(@RequestBody @Validated SubjectCreateDto.Request request){
-    return new SuccessResponse<>(HttpStatus.CREATED.value(), "교과 생성에 성공했습니다.", subjectCreateUseCase.create(request));
+    return new SuccessResponse<>(HttpStatus.CREATED.value(), "교과 생성에 성공했습니다.", subjectCreateService.create(request));
   }
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
@@ -51,7 +51,7 @@ public class SubjectApiController {
   @ApiOperation("교과 조회")
   @ResponseStatus(value = HttpStatus.OK)
   public SuccessResponse<SubjectReadDto.Response> read(@PathVariable(value = "id") Long id){
-    return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", subjectReadUseCase.read(id));
+    return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", subjectReadService.read(id));
   }
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
@@ -59,7 +59,7 @@ public class SubjectApiController {
   @ApiOperation("교과 전체 조회")
   @ResponseStatus(value = HttpStatus.OK)
   public SuccessResponse<PageImpl<Response>> readAll(@Validated PageRequest pageRequest){
-    return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", subjectReadUseCase.readAll(pageRequest.of()));
+    return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", subjectReadService.readAll(pageRequest.of()));
   }
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
@@ -67,7 +67,7 @@ public class SubjectApiController {
   @ResponseStatus(value = HttpStatus.OK)
   @ApiOperation(value = "교과 수정")
   public SuccessResponse<SubjectReadDto.Response> update(@RequestBody @Validated SubjectUpdateDto.Request request){
-    return new SuccessResponse<>(HttpStatus.OK.value(), "교과 수정에 성공했습니다.", subjectUpdateUseCase.update(request));
+    return new SuccessResponse<>(HttpStatus.OK.value(), "교과 수정에 성공했습니다.", subjectUpdateService.update(request));
   }
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
@@ -75,7 +75,7 @@ public class SubjectApiController {
   @ResponseStatus(value = HttpStatus.OK)
   @ApiOperation(value = "강의실 삭제")
   public SuccessResponse delete(@PathVariable(value = "id") Long id){
-    subjectDeleteUseCase.delete(id);
+    subjectDeleteService.delete(id);
     return new SuccessResponse<>(HttpStatus.OK.value(), "교과 삭제에 성공했습니다.");
   }
 }

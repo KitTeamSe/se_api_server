@@ -3,7 +3,7 @@ package com.se.apiserver.v1.account.infra.repository;
 import com.querydsl.jpa.JPQLQuery;
 import com.se.apiserver.v1.account.domain.entity.Account;
 import com.se.apiserver.v1.account.domain.entity.QAccount;
-import com.se.apiserver.v1.account.infra.dto.AccountReadDto;
+import com.se.apiserver.v1.account.application.dto.AccountReadDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;

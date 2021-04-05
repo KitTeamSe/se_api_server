@@ -2,14 +2,13 @@ package com.se.apiserver.v1.lectureroom.infra.api;
 
 import com.se.apiserver.v1.common.infra.dto.PageRequest;
 import com.se.apiserver.v1.common.infra.dto.SuccessResponse;
-import com.se.apiserver.v1.lectureroom.domain.usecase.LectureRoomCreateUseCase;
-import com.se.apiserver.v1.lectureroom.domain.usecase.LectureRoomDeleteUseCase;
-import com.se.apiserver.v1.lectureroom.domain.usecase.LectureRoomReadUseCase;
-import com.se.apiserver.v1.lectureroom.domain.usecase.LectureRoomUpdateUseCase;
-import com.se.apiserver.v1.lectureroom.infra.dto.LectureRoomCreateDto;
-import com.se.apiserver.v1.lectureroom.infra.dto.LectureRoomDeleteDto;
-import com.se.apiserver.v1.lectureroom.infra.dto.LectureRoomReadDto;
-import com.se.apiserver.v1.lectureroom.infra.dto.LectureRoomUpdateDto;
+import com.se.apiserver.v1.lectureroom.application.service.LectureRoomCreateService;
+import com.se.apiserver.v1.lectureroom.application.service.LectureRoomDeleteService;
+import com.se.apiserver.v1.lectureroom.application.service.LectureRoomReadService;
+import com.se.apiserver.v1.lectureroom.application.service.LectureRoomUpdateService;
+import com.se.apiserver.v1.lectureroom.application.dto.LectureRoomCreateDto;
+import com.se.apiserver.v1.lectureroom.application.dto.LectureRoomReadDto;
+import com.se.apiserver.v1.lectureroom.application.dto.LectureRoomUpdateDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -33,17 +32,17 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(tags = "강의실 관리")
 public class LectureRoomApiController {
 
-  private final LectureRoomCreateUseCase lectureRoomCreateUseCase;
-  private final LectureRoomReadUseCase lectureRoomReadUseCase;
-  private final LectureRoomUpdateUseCase lectureRoomUpdateUseCase;
-  private final LectureRoomDeleteUseCase lectureRoomDeleteUseCase;
+  private final LectureRoomCreateService lectureRoomCreateService;
+  private final LectureRoomReadService lectureRoomReadService;
+  private final LectureRoomUpdateService lectureRoomUpdateService;
+  private final LectureRoomDeleteService lectureRoomDeleteService;
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
   @PostMapping(path = "/lecture-room")
   @ResponseStatus(value = HttpStatus.CREATED)
   @ApiOperation(value = "강의실 추가")
   public SuccessResponse<Long> create(@RequestBody @Validated LectureRoomCreateDto.Request request){
-    return new SuccessResponse<>(HttpStatus.CREATED.value(), "강의실 생성에 성공했습니다.", lectureRoomCreateUseCase.create(request));
+    return new SuccessResponse<>(HttpStatus.CREATED.value(), "강의실 생성에 성공했습니다.", lectureRoomCreateService.create(request));
   }
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
@@ -51,7 +50,7 @@ public class LectureRoomApiController {
   @ApiOperation("강의실 조회")
   @ResponseStatus(value = HttpStatus.OK)
   public SuccessResponse<LectureRoomReadDto.Response> read(@PathVariable(value = "id") Long id){
-    return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", lectureRoomReadUseCase.read(id));
+    return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", lectureRoomReadService.read(id));
   }
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
@@ -59,7 +58,7 @@ public class LectureRoomApiController {
   @ApiOperation("강의실 전체 조회")
   @ResponseStatus(value = HttpStatus.OK)
   public SuccessResponse<PageImpl<LectureRoomReadDto.Response>> readAll(@Validated PageRequest pageRequest){
-    return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", lectureRoomReadUseCase.readAll(pageRequest.of()));
+    return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", lectureRoomReadService.readAll(pageRequest.of()));
   }
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
@@ -68,7 +67,7 @@ public class LectureRoomApiController {
   @ApiOperation(value = "강의실 수정")
   public SuccessResponse<LectureRoomReadDto.Response> update(@RequestBody @Validated
       LectureRoomUpdateDto.Request request){
-    lectureRoomUpdateUseCase.update(request);
+    lectureRoomUpdateService.update(request);
     return new SuccessResponse<>(HttpStatus.OK.value(), "강의실 수정에 성공했습니다.");
   }
 
@@ -77,7 +76,7 @@ public class LectureRoomApiController {
   @ResponseStatus(value = HttpStatus.OK)
   @ApiOperation(value = "강의실 삭제")
   public SuccessResponse delete(@PathVariable(value = "id") Long id){
-    lectureRoomDeleteUseCase.delete(id);
+    lectureRoomDeleteService.delete(id);
     return new SuccessResponse<>(HttpStatus.OK.value(), "강의실 삭제에 성공했습니다.");
   }
 
