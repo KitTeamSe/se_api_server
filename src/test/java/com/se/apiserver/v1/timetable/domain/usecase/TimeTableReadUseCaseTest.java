@@ -43,7 +43,7 @@ public class TimeTableReadUseCaseTest {
     Assertions.assertThat(timeTable.getYear()).isEqualTo(response.getYear());
     Assertions.assertThat(timeTable.getSemester()).isEqualTo(response.getSemester());
     Assertions.assertThat(timeTable.getStatus()).isEqualTo(response.getStatus());
-    Assertions.assertThat(timeTable.getCreatedBy()).isEqualTo(response.getCreatedBy());
+    Assertions.assertThat(timeTable.getCreatedAccountBy()).isEqualTo(response.getCreatedBy());
   }
 
   @Test

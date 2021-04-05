@@ -1,7 +1,8 @@
-package com.se.apiserver.v1.teacher.domain.usecase;
+package com.se.apiserver.v1.teacher.domain.usecase.teacher;
 
 import com.se.apiserver.v1.teacher.domain.entity.TeacherType;
-import com.se.apiserver.v1.teacher.infra.dto.TeacherCreateDto;
+import com.se.apiserver.v1.teacher.domain.usecase.teacher.TeacherCreateUseCase;
+import com.se.apiserver.v1.teacher.infra.dto.teacher.TeacherCreateDto;
 import com.se.apiserver.v1.teacher.infra.repository.TeacherJpaRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

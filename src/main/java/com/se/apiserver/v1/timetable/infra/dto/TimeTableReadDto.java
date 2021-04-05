@@ -42,7 +42,7 @@ public class TimeTableReadDto {
           .name(timeTable.getName())
           .year(timeTable.getYear())
           .semester(timeTable.getSemester())
-          .createdBy(timeTable.getCreatedBy())
+          .createdBy(timeTable.getCreatedAccountBy())
           .status(timeTable.getStatus())
           .build();
     }

@@ -1,11 +1,12 @@
-package com.se.apiserver.v1.teacher.domain.usecase;
+package com.se.apiserver.v1.teacher.domain.usecase.teacher;
 
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.teacher.domain.entity.Teacher;
 import com.se.apiserver.v1.teacher.domain.entity.TeacherType;
 import com.se.apiserver.v1.teacher.domain.error.TeacherErrorCode;
-import com.se.apiserver.v1.teacher.infra.dto.TeacherReadDto;
-import com.se.apiserver.v1.teacher.infra.dto.TeacherUpdateDto;
+import com.se.apiserver.v1.teacher.domain.usecase.teacher.TeacherUpdateUseCase;
+import com.se.apiserver.v1.teacher.infra.dto.teacher.TeacherReadDto;
+import com.se.apiserver.v1.teacher.infra.dto.teacher.TeacherUpdateDto;
 import com.se.apiserver.v1.teacher.infra.repository.TeacherJpaRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
