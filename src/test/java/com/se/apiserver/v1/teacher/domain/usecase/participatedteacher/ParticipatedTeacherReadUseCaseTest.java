@@ -110,7 +110,7 @@ public class ParticipatedTeacherReadUseCaseTest {
         .build());
 
     // When
-    PageImpl responses = participatedTeacherReadUseCase.readAll(PageRequest.builder()
+    PageImpl responses = participatedTeacherReadUseCase.readAllByTimeTableId(PageRequest.builder()
         .size(100)
         .direction(Direction.ASC)
         .page(1)

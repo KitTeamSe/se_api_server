@@ -4,6 +4,8 @@ import com.se.apiserver.v1.teacher.domain.entity.ParticipatedTeacher;
 import com.se.apiserver.v1.timetable.domain.entity.TimeTable;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -16,4 +18,7 @@ public interface ParticipatedTeacherJpaRepository extends JpaRepository<Particip
           "from ParticipatedTeacher pt " +
           "where pt.teacher.teacherId = :teacherId and pt.timeTable.timeTableId = :timeTableId")
   Optional<ParticipatedTeacher> findByTeacherIdAndTimeTableId(Long teacherId, Long timeTableId);
+
+
+  Page<ParticipatedTeacher> findAllByTimeTable(TimeTable timeTable, Pageable pageable);
 }

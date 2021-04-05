@@ -52,10 +52,10 @@ public class ParticipatedTeacherApiController {
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
   @GetMapping(path = "/participated-teacher")
-  @ApiOperation("참여 교원 전체 조회")
+  @ApiOperation("시간표에 참여한 참여 교원 전체 조회")
   @ResponseStatus(value = HttpStatus.OK)
-  public SuccessResponse<PageImpl<Response>> readAll(@Validated PageRequest pageRequest){
-    return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", participatedTeacherReadUseCase.readAll(pageRequest.of()));
+  public SuccessResponse<PageImpl<Response>> readAll(@Validated PageRequest pageRequest, Long timeTableId){
+    return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", participatedTeacherReadUseCase.readAllByTimeTableId(pageRequest.of(), timeTableId));
   }
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
