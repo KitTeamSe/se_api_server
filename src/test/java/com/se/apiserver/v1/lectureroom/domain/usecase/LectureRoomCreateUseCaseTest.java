@@ -15,11 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @Transactional
 public class LectureRoomCreateUseCaseTest {
-  @Autowired
-  LectureRoomJpaRepository lectureRoomJpaRepository;
 
   @Autowired
-  LectureRoomQueryRepository lectureRoomQueryRepository;
+  LectureRoomJpaRepository lectureRoomJpaRepository;
 
   @Autowired
   LectureRoomCreateUseCase lectureRoomCreateUseCase;
@@ -27,29 +25,27 @@ public class LectureRoomCreateUseCaseTest {
   @Test
   void 강의실_추가_성공(){
     // Given
-    LectureRoom lectureRoom = LectureRoom.builder()
+    LectureRoomCreateDto.Request req = LectureRoomCreateDto.Request.builder()
         .building("D")
-        .roomNumber(330)
+        .roomNumber(332)
         .capacity(30)
         .build();
 
     // When
-    lectureRoomJpaRepository.save(lectureRoom);
+    Long id = lectureRoomCreateUseCase.create(req);
 
     // Then
-    Assertions.assertThat(lectureRoomQueryRepository.findByRoomNumberWithBuilding(lectureRoom.getBuilding(), lectureRoom.getRoomNumber()).isPresent()).isEqualTo(true);
+    Assertions.assertThat(lectureRoomJpaRepository.findById(id).isPresent()).isEqualTo(true);
   }
 
   @Test
   void 강의실_추가_중복_실패(){
     // Given
-    LectureRoom lectureRoom = LectureRoom.builder()
+    LectureRoom lectureRoom = lectureRoomJpaRepository.save(LectureRoom.builder()
         .building("D")
         .roomNumber(330)
         .capacity(30)
-        .build();
-
-    lectureRoomJpaRepository.save(lectureRoom);
+        .build());
 
     // When
     LectureRoomCreateDto.Request req = LectureRoomCreateDto.Request.builder()
@@ -65,13 +61,11 @@ public class LectureRoomCreateUseCaseTest {
   @Test
   void 강의실_추가_건물만_같음_성공(){
     // Given
-    LectureRoom lectureRoom = LectureRoom.builder()
+    LectureRoom lectureRoom = lectureRoomJpaRepository.save(LectureRoom.builder()
         .building("D")
         .roomNumber(330)
         .capacity(30)
-        .build();
-
-    lectureRoomJpaRepository.save(lectureRoom);
+        .build());
 
     // When
     LectureRoomCreateDto.Request req = LectureRoomCreateDto.Request.builder()
@@ -80,22 +74,20 @@ public class LectureRoomCreateUseCaseTest {
         .capacity(30)
         .build();
 
-    Long savedLectureRoomPk = lectureRoomCreateUseCase.create(req);
+    Long id = lectureRoomCreateUseCase.create(req);
 
     // Then
-    Assertions.assertThat(lectureRoomJpaRepository.findById(savedLectureRoomPk).isPresent()).isEqualTo(true);
+    Assertions.assertThat(lectureRoomJpaRepository.findById(id).isPresent()).isEqualTo(true);
   }
 
   @Test
   void 강의실_추가_호수만_같음_성공(){
     // Given
-    LectureRoom lectureRoom = LectureRoom.builder()
+    LectureRoom lectureRoom = lectureRoomJpaRepository.save(LectureRoom.builder()
         .building("D")
         .roomNumber(330)
         .capacity(30)
-        .build();
-
-    lectureRoomJpaRepository.save(lectureRoom);
+        .build());
 
     // When
     LectureRoomCreateDto.Request req = LectureRoomCreateDto.Request.builder()
@@ -104,10 +96,10 @@ public class LectureRoomCreateUseCaseTest {
         .capacity(30)
         .build();
 
-    Long savedLectureRoomPk = lectureRoomCreateUseCase.create(req);
+    Long id = lectureRoomCreateUseCase.create(req);
 
     // Then
-    Assertions.assertThat(lectureRoomJpaRepository.findById(savedLectureRoomPk).isPresent()).isEqualTo(true);
+    Assertions.assertThat(lectureRoomJpaRepository.findById(id).isPresent()).isEqualTo(true);
   }
 
 

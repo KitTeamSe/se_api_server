@@ -1,7 +1,7 @@
 package com.se.apiserver.v1.timetable.domain.entity;
 
 public enum TimeTableStatus {
-  CREATION,                       // 생성
+  CREATED,                       // 생성됨
   SELECT_LECTURE_ROOM,            // 강의실 선택
   SELECT_TEACHER,                 // 교원 선택
   SELECT_SUBJECT,                 // 교과 선택

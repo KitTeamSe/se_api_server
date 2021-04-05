@@ -34,11 +34,11 @@ insert into question (question_id, text) values (8, '가장 좋아하는 색깔�
 insert into question (question_id, text) values (9, '가장 좋아하는 음식은?');
 
 insert into account (account_id, email, id_string, information_open_agree, student_id, name, nickname, password, phone_number, type, question_id, answer)
-values (1, 'djh20@naver.com', 'user', 'AGREE', '00000000', 'user', 'user', '{bcrypt}$2a$10$kq7zjt0yfgcdfd2pprpdcu81zpee.gceuwniydds0dmr7889mgyzo'
+values (1, 'djh20@naver.com', 'user', 'AGREE', '00000000', 'user', 'user', '{bcrypt}$2a$10$kQ7ZjT0yfgCDfD2pPRPdCu81ZPee.GCeuwniYdDS0dmr7889MGYZO'
 , '00000000000', 'STUDENT', 4, '구미');
 
 insert into account (account_id, email, id_string, information_open_agree, student_id, name, nickname, password, phone_number, type, question_id, answer)
-values (2, 'admin@admin.com', 'admin', 'AGREE', '00000001', 'admin', 'admin', '{bcrypt}$2a$10$kq7zjt0yfgcdfd2pprpdcu81zpee.gceuwniydds0dmr7889mgyzo'
+values (2, 'admin@admin.com', 'admin', 'AGREE', '00000001', 'admin', 'admin', '{bcrypt}$2a$10$kQ7ZjT0yfgCDfD2pPRPdCu81ZPee.GCeuwniYdDS0dmr7889MGYZO'
 , '00000000001', 'ASSISTANT',  4, '구미');
 
 

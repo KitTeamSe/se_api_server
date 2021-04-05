@@ -41,4 +41,16 @@ public class LectureRoom extends AccountGenerateEntity {
     this.roomNumber = roomNumber;
     this.capacity = capacity;
   }
+
+  public void updateBuilding(String building){
+    this.building = building;
+  }
+
+  public void updateRoomNumber(Integer roomNumber){
+    this.roomNumber = roomNumber;
+  }
+
+  public void updateCapacity(Integer capacity){
+    this.capacity = capacity;
+  }
 }
