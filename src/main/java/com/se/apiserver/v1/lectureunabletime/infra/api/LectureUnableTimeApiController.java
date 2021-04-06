@@ -5,6 +5,7 @@ import com.se.apiserver.v1.common.infra.dto.SuccessResponse;
 import com.se.apiserver.v1.lectureunabletime.application.dto.LectureUnableTimeCreateDto;
 import com.se.apiserver.v1.lectureunabletime.application.dto.LectureUnableTimeReadDto;
 import com.se.apiserver.v1.lectureunabletime.application.dto.LectureUnableTimeReadDto.Response;
+import com.se.apiserver.v1.lectureunabletime.application.dto.LectureUnableTimeUpdateDto;
 import com.se.apiserver.v1.lectureunabletime.application.service.LectureUnableTimeCreateService;
 import com.se.apiserver.v1.lectureunabletime.application.service.LectureUnableTimeDeleteService;
 import com.se.apiserver.v1.lectureunabletime.application.service.LectureUnableTimeReadService;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -33,7 +35,7 @@ public class LectureUnableTimeApiController {
 
   private final LectureUnableTimeCreateService lectureUnableTimeCreateService;
   private final LectureUnableTimeReadService lectureUnableTimeReadService;
-//  private final LectureUnableTimeUpdateService lectureUnableTimeUpdateService;
+  private final LectureUnableTimeUpdateService lectureUnableTimeUpdateService;
   private final LectureUnableTimeDeleteService lectureUnableTimeDeleteService;
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
@@ -58,6 +60,15 @@ public class LectureUnableTimeApiController {
   @ResponseStatus(value = HttpStatus.OK)
   public SuccessResponse<PageImpl<Response>> readAll(@Validated PageRequest pageRequest, Long participatedTeacherId){
     return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", lectureUnableTimeReadService.readAllByParticipatedTeacher(pageRequest.of(), participatedTeacherId));
+  }
+
+  @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
+  @PutMapping(path = "/lecture-unable-time")
+  @ResponseStatus(value = HttpStatus.OK)
+  @ApiOperation(value = "강의 불가 시간 수정")
+  public SuccessResponse<Long> update(@RequestBody @Validated
+      LectureUnableTimeUpdateDto.Request request){
+    return new SuccessResponse<>(HttpStatus.OK.value(), "강의 불가 시간 수정에 성공했습니다.", lectureUnableTimeUpdateService.update(request));
   }
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")

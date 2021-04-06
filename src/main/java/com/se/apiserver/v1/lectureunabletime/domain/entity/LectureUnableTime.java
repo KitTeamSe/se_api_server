@@ -63,4 +63,20 @@ public class LectureUnableTime extends AccountGenerateEntity {
     this.endPeriod = endPeriod;
     this.note = note;
   }
+
+  public void updateDayOfWeek(DayOfWeek dayOfWeek){
+    this.dayOfWeek = dayOfWeek;
+  }
+
+  public void updateStartPeriod(Period startPeriod){
+    this.startPeriod = startPeriod;
+  }
+
+  public void updateEndPeriod(Period endPeriod){
+    this.endPeriod = endPeriod;
+  }
+
+  public void updateNote(String note){
+    this.note = note;
+  }
 }
