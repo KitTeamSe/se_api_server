@@ -4,7 +4,7 @@ import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
 import com.se.apiserver.v1.usablelectureroom.domain.entity.UsableLectureRoom;
 import com.se.apiserver.v1.lectureunabletime.domain.entity.DayOfWeek;
 import com.se.apiserver.v1.period.domain.entity.Period;
-import com.se.apiserver.v1.subject.domain.entity.OpenSubject;
+import com.se.apiserver.v1.opensubject.domain.entity.OpenSubject;
 import com.se.apiserver.v1.participatedteacher.domain.entity.ParticipatedTeacher;
 import com.se.apiserver.v1.timetable.domain.entity.TimeTable;
 import javax.persistence.CascadeType;

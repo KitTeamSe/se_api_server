@@ -14,12 +14,7 @@ public interface UsableLectureRoomJpaRepository extends JpaRepository<UsableLect
   @Override
   Optional<UsableLectureRoom> findById(Long usableLectureRoomId);
 
-//  @Query("select ulr " +
-//      "from UsableLectureRoom ulr " +
-//      "where ulr.lectureRoom.lectureRoomId = :lectureRoomId and ulr.timeTable.timeTableId = :timeTableId")
-//  Optional<UsableLectureRoom> findByLectureRoomIdAndTimeTableId(Long lectureRoomId, Long timeTableId);
-
   Optional<UsableLectureRoom> findByTimeTableAndLectureRoom(TimeTable timeTable, LectureRoom lectureRoom);
-//
+
   Page<UsableLectureRoom> findAllByTimeTable(Pageable pageable, TimeTable timeTable);
 }
