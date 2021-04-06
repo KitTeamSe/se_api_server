@@ -20,5 +20,5 @@ public interface ParticipatedTeacherJpaRepository extends JpaRepository<Particip
   Optional<ParticipatedTeacher> findByTeacherIdAndTimeTableId(Long teacherId, Long timeTableId);
 
 
-  Page<ParticipatedTeacher> findAllByTimeTable(TimeTable timeTable, Pageable pageable);
+  Page<ParticipatedTeacher> findAllByTimeTable(Pageable pageable, TimeTable timeTable);
 }

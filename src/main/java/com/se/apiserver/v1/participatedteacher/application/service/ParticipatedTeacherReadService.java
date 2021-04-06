@@ -39,7 +39,7 @@ public class ParticipatedTeacherReadService {
         .findById(timeTableId)
         .orElseThrow(() -> new BusinessException(TimeTableErrorCode.NO_SUCH_TIME_TABLE));
 
-    Page<ParticipatedTeacher> all = participatedTeacherJpaRepository.findAllByTimeTable(timeTable, pageable);
+    Page<ParticipatedTeacher> all = participatedTeacherJpaRepository.findAllByTimeTable(pageable, timeTable);
     List<Response> responseList = all
         .stream()
         .map(t -> ParticipatedTeacherReadDto.Response.fromEntity(t))

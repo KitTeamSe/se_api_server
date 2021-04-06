@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 public enum ParticipatedTeacherErrorCode implements ErrorCode {
   NO_SUCH_PARTICIPATED_TEACHER(400, "PTE01", "존재하지 않는 참여 교원"),
-  DUPLICATED_PARTICIPATED_TEACHER(401, "PTE02", "참여 교원 중복");
+  DUPLICATED_PARTICIPATED_TEACHER(401, "PTE02", "해당 교원은 이미 해당 시간표에 참여중");
 
   private final int status;
   private final String code;

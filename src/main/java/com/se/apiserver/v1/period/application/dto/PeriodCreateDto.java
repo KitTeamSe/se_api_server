@@ -31,7 +31,7 @@ public class PeriodCreateDto {
     private LocalTime endTime;
 
     @ApiModelProperty(notes = "비고", example = "오전 9시부터 오전 10시까지 하는 수업")
-    @Size(min = 1, max = 255)
+    @Size(max = 255)
     private String note;
   }
 
