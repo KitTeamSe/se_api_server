@@ -35,7 +35,7 @@ public class Subject extends AccountGenerateEntity {
   @Column(nullable = false, unique = true)
   private String code;
 
-  @Size(min = 2, max = 30)
+  @Size(max = 50)
   @Column(nullable = false)
   private String name;
 
@@ -52,7 +52,7 @@ public class Subject extends AccountGenerateEntity {
   public Subject(Long subjectId,
       @Size(min = 2, max = 30) String curriculum,
       SubjectType type, @Size(min = 2, max = 30) String code,
-      @Size(min = 2, max = 30) String name, Integer grade, Integer semester, Integer credit) {
+      @Size(min = 1, max = 50) String name, Integer grade, Integer semester, Integer credit) {
     this.subjectId = subjectId;
     this.curriculum = curriculum;
     this.type = type;

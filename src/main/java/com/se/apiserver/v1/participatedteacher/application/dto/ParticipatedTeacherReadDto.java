@@ -35,17 +35,17 @@ public class ParticipatedTeacherReadDto {
     @ApiModelProperty(notes = "참여 교원 id", example = "1")
     private Long participatedTeacherId;
 
-    @ApiModelProperty(notes = "교원 id", example = "1")
-    private Long teacherId;
-
     @ApiModelProperty(notes = "시간표 id", example = "1")
     private Long timeTableId;
+
+    @ApiModelProperty(notes = "교원 id", example = "1")
+    private Long teacherId;
 
     public static Response fromEntity(ParticipatedTeacher participatedTeacher){
       return Response.builder()
           .participatedTeacherId(participatedTeacher.getParticipatedTeacherId())
-          .teacherId(participatedTeacher.getTeacher().getTeacherId())
           .timeTableId(participatedTeacher.getTimeTable().getTimeTableId())
+          .teacherId(participatedTeacher.getTeacher().getTeacherId())
           .build();
     }
   }

@@ -27,11 +27,11 @@ public class ParticipatedTeacherCreateService {
   @Transactional
   public Long create(ParticipatedTeacherCreateDto.Request request){
 
-    Teacher teacher = teacherJpaRepository.findById(request.getTeacherId())
-        .orElseThrow(() -> new BusinessException(TeacherErrorCode.NO_SUCH_TEACHER));
-
     TimeTable timeTable = timeTableJpaRepository.findById(request.getTimeTableId())
         .orElseThrow(() -> new BusinessException(TimeTableErrorCode.NO_SUCH_TIME_TABLE));
+
+    Teacher teacher = teacherJpaRepository.findById(request.getTeacherId())
+        .orElseThrow(() -> new BusinessException(TeacherErrorCode.NO_SUCH_TEACHER));
 
     if(participatedTeacherJpaRepository
         .findByTimeTableAndTeacher(timeTable, teacher)
@@ -40,8 +40,8 @@ public class ParticipatedTeacherCreateService {
     }
 
     ParticipatedTeacher participatedTeacher = ParticipatedTeacher.builder()
-        .teacher(teacher)
         .timeTable(timeTable)
+        .teacher(teacher)
         .build();
 
     participatedTeacherJpaRepository.save(participatedTeacher);

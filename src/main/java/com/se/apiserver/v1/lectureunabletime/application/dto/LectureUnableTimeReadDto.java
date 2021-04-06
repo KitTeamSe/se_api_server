@@ -20,7 +20,7 @@ public class LectureUnableTimeReadDto {
   @ApiModel("강의 불가 시간 조회 응답")
   static public class Response {
 
-    @ApiModelProperty(notes = "강의 불가 시간 id", example = "1")
+    @ApiModelProperty(notes = "강의 불가 시간 번호", example = "1")
     private Long lectureUnableTimeId;
 
     @ApiModelProperty(notes = "참여 교원 번호", example = "1")
@@ -32,7 +32,7 @@ public class LectureUnableTimeReadDto {
     @ApiModelProperty(notes = "시작 교시 번호", example = "1")
     private Long startPeriodId;
 
-    @ApiModelProperty(notes = "종료 교시", example = "1")
+    @ApiModelProperty(notes = "종료 교시 번호", example = "1")
     private Long endPeriodId;
 
     @ApiModelProperty(notes = "비고", example = "1번 참여 교원은 1교시부터 1교시까지 강의 불가합니다.")

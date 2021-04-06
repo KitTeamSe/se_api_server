@@ -16,9 +16,9 @@ public class UsableLectureRoomDeleteService {
   private final UsableLectureRoomJpaRepository usableLectureRoomJpaRepository;
 
   @Transactional
-  public void delete(Long participatedTeacherId){
+  public void delete(Long usableLectureRoomId){
     UsableLectureRoom usableLectureRoom = usableLectureRoomJpaRepository
-        .findById(participatedTeacherId)
+        .findById(usableLectureRoomId)
         .orElseThrow(() ->
             new BusinessException(UsableLectureRoomErrorCode.NO_SUCH_USABLE_LECTURE_ROOM)
         );

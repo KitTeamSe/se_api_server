@@ -1,7 +1,7 @@
-package com.se.apiserver.v1.subject.domain.entity;
+package com.se.apiserver.v1.opensubject.domain.entity;
 
 import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
-import com.se.apiserver.v1.common.domain.entity.BaseEntity;
+import com.se.apiserver.v1.subject.domain.entity.Subject;
 import com.se.apiserver.v1.timetable.domain.entity.TimeTable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -12,11 +12,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OpenSubject extends AccountGenerateEntity {
 
   @Id
@@ -25,7 +28,7 @@ public class OpenSubject extends AccountGenerateEntity {
 
   @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
   @JoinColumn(name = "time_table_id", referencedColumnName = "timeTableId", nullable = false)
-  private TimeTable timeTableId;
+  private TimeTable timeTable;
 
   @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
   @JoinColumn(name = "subject_id", referencedColumnName = "subjectId", nullable = false)
@@ -34,17 +37,24 @@ public class OpenSubject extends AccountGenerateEntity {
   @Column(nullable = false)
   private Integer numberOfDivision;
 
-  @Column(nullable = false)
   private Integer teachingTimePerWeek;
 
   @Builder
   public OpenSubject(Long openSubjectId,
-      TimeTable timeTableId, Subject subject, Integer numberOfDivision,
+      TimeTable timeTable, Subject subject, Integer numberOfDivision,
       Integer teachingTimePerWeek) {
     this.openSubjectId = openSubjectId;
-    this.timeTableId = timeTableId;
+    this.timeTable = timeTable;
     this.subject = subject;
     this.numberOfDivision = numberOfDivision;
+    this.teachingTimePerWeek = teachingTimePerWeek;
+  }
+
+  public void updateNumberOfDivision(Integer numberOfDivision){
+    this.numberOfDivision = numberOfDivision;
+  }
+
+  public void updateTeachingTimePerWeek(Integer teachingTimePerWeek){
     this.teachingTimePerWeek = teachingTimePerWeek;
   }
 }

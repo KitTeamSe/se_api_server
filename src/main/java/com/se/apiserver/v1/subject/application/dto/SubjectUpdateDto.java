@@ -32,7 +32,7 @@ public class SubjectUpdateDto {
     private String code;
 
     @ApiModelProperty(notes = "교과목명", example = "논리회로")
-    @Size(min = 2, max = 30)
+    @Size(min = 1, max = 50)
     private String name;
 
     @ApiModelProperty(notes = "대상학년", example = "1")
