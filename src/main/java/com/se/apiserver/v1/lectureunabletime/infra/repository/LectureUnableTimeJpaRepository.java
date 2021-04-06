@@ -1,0 +1,12 @@
+package com.se.apiserver.v1.lectureunabletime.infra.repository;
+
+import com.se.apiserver.v1.lectureunabletime.domain.entity.LectureUnableTime;
+import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface LectureUnableTimeJpaRepository extends JpaRepository<LectureUnableTime, Long> {
+
+  @Override
+  Optional<LectureUnableTime> findById(Long id);
+
+}
