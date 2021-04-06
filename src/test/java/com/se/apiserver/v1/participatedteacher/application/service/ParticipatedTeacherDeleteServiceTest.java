@@ -36,22 +36,13 @@ public class ParticipatedTeacherDeleteServiceTest {
   @Test
   void 참여_교원_삭제_성공(){
     // Given
-    Teacher teacher = teacherJpaRepository.save(Teacher.builder()
-        .name("홍길동")
-        .department("컴퓨터소프트웨어공학")
-        .type(TeacherType.FULL_PROFESSOR)
-        .build());
+    TimeTable timeTable = createTimeTable("참여_교원_삭제_성공 테스트 시간표 1");
 
-    TimeTable timeTable = timeTableJpaRepository.save(TimeTable.builder()
-        .name("테스트 시간표 1")
-        .year(2021)
-        .semester(2)
-        .status(TimeTableStatus.CREATED)
-        .build());
+    Teacher teacher = createTeacher("홍길동 1");
 
     ParticipatedTeacher participatedTeacher = participatedTeacherJpaRepository.save(ParticipatedTeacher.builder()
-        .teacher(teacher)
         .timeTable(timeTable)
+        .teacher(teacher)
         .build());
 
     Long id = participatedTeacher.getParticipatedTeacherId();
@@ -73,5 +64,22 @@ public class ParticipatedTeacherDeleteServiceTest {
     Assertions.assertThatThrownBy(() ->{
       participatedTeacherDeleteService.delete(id);
     }).isInstanceOf(BusinessException.class).hasMessage(ParticipatedTeacherErrorCode.NO_SUCH_PARTICIPATED_TEACHER.getMessage());
+  }
+
+  private TimeTable createTimeTable(String name){
+    return timeTableJpaRepository.save(TimeTable.builder()
+        .name(name)
+        .year(2021)
+        .semester(2)
+        .status(TimeTableStatus.CREATED)
+        .build());
+  }
+
+  private Teacher createTeacher(String name){
+    return teacherJpaRepository.save(Teacher.builder()
+        .name(name)
+        .department("컴퓨터소프트웨어공학")
+        .type(TeacherType.FULL_PROFESSOR)
+        .build());
   }
 }

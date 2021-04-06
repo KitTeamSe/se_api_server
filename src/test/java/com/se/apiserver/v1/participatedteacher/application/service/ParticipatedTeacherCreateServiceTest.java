@@ -31,30 +31,21 @@ public class ParticipatedTeacherCreateServiceTest {
   ParticipatedTeacherCreateService participatedTeacherCreateService;
 
   @Autowired
-  TeacherJpaRepository teacherJpaRepository;
+  TimeTableJpaRepository timeTableJpaRepository;
 
   @Autowired
-  TimeTableJpaRepository timeTableJpaRepository;
+  TeacherJpaRepository teacherJpaRepository;
 
   @Test
   void 참여_교원_생성_성공(){
     // Given
-    Teacher teacher = teacherJpaRepository.save(Teacher.builder()
-        .name("홍길동")
-        .department("컴퓨터소프트웨어공학")
-        .type(TeacherType.FULL_PROFESSOR)
-        .build());
+    TimeTable timeTable = createTimeTable("참여_교원_생성_성공 테스트 시간표 1");
 
-    TimeTable timeTable = timeTableJpaRepository.save(TimeTable.builder()
-        .name("테스트 시간표 1")
-        .year(2021)
-        .semester(2)
-        .status(TimeTableStatus.CREATED)
-        .build());
+    Teacher teacher = createTeacher("홍길동 1");
 
     ParticipatedTeacherCreateDto.Request request = ParticipatedTeacherCreateDto.Request.builder()
-        .teacherId(teacher.getTeacherId())
         .timeTableId(timeTable.getTimeTableId())
+        .teacherId(teacher.getTeacherId())
         .build();
 
     // When
@@ -67,18 +58,9 @@ public class ParticipatedTeacherCreateServiceTest {
   @Test
   void 참여_교원_생성_교원이_이미_참여중_실패(){
     // Given
-    Teacher teacher = teacherJpaRepository.save(Teacher.builder()
-        .name("홍길동")
-        .department("컴퓨터소프트웨어공학")
-        .type(TeacherType.FULL_PROFESSOR)
-        .build());
+    TimeTable timeTable = createTimeTable("참여_교원_생성_교원이_이미_참여중_실패 테스트 시간표 1");
 
-    TimeTable timeTable = timeTableJpaRepository.save(TimeTable.builder()
-        .name("테스트 시간표 1")
-        .year(2021)
-        .semester(2)
-        .status(TimeTableStatus.CREATED)
-        .build());
+    Teacher teacher = createTeacher("홍길동 1");
 
     participatedTeacherJpaRepository.save(ParticipatedTeacher.builder()
         .teacher(teacher)
@@ -86,12 +68,11 @@ public class ParticipatedTeacherCreateServiceTest {
         .build());
 
     ParticipatedTeacherCreateDto.Request request = ParticipatedTeacherCreateDto.Request.builder()
-        .teacherId(teacher.getTeacherId())
         .timeTableId(timeTable.getTimeTableId())
+        .teacherId(teacher.getTeacherId())
         .build();
 
     // When
-
     // Then
     Assertions.assertThatThrownBy(() ->{
       participatedTeacherCreateService.create(request);
@@ -103,20 +84,14 @@ public class ParticipatedTeacherCreateServiceTest {
     // Given
     Long teacherId = 1666L;
 
-    TimeTable timeTable = timeTableJpaRepository.save(TimeTable.builder()
-        .name("테스트 시간표 1")
-        .year(2021)
-        .semester(2)
-        .status(TimeTableStatus.CREATED)
-        .build());
+    TimeTable timeTable = createTimeTable("참여_교원_생성_존재하지_않는_교원_실패 테스트 시간표 1");
 
     ParticipatedTeacherCreateDto.Request request = ParticipatedTeacherCreateDto.Request.builder()
-        .teacherId(teacherId)
         .timeTableId(timeTable.getTimeTableId())
+        .teacherId(teacherId)
         .build();
 
     // When
-
     // Then
     Assertions.assertThatThrownBy(() ->{
       participatedTeacherCreateService.create(request);
@@ -126,17 +101,13 @@ public class ParticipatedTeacherCreateServiceTest {
   @Test
   void 참여_교원_생성_존재하지_않는_시간표_실패(){
     // Given
-    Teacher teacher = teacherJpaRepository.save(Teacher.builder()
-        .name("홍길동")
-        .department("컴퓨터소프트웨어공학")
-        .type(TeacherType.FULL_PROFESSOR)
-        .build());
+    Teacher teacher = createTeacher("홍길동 1");
 
     Long timeTableId = 17777L;
 
     ParticipatedTeacherCreateDto.Request request = ParticipatedTeacherCreateDto.Request.builder()
-        .teacherId(teacher.getTeacherId())
         .timeTableId(timeTableId)
+        .teacherId(teacher.getTeacherId())
         .build();
 
     // When
@@ -147,4 +118,20 @@ public class ParticipatedTeacherCreateServiceTest {
     }).isInstanceOf(BusinessException.class).hasMessage(TimeTableErrorCode.NO_SUCH_TIME_TABLE.getMessage());
   }
 
+  private TimeTable createTimeTable(String name){
+    return timeTableJpaRepository.save(TimeTable.builder()
+        .name(name)
+        .year(2021)
+        .semester(2)
+        .status(TimeTableStatus.CREATED)
+        .build());
+  }
+
+  private Teacher createTeacher(String name){
+    return teacherJpaRepository.save(Teacher.builder()
+        .name(name)
+        .department("컴퓨터소프트웨어공학")
+        .type(TeacherType.FULL_PROFESSOR)
+        .build());
+  }
 }
