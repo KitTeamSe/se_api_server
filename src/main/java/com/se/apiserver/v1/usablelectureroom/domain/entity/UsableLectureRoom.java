@@ -1,7 +1,8 @@
-package com.se.apiserver.v1.lectureroom.domain.entity;
+package com.se.apiserver.v1.usablelectureroom.domain.entity;
 
 import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
 import com.se.apiserver.v1.common.domain.entity.BaseEntity;
+import com.se.apiserver.v1.lectureroom.domain.entity.LectureRoom;
 import com.se.apiserver.v1.timetable.domain.entity.TimeTable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -12,11 +13,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UsableLectureRoom extends AccountGenerateEntity {
 
   @Id

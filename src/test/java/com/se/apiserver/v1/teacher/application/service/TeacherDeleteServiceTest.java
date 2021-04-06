@@ -1,4 +1,4 @@
-package com.se.apiserver.v1.teacher.application.service.teacher;
+package com.se.apiserver.v1.teacher.application.service;
 
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.teacher.application.service.TeacherDeleteService;
