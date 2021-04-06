@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,7 +36,7 @@ public class OpenSubjectApiController {
   private final OpenSubjectCreateService openSubjectCreateService;
   private final OpenSubjectReadService openSubjectReadService;
   private final OpenSubjectUpdateService openSubjectUpdateService;
-//  private final OpenSubjectDeleteService openSubjectDeleteService;
+  private final OpenSubjectDeleteService openSubjectDeleteService;
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
   @PostMapping(path = "/open-subject")
@@ -69,6 +70,15 @@ public class OpenSubjectApiController {
   public SuccessResponse<Long> update(@RequestBody @Validated
       OpenSubjectUpdateDto.Request request){
     return new SuccessResponse<>(HttpStatus.OK.value(), "개설 교과 수정에 성공했습니다.", openSubjectUpdateService.update(request));
+  }
+
+  @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
+  @DeleteMapping(path = "/open-subject/{id}")
+  @ResponseStatus(value = HttpStatus.OK)
+  @ApiOperation(value = "개설 교과 삭제")
+  public SuccessResponse delete(@PathVariable(value = "id") Long id){
+    openSubjectDeleteService.delete(id);
+    return new SuccessResponse<>(HttpStatus.OK.value(), "개설 교과 삭제에 성공했습니다.");
   }
 
 }
