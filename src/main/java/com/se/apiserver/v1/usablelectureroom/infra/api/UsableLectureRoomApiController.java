@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,7 +32,7 @@ public class UsableLectureRoomApiController {
   
   private final UsableLectureRoomCreateService usableLectureRoomCreateService;
   private final UsableLectureRoomReadService usableLectureRoomReadService;
-//  private final UsableLectureRoomDeleteService usableLectureRoomDeleteService;
+  private final UsableLectureRoomDeleteService usableLectureRoomDeleteService;
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
   @PostMapping(path = "/usable-lecture-room")
@@ -56,6 +57,15 @@ public class UsableLectureRoomApiController {
   @ResponseStatus(value = HttpStatus.OK)
   public SuccessResponse<PageImpl<Response>> readAll(@Validated PageRequest pageRequest, Long timeTableId){
     return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", usableLectureRoomReadService.readAllByTimeTableId(pageRequest.of(), timeTableId));
+  }
+
+  @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
+  @DeleteMapping(path = "/usable-lecture-room/{id}")
+  @ResponseStatus(value = HttpStatus.OK)
+  @ApiOperation(value = "사용 가능 강의실 삭제")
+  public SuccessResponse delete(@PathVariable(value = "id") Long id){
+    usableLectureRoomDeleteService.delete(id);
+    return new SuccessResponse<>(HttpStatus.OK.value(), "사용 가능 강의실 삭제에 성공했습니다.");
   }
 
 }
