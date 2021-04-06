@@ -24,7 +24,7 @@ public class TimeTable extends AccountGenerateEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long timeTableId;
 
-  @Size(min = 2, max = 20)
+  @Size(min = 1, max = 50)
   @Column(nullable = false)
   private String name;
 
@@ -40,7 +40,7 @@ public class TimeTable extends AccountGenerateEntity {
 
   @Builder
   public TimeTable(Long timeTableId,
-      @Size(min = 2, max = 20) String name, Integer year, Integer semester, TimeTableStatus status) {
+      @Size(min = 1, max = 50) String name, Integer year, Integer semester, TimeTableStatus status) {
     this.timeTableId = timeTableId;
     this.name = name;
     this.year = year;

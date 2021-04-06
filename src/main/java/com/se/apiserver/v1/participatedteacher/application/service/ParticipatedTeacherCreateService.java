@@ -33,9 +33,9 @@ public class ParticipatedTeacherCreateService {
     TimeTable timeTable = timeTableJpaRepository.findById(request.getTimeTableId())
         .orElseThrow(() -> new BusinessException(TimeTableErrorCode.NO_SUCH_TIME_TABLE));
 
-    if(participatedTeacherJpaRepository.findByTeacherIdAndTimeTableId(
-        teacher.getTeacherId(),
-        timeTable.getTimeTableId()).isPresent()){
+    if(participatedTeacherJpaRepository
+        .findByTimeTableAndTeacher(timeTable, teacher)
+        .isPresent()){
       throw new BusinessException(ParticipatedTeacherErrorCode.DUPLICATED_PARTICIPATED_TEACHER);
     }
 

@@ -17,7 +17,7 @@ public class TimeTableCreateDto {
   @ApiModel("시간표 생성 요청")
   static public class Request{
     @ApiModelProperty(notes = "이름", example = "테스트 시간표 1")
-    @Size(min = 2, max = 20)
+    @Size(min = 1, max = 50)
     private String name;
 
     @ApiModelProperty(notes = "년도", example = "2021")

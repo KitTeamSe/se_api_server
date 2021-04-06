@@ -1,4 +1,4 @@
-package com.se.apiserver.v1.teacher.application.service.participatedteacher;
+package com.se.apiserver.v1.participatedteacher.application.service;
 
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.common.infra.dto.PageRequest;
