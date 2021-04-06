@@ -35,13 +35,13 @@ public class Period extends AccountGenerateEntity {
   @Column(nullable = false)
   private LocalTime endTime;
 
-  @Size(min = 1, max = 255)
+  @Size(max = 255)
   private String note;
 
   @Builder
   public Period(Long periodId, Integer periodOrder,
       @Size(min = 1, max = 20) String name, LocalTime startTime, LocalTime endTime,
-      @Size(min = 2, max = 255) String note) {
+      @Size(max = 255) String note) {
     this.periodId = periodId;
     this.periodOrder = periodOrder;
     this.name = name;

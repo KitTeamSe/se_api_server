@@ -45,14 +45,14 @@ public class LectureUnableTime extends AccountGenerateEntity {
   @JoinColumn(name = "end_period_id", referencedColumnName = "periodId", nullable = false)
   private Period endPeriod;
 
-  @Size(min = 2, max = 255)
+  @Size(max = 255)
   private String note;
 
   @Builder
   public LectureUnableTime(Long lectureUnableTimeId,
       ParticipatedTeacher participatedTeacher,
       DayOfWeek dayOfWeek, Period startPeriod,
-      Period endPeriod, @Size(min = 2, max = 255) String note) {
+      Period endPeriod, @Size(max = 255) String note) {
     this.lectureUnableTimeId = lectureUnableTimeId;
     this.participatedTeacher = participatedTeacher;
     this.dayOfWeek = dayOfWeek;

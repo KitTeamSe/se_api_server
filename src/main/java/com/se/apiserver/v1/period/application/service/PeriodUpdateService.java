@@ -48,7 +48,8 @@ public class PeriodUpdateService {
     }
 
     if(request.getNote() != null){
-      period.updateNote(request.getNote());
+      String note = request.getNote().isEmpty() ? null : request.getNote();
+      period.updateNote(note);
     }
 
     // 변경된 시간이 교차되는지 검사

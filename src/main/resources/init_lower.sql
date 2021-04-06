@@ -77,3 +77,18 @@ insert into authority_group_authority_mapping (authority_group_authority_mapping
 insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (25,17,3);
 insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (26,18,3);
 insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (27,19,3);
+
+insert into period (period_id, period_order, name, start_time, end_time) values (1, 1, '1', '09:00:00', '09:50:00');
+insert into period (period_id, period_order, name, start_time, end_time) values (2, 2, '2', '10:00:00', '10:50:00');
+insert into period (period_id, period_order, name, start_time, end_time) values (3, 3, '3', '11:00:00', '11:50:00');
+insert into period (period_id, period_order, name, start_time, end_time) values (4, 4, '4', '12:00:00', '12:50:00');
+insert into period (period_id, period_order, name, start_time, end_time) values (5, 5, '5', '13:00:00', '13:50:00');
+insert into period (period_id, period_order, name, start_time, end_time) values (6, 6, '6', '14:00:00', '14:50:00');
+insert into period (period_id, period_order, name, start_time, end_time) values (7, 7, '7', '15:00:00', '15:50:00');
+insert into period (period_id, period_order, name, start_time, end_time) values (8, 8, '8', '16:00:00', '16:50:00');
+insert into period (period_id, period_order, name, start_time, end_time) values (9, 9, '9', '17:00:00', '17:50:00');
+insert into period (period_id, period_order, name, start_time, end_time) values (10, 10, 'A', '18:00:00', '18:45:00');
+insert into period (period_id, period_order, name, start_time, end_time) values (11, 11, 'B', '18:55:00', '19:40:00');
+insert into period (period_id, period_order, name, start_time, end_time) values (12, 12, 'C', '19:50:00', '20:35:00');
+insert into period (period_id, period_order, name, start_time, end_time) values (13, 13, 'D', '20:45:00', '21:30:00');
+insert into period (period_id, period_order, name, start_time, end_time) values (14, 14, 'E', '21:40:00', '22:25:00');
