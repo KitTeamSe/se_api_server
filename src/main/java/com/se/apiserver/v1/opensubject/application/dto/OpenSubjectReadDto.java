@@ -32,20 +32,28 @@ public class OpenSubjectReadDto {
   @ApiModel("개설 교과 조회 응답")
   static public class Response{
 
-    @ApiModelProperty(notes = "개설 교과 id", example = "1")
+    @ApiModelProperty(notes = "개설 교과 번호", example = "1")
     private Long openSubjectId;
 
-    @ApiModelProperty(notes = "시간표 id", example = "1")
+    @ApiModelProperty(notes = "시간표 번호", example = "1")
     private Long timeTableId;
 
-    @ApiModelProperty(notes = "교과 id", example = "1")
+    @ApiModelProperty(notes = "교과 번호", example = "1")
     private Long subjectId;
+
+    @ApiModelProperty(notes = "분반 수", example = "1")
+    private Integer numberOfDivision;
+
+    @ApiModelProperty(notes = "주간 수업 시간", example = "3")
+    private Integer teachingTimePerWeek;
 
     public static Response fromEntity(OpenSubject openSubject){
       return Response.builder()
           .openSubjectId(openSubject.getOpenSubjectId())
           .timeTableId(openSubject.getTimeTable().getTimeTableId())
           .subjectId(openSubject.getSubject().getSubjectId())
+          .numberOfDivision(openSubject.getNumberOfDivision())
+          .teachingTimePerWeek(openSubject.getTeachingTimePerWeek())
           .build();
     }
   }

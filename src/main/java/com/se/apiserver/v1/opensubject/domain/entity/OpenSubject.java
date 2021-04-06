@@ -49,4 +49,12 @@ public class OpenSubject extends AccountGenerateEntity {
     this.numberOfDivision = numberOfDivision;
     this.teachingTimePerWeek = teachingTimePerWeek;
   }
+
+  public void updateNumberOfDivision(Integer numberOfDivision){
+    this.numberOfDivision = numberOfDivision;
+  }
+
+  public void updateTeachingTimePerWeek(Integer teachingTimePerWeek){
+    this.teachingTimePerWeek = teachingTimePerWeek;
+  }
 }

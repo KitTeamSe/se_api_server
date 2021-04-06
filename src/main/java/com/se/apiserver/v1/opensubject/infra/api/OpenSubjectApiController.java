@@ -5,6 +5,7 @@ import com.se.apiserver.v1.common.infra.dto.SuccessResponse;
 import com.se.apiserver.v1.opensubject.application.dto.OpenSubjectCreateDto;
 import com.se.apiserver.v1.opensubject.application.dto.OpenSubjectReadDto;
 import com.se.apiserver.v1.opensubject.application.dto.OpenSubjectReadDto.Response;
+import com.se.apiserver.v1.opensubject.application.dto.OpenSubjectUpdateDto;
 import com.se.apiserver.v1.opensubject.application.service.OpenSubjectCreateService;
 import com.se.apiserver.v1.opensubject.application.service.OpenSubjectDeleteService;
 import com.se.apiserver.v1.opensubject.application.service.OpenSubjectReadService;
@@ -19,6 +20,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -32,7 +34,7 @@ public class OpenSubjectApiController {
 
   private final OpenSubjectCreateService openSubjectCreateService;
   private final OpenSubjectReadService openSubjectReadService;
-//  private final OpenSubjectUpdateService openSubjectUpdateService;
+  private final OpenSubjectUpdateService openSubjectUpdateService;
 //  private final OpenSubjectDeleteService openSubjectDeleteService;
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
@@ -58,6 +60,15 @@ public class OpenSubjectApiController {
   @ResponseStatus(value = HttpStatus.OK)
   public SuccessResponse<PageImpl<Response>> readAll(@Validated PageRequest pageRequest, Long timeTableId){
     return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", openSubjectReadService.readAllByTimeTableId(pageRequest.of(), timeTableId));
+  }
+
+  @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
+  @PutMapping(path = "/open-subject")
+  @ResponseStatus(value = HttpStatus.OK)
+  @ApiOperation(value = "개설 교과 수정")
+  public SuccessResponse<Long> update(@RequestBody @Validated
+      OpenSubjectUpdateDto.Request request){
+    return new SuccessResponse<>(HttpStatus.OK.value(), "개설 교과 수정에 성공했습니다.", openSubjectUpdateService.update(request));
   }
 
 }
