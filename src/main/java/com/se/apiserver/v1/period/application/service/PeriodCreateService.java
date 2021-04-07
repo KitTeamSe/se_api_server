@@ -27,11 +27,6 @@ public class PeriodCreateService {
     // 교시 이름이 유니크한지 검사
     checkUniqueName(request.getName());
 
-    // LocalDateTime의 날짜정보를 0년 1월 1일로 바꾸어 시간만 남김.
-
-    // 시작 시간과 종료 시간이 교차하는지 검사
-    checkTimeCrossing(request.getStartTime(), request.getEndTime());
-
     Period period = Period.builder()
         .periodOrder(request.getPeriodOrder())
         .name(request.getName())
@@ -53,10 +48,5 @@ public class PeriodCreateService {
   private void checkUniqueName(String name){
     if(periodJpaRepository.findByName(name).isPresent())
       throw new BusinessException(PeriodErrorCode.DUPLICATED_PERIOD_NAME);
-  }
-
-  private void checkTimeCrossing(LocalTime startTime, LocalTime endTime){
-    if(startTime.isAfter(endTime))
-      throw new BusinessException(PeriodErrorCode.CROSSING_START_END_TIME);
   }
 }

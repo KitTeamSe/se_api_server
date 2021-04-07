@@ -39,18 +39,9 @@ public class OpenSubjectCreateService {
       throw new BusinessException(OpenSubjectErrorCode.DUPLICATED_OPEN_SUBJECT);
     }
 
-    if(request.getTeachingTimePerWeek() != null){
-      if(request.getTeachingTimePerWeek() <= 0)
-        throw new BusinessException(OpenSubjectErrorCode.INVALID_TEACHING_TIME_PER_WEEK);
-    }
-    else{
-      // 주간 강의 시간이 정해져있지 않으면 교과의 학점을 그대로 사용.
+    // 주간 강의 시간이 정해져있지 않으면 교과의 학점을 그대로 사용.
+    if(request.getTeachingTimePerWeek() == null){
       request.setTeachingTimePerWeek(subject.getCredit());
-    }
-
-    if(request.getNumberOfDivision() != null){
-      if(request.getNumberOfDivision() <= 0)
-        throw new BusinessException(OpenSubjectErrorCode.INVALID_NUMBER_OF_DIVISION);
     }
 
     OpenSubject openSubject = OpenSubject.builder()

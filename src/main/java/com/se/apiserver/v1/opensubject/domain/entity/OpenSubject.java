@@ -1,6 +1,8 @@
 package com.se.apiserver.v1.opensubject.domain.entity;
 
 import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
+import com.se.apiserver.v1.common.domain.exception.BusinessException;
+import com.se.apiserver.v1.opensubject.application.error.OpenSubjectErrorCode;
 import com.se.apiserver.v1.subject.domain.entity.Subject;
 import com.se.apiserver.v1.timetable.domain.entity.TimeTable;
 import javax.persistence.CascadeType;
@@ -43,6 +45,10 @@ public class OpenSubject extends AccountGenerateEntity {
   public OpenSubject(Long openSubjectId,
       TimeTable timeTable, Subject subject, Integer numberOfDivision,
       Integer teachingTimePerWeek) {
+
+    validateNumberOfDivision(numberOfDivision);
+    validateTeachingTimePerWeek(teachingTimePerWeek);
+
     this.openSubjectId = openSubjectId;
     this.timeTable = timeTable;
     this.subject = subject;
@@ -50,11 +56,23 @@ public class OpenSubject extends AccountGenerateEntity {
     this.teachingTimePerWeek = teachingTimePerWeek;
   }
 
+  public void validateNumberOfDivision(Integer numberOfDivision){
+    if(numberOfDivision <= 0)
+      throw new BusinessException(OpenSubjectErrorCode.INVALID_NUMBER_OF_DIVISION);
+  }
+
+  public void validateTeachingTimePerWeek(Integer teachingTimePerWeek){
+    if(teachingTimePerWeek <= 0)
+      throw new BusinessException(OpenSubjectErrorCode.INVALID_TEACHING_TIME_PER_WEEK);
+  }
+
   public void updateNumberOfDivision(Integer numberOfDivision){
+    validateNumberOfDivision(numberOfDivision);
     this.numberOfDivision = numberOfDivision;
   }
 
   public void updateTeachingTimePerWeek(Integer teachingTimePerWeek){
+    validateTeachingTimePerWeek(teachingTimePerWeek);
     this.teachingTimePerWeek = teachingTimePerWeek;
   }
 }

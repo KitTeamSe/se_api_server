@@ -29,8 +29,8 @@ public class PeriodReadServiceTest {
   void 교시_조회_성공(){
     // Given
     Period period = periodJpaRepository.save(Period.builder()
-        .periodOrder(1)
-        .name("1")
+        .periodOrder(101)
+        .name("101")
         .startTime(LocalTime.of(9, 0, 0))
         .endTime(LocalTime.of(9, 50, 0))
         .build());
@@ -58,18 +58,18 @@ public class PeriodReadServiceTest {
   }
 
   @Test
-  void 강의실_전체_조회_성공(){
+  void 교시_전체_조회_성공(){
     // Given
     periodJpaRepository.save(Period.builder()
-        .periodOrder(1)
-        .name("1")
+        .periodOrder(101)
+        .name("101")
         .startTime(LocalTime.of(9, 0, 0))
         .endTime(LocalTime.of(9, 50, 0))
         .build());
 
     periodJpaRepository.save(Period.builder()
-        .periodOrder(2)
-        .name("2")
+        .periodOrder(102)
+        .name("102")
         .startTime(LocalTime.of(10, 0, 0))
         .endTime(LocalTime.of(10, 50, 0))
         .build());
@@ -82,6 +82,6 @@ public class PeriodReadServiceTest {
         .build().of());
 
     // Then
-    Assertions.assertThat(responses.getTotalElements()).isEqualTo(2);
+    Assertions.assertThat(responses.getTotalElements()).isEqualTo(16); // 2개가 되어야 하지만, init_sql로 14개가 생성되므로 16이 맞음.
   }
 }

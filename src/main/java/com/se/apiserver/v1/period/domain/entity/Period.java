@@ -1,6 +1,8 @@
 package com.se.apiserver.v1.period.domain.entity;
 
 import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
+import com.se.apiserver.v1.common.domain.exception.BusinessException;
+import com.se.apiserver.v1.period.application.error.PeriodErrorCode;
 import java.time.LocalTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -42,15 +44,31 @@ public class Period extends AccountGenerateEntity {
   public Period(Long periodId, Integer periodOrder,
       @Size(min = 1, max = 20) String name, LocalTime startTime, LocalTime endTime,
       @Size(max = 255) String note) {
+
+    validatePeriodOrder(periodOrder);
+
     this.periodId = periodId;
     this.periodOrder = periodOrder;
     this.name = name;
     this.startTime = startTime;
     this.endTime = endTime;
     this.note = note;
+
+    validateTimeCrossing();
+  }
+
+  public void validateTimeCrossing(){
+    if(startTime.isAfter(endTime))
+      throw new BusinessException(PeriodErrorCode.CROSSING_START_END_TIME);
+  }
+
+  public void validatePeriodOrder(Integer periodOrder){
+    if(periodOrder < 0)
+      throw new BusinessException(PeriodErrorCode.INVALID_PERIOD_ORDER);
   }
 
   public void updatePeriodOrder(Integer periodOrder){
+    validatePeriodOrder(periodOrder);
     this.periodOrder = periodOrder;
   }
 
