@@ -44,8 +44,8 @@ public class LectureUnableTimeReadDto {
           .lectureUnableTimeId(lectureUnableTime.getLectureUnableTimeId())
           .participatedTeacherId(lectureUnableTime.getParticipatedTeacher().getParticipatedTeacherId())
           .dayOfWeek(lectureUnableTime.getDayOfWeek())
-          .startPeriodId(lectureUnableTime.getStartPeriod().getPeriodId())
-          .endPeriodId(lectureUnableTime.getEndPeriod().getPeriodId())
+          .startPeriodId(lectureUnableTime.getPeriodRange().getStartPeriod().getPeriodId())
+          .endPeriodId(lectureUnableTime.getPeriodRange().getEndPeriod().getPeriodId())
           .note(lectureUnableTime.getNote())
           .build();
     }

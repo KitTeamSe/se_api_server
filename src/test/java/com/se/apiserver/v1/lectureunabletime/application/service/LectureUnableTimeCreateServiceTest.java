@@ -9,6 +9,7 @@ import com.se.apiserver.v1.participatedteacher.application.error.ParticipatedTea
 import com.se.apiserver.v1.participatedteacher.domain.entity.ParticipatedTeacher;
 import com.se.apiserver.v1.participatedteacher.infra.repository.ParticipatedTeacherJpaRepository;
 import com.se.apiserver.v1.period.application.error.PeriodErrorCode;
+import com.se.apiserver.v1.period.application.error.PeriodRangeError;
 import com.se.apiserver.v1.period.domain.entity.Period;
 import com.se.apiserver.v1.period.infra.repository.PeriodJpaRepository;
 import com.se.apiserver.v1.teacher.domain.entity.Teacher;
@@ -124,7 +125,7 @@ public class LectureUnableTimeCreateServiceTest {
     Assertions.assertThatThrownBy(()->
         lectureUnableTimeCreateService.create(request))
         .isInstanceOf(BusinessException.class)
-        .hasMessage(LectureUnableTimeErrorCode.CROSSING_START_END_PERIOD.getMessage());
+        .hasMessage(PeriodRangeError.INVALID_PERIOD_RANGE.getMessage());
   }
 
   private Teacher createTeacher(String name){

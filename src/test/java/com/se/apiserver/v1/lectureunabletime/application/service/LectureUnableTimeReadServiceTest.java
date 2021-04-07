@@ -2,7 +2,7 @@ package com.se.apiserver.v1.lectureunabletime.application.service;
 
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.common.infra.dto.PageRequest;
-import com.se.apiserver.v1.lectureunabletime.application.dto.LectureUnableTimeCreateDto;
+import com.se.apiserver.v1.period.domain.entity.PeriodRange;
 import com.se.apiserver.v1.lectureunabletime.application.dto.LectureUnableTimeReadDto;
 import com.se.apiserver.v1.lectureunabletime.application.error.LectureUnableTimeErrorCode;
 import com.se.apiserver.v1.lectureunabletime.domain.entity.DayOfWeek;
@@ -65,8 +65,7 @@ public class LectureUnableTimeReadServiceTest {
     LectureUnableTime lectureUnableTime = lectureUnableTimeJpaRepository.save(LectureUnableTime.builder()
         .participatedTeacher(participatedTeacher)
         .dayOfWeek(DayOfWeek.FRIDAY)
-        .startPeriod(startPeriod)
-        .endPeriod(endPeriod)
+        .periodRange(new PeriodRange(startPeriod, endPeriod))
         .build());
 
     // When
@@ -107,15 +106,13 @@ public class LectureUnableTimeReadServiceTest {
     lectureUnableTimeJpaRepository.save(LectureUnableTime.builder()
         .participatedTeacher(participatedTeacher)
         .dayOfWeek(DayOfWeek.FRIDAY)
-        .startPeriod(startPeriod)
-        .endPeriod(endPeriod)
+        .periodRange(new PeriodRange(startPeriod, endPeriod))
         .build());
 
     lectureUnableTimeJpaRepository.save(LectureUnableTime.builder()
         .participatedTeacher(participatedTeacher)
         .dayOfWeek(DayOfWeek.WEDNESDAY)
-        .startPeriod(startPeriod)
-        .endPeriod(endPeriod)
+        .periodRange(new PeriodRange(startPeriod, endPeriod))
         .build());
 
     // When
