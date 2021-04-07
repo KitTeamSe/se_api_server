@@ -54,8 +54,7 @@ public class LectureUnableTimeUpdateService {
     }
 
     // 변경된 시간이 교차되는지 검사
-    if(isPeriodCrossing(lectureUnableTime.getStartPeriod(), lectureUnableTime.getEndPeriod()))
-      throw new BusinessException(LectureUnableTimeErrorCode.CROSSING_START_END_PERIOD);
+    lectureUnableTime.validatePeriods();
 
     return lectureUnableTimeJpaRepository.save(lectureUnableTime).getLectureUnableTimeId();
   }

@@ -39,9 +39,6 @@ public class LectureUnableTimeCreateService {
         .findById(request.getEndPeriodId())
         .orElseThrow(() -> new BusinessException(PeriodErrorCode.NO_SUCH_PERIOD));
 
-    if(isPeriodCrossing(startPeriod, endPeriod))
-      throw new BusinessException(LectureUnableTimeErrorCode.CROSSING_START_END_PERIOD);
-
     LectureUnableTime lectureUnableTime = LectureUnableTime.builder()
         .participatedTeacher(participatedTeacher)
         .dayOfWeek(request.getDayOfWeek())

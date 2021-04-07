@@ -1,6 +1,8 @@
 package com.se.apiserver.v1.lectureunabletime.domain.entity;
 
 import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
+import com.se.apiserver.v1.common.domain.exception.BusinessException;
+import com.se.apiserver.v1.lectureunabletime.application.error.LectureUnableTimeErrorCode;
 import com.se.apiserver.v1.period.domain.entity.Period;
 import com.se.apiserver.v1.participatedteacher.domain.entity.ParticipatedTeacher;
 
@@ -62,6 +64,13 @@ public class LectureUnableTime extends AccountGenerateEntity {
     this.startPeriod = startPeriod;
     this.endPeriod = endPeriod;
     this.note = note;
+
+    validatePeriods();
+  }
+
+  public void validatePeriods(){
+    if(startPeriod.getPeriodOrder() > endPeriod.getPeriodOrder())
+      throw new BusinessException(LectureUnableTimeErrorCode.CROSSING_START_END_PERIOD);
   }
 
   public void updateDayOfWeek(DayOfWeek dayOfWeek){
