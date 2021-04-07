@@ -2,7 +2,6 @@ package com.se.apiserver.v1.period.domain.entity;
 
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.period.application.error.PeriodRangeError;
-import com.se.apiserver.v1.period.domain.entity.Period;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
@@ -29,11 +28,30 @@ public class PeriodRange {
     this.startPeriod = startPeriod;
     this.endPeriod = endPeriod;
 
-    validatePeriod();
+    validateCrossing();
   }
 
-  public void validatePeriod(){
+  public void validateCrossing(){
     if(startPeriod.getPeriodOrder() > endPeriod.getPeriodOrder())
       throw new BusinessException(PeriodRangeError.INVALID_PERIOD_RANGE);
+  }
+
+  public boolean isOverlappedWith(PeriodRange target){
+    if(startPeriod.equals(target.startPeriod) || endPeriod.equals(target.endPeriod))
+      return true;
+
+    PeriodRange first = this;
+    PeriodRange second = target;
+    if(startPeriod.isAfter(target.startPeriod)){
+      first = target;
+      second = this;
+    }
+
+    return first.getEndPeriod().isAfter(second.getStartPeriod());
+  }
+
+  // 수업 시간
+  public int getTeachingTime(){
+    return endPeriod.getPeriodOrder() - startPeriod.getPeriodOrder() + 1;
   }
 }

@@ -87,4 +87,12 @@ public class Period extends AccountGenerateEntity {
   public void updateNote(String note){
     this.note = note;
   }
+
+  public boolean isAfter(Period period){
+    return periodOrder > period.getPeriodOrder();
+  }
+
+  public boolean isBefore(Period period){
+    return periodOrder < period.getPeriodOrder();
+  }
 }

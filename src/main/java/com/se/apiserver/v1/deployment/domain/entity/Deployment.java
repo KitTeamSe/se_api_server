@@ -1,6 +1,8 @@
 package com.se.apiserver.v1.deployment.domain.entity;
 
 import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
+import com.se.apiserver.v1.common.domain.exception.BusinessException;
+import com.se.apiserver.v1.deployment.application.error.DeploymentErrorCode;
 import com.se.apiserver.v1.period.domain.entity.PeriodRange;
 import com.se.apiserver.v1.usablelectureroom.domain.entity.UsableLectureRoom;
 import com.se.apiserver.v1.lectureunabletime.domain.entity.DayOfWeek;
@@ -68,6 +70,8 @@ public class Deployment extends AccountGenerateEntity {
       DayOfWeek dayOfWeek, Integer division,
       PeriodRange periodRange) {
 
+    validateDivision(division);
+
     this.deploymentId = deploymentId;
     this.timeTable = timeTable;
     this.openSubject = openSubject;
@@ -76,5 +80,10 @@ public class Deployment extends AccountGenerateEntity {
     this.dayOfWeek = dayOfWeek;
     this.division = division;
     this.periodRange = periodRange;
+  }
+  
+  private void validateDivision(Integer division){
+    if(division <= 0)
+      throw new BusinessException(DeploymentErrorCode.INVALID_DIVISION);
   }
 }

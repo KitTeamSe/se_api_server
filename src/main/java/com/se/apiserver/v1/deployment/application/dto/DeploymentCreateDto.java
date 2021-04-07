@@ -41,4 +41,15 @@ public class DeploymentCreateDto {
     @ApiModelProperty(notes = "종료 교시 번호", example = "1")
     private Long endPeriodId;
   }
+
+  @Data
+  @AllArgsConstructor
+  @ApiModel("배치 생성 응답")
+  static public class Resposne{
+    @ApiModelProperty(notes = "배치 pk", example = "1")
+    private Long deploymentId;
+
+    @ApiModelProperty(notes = "메시지", example = "성공")
+    private String alertMessage;
+  }
 }

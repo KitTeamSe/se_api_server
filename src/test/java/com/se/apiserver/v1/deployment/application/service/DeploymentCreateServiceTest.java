@@ -93,10 +93,10 @@ public class DeploymentCreateServiceTest {
         .build();
 
     // When
-    Long id = deploymentCreateService.create(request);
+    DeploymentCreateDto.Resposne resposne = deploymentCreateService.create(request);
 
     // Then
-    Assertions.assertThat(deploymentJpaRepository.findById(id).isPresent()).isEqualTo(true);
+    Assertions.assertThat(deploymentJpaRepository.findById(resposne.getDeploymentId()).isPresent()).isEqualTo(true);
   }
 
   private TimeTable createTimeTable(String name){

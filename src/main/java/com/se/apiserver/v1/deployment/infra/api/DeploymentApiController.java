@@ -33,8 +33,8 @@ public class DeploymentApiController {
   @PostMapping(path = "/deploy")
   @ResponseStatus(value = HttpStatus.CREATED)
   @ApiOperation(value = "배치 추가")
-  public SuccessResponse<Long> create(@RequestBody @Validated DeploymentCreateDto.Request request){
-    return new SuccessResponse<>(HttpStatus.CREATED.value(), "배치 생성에 성공했습니다.", deploymentCreateService
+  public SuccessResponse<DeploymentCreateDto.Resposne> create(@RequestBody @Validated DeploymentCreateDto.Request request){
+    return new SuccessResponse<DeploymentCreateDto.Resposne>(HttpStatus.CREATED.value(), "배치 생성에 성공했습니다.", deploymentCreateService
         .create(request));
   }
 }

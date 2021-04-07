@@ -6,7 +6,8 @@ import lombok.Getter;
 @Getter
 public enum  PeriodRangeError implements ErrorCode {
 
-  INVALID_PERIOD_RANGE(400, "PRE01", "유효하지 않은 교시 범위");
+  INVALID_PERIOD_RANGE(400, "PRE01", "유효하지 않은 교시 범위"),
+  OVERLAPPED_PERIOD(401, "PRE02", "교시 범위가 서로 중첩됨");
 
   private final int status;
   private final String code;
