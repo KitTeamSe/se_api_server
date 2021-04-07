@@ -1,6 +1,7 @@
 package com.se.apiserver.v1.deployment.domain.entity;
 
 import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
+import com.se.apiserver.v1.period.domain.entity.PeriodRange;
 import com.se.apiserver.v1.usablelectureroom.domain.entity.UsableLectureRoom;
 import com.se.apiserver.v1.lectureunabletime.domain.entity.DayOfWeek;
 import com.se.apiserver.v1.period.domain.entity.Period;
@@ -9,6 +10,7 @@ import com.se.apiserver.v1.participatedteacher.domain.entity.ParticipatedTeacher
 import com.se.apiserver.v1.timetable.domain.entity.TimeTable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -18,11 +20,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Deployment extends AccountGenerateEntity {
 
   @Id
@@ -52,13 +57,8 @@ public class Deployment extends AccountGenerateEntity {
   @Column(nullable = false)
   private Integer division;
 
-  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
-  @JoinColumn(name = "start_period_id", referencedColumnName = "periodId", nullable = false)
-  private Period startPeriod;
-
-  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
-  @JoinColumn(name = "end_period_id", referencedColumnName = "periodId", nullable = false)
-  private Period endPeriod;
+  @Embedded
+  private PeriodRange periodRange;
 
   @Builder
   public Deployment(Long deploymentId, TimeTable timeTable,
@@ -66,7 +66,8 @@ public class Deployment extends AccountGenerateEntity {
       UsableLectureRoom usableLectureRoom,
       ParticipatedTeacher participatedTeacherId,
       DayOfWeek dayOfWeek, Integer division,
-      Period startPeriod, Period endPeriod) {
+      PeriodRange periodRange) {
+
     this.deploymentId = deploymentId;
     this.timeTable = timeTable;
     this.openSubject = openSubject;
@@ -74,7 +75,6 @@ public class Deployment extends AccountGenerateEntity {
     this.participatedTeacherId = participatedTeacherId;
     this.dayOfWeek = dayOfWeek;
     this.division = division;
-    this.startPeriod = startPeriod;
-    this.endPeriod = endPeriod;
+    this.periodRange = periodRange;
   }
 }
