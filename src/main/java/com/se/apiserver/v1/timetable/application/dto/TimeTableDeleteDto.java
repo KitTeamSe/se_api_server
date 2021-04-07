@@ -12,7 +12,7 @@ public class TimeTableDeleteDto {
   @NoArgsConstructor
   @ApiModel("시간표 삭제 요청")
   static public class Request{
-    @ApiModelProperty(notes = "삭제할 시간표 id", example = "1")
+    @ApiModelProperty(notes = "삭제할 시간표 번호", example = "1")
     private Long timeTableId;
   }
 }
