@@ -7,10 +7,8 @@ import com.se.apiserver.v1.period.application.error.PeriodErrorCode;
 import com.se.apiserver.v1.period.application.dto.PeriodReadDto;
 import com.se.apiserver.v1.period.application.dto.PeriodUpdateDto;
 import com.se.apiserver.v1.period.infra.repository.PeriodJpaRepository;
-import java.time.LocalTime;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,8 +50,7 @@ public class PeriodUpdateService {
       period.updateNote(note);
     }
 
-    // 변경된 시간이 교차되는지 검사
-    checkTimeCrossing(period.getStartTime(), period.getEndTime());
+    period.validateTimeCrossing();
 
     periodJpaRepository.save(period);
     return PeriodReadDto.Response.fromEntity(period);
@@ -73,10 +70,5 @@ public class PeriodUpdateService {
     if(optionalPeriod.isPresent())
       if(!optionalPeriod.get().getPeriodId().equals(request.getPeriodId()))
         throw new BusinessException(PeriodErrorCode.DUPLICATED_PERIOD_NAME);
-  }
-
-  private void checkTimeCrossing(LocalTime startTime, LocalTime endTime){
-    if(startTime.isAfter(endTime))
-      throw new BusinessException(PeriodErrorCode.CROSSING_START_END_TIME);
   }
 }

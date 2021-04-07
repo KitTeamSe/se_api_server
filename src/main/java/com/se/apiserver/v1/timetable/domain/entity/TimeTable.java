@@ -2,6 +2,8 @@ package com.se.apiserver.v1.timetable.domain.entity;
 
 import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
 
+import com.se.apiserver.v1.common.domain.exception.BusinessException;
+import com.se.apiserver.v1.timetable.application.error.TimeTableErrorCode;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -41,6 +43,10 @@ public class TimeTable extends AccountGenerateEntity {
   @Builder
   public TimeTable(Long timeTableId,
       @Size(min = 1, max = 50) String name, Integer year, Integer semester, TimeTableStatus status) {
+
+    validateYear(year);
+    validateSemester(semester);
+
     this.timeTableId = timeTableId;
     this.name = name;
     this.year = year;
@@ -48,15 +54,27 @@ public class TimeTable extends AccountGenerateEntity {
     this.status = status;
   }
 
+  private void validateYear(Integer year){
+    if(year <= 1900)
+      throw new BusinessException(TimeTableErrorCode.INVALID_YEAR);
+  }
+
+  private void validateSemester(Integer semester){
+    if(semester < 0)
+      throw new BusinessException(TimeTableErrorCode.INVALID_SEMESTER);
+  }
+
   public void updateName(String name){
     this.name = name;
   }
 
   public void updateYear(Integer year){
+    validateYear(year);
     this.year = year;
   }
 
   public void updateSemester(Integer semester){
+    validateSemester(semester);
     this.semester = semester;
   }
 

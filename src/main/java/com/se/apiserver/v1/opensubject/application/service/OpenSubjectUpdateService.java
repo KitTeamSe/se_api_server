@@ -25,14 +25,10 @@ public class OpenSubjectUpdateService {
         .orElseThrow(() -> new BusinessException(OpenSubjectErrorCode.NO_SUCH_OPEN_SUBJECT));
 
     if(request.getNumberOfDivision() != null){
-      if(request.getNumberOfDivision() <= 0)
-        throw new BusinessException(OpenSubjectErrorCode.INVALID_NUMBER_OF_DIVISION);
       openSubject.updateNumberOfDivision(request.getNumberOfDivision());
     }
 
     if(request.getTeachingTimePerWeek() != null){
-      if(request.getTeachingTimePerWeek() <= 0)
-        throw new BusinessException(OpenSubjectErrorCode.INVALID_TEACHING_TIME_PER_WEEK);
       openSubject.updateTeachingTimePerWeek(request.getTeachingTimePerWeek());
     }
 

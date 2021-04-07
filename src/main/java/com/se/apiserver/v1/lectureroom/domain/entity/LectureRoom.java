@@ -2,6 +2,8 @@ package com.se.apiserver.v1.lectureroom.domain.entity;
 
 import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
 import com.se.apiserver.v1.common.domain.entity.BaseEntity;
+import com.se.apiserver.v1.common.domain.exception.BusinessException;
+import com.se.apiserver.v1.lectureroom.application.error.LectureRoomErrorCode;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -36,10 +38,18 @@ public class LectureRoom extends AccountGenerateEntity {
   @Builder
   public LectureRoom(Long lectureRoomId,
       @Size(min = 1, max = 30) String building, Integer roomNumber, Integer capacity) {
+
+    validateCapacity(capacity);
+
     this.lectureRoomId = lectureRoomId;
     this.building = building;
     this.roomNumber = roomNumber;
     this.capacity = capacity;
+  }
+  
+  public void validateCapacity(Integer capacity){
+    if(capacity < 0)
+      throw new BusinessException(LectureRoomErrorCode.INVALID_CAPACITY);
   }
 
   public void updateBuilding(String building){
@@ -51,6 +61,7 @@ public class LectureRoom extends AccountGenerateEntity {
   }
 
   public void updateCapacity(Integer capacity){
+    validateCapacity(capacity);
     this.capacity = capacity;
   }
 }

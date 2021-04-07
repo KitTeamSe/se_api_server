@@ -26,11 +26,10 @@ public class PeriodCreateServiceTest {
   void 교시_생성_성공(){
     // Given
     PeriodCreateDto.Request request = PeriodCreateDto.Request.builder()
-        .periodOrder(1)
-        .name("1")
+        .periodOrder(101)
+        .name("101")
         .startTime(LocalTime.of(9, 0, 0))
         .endTime(LocalTime.of(9, 50, 0))
-        .note("비고 없음")
         .build();
     
     // When
@@ -44,11 +43,10 @@ public class PeriodCreateServiceTest {
   void 교시_생성_시작시간_종료시간_교차_실패(){
     // Given
     PeriodCreateDto.Request request = PeriodCreateDto.Request.builder()
-        .periodOrder(1)
-        .name("1")
+        .periodOrder(101)
+        .name("101")
         .startTime(LocalTime.of(9, 50, 0))
         .endTime(LocalTime.of(9, 0, 0))
-        .note("비고 없음")
         .build();
 
     // When
@@ -62,15 +60,15 @@ public class PeriodCreateServiceTest {
   void 교시_생성_교시_순서_중복_실패(){
     // Given
     periodJpaRepository.save(Period.builder()
-        .periodOrder(1)
-        .name("1")
+        .periodOrder(101)
+        .name("101")
         .startTime(LocalTime.of(9, 0, 0))
         .endTime(LocalTime.of(9, 50, 0))
         .build());
 
     PeriodCreateDto.Request request = PeriodCreateDto.Request.builder()
-        .periodOrder(1)
-        .name("2")
+        .periodOrder(101)
+        .name("102")
         .startTime(LocalTime.of(9, 0, 0))
         .endTime(LocalTime.of(9, 50, 0))
         .build();
@@ -86,15 +84,15 @@ public class PeriodCreateServiceTest {
   void 교시_생성_교시_이름_중복_실패(){
     // Given
     periodJpaRepository.save(Period.builder()
-        .periodOrder(1)
-        .name("1")
+        .periodOrder(101)
+        .name("101")
         .startTime(LocalTime.of(9, 0, 0))
         .endTime(LocalTime.of(9, 50, 0))
         .build());
 
     PeriodCreateDto.Request request = PeriodCreateDto.Request.builder()
-        .periodOrder(2)
-        .name("1")
+        .periodOrder(102)
+        .name("101")
         .startTime(LocalTime.of(10, 0, 0))
         .endTime(LocalTime.of(10, 50, 0))
         .build();

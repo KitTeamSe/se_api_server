@@ -25,8 +25,8 @@ public class PeriodDeleteServiceTest {
   void 교시_삭제_성공(){
     // Given
     Period period = periodJpaRepository.save(Period.builder()
-        .periodOrder(1)
-        .name("1")
+        .periodOrder(101)
+        .name("101")
         .startTime(LocalTime.of(9, 0, 0))
         .endTime(LocalTime.of(9, 50, 0))
         .build());
