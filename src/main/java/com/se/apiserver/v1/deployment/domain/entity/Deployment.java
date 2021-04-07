@@ -1,4 +1,4 @@
-package com.se.apiserver.v1.placement.domain.entity;
+package com.se.apiserver.v1.deployment.domain.entity;
 
 import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
 import com.se.apiserver.v1.usablelectureroom.domain.entity.UsableLectureRoom;
@@ -23,11 +23,11 @@ import lombok.Getter;
 
 @Entity
 @Getter
-public class Placement extends AccountGenerateEntity {
+public class Deployment extends AccountGenerateEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long placementId;
+  private Long deploymentId;
 
   @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
   @JoinColumn(name = "time_table_id", referencedColumnName = "timeTableId", nullable = false)
@@ -61,13 +61,13 @@ public class Placement extends AccountGenerateEntity {
   private Period endPeriod;
 
   @Builder
-  public Placement(Long placementId, TimeTable timeTable,
+  public Deployment(Long deploymentId, TimeTable timeTable,
       OpenSubject openSubject,
       UsableLectureRoom usableLectureRoom,
       ParticipatedTeacher participatedTeacherId,
       DayOfWeek dayOfWeek, Integer division,
       Period startPeriod, Period endPeriod) {
-    this.placementId = placementId;
+    this.deploymentId = deploymentId;
     this.timeTable = timeTable;
     this.openSubject = openSubject;
     this.usableLectureRoom = usableLectureRoom;
