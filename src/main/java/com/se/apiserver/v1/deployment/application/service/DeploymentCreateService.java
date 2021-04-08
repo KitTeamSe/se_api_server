@@ -195,7 +195,6 @@ public class DeploymentCreateService {
     }
   }
 
-
   // 요일, 강의실, 교시 겹치는지 검사
   private void checkOverlap(StringBuilder alertBuilder, PeriodRange periodRange, List<Deployment> deployments,  UsableLectureRoom usableLectureRoom){
     for(Deployment deployment : deployments){

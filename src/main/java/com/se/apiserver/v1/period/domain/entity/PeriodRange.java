@@ -37,15 +37,15 @@ public class PeriodRange {
   }
 
   public boolean isOverlappedWith(PeriodRange target){
-    if(startPeriod.equals(target.startPeriod) || endPeriod.equals(target.endPeriod))
-      return true;
-
     PeriodRange first = this;
     PeriodRange second = target;
     if(startPeriod.isAfter(target.startPeriod)){
       first = target;
       second = this;
     }
+
+    if(first.getEndPeriod().equals(second.startPeriod))
+      return true;
 
     return first.getEndPeriod().isAfter(second.getStartPeriod());
   }
