@@ -6,6 +6,8 @@ import com.se.apiserver.v1.opensubject.domain.entity.OpenSubject;
 import com.se.apiserver.v1.timetable.domain.entity.TimeTable;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DeploymentJpaRepository extends JpaRepository<Deployment, Long> {
@@ -15,7 +17,7 @@ public interface DeploymentJpaRepository extends JpaRepository<Deployment, Long>
 
   List<Deployment> findAllByTimeTableAndOpenSubjectAndDivision(TimeTable timeTable, OpenSubject openSubject, Integer division);
 
-  List<Deployment> findAllByTimeTable(TimeTable timeTable);
+  Page<Deployment> findAllByTimeTable(Pageable pageable, TimeTable timeTable);
 
   List<Deployment> findAllByTimeTableAndDayOfWeek(TimeTable timeTable, DayOfWeek dayOfWeek);
 }

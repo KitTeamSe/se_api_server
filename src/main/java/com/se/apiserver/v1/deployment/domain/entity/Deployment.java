@@ -6,7 +6,6 @@ import com.se.apiserver.v1.deployment.application.error.DeploymentErrorCode;
 import com.se.apiserver.v1.period.domain.entity.PeriodRange;
 import com.se.apiserver.v1.usablelectureroom.domain.entity.UsableLectureRoom;
 import com.se.apiserver.v1.lectureunabletime.domain.entity.DayOfWeek;
-import com.se.apiserver.v1.period.domain.entity.Period;
 import com.se.apiserver.v1.opensubject.domain.entity.OpenSubject;
 import com.se.apiserver.v1.participatedteacher.domain.entity.ParticipatedTeacher;
 import com.se.apiserver.v1.timetable.domain.entity.TimeTable;
@@ -50,7 +49,7 @@ public class Deployment extends AccountGenerateEntity {
 
   @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
   @JoinColumn(name = "participated_teacher_id", referencedColumnName = "participatedTeacherId", nullable = false)
-  private ParticipatedTeacher participatedTeacherId;
+  private ParticipatedTeacher participatedTeacher;
 
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
@@ -66,7 +65,7 @@ public class Deployment extends AccountGenerateEntity {
   public Deployment(Long deploymentId, TimeTable timeTable,
       OpenSubject openSubject,
       UsableLectureRoom usableLectureRoom,
-      ParticipatedTeacher participatedTeacherId,
+      ParticipatedTeacher participatedTeacher,
       DayOfWeek dayOfWeek, Integer division,
       PeriodRange periodRange) {
 
@@ -76,7 +75,7 @@ public class Deployment extends AccountGenerateEntity {
     this.timeTable = timeTable;
     this.openSubject = openSubject;
     this.usableLectureRoom = usableLectureRoom;
-    this.participatedTeacherId = participatedTeacherId;
+    this.participatedTeacher = participatedTeacher;
     this.dayOfWeek = dayOfWeek;
     this.division = division;
     this.periodRange = periodRange;

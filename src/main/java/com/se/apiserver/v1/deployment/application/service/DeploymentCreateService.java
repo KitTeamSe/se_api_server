@@ -86,7 +86,7 @@ public class DeploymentCreateService {
         .timeTable(timeTable)
         .openSubject(openSubject)
         .usableLectureRoom(usableLectureRoom)
-        .participatedTeacherId(participatedTeacher)
+        .participatedTeacher(participatedTeacher)
         .dayOfWeek(request.getDayOfWeek())
         .division(division)
         .periodRange(new PeriodRange(startPeriod, endPeriod))
@@ -186,7 +186,7 @@ public class DeploymentCreateService {
   // 교원이 수업 중인지 검사
   private void checkTeacherLectures(StringBuilder alertBuilder, PeriodRange periodRange, List<Deployment> deployments, ParticipatedTeacher participatedTeacher){
     for(Deployment deployment : deployments){
-      if(participatedTeacher.equals(deployment.getParticipatedTeacherId())){
+      if(participatedTeacher.equals(deployment.getParticipatedTeacher())){
         if(periodRange.isOverlappedWith(deployment.getPeriodRange())){
           alertBuilder.append(DeploymentErrorCode.TEACHER_LECTURES_SAME_TIME.getMessage()).append("\n");
           break;

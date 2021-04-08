@@ -153,8 +153,6 @@ public class DeploymentCreateServiceTest {
         .build());
   }
 
-
-
   private ParticipatedTeacher createParticipatedTeacher(Teacher teacher, TimeTable timeTable){
     return participatedTeacherJpaRepository.save(ParticipatedTeacher.builder()
         .teacher(teacher)
