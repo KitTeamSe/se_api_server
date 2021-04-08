@@ -1,7 +1,7 @@
 package com.se.apiserver.v1.lectureunabletime.application.service;
 
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
-import com.se.apiserver.v1.lectureunabletime.application.dto.LectureUnableTimeCreateDto;
+import com.se.apiserver.v1.period.domain.entity.PeriodRange;
 import com.se.apiserver.v1.lectureunabletime.application.error.LectureUnableTimeErrorCode;
 import com.se.apiserver.v1.lectureunabletime.domain.entity.DayOfWeek;
 import com.se.apiserver.v1.lectureunabletime.domain.entity.LectureUnableTime;
@@ -61,8 +61,7 @@ public class LectureUnableTimeDeleteServiceTest {
     LectureUnableTime lectureUnableTime = lectureUnableTimeJpaRepository.save(LectureUnableTime.builder()
         .participatedTeacher(participatedTeacher)
         .dayOfWeek(DayOfWeek.FRIDAY)
-        .startPeriod(startPeriod)
-        .endPeriod(endPeriod)
+        .periodRange(new PeriodRange(startPeriod, endPeriod))
         .build());
 
     Long id = lectureUnableTime.getLectureUnableTimeId();

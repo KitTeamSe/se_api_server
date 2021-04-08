@@ -18,7 +18,7 @@ public class ParticipatedTeacherReadDto {
   @ApiModel("참여 교원 조회 요청")
   static public class Request{
 
-    @ApiModelProperty(notes = "시간표 id", example = "1")
+    @ApiModelProperty(notes = "시간표 번호", example = "1")
     private Long timeTableId;
 
     @ApiModelProperty(notes = "페이장 정보")
@@ -32,13 +32,13 @@ public class ParticipatedTeacherReadDto {
   @ApiModel("참여 교원 조회 응답")
   static public class Response{
 
-    @ApiModelProperty(notes = "참여 교원 id", example = "1")
+    @ApiModelProperty(notes = "참여 교원 번호", example = "1")
     private Long participatedTeacherId;
 
-    @ApiModelProperty(notes = "시간표 id", example = "1")
+    @ApiModelProperty(notes = "시간표 번호", example = "1")
     private Long timeTableId;
 
-    @ApiModelProperty(notes = "교원 id", example = "1")
+    @ApiModelProperty(notes = "교원 번호", example = "1")
     private Long teacherId;
 
     public static Response fromEntity(ParticipatedTeacher participatedTeacher){

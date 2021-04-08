@@ -1,8 +1,8 @@
 package com.se.apiserver.v1.lectureunabletime.application.service;
 
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
+import com.se.apiserver.v1.period.domain.entity.PeriodRange;
 import com.se.apiserver.v1.lectureunabletime.application.dto.LectureUnableTimeCreateDto;
-import com.se.apiserver.v1.lectureunabletime.application.error.LectureUnableTimeErrorCode;
 import com.se.apiserver.v1.lectureunabletime.domain.entity.LectureUnableTime;
 import com.se.apiserver.v1.lectureunabletime.infra.repository.LectureUnableTimeJpaRepository;
 import com.se.apiserver.v1.participatedteacher.application.error.ParticipatedTeacherErrorCode;
@@ -39,23 +39,15 @@ public class LectureUnableTimeCreateService {
         .findById(request.getEndPeriodId())
         .orElseThrow(() -> new BusinessException(PeriodErrorCode.NO_SUCH_PERIOD));
 
-    if(isPeriodCrossing(startPeriod, endPeriod))
-      throw new BusinessException(LectureUnableTimeErrorCode.CROSSING_START_END_PERIOD);
-
     LectureUnableTime lectureUnableTime = LectureUnableTime.builder()
         .participatedTeacher(participatedTeacher)
         .dayOfWeek(request.getDayOfWeek())
-        .startPeriod(startPeriod)
-        .endPeriod(endPeriod)
+        .periodRange(new PeriodRange(startPeriod, endPeriod))
         .note(request.getNote())
         .build();
 
     lectureUnableTimeJpaRepository.save(lectureUnableTime);
 
     return lectureUnableTime.getLectureUnableTimeId();
-  }
-
-  private boolean isPeriodCrossing(Period startPeriod, Period endPeriod){
-    return startPeriod.getPeriodOrder() > endPeriod.getPeriodOrder();
   }
 }

@@ -1,14 +1,11 @@
 package com.se.apiserver.v1.lectureunabletime.application.service;
 
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
-import com.se.apiserver.v1.lectureunabletime.application.dto.LectureUnableTimeReadDto;
+import com.se.apiserver.v1.period.domain.entity.PeriodRange;
 import com.se.apiserver.v1.lectureunabletime.application.dto.LectureUnableTimeUpdateDto;
 import com.se.apiserver.v1.lectureunabletime.application.error.LectureUnableTimeErrorCode;
 import com.se.apiserver.v1.lectureunabletime.domain.entity.LectureUnableTime;
 import com.se.apiserver.v1.lectureunabletime.infra.repository.LectureUnableTimeJpaRepository;
-import com.se.apiserver.v1.participatedteacher.application.error.ParticipatedTeacherErrorCode;
-import com.se.apiserver.v1.participatedteacher.domain.entity.ParticipatedTeacher;
-import com.se.apiserver.v1.participatedteacher.infra.repository.ParticipatedTeacherJpaRepository;
 import com.se.apiserver.v1.period.application.error.PeriodErrorCode;
 import com.se.apiserver.v1.period.domain.entity.Period;
 import com.se.apiserver.v1.period.infra.repository.PeriodJpaRepository;
@@ -34,18 +31,8 @@ public class LectureUnableTimeUpdateService {
       lectureUnableTime.updateDayOfWeek(request.getDayOfWeek());
     }
 
-    if(request.getStartPeriodId() != null){
-      Period startPeriod = periodJpaRepository
-          .findById(request.getStartPeriodId())
-          .orElseThrow(() -> new BusinessException(PeriodErrorCode.NO_SUCH_PERIOD));
-      lectureUnableTime.updateStartPeriod(startPeriod);
-    }
-
-    if(request.getEndPeriodId() != null){
-      Period endPeriod = periodJpaRepository
-          .findById(request.getEndPeriodId())
-          .orElseThrow(() -> new BusinessException(PeriodErrorCode.NO_SUCH_PERIOD));
-      lectureUnableTime.updateEndPeriod(endPeriod);
+    if(request.getStartPeriodId() != null || request.getEndPeriodId() != null){
+      updatePeriodRange(lectureUnableTime, request.getStartPeriodId(), request.getEndPeriodId());
     }
 
     if(request.getNote() != null){
@@ -53,14 +40,26 @@ public class LectureUnableTimeUpdateService {
       lectureUnableTime.updateNote(note);
     }
 
-    // 변경된 시간이 교차되는지 검사
-    if(isPeriodCrossing(lectureUnableTime.getStartPeriod(), lectureUnableTime.getEndPeriod()))
-      throw new BusinessException(LectureUnableTimeErrorCode.CROSSING_START_END_PERIOD);
-
     return lectureUnableTimeJpaRepository.save(lectureUnableTime).getLectureUnableTimeId();
   }
 
-  private boolean isPeriodCrossing(Period startPeriod, Period endPeriod){
-    return startPeriod.getPeriodOrder() > endPeriod.getPeriodOrder();
+  private void updatePeriodRange(LectureUnableTime lectureUnableTime, Long startPeriodId, Long endPeriodId){
+    Period startPeriod = lectureUnableTime.getPeriodRange().getStartPeriod();
+    Period endPeriod = lectureUnableTime.getPeriodRange().getEndPeriod();
+
+    if(startPeriodId != null){
+      startPeriod = periodJpaRepository
+          .findById(startPeriodId)
+          .orElseThrow(() -> new BusinessException(PeriodErrorCode.NO_SUCH_PERIOD));
+    }
+
+    if(endPeriodId != null){
+      endPeriod = periodJpaRepository
+          .findById(endPeriodId)
+          .orElseThrow(() -> new BusinessException(PeriodErrorCode.NO_SUCH_PERIOD));
+    }
+
+    lectureUnableTime.updatePeriodRange(new PeriodRange(startPeriod, endPeriod));
   }
+
 }
