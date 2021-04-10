@@ -113,6 +113,7 @@ public class ParticipatedTeacherReadServiceTest {
         .name(name)
         .department("컴퓨터소프트웨어공학")
         .type(TeacherType.FULL_PROFESSOR)
+        .autoCreated(false)
         .build());
   }
 }
