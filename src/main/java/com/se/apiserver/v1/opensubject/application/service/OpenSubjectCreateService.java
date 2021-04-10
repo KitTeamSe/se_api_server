@@ -49,11 +49,11 @@ public class OpenSubjectCreateService {
         .subject(subject)
         .numberOfDivision(request.getNumberOfDivision())
         .teachingTimePerWeek(request.getTeachingTimePerWeek())
+        .autoCreated(false)
+        .note(request.getNote())
         .build();
 
-    openSubjectJpaRepository.save(openSubject);
-
-    return openSubject.getOpenSubjectId();
+    return openSubjectJpaRepository.save(openSubject).getOpenSubjectId();
   }
 
 }

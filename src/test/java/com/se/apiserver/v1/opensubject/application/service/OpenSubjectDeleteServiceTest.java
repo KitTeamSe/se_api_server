@@ -44,6 +44,7 @@ public class OpenSubjectDeleteServiceTest {
         .subject(subject)
         .numberOfDivision(1)
         .teachingTimePerWeek(subject.getCredit())
+        .autoCreated(false)
         .build());
 
     Long id = openSubject.getOpenSubjectId();
@@ -85,6 +86,7 @@ public class OpenSubjectDeleteServiceTest {
         .credit(3)
         .semester(1)
         .grade(1)
+        .autoCreated(false)
         .build());
   }
 }

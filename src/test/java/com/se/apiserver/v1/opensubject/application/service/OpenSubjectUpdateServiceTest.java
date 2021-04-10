@@ -91,6 +91,7 @@ public class OpenSubjectUpdateServiceTest {
         .credit(3)
         .semester(1)
         .grade(1)
+        .autoCreated(false)
         .build());
   }
 
@@ -100,6 +101,7 @@ public class OpenSubjectUpdateServiceTest {
         .subject(subject)
         .numberOfDivision(1)
         .teachingTimePerWeek(3)
+        .autoCreated(false)
         .build());
   }
 

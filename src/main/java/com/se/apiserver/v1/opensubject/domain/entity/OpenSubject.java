@@ -51,7 +51,7 @@ public class OpenSubject extends AccountGenerateEntity {
   @Builder
   public OpenSubject(Long openSubjectId,
       TimeTable timeTable, Subject subject, Integer numberOfDivision,
-      Integer teachingTimePerWeek) {
+      Integer teachingTimePerWeek, Boolean autoCreated, @Size(max=255) String note) {
 
     validateNumberOfDivision(numberOfDivision);
     validateTeachingTimePerWeek(teachingTimePerWeek);
@@ -61,6 +61,8 @@ public class OpenSubject extends AccountGenerateEntity {
     this.subject = subject;
     this.numberOfDivision = numberOfDivision;
     this.teachingTimePerWeek = teachingTimePerWeek;
+    this.autoCreated = autoCreated;
+    this.note = note;
   }
 
   public void validateNumberOfDivision(Integer numberOfDivision){
@@ -81,5 +83,9 @@ public class OpenSubject extends AccountGenerateEntity {
   public void updateTeachingTimePerWeek(Integer teachingTimePerWeek){
     validateTeachingTimePerWeek(teachingTimePerWeek);
     this.teachingTimePerWeek = teachingTimePerWeek;
+  }
+
+  public void updateNote(String note){
+    this.note = note;
   }
 }

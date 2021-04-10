@@ -27,5 +27,8 @@ public class OpenSubjectCreateDto {
 
     @ApiModelProperty(notes = "주간 수업 시간", example = "1", allowEmptyValue = true)
     private Integer teachingTimePerWeek;
+
+    @ApiModelProperty(notes = "비고", example = "비고 예시")
+    private String note;
   }
 }
