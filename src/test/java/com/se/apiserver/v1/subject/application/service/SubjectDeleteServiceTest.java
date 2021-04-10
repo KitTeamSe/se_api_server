@@ -32,6 +32,7 @@ public class SubjectDeleteServiceTest {
         .grade(1)
         .semester(1)
         .credit(3)
+        .autoCreated(false)
         .build()
     );
 

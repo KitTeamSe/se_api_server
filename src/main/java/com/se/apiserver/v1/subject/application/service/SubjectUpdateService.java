@@ -20,7 +20,7 @@ public class SubjectUpdateService {
   private final SubjectJpaRepository subjectJpaRepository;
 
   @Transactional
-  public SubjectReadDto.Response update(SubjectUpdateDto.Request request){
+  public Long update(SubjectUpdateDto.Request request){
     Subject subject = subjectJpaRepository
         .findById(request.getSubjectId())
         .orElseThrow(() -> new BusinessException(SubjectErrorCode.NO_SUCH_SUBJECT));
@@ -51,8 +51,11 @@ public class SubjectUpdateService {
     if(request.getCredit() != null)
       subject.updateCredit(request.getCredit());
 
-    subjectJpaRepository.save(subject);
+    if(request.getNote() != null){
+      String note = request.getNote().isEmpty() ? null : request.getNote();
+      subject.updateNote(note);
+    }
 
-    return Response.fromEntity(subject);
+    return subjectJpaRepository.save(subject).getSubjectId();
   }
 }

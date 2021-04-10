@@ -14,7 +14,7 @@ public class SubjectDeleteDto {
   @ApiModel("교과 삭제 요청")
   static public class Request{
 
-    @ApiModelProperty(notes = "삭제할 교과 id", example = "1")
+    @ApiModelProperty(notes = "삭제할 교과 번호", example = "1")
     private Long subjectId;
   }
 }

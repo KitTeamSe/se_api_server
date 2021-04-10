@@ -36,6 +36,7 @@ public class SubjectReadServiceTest {
         .grade(1)
         .semester(1)
         .credit(3)
+        .autoCreated(false)
         .build()
     );
 
@@ -93,6 +94,7 @@ public class SubjectReadServiceTest {
           .grade(1)
           .semester(1)
           .credit(3)
+          .autoCreated(false)
           .build()
       );
     }

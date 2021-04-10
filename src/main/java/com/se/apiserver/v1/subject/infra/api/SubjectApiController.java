@@ -66,7 +66,7 @@ public class SubjectApiController {
   @PutMapping(path = "/subject")
   @ResponseStatus(value = HttpStatus.OK)
   @ApiOperation(value = "교과 수정")
-  public SuccessResponse<SubjectReadDto.Response> update(@RequestBody @Validated SubjectUpdateDto.Request request){
+  public SuccessResponse<Long> update(@RequestBody @Validated SubjectUpdateDto.Request request){
     return new SuccessResponse<>(HttpStatus.OK.value(), "교과 수정에 성공했습니다.", subjectUpdateService.update(request));
   }
 
