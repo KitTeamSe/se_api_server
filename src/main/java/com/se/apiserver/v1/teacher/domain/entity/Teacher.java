@@ -41,11 +41,13 @@ public class Teacher extends AccountGenerateEntity {
   public Teacher(Long teacherId,
       @Size(min = 2, max = 20) String name,
       TeacherType type,
-      @Size(min = 2, max = 30) String department) {
+      @Size(min = 2, max = 30) String department, Boolean autoCreated, @Size(max = 255) String note) {
     this.teacherId = teacherId;
     this.name = name;
     this.type = type;
     this.department = department;
+    this.autoCreated = autoCreated;
+    this.note = note;
   }
 
   public void updateName(String name){
@@ -58,5 +60,9 @@ public class Teacher extends AccountGenerateEntity {
 
   public void updateDepartment(String department){
     this.department = department;
+  }
+
+  public void updateNote(String note){
+    this.note = note;
   }
 }

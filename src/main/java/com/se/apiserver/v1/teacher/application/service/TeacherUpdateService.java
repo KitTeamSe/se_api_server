@@ -18,7 +18,7 @@ public class TeacherUpdateService {
   private final TeacherJpaRepository teacherJpaRepository;
 
   @Transactional
-  public TeacherReadDto.Response update(TeacherUpdateDto.Request request){
+  public Long update(TeacherUpdateDto.Request request){
     Teacher teacher = teacherJpaRepository.findById(request.getTeacherId()).orElseThrow(() ->
       new BusinessException(TeacherErrorCode.NO_SUCH_TEACHER)
     );
@@ -32,8 +32,11 @@ public class TeacherUpdateService {
     if(request.getDepartment() != null)
       teacher.updateDepartment(request.getDepartment());
 
-    teacherJpaRepository.save(teacher);
+    if(request.getNote() != null){
+      String note = request.getNote().isEmpty() ? null : request.getNote();
+      teacher.updateNote(note);
+    }
 
-    return TeacherReadDto.Response.fromEntity(teacher);
+    return teacherJpaRepository.save(teacher).getTeacherId();
   }
 }

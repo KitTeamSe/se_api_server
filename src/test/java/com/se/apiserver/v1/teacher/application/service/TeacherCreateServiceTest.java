@@ -27,6 +27,7 @@ public class TeacherCreateServiceTest {
         .name("홍길동")
         .type(TeacherType.FULL_PROFESSOR)
         .department("컴퓨터소프트웨어공학")
+        .note("홍길동의 비고")
         .build();
 
     // When

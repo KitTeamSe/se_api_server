@@ -20,10 +20,10 @@ public class TeacherCreateService {
         .name(request.getName())
         .type(request.getType())
         .department(request.getDepartment())
+        .autoCreated(false)
+        .note(request.getNote())
         .build();
 
-    teacherJpaRepository.save(teacher);
-
-    return teacher.getTeacherId();
+    return teacherJpaRepository.save(teacher).getTeacherId();
   }
 }
