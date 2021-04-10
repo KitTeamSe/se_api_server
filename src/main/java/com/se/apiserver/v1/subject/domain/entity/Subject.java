@@ -50,6 +50,12 @@ public class Subject extends AccountGenerateEntity {
   @Column(nullable = false)
   private Integer credit;
 
+  @Column(nullable = false)
+  private Boolean autoCreated;
+
+  @Size(max = 255)
+  private String note;
+
   @Builder
   public Subject(Long subjectId,
       @Size(min = 2, max = 30) String curriculum,

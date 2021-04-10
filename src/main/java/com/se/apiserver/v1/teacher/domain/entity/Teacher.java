@@ -31,6 +31,12 @@ public class Teacher extends AccountGenerateEntity {
   @Column(nullable = false)
   private String department;
 
+  @Column(nullable = false)
+  private Boolean autoCreated;
+
+  @Size(max = 255)
+  private String note;
+
   @Builder
   public Teacher(Long teacherId,
       @Size(min = 2, max = 20) String name,

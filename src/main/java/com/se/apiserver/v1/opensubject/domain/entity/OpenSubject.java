@@ -14,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -40,6 +41,12 @@ public class OpenSubject extends AccountGenerateEntity {
   private Integer numberOfDivision;
 
   private Integer teachingTimePerWeek;
+
+  @Column(nullable = false)
+  private Boolean autoCreated;
+
+  @Size(max = 255)
+  private String note;
 
   @Builder
   public OpenSubject(Long openSubjectId,
