@@ -4,6 +4,7 @@ import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.deployment.application.dto.DeploymentCreateDto;
 import com.se.apiserver.v1.deployment.application.error.DeploymentErrorCode;
 import com.se.apiserver.v1.deployment.domain.entity.Deployment;
+import com.se.apiserver.v1.deployment.domain.entity.DeploymentAlertMessage;
 import com.se.apiserver.v1.deployment.infra.repository.DeploymentJpaRepository;
 import com.se.apiserver.v1.lectureunabletime.domain.entity.DayOfWeek;
 import com.se.apiserver.v1.lectureunabletime.domain.entity.LectureUnableTime;
@@ -61,26 +62,25 @@ public class DeploymentCreateService {
     Integer division = request.getDivision();
     validateDivision(division, openSubject);
 
-    StringBuilder alertBuilder = new StringBuilder();
+    DeploymentAlertMessage alertMessage = new DeploymentAlertMessage();
 
-    // (경고) 교원 강의 불가 시간 검사
-    if(!lectureUnableTimes.isEmpty())
-      checkLectureUnableTime(alertBuilder, lectureUnableTimes, periodRange, request.getDayOfWeek());
+    // 교원 강의 불가 시간 검사
+    checkLectureUnableTime(alertMessage, lectureUnableTimes, periodRange, request.getDayOfWeek());
 
-    // (경고) 이 배치로 인해 주간 수업 시간이 초과되는가?
-    checkOverTeaching(alertBuilder, timeTable, openSubject, division, periodRange);
+    // 이 배치로 인해 주간 수업 시간이 초과되는가?
+    checkOverTeaching(alertMessage, timeTable, openSubject, division, periodRange);
 
     // 시간표에 포함된 모든 배치 정보 중 요일이 같은 배치 정보 가져옴
     List<Deployment> deployments = deploymentJpaRepository.findAllByTimeTableAndDayOfWeek(timeTable, request.getDayOfWeek());
 
     // 해당 학년이 동 시간대에 강의 받는 중인지 검사
-    checkSameGradeLectured(alertBuilder, periodRange, deployments, openSubject.getSubject().getGrade());
+    checkSameGradeLectured(alertMessage, periodRange, deployments, openSubject.getSubject().getGrade());
     
     // 교원이 동 시간대에 강의중인지 검사
-    checkTeacherLectures(alertBuilder, periodRange, deployments, participatedTeacher);
+    checkTeacherLectures(alertMessage, periodRange, deployments, participatedTeacher);
 
     // 겹치는 강의가 있는지 검사
-    checkOverlap(alertBuilder, periodRange, deployments, usableLectureRoom);
+    checkOverlap(alertMessage, periodRange, deployments, usableLectureRoom);
 
     Deployment deployment = Deployment.builder()
         .timeTable(timeTable)
@@ -94,7 +94,7 @@ public class DeploymentCreateService {
 
     deploymentJpaRepository.save(deployment);
 
-    String alertMessage = alertBuilder.length() == 0 ? null : alertBuilder.toString().trim();
+    alertMessage = alertMessage.isEmpty() ? null : alertMessage;
 
     return new DeploymentCreateDto.Resposne(
         deployment.getDeploymentId(),
@@ -155,13 +155,14 @@ public class DeploymentCreateService {
   }
 
   // 교원의 강의 불가 시간 검사
-  private void checkLectureUnableTime(StringBuilder alertBuilder, List<LectureUnableTime> lectureUnableTimes, PeriodRange periodRange, DayOfWeek dayOfWeek){
-    if(!isLectureUnableTimeIncluded(lectureUnableTimes, periodRange, dayOfWeek))
-      alertBuilder.append(DeploymentErrorCode.TEACHER_LECTURE_UNABLE_TIME.getMessage()).append("\n");
+  private void checkLectureUnableTime(DeploymentAlertMessage alertMessage, List<LectureUnableTime> lectureUnableTimes, PeriodRange periodRange, DayOfWeek dayOfWeek){
+    if(!lectureUnableTimes.isEmpty())
+      if(!isLectureUnableTimeIncluded(lectureUnableTimes, periodRange, dayOfWeek))
+        alertMessage.addAlertMessages(DeploymentErrorCode.TEACHER_LECTURE_UNABLE_TIME.getMessage());
   }
 
   // 주간 수업 시간 초과 검사
-  private void checkOverTeaching(StringBuilder alertBuilder, TimeTable timeTable, OpenSubject openSubject, Integer division, PeriodRange periodRange){
+  private void checkOverTeaching(DeploymentAlertMessage alertMessage, TimeTable timeTable, OpenSubject openSubject, Integer division, PeriodRange periodRange){
     List<Deployment> deployments = deploymentJpaRepository.findAllByTimeTableAndOpenSubjectAndDivision(timeTable, openSubject, division);
 
     int teachingTimeSum = deployments.stream()
@@ -171,15 +172,15 @@ public class DeploymentCreateService {
 
     // 배치된 주간 수업 시간 합 + 넣으려는 배치의 수업 시간 > 주간 수업 시간
     if(teachingTimeSum + periodRange.getTeachingTime() > openSubject.getTeachingTimePerWeek())
-      alertBuilder.append(DeploymentErrorCode.OVER_TEACHING_PER_WEEK.getMessage()).append("\n");
+      alertMessage.addAlertMessages(DeploymentErrorCode.OVER_TEACHING_PER_WEEK.getMessage());
   }
 
   // 같은 학년이 수업 받는 중인지 검사
-  private void checkSameGradeLectured(StringBuilder alertBuilder, PeriodRange periodRange, List<Deployment> deployments, int grade){
+  private void checkSameGradeLectured(DeploymentAlertMessage alertMessage, PeriodRange periodRange, List<Deployment> deployments, int grade){
     for(Deployment deployment : deployments){
       if(deployment.getOpenSubject().getSubject().getGrade().equals(grade)){
         if(deployment.getPeriodRange().isOverlappedWith(periodRange)){
-          alertBuilder.append(DeploymentErrorCode.SAME_GRADE_LECTURED.getMessage()).append("\n");
+          alertMessage.addAlertMessages(DeploymentErrorCode.SAME_GRADE_LECTURED.getMessage());
           break;
         }
       }
@@ -187,11 +188,11 @@ public class DeploymentCreateService {
   }
 
   // 교원이 수업 중인지 검사
-  private void checkTeacherLectures(StringBuilder alertBuilder, PeriodRange periodRange, List<Deployment> deployments, ParticipatedTeacher participatedTeacher){
+  private void checkTeacherLectures(DeploymentAlertMessage alertMessage, PeriodRange periodRange, List<Deployment> deployments, ParticipatedTeacher participatedTeacher){
     for(Deployment deployment : deployments){
       if(participatedTeacher.equals(deployment.getParticipatedTeacher())){
         if(periodRange.isOverlappedWith(deployment.getPeriodRange())){
-          alertBuilder.append(DeploymentErrorCode.TEACHER_LECTURES_SAME_TIME.getMessage()).append("\n");
+          alertMessage.addAlertMessages(DeploymentErrorCode.TEACHER_LECTURES_SAME_TIME.getMessage());
           break;
         }
       }
@@ -199,11 +200,11 @@ public class DeploymentCreateService {
   }
 
   // 요일, 강의실, 교시 겹치는지 검사
-  private void checkOverlap(StringBuilder alertBuilder, PeriodRange periodRange, List<Deployment> deployments,  UsableLectureRoom usableLectureRoom){
+  private void checkOverlap(DeploymentAlertMessage alertMessage, PeriodRange periodRange, List<Deployment> deployments,  UsableLectureRoom usableLectureRoom){
     for(Deployment deployment : deployments){
       if(usableLectureRoom.equals(deployment.getUsableLectureRoom())){
         if(periodRange.isOverlappedWith(deployment.getPeriodRange())){
-          alertBuilder.append(DeploymentErrorCode.DEPLOYMENT_OVERLAPPED.getMessage()).append("\n");
+          alertMessage.addAlertMessages(DeploymentErrorCode.DEPLOYMENT_OVERLAPPED.getMessage());
           break;
         }
       }
