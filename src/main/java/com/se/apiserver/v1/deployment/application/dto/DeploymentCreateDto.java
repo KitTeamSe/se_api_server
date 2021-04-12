@@ -1,5 +1,6 @@
 package com.se.apiserver.v1.deployment.application.dto;
 
+import com.se.apiserver.v1.deployment.domain.entity.DeploymentAlertMessage;
 import com.se.apiserver.v1.lectureunabletime.domain.entity.DayOfWeek;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -49,7 +50,7 @@ public class DeploymentCreateDto {
     @ApiModelProperty(notes = "배치 pk", example = "1")
     private Long deploymentId;
 
-    @ApiModelProperty(notes = "메시지", example = "성공")
-    private String alertMessage;
+    @ApiModelProperty(notes = "경고 메시지")
+    private DeploymentAlertMessage deploymentAlertMessage;
   }
 }
