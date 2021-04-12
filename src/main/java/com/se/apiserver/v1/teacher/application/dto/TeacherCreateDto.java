@@ -28,15 +28,9 @@ public class TeacherCreateDto {
     @ApiModelProperty(notes = "소속", example = "컴퓨터소프트웨어공학")
     @Size(min = 2, max = 30)
     private String department;
+
+    @ApiModelProperty(notes = "비고", example = "비고 예시")
+    @Size(max = 255)
+    private String note;
   }
-
-  @Data
-  @AllArgsConstructor
-  @ApiModel("교원 생성 응답")
-  static public class Resposne{
-    @ApiModelProperty(notes = "교원 pk", example = "1")
-    private Long teacherId;
-  }
-
-
 }

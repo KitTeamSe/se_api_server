@@ -50,11 +50,18 @@ public class Subject extends AccountGenerateEntity {
   @Column(nullable = false)
   private Integer credit;
 
+  @Column(nullable = false)
+  private Boolean autoCreated;
+
+  @Size(max = 255)
+  private String note;
+
   @Builder
   public Subject(Long subjectId,
       @Size(min = 2, max = 30) String curriculum,
       SubjectType type, @Size(min = 2, max = 30) String code,
-      @Size(min = 1, max = 50) String name, Integer grade, Integer semester, Integer credit) {
+      @Size(min = 1, max = 50) String name, Integer grade, Integer semester,
+      Integer credit, Boolean autoCreated, @Size(max=255) String note) {
 
     validateGrade(grade);
     validateSemester(semester);
@@ -68,6 +75,8 @@ public class Subject extends AccountGenerateEntity {
     this.grade = grade;
     this.semester = semester;
     this.credit = credit;
+    this.autoCreated = autoCreated;
+    this.note = note;
   }
 
   public void validateGrade(Integer grade){
@@ -114,5 +123,9 @@ public class Subject extends AccountGenerateEntity {
   public void updateCredit(Integer credit){
     validateCredit(credit);
     this.credit = credit;
+  }
+
+  public void updateNote(String note){
+    this.note = note;
   }
 }

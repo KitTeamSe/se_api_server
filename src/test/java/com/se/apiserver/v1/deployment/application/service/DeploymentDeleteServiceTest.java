@@ -132,6 +132,7 @@ public class DeploymentDeleteServiceTest {
         .credit(3)
         .semester(2)
         .type(SubjectType.MAJOR)
+        .autoCreated(false)
         .build());
   }
 
@@ -141,6 +142,7 @@ public class DeploymentDeleteServiceTest {
         .subject(subject)
         .numberOfDivision(1)
         .teachingTimePerWeek(subject.getCredit())
+        .autoCreated(false)
         .build());
   }
 
@@ -165,6 +167,7 @@ public class DeploymentDeleteServiceTest {
         .name(name)
         .type(TeacherType.FULL_PROFESSOR)
         .department("컴퓨터소프트웨어공학")
+        .autoCreated(false)
         .build());
   }
 

@@ -14,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,15 +37,21 @@ public class OpenSubject extends AccountGenerateEntity {
   @JoinColumn(name = "subject_id", referencedColumnName = "subjectId", nullable = false)
   private Subject subject;
 
-  @Column(nullable = false)
   private Integer numberOfDivision;
 
+  @Column(nullable = false)
   private Integer teachingTimePerWeek;
+
+  @Column(nullable = false)
+  private Boolean autoCreated;
+
+  @Size(max = 255)
+  private String note;
 
   @Builder
   public OpenSubject(Long openSubjectId,
       TimeTable timeTable, Subject subject, Integer numberOfDivision,
-      Integer teachingTimePerWeek) {
+      Integer teachingTimePerWeek, Boolean autoCreated, @Size(max=255) String note) {
 
     validateNumberOfDivision(numberOfDivision);
     validateTeachingTimePerWeek(teachingTimePerWeek);
@@ -54,9 +61,14 @@ public class OpenSubject extends AccountGenerateEntity {
     this.subject = subject;
     this.numberOfDivision = numberOfDivision;
     this.teachingTimePerWeek = teachingTimePerWeek;
+    this.autoCreated = autoCreated;
+    this.note = note;
   }
 
   public void validateNumberOfDivision(Integer numberOfDivision){
+    if(numberOfDivision == null)
+      return;
+
     if(numberOfDivision <= 0)
       throw new BusinessException(OpenSubjectErrorCode.INVALID_NUMBER_OF_DIVISION);
   }
@@ -74,5 +86,9 @@ public class OpenSubject extends AccountGenerateEntity {
   public void updateTeachingTimePerWeek(Integer teachingTimePerWeek){
     validateTeachingTimePerWeek(teachingTimePerWeek);
     this.teachingTimePerWeek = teachingTimePerWeek;
+  }
+
+  public void updateNote(String note){
+    this.note = note;
   }
 }

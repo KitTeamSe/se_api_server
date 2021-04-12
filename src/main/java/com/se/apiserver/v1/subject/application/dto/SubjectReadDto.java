@@ -19,7 +19,7 @@ public class SubjectReadDto {
   @ApiModel("교과 조회 요청")
   static public class Response{
 
-    @ApiModelProperty(notes = "교과 id", example = "1")
+    @ApiModelProperty(notes = "교과 번호", example = "1")
     private Long subjectId;
 
     @ApiModelProperty(notes = "교육과정", example = "컴퓨터소프트웨어공학")
@@ -46,6 +46,12 @@ public class SubjectReadDto {
     @ApiModelProperty(notes = "학점", example = "3")
     private Integer credit;
 
+    @ApiModelProperty(notes = "자동 생성 여부", example = "false")
+    private Boolean autoCreated;
+
+    @ApiModelProperty(notes = "비고", example = "비고 입력")
+    private String note;
+
     public static Response fromEntity(Subject subject){
       return Response.builder()
           .subjectId(subject.getSubjectId())
@@ -56,6 +62,8 @@ public class SubjectReadDto {
           .grade(subject.getGrade())
           .semester(subject.getSemester())
           .credit(subject.getCredit())
+          .autoCreated(subject.getAutoCreated())
+          .note(subject.getNote())
           .build();
     }
   }

@@ -65,7 +65,7 @@ public class TeacherApiController {
   @PutMapping(path = "/teacher")
   @ApiOperation("교원 수정")
   @ResponseStatus(value = HttpStatus.OK)
-  public SuccessResponse<TeacherReadDto.Response> update(@RequestBody @Validated TeacherUpdateDto.Request request){
+  public SuccessResponse<Long> update(@RequestBody @Validated TeacherUpdateDto.Request request){
     return new SuccessResponse<>(HttpStatus.OK.value(), "교원 수정에 성공했습니다.", teacherUpdateService.update(request));
   }
 

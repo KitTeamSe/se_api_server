@@ -48,6 +48,7 @@ public class OpenSubjectReadServiceTest {
         .subject(subject)
         .numberOfDivision(1)
         .teachingTimePerWeek(subject.getCredit())
+        .autoCreated(false)
         .build());
 
     // When
@@ -82,6 +83,7 @@ public class OpenSubjectReadServiceTest {
         .subject(subject)
         .numberOfDivision(1)
         .teachingTimePerWeek(subject.getCredit())
+        .autoCreated(false)
         .build());
 
     Subject subject2 = createSubject("테스트 교과 2", "CS00004");
@@ -91,6 +93,7 @@ public class OpenSubjectReadServiceTest {
         .subject(subject2)
         .numberOfDivision(1)
         .teachingTimePerWeek(subject2.getCredit())
+        .autoCreated(false)
         .build());
 
     // When
@@ -122,6 +125,7 @@ public class OpenSubjectReadServiceTest {
         .credit(3)
         .semester(1)
         .grade(1)
+        .autoCreated(false)
         .build());
   }
 }

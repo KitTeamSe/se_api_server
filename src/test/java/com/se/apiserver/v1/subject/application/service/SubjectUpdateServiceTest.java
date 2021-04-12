@@ -34,6 +34,7 @@ public class SubjectUpdateServiceTest {
         .grade(1)
         .semester(1)
         .credit(3)
+        .autoCreated(false)
         .build()
     );
 
@@ -45,14 +46,18 @@ public class SubjectUpdateServiceTest {
         .name("수정된 과목명")
         .build();
 
-    SubjectReadDto.Response response = subjectUpdateService.update(request);
+    subjectUpdateService.update(request);
+
+    Subject response = subjectJpaRepository
+        .findById(id)
+        .orElseThrow(() -> new BusinessException(SubjectErrorCode.NO_SUCH_SUBJECT));
 
     // Then
     Assertions.assertThat(response.getName()).isEqualTo("수정된 과목명");
   }
 
   @Test
-  void 교과_수정_코드_동일_성공(){
+  void 교과_수정_코드_동일_과목명만_변경_성공(){
     // Given
     Subject subject = subjectJpaRepository.save(Subject.builder()
         .curriculum("컴퓨터소프트웨어공학")
@@ -62,6 +67,7 @@ public class SubjectUpdateServiceTest {
         .grade(1)
         .semester(1)
         .credit(3)
+        .autoCreated(false)
         .build()
     );
 
@@ -74,13 +80,15 @@ public class SubjectUpdateServiceTest {
         .name("수정된 과목명")
         .build();
 
-    SubjectReadDto.Response response = subjectUpdateService.update(request);
 
+    subjectUpdateService.update(request);
+
+    Subject response = subjectJpaRepository
+        .findById(id)
+        .orElseThrow(() -> new BusinessException(SubjectErrorCode.NO_SUCH_SUBJECT));
     // Then
     Assertions.assertThat(response.getName()).isEqualTo("수정된 과목명");
   }
-
-
 
   @Test
   void 교과_수정_코드_변경_성공(){
@@ -93,6 +101,7 @@ public class SubjectUpdateServiceTest {
         .grade(1)
         .semester(1)
         .credit(3)
+        .autoCreated(false)
         .build()
     );
 
@@ -104,6 +113,7 @@ public class SubjectUpdateServiceTest {
         .grade(1)
         .semester(2)
         .credit(4)
+        .autoCreated(false)
         .build()
     );
 
@@ -115,8 +125,11 @@ public class SubjectUpdateServiceTest {
         .code("CS00003")
         .build();
 
-    SubjectReadDto.Response response = subjectUpdateService.update(request);
+    subjectUpdateService.update(request);
 
+    Subject response = subjectJpaRepository
+        .findById(id)
+        .orElseThrow(() -> new BusinessException(SubjectErrorCode.NO_SUCH_SUBJECT));
     // Then
     Assertions.assertThat(response.getCode()).isEqualTo("CS00003");
   }
@@ -132,6 +145,7 @@ public class SubjectUpdateServiceTest {
         .grade(1)
         .semester(1)
         .credit(3)
+        .autoCreated(false)
         .build()
     );
 
@@ -143,6 +157,7 @@ public class SubjectUpdateServiceTest {
         .grade(1)
         .semester(2)
         .credit(4)
+        .autoCreated(false)
         .build()
     );
 

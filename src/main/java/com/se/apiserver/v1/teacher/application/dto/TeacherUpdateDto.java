@@ -27,5 +27,8 @@ public class TeacherUpdateDto {
 
     @ApiModelProperty(notes = "변경할 소속", example = "기계공학과")
     private String department;
+
+    @ApiModelProperty(notes = "변경할 비고", example = "변경할 비고 예시")
+    private String note;
   }
 }

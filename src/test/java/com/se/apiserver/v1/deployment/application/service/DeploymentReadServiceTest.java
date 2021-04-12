@@ -182,6 +182,7 @@ public class DeploymentReadServiceTest {
         .credit(3)
         .semester(2)
         .type(SubjectType.MAJOR)
+        .autoCreated(false)
         .build());
   }
 
@@ -191,6 +192,7 @@ public class DeploymentReadServiceTest {
         .subject(subject)
         .numberOfDivision(1)
         .teachingTimePerWeek(subject.getCredit())
+        .autoCreated(false)
         .build());
   }
 
@@ -215,6 +217,7 @@ public class DeploymentReadServiceTest {
         .name(name)
         .type(TeacherType.FULL_PROFESSOR)
         .department("컴퓨터소프트웨어공학")
+        .autoCreated(false)
         .build());
   }
 

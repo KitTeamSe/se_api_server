@@ -33,6 +33,7 @@ public class SubjectCreateServiceTest {
         .grade(1)
         .semester(1)
         .credit(3)
+        .note("비고 입력")
         .build();
 
     // When
@@ -53,6 +54,8 @@ public class SubjectCreateServiceTest {
         .grade(1)
         .semester(1)
         .credit(3)
+        .note("비고 입력")
+        .autoCreated(false)
         .build()
     );
 
@@ -84,6 +87,7 @@ public class SubjectCreateServiceTest {
         .grade(1)
         .semester(1)
         .credit(3)
+        .autoCreated(false)
         .build()
     );
 

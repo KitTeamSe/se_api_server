@@ -30,12 +30,20 @@ public class TeacherReadDto {
     @ApiModelProperty(notes = "소속", example = "컴퓨터소프트웨어공학")
     private String department;
 
+    @ApiModelProperty(notes = "자동 생성 여부", example = "false")
+    private Boolean autoCreated;
+
+    @ApiModelProperty(notes = "비고", example = "비고 예시")
+    private String note;
+
     public static Response fromEntity(Teacher teacher){
       return Response.builder()
           .teacherId(teacher.getTeacherId())
           .name(teacher.getName())
           .type(teacher.getType())
           .department(teacher.getDepartment())
+          .autoCreated(teacher.getAutoCreated())
+          .note(teacher.getNote())
           .build();
     }
   }

@@ -33,6 +33,8 @@ public class TeacherReadServiceTest {
         .name("홍길동")
         .type(TeacherType.FULL_PROFESSOR)
         .department("컴퓨터소프트웨어공학")
+        .autoCreated(false)
+        .note("홍길동의 비고")
         .build());
 
     // When
@@ -42,6 +44,7 @@ public class TeacherReadServiceTest {
     Assertions.assertThat(teacher.getName()).isEqualTo(response.getName());
     Assertions.assertThat(teacher.getType()).isEqualTo(response.getType());
     Assertions.assertThat(teacher.getDepartment()).isEqualTo(response.getDepartment());
+    Assertions.assertThat(teacher.getNote()).isEqualTo(response.getNote());
   }
 
   @Test
@@ -62,12 +65,14 @@ public class TeacherReadServiceTest {
     teacherJpaRepository.save(Teacher.builder()
         .name("홍길동")
         .type(TeacherType.FULL_PROFESSOR)
+        .autoCreated(false)
         .department("컴퓨터소프트웨어공학")
         .build());
 
     teacherJpaRepository.save(Teacher.builder()
         .name("도길동")
         .type(TeacherType.ASSISTANT)
+        .autoCreated(false)
         .department("기계공학")
         .build());
 

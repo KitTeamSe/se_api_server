@@ -29,12 +29,16 @@ public class LectureRoomReadDto {
     @ApiModelProperty(notes = "정원", example = "30")
     private Integer capacity;
 
+    @ApiModelProperty(notes = "비고", example = "정원이 50명인 DB 107")
+    private String note;
+
     public static Response fromEntity(LectureRoom lectureRoom){
       return Response.builder()
           .lectureRoomId(lectureRoom.getLectureRoomId())
           .building(lectureRoom.getBuilding())
           .roomNumber(lectureRoom.getRoomNumber())
           .capacity(lectureRoom.getCapacity())
+          .note(lectureRoom.getNote())
           .build();
     }
   }

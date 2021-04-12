@@ -40,14 +40,9 @@ public class SubjectCreateDto {
 
     @ApiModelProperty(notes = "학점", example = "3")
     private Integer credit;
-  }
 
-  @Data
-  @AllArgsConstructor
-  @ApiModel("교과 생성 응답")
-  static public class Response{
-    @ApiModelProperty(notes = "교과 pk", example = "1")
-    private Long subjectId;
+    @ApiModelProperty(notes = "비고", example = "비고를 적어주세요.")
+    private String note;
   }
 
 }

@@ -65,10 +65,9 @@ public class LectureRoomApiController {
   @PutMapping(path = "/lecture-room")
   @ResponseStatus(value = HttpStatus.OK)
   @ApiOperation(value = "강의실 수정")
-  public SuccessResponse<LectureRoomReadDto.Response> update(@RequestBody @Validated
+  public SuccessResponse<Long> update(@RequestBody @Validated
       LectureRoomUpdateDto.Request request){
-    lectureRoomUpdateService.update(request);
-    return new SuccessResponse<>(HttpStatus.OK.value(), "강의실 수정에 성공했습니다.");
+    return new SuccessResponse<>(HttpStatus.OK.value(), "강의실 수정에 성공했습니다.", lectureRoomUpdateService.update(request));
   }
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")

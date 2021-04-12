@@ -17,7 +17,7 @@ public class SubjectUpdateDto {
   @ApiModel("교과 수정 요청")
   static public class Request{
 
-    @ApiModelProperty(notes = "교과 id", example = "1")
+    @ApiModelProperty(notes = "교과 번호", example = "1")
     private Long subjectId;
 
     @ApiModelProperty(notes = "교육과정", example = "컴퓨터소프트웨어공학")
@@ -43,6 +43,9 @@ public class SubjectUpdateDto {
 
     @ApiModelProperty(notes = "학점", example = "3")
     private Integer credit;
+    
+    @ApiModelProperty(notes = "비고", example = "수정된 비고")
+    private String note;
 
   }
 

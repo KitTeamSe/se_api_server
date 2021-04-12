@@ -103,6 +103,7 @@ public class LectureUnableTimeUpdateServiceTest {
         .name(name)
         .type(TeacherType.FULL_PROFESSOR)
         .department("컴퓨터소프트웨어공학")
+        .autoCreated(false)
         .build());
   }
 

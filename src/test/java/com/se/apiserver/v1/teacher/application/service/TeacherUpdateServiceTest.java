@@ -31,6 +31,8 @@ public class TeacherUpdateServiceTest {
         .name("홍길동")
         .type(TeacherType.FULL_PROFESSOR)
         .department("컴퓨터소프트웨어공학")
+        .autoCreated(false)
+        .note("홍길동의 비고")
         .build());
 
     Long id = teacher.getTeacherId();
@@ -41,14 +43,20 @@ public class TeacherUpdateServiceTest {
         .name("고길동")
         .type(TeacherType.ASSISTANT)
         .department("기계공학")
+        .note("변경된 홍길동의 비고")
         .build();
 
-    TeacherReadDto.Response response = teacherUpdateService.update(request);
+    teacherUpdateService.update(request);
+
+    Teacher response = teacherJpaRepository
+        .findById(id)
+        .orElseThrow(() -> new BusinessException(TeacherErrorCode.NO_SUCH_TEACHER));
 
     // Then
     Assertions.assertThat(teacher.getName()).isEqualTo(response.getName());
     Assertions.assertThat(teacher.getType()).isEqualTo(response.getType());
     Assertions.assertThat(teacher.getDepartment()).isEqualTo(response.getDepartment());
+    Assertions.assertThat(teacher.getNote()).isEqualTo(response.getNote());
   }
 
   @Test
@@ -62,6 +70,7 @@ public class TeacherUpdateServiceTest {
         .name("고길동")
         .type(TeacherType.ASSISTANT)
         .department("기계공학")
+        .note("고길동의 비고")
         .build();
 
     // Then

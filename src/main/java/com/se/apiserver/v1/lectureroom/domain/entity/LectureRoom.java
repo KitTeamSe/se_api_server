@@ -35,9 +35,12 @@ public class LectureRoom extends AccountGenerateEntity {
   @Column(nullable = false)
   private Integer capacity;
 
+  @Size(max = 255)
+  private String note;
+
   @Builder
   public LectureRoom(Long lectureRoomId,
-      @Size(min = 1, max = 30) String building, Integer roomNumber, Integer capacity) {
+      @Size(min = 1, max = 30) String building, Integer roomNumber, Integer capacity, @Size(max=255) String note) {
 
     validateCapacity(capacity);
 
@@ -45,6 +48,7 @@ public class LectureRoom extends AccountGenerateEntity {
     this.building = building;
     this.roomNumber = roomNumber;
     this.capacity = capacity;
+    this.note = note;
   }
   
   public void validateCapacity(Integer capacity){
@@ -63,5 +67,9 @@ public class LectureRoom extends AccountGenerateEntity {
   public void updateCapacity(Integer capacity){
     validateCapacity(capacity);
     this.capacity = capacity;
+  }
+
+  public void updateNote(String note){
+    this.note = note;
   }
 }

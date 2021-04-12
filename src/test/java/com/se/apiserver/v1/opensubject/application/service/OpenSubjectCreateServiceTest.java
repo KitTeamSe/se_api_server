@@ -47,6 +47,7 @@ public class OpenSubjectCreateServiceTest {
         .subjectId(subject.getSubjectId())
         .numberOfDivision(1)
         .teachingTimePerWeek(subject.getCredit())
+        .note("개설 교과의 비고")
         .build();
 
     // When
@@ -68,6 +69,7 @@ public class OpenSubjectCreateServiceTest {
         .subject(subject)
         .numberOfDivision(1)
         .teachingTimePerWeek(subject.getCredit())
+        .autoCreated(false)
         .build());
 
     OpenSubjectCreateDto.Request request = OpenSubjectCreateDto.Request.builder()
@@ -75,6 +77,7 @@ public class OpenSubjectCreateServiceTest {
         .subjectId(subject.getSubjectId())
         .numberOfDivision(1)
         .teachingTimePerWeek(subject.getCredit())
+        .note("비고 1")
         .build();
 
     // When
@@ -145,6 +148,7 @@ public class OpenSubjectCreateServiceTest {
         .credit(3)
         .semester(1)
         .grade(1)
+        .autoCreated(false)
         .build());
   }
 }

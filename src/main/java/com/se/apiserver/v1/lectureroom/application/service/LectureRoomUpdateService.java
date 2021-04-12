@@ -21,7 +21,7 @@ public class LectureRoomUpdateService {
   private final LectureRoomQueryRepository lectureRoomQueryRepository;
 
   @Transactional
-  public LectureRoomReadDto.Response update(LectureRoomUpdateDto.Request request) {
+  public Long update(LectureRoomUpdateDto.Request request) {
     // DB에서 pk로 탐색
     LectureRoom lectureRoom = lectureRoomJpaRepository
         .findById(request.getLectureRoomId())
@@ -48,28 +48,20 @@ public class LectureRoomUpdateService {
     }
 
     if(request.getBuilding() != null)
-      updateBuilding(lectureRoom, request.getBuilding());
+      lectureRoom.updateBuilding(request.getBuilding());
 
     if(request.getRoomNumber() != null)
-      updateRoomNumber(lectureRoom, request.getRoomNumber());
+      lectureRoom.updateRoomNumber(request.getRoomNumber());
 
     if(request.getCapacity() != null)
-      updateCapacity(lectureRoom, request.getCapacity());
+      lectureRoom.updateCapacity(request.getCapacity());
+
+    if(request.getNote() != null){
+      String note = request.getNote().isEmpty() ? null : request.getNote();
+      lectureRoom.updateNote(note);
+    }
     
     // 저장
-    lectureRoomJpaRepository.save(lectureRoom);
-    return LectureRoomReadDto.Response.fromEntity(lectureRoom);
-  }
-
-  public void updateBuilding(LectureRoom lectureRoom, String building){
-    lectureRoom.updateBuilding(building);
-  }
-
-  public void updateRoomNumber(LectureRoom lectureRoom, Integer roomNumber){
-    lectureRoom.updateRoomNumber(roomNumber);
-  }
-
-  public void updateCapacity(LectureRoom lectureRoom, Integer capacity){
-    lectureRoom.updateCapacity(capacity);
+    return lectureRoomJpaRepository.save(lectureRoom).getLectureRoomId();
   }
 }

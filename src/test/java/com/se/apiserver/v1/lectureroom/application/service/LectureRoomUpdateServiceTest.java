@@ -1,5 +1,6 @@
 package com.se.apiserver.v1.lectureroom.application.service;
 
+import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.lectureroom.domain.entity.LectureRoom;
 import com.se.apiserver.v1.lectureroom.application.error.LectureRoomErrorCode;
 import com.se.apiserver.v1.lectureroom.application.dto.LectureRoomReadDto;
@@ -40,7 +41,11 @@ public class LectureRoomUpdateServiceTest {
         .capacity(50)
         .build();
 
-    LectureRoomReadDto.Response response = lectureRoomUpdateService.update(request);
+    lectureRoomUpdateService.update(request);
+
+    LectureRoom response = lectureRoomJpaRepository
+        .findById(id)
+        .orElseThrow(() -> new BusinessException(LectureRoomErrorCode.NO_SUCH_LECTURE_ROOM));
 
     // Then
     Assertions.assertThat(response.getBuilding()).isEqualTo("D");
@@ -67,8 +72,11 @@ public class LectureRoomUpdateServiceTest {
         .capacity(30)
         .build();
 
-    LectureRoomReadDto.Response response = lectureRoomUpdateService.update(request);
+    lectureRoomUpdateService.update(request);
 
+    LectureRoom response = lectureRoomJpaRepository
+        .findById(id)
+        .orElseThrow(() -> new BusinessException(LectureRoomErrorCode.NO_SUCH_LECTURE_ROOM));
     // Then
     Assertions.assertThat(response.getBuilding()).isEqualTo("DB");
     Assertions.assertThat(response.getRoomNumber()).isEqualTo(330);
@@ -94,8 +102,11 @@ public class LectureRoomUpdateServiceTest {
         .capacity(30)
         .build();
 
-    LectureRoomReadDto.Response response = lectureRoomUpdateService.update(request);
+    lectureRoomUpdateService.update(request);
 
+    LectureRoom response = lectureRoomJpaRepository
+        .findById(id)
+        .orElseThrow(() -> new BusinessException(LectureRoomErrorCode.NO_SUCH_LECTURE_ROOM));
     // Then
     Assertions.assertThat(response.getBuilding()).isEqualTo("D");
     Assertions.assertThat(response.getRoomNumber()).isEqualTo(331);
@@ -121,7 +132,12 @@ public class LectureRoomUpdateServiceTest {
         .capacity(30)
         .build();
 
-    LectureRoomReadDto.Response response = lectureRoomUpdateService.update(request);
+
+    lectureRoomUpdateService.update(request);
+
+    LectureRoom response = lectureRoomJpaRepository
+        .findById(id)
+        .orElseThrow(() -> new BusinessException(LectureRoomErrorCode.NO_SUCH_LECTURE_ROOM));
 
     // Then
     Assertions.assertThat(response.getBuilding()).isEqualTo("D");

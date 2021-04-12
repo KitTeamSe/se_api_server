@@ -30,10 +30,10 @@ public class SubjectCreateService {
         .grade(request.getGrade())
         .semester(request.getSemester())
         .credit(request.getCredit())
+        .autoCreated(false)
+        .note(request.getNote())
         .build();
 
-    subjectJpaRepository.save(subject);
-
-    return subject.getSubjectId();
+    return subjectJpaRepository.save(subject).getSubjectId();
   }
 }
