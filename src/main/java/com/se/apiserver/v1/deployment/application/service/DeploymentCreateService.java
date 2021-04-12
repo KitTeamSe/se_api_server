@@ -133,6 +133,9 @@ public class DeploymentCreateService {
   }
 
   private void validateDivision(Integer division, OpenSubject openSubject){
+    if(openSubject.getNumberOfDivision() == null)
+      throw new BusinessException(DeploymentErrorCode.EMPTY_NUMBER_OF_DIVISION);
+
     if(division > openSubject.getNumberOfDivision())
       throw new BusinessException(DeploymentErrorCode.INVALID_DIVISION);
   }

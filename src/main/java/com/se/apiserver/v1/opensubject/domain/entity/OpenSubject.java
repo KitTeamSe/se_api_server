@@ -37,9 +37,9 @@ public class OpenSubject extends AccountGenerateEntity {
   @JoinColumn(name = "subject_id", referencedColumnName = "subjectId", nullable = false)
   private Subject subject;
 
-  @Column(nullable = false)
   private Integer numberOfDivision;
 
+  @Column(nullable = false)
   private Integer teachingTimePerWeek;
 
   @Column(nullable = false)
@@ -66,6 +66,9 @@ public class OpenSubject extends AccountGenerateEntity {
   }
 
   public void validateNumberOfDivision(Integer numberOfDivision){
+    if(numberOfDivision == null)
+      return;
+
     if(numberOfDivision <= 0)
       throw new BusinessException(OpenSubjectErrorCode.INVALID_NUMBER_OF_DIVISION);
   }

@@ -22,7 +22,7 @@ public class OpenSubjectUpdateDto {
     @ApiModelProperty(notes = "수정할 분반 수", example = "1")
     private Integer numberOfDivision;
 
-    @ApiModelProperty(notes = "수정할 주간 수업 시간", example = "1", allowEmptyValue = true)
+    @ApiModelProperty(notes = "수정할 주간 수업 시간", example = "1")
     private Integer teachingTimePerWeek;
 
     @ApiModelProperty(notes = "수정할 비고", example = "수정할 비고 예시")
