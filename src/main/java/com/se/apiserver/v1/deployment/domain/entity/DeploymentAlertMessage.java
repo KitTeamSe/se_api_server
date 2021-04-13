@@ -1,5 +1,6 @@
 package com.se.apiserver.v1.deployment.domain.entity;
 
+import com.se.apiserver.v1.deployment.application.error.DeploymentErrorCode;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
@@ -7,17 +8,17 @@ import lombok.Getter;
 @Getter
 public class DeploymentAlertMessage {
 
-  private List<String> alertMessages;
+  private List<DeploymentErrorCode> alertErrors;
 
   public DeploymentAlertMessage(){
-    alertMessages = new ArrayList<>();
+    alertErrors = new ArrayList<>();
   }
 
-  public void addAlertMessages(String alertMessage){
-    this.alertMessages.add(alertMessage);
+  public void addAlertMessages(DeploymentErrorCode alertError){
+    this.alertErrors.add(alertError);
   }
 
   public boolean isEmpty(){
-    return alertMessages.isEmpty();
+    return alertErrors.isEmpty();
   }
 }

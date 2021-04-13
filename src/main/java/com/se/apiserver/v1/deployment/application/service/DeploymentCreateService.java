@@ -158,7 +158,7 @@ public class DeploymentCreateService {
   private void checkLectureUnableTime(DeploymentAlertMessage alertMessage, List<LectureUnableTime> lectureUnableTimes, PeriodRange periodRange, DayOfWeek dayOfWeek){
     if(!lectureUnableTimes.isEmpty())
       if(!isLectureUnableTimeIncluded(lectureUnableTimes, periodRange, dayOfWeek))
-        alertMessage.addAlertMessages(DeploymentErrorCode.TEACHER_LECTURE_UNABLE_TIME.getMessage());
+        alertMessage.addAlertMessages(DeploymentErrorCode.TEACHER_LECTURE_UNABLE_TIME);
   }
 
   // 주간 수업 시간 초과 검사
@@ -172,7 +172,7 @@ public class DeploymentCreateService {
 
     // 배치된 주간 수업 시간 합 + 넣으려는 배치의 수업 시간 > 주간 수업 시간
     if(teachingTimeSum + periodRange.getTeachingTime() > openSubject.getTeachingTimePerWeek())
-      alertMessage.addAlertMessages(DeploymentErrorCode.OVER_TEACHING_PER_WEEK.getMessage());
+      alertMessage.addAlertMessages(DeploymentErrorCode.OVER_TEACHING_PER_WEEK);
   }
 
   // 같은 학년이 수업 받는 중인지 검사
@@ -180,7 +180,7 @@ public class DeploymentCreateService {
     for(Deployment deployment : deployments){
       if(deployment.getOpenSubject().getSubject().getGrade().equals(grade)){
         if(deployment.getPeriodRange().isOverlappedWith(periodRange)){
-          alertMessage.addAlertMessages(DeploymentErrorCode.SAME_GRADE_LECTURED.getMessage());
+          alertMessage.addAlertMessages(DeploymentErrorCode.SAME_GRADE_LECTURED);
           break;
         }
       }
@@ -192,7 +192,7 @@ public class DeploymentCreateService {
     for(Deployment deployment : deployments){
       if(participatedTeacher.equals(deployment.getParticipatedTeacher())){
         if(periodRange.isOverlappedWith(deployment.getPeriodRange())){
-          alertMessage.addAlertMessages(DeploymentErrorCode.TEACHER_LECTURES_SAME_TIME.getMessage());
+          alertMessage.addAlertMessages(DeploymentErrorCode.TEACHER_LECTURES_SAME_TIME);
           break;
         }
       }
@@ -204,7 +204,7 @@ public class DeploymentCreateService {
     for(Deployment deployment : deployments){
       if(usableLectureRoom.equals(deployment.getUsableLectureRoom())){
         if(periodRange.isOverlappedWith(deployment.getPeriodRange())){
-          alertMessage.addAlertMessages(DeploymentErrorCode.DEPLOYMENT_OVERLAPPED.getMessage());
+          alertMessage.addAlertMessages(DeploymentErrorCode.DEPLOYMENT_OVERLAPPED);
           break;
         }
       }

@@ -1,9 +1,11 @@
 package com.se.apiserver.v1.deployment.application.error;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.se.apiserver.v1.common.domain.error.ErrorCode;
 import lombok.Getter;
 
 @Getter
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum DeploymentErrorCode implements ErrorCode {
 
   NO_SUCH_DEPLOYMENT(400, "DE01", "존재하지 않는 배치"),
