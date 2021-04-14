@@ -53,7 +53,7 @@ public class OpenSubjectUpdateServiceTest {
         .findById(id)
         .orElseThrow(() -> new BusinessException(OpenSubjectErrorCode.NO_SUCH_OPEN_SUBJECT));
 
-    Assertions.assertThat(2).isEqualTo(changed.getNumberOfDivision());
+    Assertions.assertThat(2).isEqualTo(changed.getDivisions().size());
   }
 
   @Test

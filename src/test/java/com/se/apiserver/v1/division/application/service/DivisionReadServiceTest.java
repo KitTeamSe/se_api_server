@@ -83,6 +83,7 @@ public class DivisionReadServiceTest {
 
     Subject subject = createSubject("D", "ASDASD");
 
+    // 개설 교과 생성 시 분반 하나 자동 생성됨.
     OpenSubject openSubject = createOpenSubject(timeTable, subject);
 
     divisionJpaRepository.save(Division.builder()
@@ -98,7 +99,7 @@ public class DivisionReadServiceTest {
     List<Response> responses = divisionReadService.readAllByOpenSubjectId(openSubject.getOpenSubjectId());
 
     // Then
-    Assertions.assertThat(responses.size()).isEqualTo(2);
+    Assertions.assertThat(responses.size()).isEqualTo(3);
   }
 
   private TimeTable createTimeTable(String name){

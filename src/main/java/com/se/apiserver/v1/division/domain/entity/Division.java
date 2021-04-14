@@ -26,7 +26,7 @@ public class Division {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long divisionId;
 
-  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "open_subject_id", referencedColumnName = "openSubjectId", nullable = false)
   private OpenSubject openSubject;
 
@@ -35,6 +35,9 @@ public class Division {
 
   @Builder
   public Division(Long divisionId, OpenSubject openSubject, Integer deployedTeachingTime){
+
+    if(deployedTeachingTime == null)
+      deployedTeachingTime = 0;
 
     validateDeployedTeachingTime(deployedTeachingTime);
 
@@ -51,5 +54,4 @@ public class Division {
   public void updateDeployedTeachingTime(Integer deployedTeachingTime){
     this.deployedTeachingTime = deployedTeachingTime;
   }
-
 }

@@ -31,7 +31,7 @@ public class DivisionCreateService {
         .size();
     
     // 개설 교과의 분반 수 보다 많이 분반을 만드려고 하는 경우
-    if(numberOfCreatedDivision >= openSubject.getNumberOfDivision())
+    if(numberOfCreatedDivision >= openSubject.getDivisions().size())
       throw new BusinessException(DivisionErrorCode.INVALID_DIVISION);
 
     Division division = Division.builder()

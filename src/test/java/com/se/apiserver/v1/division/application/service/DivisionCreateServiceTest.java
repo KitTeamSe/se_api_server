@@ -44,14 +44,11 @@ public class DivisionCreateServiceTest {
 
     Subject subject = createSubject("D", "ASDASD");
 
+    // 개설교과 생성 시 자동으로 분반 생성됨.
     OpenSubject openSubject = createOpenSubject(timeTable, subject);
 
-    DivisionCreateDto.Request request = DivisionCreateDto.Request.builder()
-        .openSubjectId(openSubject.getOpenSubjectId())
-        .build();
-
     // When
-    Long id = divisionCreateService.create(request);
+    Long id = openSubject.getDivisions().get(0).getDivisionId();
 
     // Then
     Assertions.assertThat(divisionJpaRepository.findById(id).isPresent()).isEqualTo(true);
