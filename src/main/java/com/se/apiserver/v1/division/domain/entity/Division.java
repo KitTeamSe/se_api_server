@@ -27,7 +27,7 @@ public class Division {
   private Long divisionId;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "open_subject_id", referencedColumnName = "openSubjectId", nullable = false)
+  @JoinColumn(name = "open_subject_id", referencedColumnName = "openSubjectId")
   private OpenSubject openSubject;
 
   @Column(nullable = false)
@@ -53,5 +53,9 @@ public class Division {
 
   public void updateDeployedTeachingTime(Integer deployedTeachingTime){
     this.deployedTeachingTime = deployedTeachingTime;
+  }
+
+  public void remove(){
+    this.openSubject = null;
   }
 }

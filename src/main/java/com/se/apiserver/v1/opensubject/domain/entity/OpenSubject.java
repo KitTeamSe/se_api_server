@@ -98,6 +98,7 @@ public class OpenSubject extends AccountGenerateEntity {
     else{
       divisions.sort((o1, o2) -> (int) (o2.getDivisionId() - o1.getDivisionId()));
       IntStream.range(0, diff).forEach((i) -> {
+        divisions.get(0).remove();
         this.divisions.remove(0);
       });
     }
