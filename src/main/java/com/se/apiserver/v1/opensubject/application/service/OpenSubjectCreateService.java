@@ -40,9 +40,8 @@ public class OpenSubjectCreateService {
     }
 
     // 주간 강의 시간이 정해져있지 않으면 교과의 학점을 그대로 사용.
-    if(request.getTeachingTimePerWeek() == null){
+    if(request.getTeachingTimePerWeek() == null)
       request.setTeachingTimePerWeek(subject.getCredit());
-    }
 
     OpenSubject openSubject = OpenSubject.builder()
         .timeTable(timeTable)

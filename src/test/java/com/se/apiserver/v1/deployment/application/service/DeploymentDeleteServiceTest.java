@@ -4,6 +4,8 @@ import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.deployment.application.error.DeploymentErrorCode;
 import com.se.apiserver.v1.deployment.domain.entity.Deployment;
 import com.se.apiserver.v1.deployment.infra.repository.DeploymentJpaRepository;
+import com.se.apiserver.v1.division.domain.entity.Division;
+import com.se.apiserver.v1.division.infra.repository.DivisionJpaRepository;
 import com.se.apiserver.v1.lectureroom.domain.entity.LectureRoom;
 import com.se.apiserver.v1.lectureroom.infra.repository.LectureRoomJpaRepository;
 import com.se.apiserver.v1.lectureunabletime.domain.entity.DayOfWeek;
@@ -52,6 +54,9 @@ public class DeploymentDeleteServiceTest {
   OpenSubjectJpaRepository openSubjectJpaRepository;
 
   @Autowired
+  DivisionJpaRepository divisionJpaRepository;
+
+  @Autowired
   LectureRoomJpaRepository lectureRoomJpaRepository;
 
   @Autowired
@@ -73,6 +78,7 @@ public class DeploymentDeleteServiceTest {
 
     Subject subject = createSubject("전자공학개론", "GE00013");
     OpenSubject openSubject = createOpenSubject(timeTable, subject);
+    Division division = createDivision(openSubject);
 
     LectureRoom lectureRoom = createLectureRoom("BVS", 101);
     UsableLectureRoom usableLectureRoom = createUsableLectureRoom(timeTable, lectureRoom);
@@ -85,11 +91,10 @@ public class DeploymentDeleteServiceTest {
 
     Deployment deployment = deploymentJpaRepository.save(Deployment.builder()
         .timeTable(timeTable)
-        .openSubject(openSubject)
+        .division(division)
         .usableLectureRoom(usableLectureRoom)
         .participatedTeacher(participatedTeacher)
         .dayOfWeek(DayOfWeek.FRIDAY)
-        .division(1)
         .periodRange(new PeriodRange(startPeriod, endPeriod))
         .build());
 
@@ -145,6 +150,14 @@ public class DeploymentDeleteServiceTest {
         .autoCreated(false)
         .build());
   }
+
+  private Division createDivision(OpenSubject openSubject){
+    return divisionJpaRepository.save(Division.builder()
+        .openSubject(openSubject)
+        .deployedTeachingTime(0)
+        .build());
+  }
+
 
   private LectureRoom createLectureRoom(String building, Integer roomNumber){
     return lectureRoomJpaRepository.save(LectureRoom.builder()
