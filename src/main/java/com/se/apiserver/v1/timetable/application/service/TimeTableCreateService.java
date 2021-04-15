@@ -19,17 +19,15 @@ public class TimeTableCreateService {
 
   @Transactional
   public Long create(TimeTableCreateDto.Request request){
-    // 이름이 중복되는 시간표가 있는지 검사
     if(timeTableJpaRepository.findByName(request.getName()).isPresent()){
       throw new BusinessException(TimeTableErrorCode.DUPLICATED_TIME_TABLE_NAME);
     }
 
-    TimeTable timeTable = TimeTable.builder()
-        .name(request.getName())
-        .year(request.getYear())
-        .semester(request.getSemester())
-        .status(TimeTableStatus.CREATED)
-        .build();
+    TimeTable timeTable = new TimeTable(
+        request.getName(),
+        request.getYear(),
+        request.getSemester(),
+        TimeTableStatus.CREATED);
 
     timeTableJpaRepository.save(timeTable);
 

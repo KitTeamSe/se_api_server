@@ -11,6 +11,7 @@ import com.se.apiserver.v1.teacher.application.error.TeacherErrorCode;
 import com.se.apiserver.v1.participatedteacher.application.dto.ParticipatedTeacherCreateDto;
 import com.se.apiserver.v1.participatedteacher.infra.repository.ParticipatedTeacherJpaRepository;
 import com.se.apiserver.v1.teacher.infra.repository.TeacherJpaRepository;
+import com.se.apiserver.v1.timetable.application.service.TimeTableCreateServiceTest;
 import com.se.apiserver.v1.timetable.domain.entity.TimeTable;
 import com.se.apiserver.v1.timetable.domain.entity.TimeTableStatus;
 import com.se.apiserver.v1.timetable.application.error.TimeTableErrorCode;
@@ -40,8 +41,7 @@ public class ParticipatedTeacherCreateServiceTest {
   @Test
   void 참여_교원_생성_성공(){
     // Given
-    TimeTable timeTable = createTimeTable("참여_교원_생성_성공 테스트 시간표 1");
-
+    TimeTable timeTable = TimeTableCreateServiceTest.createTimeTable(timeTableJpaRepository, "테스트 시간표 1");
     Teacher teacher = TeacherCreateServiceTest.createTeacher(teacherJpaRepository,"홍길동");
 
     ParticipatedTeacherCreateDto.Request request = ParticipatedTeacherCreateDto.Request.builder()
@@ -59,8 +59,7 @@ public class ParticipatedTeacherCreateServiceTest {
   @Test
   void 참여_교원_생성_교원이_이미_참여중_실패(){
     // Given
-    TimeTable timeTable = createTimeTable("참여_교원_생성_교원이_이미_참여중_실패 테스트 시간표 1");
-
+    TimeTable timeTable = TimeTableCreateServiceTest.createTimeTable(timeTableJpaRepository, "테스트 시간표 1");
     Teacher teacher = TeacherCreateServiceTest.createTeacher(teacherJpaRepository,"홍길동");
 
     createParticipatedTeacher(participatedTeacherJpaRepository, timeTable, teacher);
@@ -82,7 +81,7 @@ public class ParticipatedTeacherCreateServiceTest {
     // Given
     Long teacherId = 1666L;
 
-    TimeTable timeTable = createTimeTable("참여_교원_생성_존재하지_않는_교원_실패 테스트 시간표 1");
+    TimeTable timeTable = TimeTableCreateServiceTest.createTimeTable(timeTableJpaRepository, "테스트 시간표 1");
 
     ParticipatedTeacherCreateDto.Request request = ParticipatedTeacherCreateDto.Request.builder()
         .timeTableId(timeTable.getTimeTableId())
@@ -114,15 +113,6 @@ public class ParticipatedTeacherCreateServiceTest {
     Assertions.assertThatThrownBy(() ->{
       participatedTeacherCreateService.create(request);
     }).isInstanceOf(BusinessException.class).hasMessage(TimeTableErrorCode.NO_SUCH_TIME_TABLE.getMessage());
-  }
-
-  private TimeTable createTimeTable(String name){
-    return timeTableJpaRepository.save(TimeTable.builder()
-        .name(name)
-        .year(2021)
-        .semester(2)
-        .status(TimeTableStatus.CREATED)
-        .build());
   }
 
   public static ParticipatedTeacher createParticipatedTeacher(ParticipatedTeacherJpaRepository participatedTeacherJpaRepository,

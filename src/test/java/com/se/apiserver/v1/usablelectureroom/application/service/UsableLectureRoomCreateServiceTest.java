@@ -5,6 +5,7 @@ import com.se.apiserver.v1.lectureroom.application.error.LectureRoomErrorCode;
 import com.se.apiserver.v1.lectureroom.domain.entity.LectureRoom;
 import com.se.apiserver.v1.lectureroom.infra.repository.LectureRoomJpaRepository;
 import com.se.apiserver.v1.timetable.application.error.TimeTableErrorCode;
+import com.se.apiserver.v1.timetable.application.service.TimeTableCreateServiceTest;
 import com.se.apiserver.v1.timetable.domain.entity.TimeTable;
 import com.se.apiserver.v1.timetable.domain.entity.TimeTableStatus;
 import com.se.apiserver.v1.timetable.infra.repository.TimeTableJpaRepository;
@@ -37,7 +38,7 @@ public class UsableLectureRoomCreateServiceTest {
   @Test
   void 사용_가능_강의실_생성_성공(){
     // Given
-    TimeTable timeTable = createTimeTable("사용_가능_강의실_생성_성공 시간표 1");
+    TimeTable timeTable = TimeTableCreateServiceTest.createTimeTable(timeTableJpaRepository, "테스트 시간표 1");
 
     LectureRoom lectureRoom = createLectureRoom("D", 107);
 
@@ -56,7 +57,7 @@ public class UsableLectureRoomCreateServiceTest {
   @Test
   void 사용_가능_강의실_생성_강의실_이미_사용중_실패(){
     // Given
-    TimeTable timeTable = createTimeTable("사용_가능_강의실_생성_강의실_이미_사용중_실패 시간표 1");
+    TimeTable timeTable = TimeTableCreateServiceTest.createTimeTable(timeTableJpaRepository, "테스트 시간표 1");
 
     LectureRoom lectureRoom = createLectureRoom("D", 108);
 
@@ -101,12 +102,7 @@ public class UsableLectureRoomCreateServiceTest {
     // Given
     Long lectureRoomId = 1666L;
 
-    TimeTable timeTable = timeTableJpaRepository.save(TimeTable.builder()
-        .name("테스트 시간표 1")
-        .year(2021)
-        .semester(2)
-        .status(TimeTableStatus.CREATED)
-        .build());
+    TimeTable timeTable = TimeTableCreateServiceTest.createTimeTable(timeTableJpaRepository, "테스트 시간표 1");
 
     UsableLectureRoomCreateDto.Request request = UsableLectureRoomCreateDto.Request.builder()
         .timeTableId(timeTable.getTimeTableId())
@@ -119,15 +115,6 @@ public class UsableLectureRoomCreateServiceTest {
     Assertions.assertThatThrownBy(() ->{
       usableLectureRoomCreateService.create(request);
     }).isInstanceOf(BusinessException.class).hasMessage(LectureRoomErrorCode.NO_SUCH_LECTURE_ROOM.getMessage());
-  }
-
-  private TimeTable createTimeTable(String name){
-    return timeTableJpaRepository.save(TimeTable.builder()
-        .name(name)
-        .year(2021)
-        .semester(2)
-        .status(TimeTableStatus.CREATED)
-        .build());
   }
 
   private LectureRoom createLectureRoom(String building, Integer roomNumber){

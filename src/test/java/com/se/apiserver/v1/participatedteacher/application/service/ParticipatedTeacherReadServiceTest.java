@@ -11,6 +11,7 @@ import com.se.apiserver.v1.participatedteacher.application.error.ParticipatedTea
 import com.se.apiserver.v1.participatedteacher.application.dto.ParticipatedTeacherReadDto;
 import com.se.apiserver.v1.participatedteacher.infra.repository.ParticipatedTeacherJpaRepository;
 import com.se.apiserver.v1.teacher.infra.repository.TeacherJpaRepository;
+import com.se.apiserver.v1.timetable.application.service.TimeTableCreateServiceTest;
 import com.se.apiserver.v1.timetable.domain.entity.TimeTable;
 import com.se.apiserver.v1.timetable.domain.entity.TimeTableStatus;
 import com.se.apiserver.v1.timetable.infra.repository.TimeTableJpaRepository;
@@ -41,10 +42,8 @@ public class ParticipatedTeacherReadServiceTest {
   @Test
   void 참여_교원_조회_성공(){
     // Given
-    TimeTable timeTable = createTimeTable("참여_교원_조회_성공 테스트 시간표 1");
-
+    TimeTable timeTable = TimeTableCreateServiceTest.createTimeTable(timeTableJpaRepository, "테스트 시간표 1");
     Teacher teacher = TeacherCreateServiceTest.createTeacher(teacherJpaRepository, "홍길동 1");
-
     ParticipatedTeacher participatedTeacher = ParticipatedTeacherCreateServiceTest
         .createParticipatedTeacher(participatedTeacherJpaRepository, timeTable, teacher);
 
@@ -71,10 +70,8 @@ public class ParticipatedTeacherReadServiceTest {
   @Test
   void 참여_교원_전체_조회_성공(){
     // Given
-    TimeTable timeTable = createTimeTable("참여_교원_조회_성공 테스트 시간표 1");
-
+    TimeTable timeTable = TimeTableCreateServiceTest.createTimeTable(timeTableJpaRepository, "테스트 시간표 1");
     Teacher teacher = TeacherCreateServiceTest.createTeacher(teacherJpaRepository, "홍길동 1");
-
     ParticipatedTeacherCreateServiceTest
         .createParticipatedTeacher(participatedTeacherJpaRepository, timeTable, teacher);
 
@@ -92,14 +89,5 @@ public class ParticipatedTeacherReadServiceTest {
 
     // Then
     Assertions.assertThat(responses.getTotalElements()).isEqualTo(2);
-  }
-
-  private TimeTable createTimeTable(String name){
-    return timeTableJpaRepository.save(TimeTable.builder()
-        .name(name)
-        .year(2021)
-        .semester(2)
-        .status(TimeTableStatus.CREATED)
-        .build());
   }
 }

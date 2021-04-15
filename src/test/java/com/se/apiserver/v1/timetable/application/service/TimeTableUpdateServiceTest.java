@@ -25,12 +25,7 @@ public class TimeTableUpdateServiceTest {
   @Test
   void 시간표_수정_이름_수정_성공(){
     // Given
-    TimeTable timeTable = timeTableJpaRepository.save(TimeTable.builder()
-        .name("테스트 시간표 1")
-        .year(2021)
-        .semester(2)
-        .status(TimeTableStatus.CREATED)
-        .build());
+    TimeTable timeTable = TimeTableCreateServiceTest.createTimeTable(timeTableJpaRepository, "테스트 시간표 1");
 
     Long id = timeTable.getTimeTableId();
 
@@ -56,12 +51,7 @@ public class TimeTableUpdateServiceTest {
   @Test
   void 시간표_수정_모두_수정_성공(){
     // Given
-    TimeTable timeTable = timeTableJpaRepository.save(TimeTable.builder()
-        .name("테스트 시간표 2")
-        .year(2022)
-        .semester(1)
-        .status(TimeTableStatus.CREATED)
-        .build());
+    TimeTable timeTable = TimeTableCreateServiceTest.createTimeTable(timeTableJpaRepository, "테스트 시간표 2");
 
     Long id = timeTable.getTimeTableId();
 
@@ -119,19 +109,9 @@ public class TimeTableUpdateServiceTest {
   @Test
   void 시간표_수정_시간표_이름_중복_실패(){
     // Given
-    timeTableJpaRepository.save(TimeTable.builder()
-        .name("테스트 시간표 1")
-        .year(2021)
-        .semester(1)
-        .status(TimeTableStatus.CREATED)
-        .build());
+    TimeTableCreateServiceTest.createTimeTable(timeTableJpaRepository, "테스트 시간표 1");
 
-    TimeTable timeTable = timeTableJpaRepository.save(TimeTable.builder()
-        .name("테스트 시간표 2")
-        .year(2022)
-        .semester(1)
-        .status(TimeTableStatus.CREATED)
-        .build());
+    TimeTable timeTable = TimeTableCreateServiceTest.createTimeTable(timeTableJpaRepository, "테스트 시간표 2");
 
     Long id = timeTable.getTimeTableId();
 

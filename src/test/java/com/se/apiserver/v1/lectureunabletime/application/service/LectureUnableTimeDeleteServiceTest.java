@@ -16,6 +16,7 @@ import com.se.apiserver.v1.teacher.application.service.TeacherCreateServiceTest;
 import com.se.apiserver.v1.teacher.domain.entity.Teacher;
 import com.se.apiserver.v1.teacher.domain.entity.TeacherType;
 import com.se.apiserver.v1.teacher.infra.repository.TeacherJpaRepository;
+import com.se.apiserver.v1.timetable.application.service.TimeTableCreateServiceTest;
 import com.se.apiserver.v1.timetable.domain.entity.TimeTable;
 import com.se.apiserver.v1.timetable.domain.entity.TimeTableStatus;
 import com.se.apiserver.v1.timetable.infra.repository.TimeTableJpaRepository;
@@ -50,7 +51,8 @@ public class LectureUnableTimeDeleteServiceTest {
   @Test
   void 강의_불가_시간_삭제_성공(){
     // Given
-    TimeTable timeTable = createTimeTable("테스트 시간표 1");
+    TimeTable timeTable = TimeTableCreateServiceTest
+        .createTimeTable(timeTableJpaRepository, "테스트 시간표 1");
     Teacher teacher = TeacherCreateServiceTest.createTeacher(teacherJpaRepository, "홍길동 1");
     ParticipatedTeacher participatedTeacher = ParticipatedTeacherCreateServiceTest
         .createParticipatedTeacher(participatedTeacherJpaRepository, timeTable, teacher);
@@ -85,15 +87,6 @@ public class LectureUnableTimeDeleteServiceTest {
     Assertions.assertThatThrownBy(() ->{
       lectureUnableTimeDeleteService.delete(id);
     }).isInstanceOf(BusinessException.class).hasMessage(LectureUnableTimeErrorCode.NO_SUCH_LECTURE_UNABLE_TIME.getMessage());
-  }
-
-  private TimeTable createTimeTable(String name){
-    return timeTableJpaRepository.save(TimeTable.builder()
-        .name(name)
-        .year(2021)
-        .semester(2)
-        .status(TimeTableStatus.CREATED)
-        .build());
   }
 
   private Period getPeriod(String name){

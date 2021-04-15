@@ -24,12 +24,7 @@ public class TimeTableDeleteServiceTest {
   @Test
   void 시간표_삭제_성공(){
     // Given
-    TimeTable timeTable = timeTableJpaRepository.save(TimeTable.builder()
-        .name("테스트 시간표 1")
-        .year(2021)
-        .semester(2)
-        .status(TimeTableStatus.CREATED)
-        .build());
+    TimeTable timeTable = TimeTableCreateServiceTest.createTimeTable(timeTableJpaRepository, "테스트 시간표 1");
 
     Long id = timeTable.getTimeTableId();
 

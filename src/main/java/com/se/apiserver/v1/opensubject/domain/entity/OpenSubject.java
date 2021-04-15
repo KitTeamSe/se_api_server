@@ -33,7 +33,7 @@ public class OpenSubject extends AccountGenerateEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long openSubjectId;
 
-  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "time_table_id", referencedColumnName = "timeTableId", nullable = false)
   private TimeTable timeTable;
 
@@ -115,6 +115,10 @@ public class OpenSubject extends AccountGenerateEntity {
 
   public void updateSubject(Subject subject) {
     this.subject = subject;
+  }
+
+  public void updateTimeTable(TimeTable timeTable){
+    this.timeTable = timeTable;
   }
 
   private void addDivisions(int numberOfDivision){

@@ -26,10 +26,9 @@ public class ParticipatedTeacher extends AccountGenerateEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long participatedTeacherId;
 
-  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "time_table_id", referencedColumnName = "timeTableId", nullable = false)
   private TimeTable timeTable;
-
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "teacher_id", referencedColumnName = "teacherId", nullable = false)
@@ -42,5 +41,8 @@ public class ParticipatedTeacher extends AccountGenerateEntity {
 
   public void updateTeacher(Teacher teacher){
     this.teacher = teacher;
+  }
+  public void updateTimeTable(TimeTable timeTable){
+    this.timeTable = timeTable;
   }
 }
