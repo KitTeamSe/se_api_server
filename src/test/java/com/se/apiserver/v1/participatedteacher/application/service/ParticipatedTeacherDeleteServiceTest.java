@@ -3,6 +3,7 @@ package com.se.apiserver.v1.participatedteacher.application.service;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.participatedteacher.application.service.ParticipatedTeacherDeleteService;
 import com.se.apiserver.v1.participatedteacher.domain.entity.ParticipatedTeacher;
+import com.se.apiserver.v1.teacher.application.service.TeacherCreateServiceTest;
 import com.se.apiserver.v1.teacher.domain.entity.Teacher;
 import com.se.apiserver.v1.teacher.domain.entity.TeacherType;
 import com.se.apiserver.v1.participatedteacher.application.error.ParticipatedTeacherErrorCode;
@@ -38,12 +39,10 @@ public class ParticipatedTeacherDeleteServiceTest {
     // Given
     TimeTable timeTable = createTimeTable("참여_교원_삭제_성공 테스트 시간표 1");
 
-    Teacher teacher = createTeacher("홍길동 1");
+    Teacher teacher = TeacherCreateServiceTest.createTeacher(teacherJpaRepository, "홍길동 1");
 
-    ParticipatedTeacher participatedTeacher = participatedTeacherJpaRepository.save(ParticipatedTeacher.builder()
-        .timeTable(timeTable)
-        .teacher(teacher)
-        .build());
+    ParticipatedTeacher participatedTeacher = ParticipatedTeacherCreateServiceTest
+        .createParticipatedTeacher(participatedTeacherJpaRepository, timeTable, teacher);
 
     Long id = participatedTeacher.getParticipatedTeacherId();
 
@@ -75,12 +74,4 @@ public class ParticipatedTeacherDeleteServiceTest {
         .build());
   }
 
-  private Teacher createTeacher(String name){
-    return teacherJpaRepository.save(Teacher.builder()
-        .name(name)
-        .department("컴퓨터소프트웨어공학")
-        .type(TeacherType.FULL_PROFESSOR)
-        .autoCreated(false)
-        .build());
-  }
 }

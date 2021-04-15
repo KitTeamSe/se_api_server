@@ -12,6 +12,7 @@ import com.se.apiserver.v1.lectureunabletime.domain.entity.DayOfWeek;
 import com.se.apiserver.v1.opensubject.application.service.OpenSubjectCreateServiceTest;
 import com.se.apiserver.v1.opensubject.domain.entity.OpenSubject;
 import com.se.apiserver.v1.opensubject.infra.repository.OpenSubjectJpaRepository;
+import com.se.apiserver.v1.participatedteacher.application.service.ParticipatedTeacherCreateServiceTest;
 import com.se.apiserver.v1.participatedteacher.domain.entity.ParticipatedTeacher;
 import com.se.apiserver.v1.participatedteacher.infra.repository.ParticipatedTeacherJpaRepository;
 import com.se.apiserver.v1.period.application.error.PeriodErrorCode;
@@ -22,6 +23,7 @@ import com.se.apiserver.v1.subject.application.service.SubjectCreateServiceTest;
 import com.se.apiserver.v1.subject.domain.entity.Subject;
 import com.se.apiserver.v1.subject.domain.entity.SubjectType;
 import com.se.apiserver.v1.subject.infra.repository.SubjectJpaRepository;
+import com.se.apiserver.v1.teacher.application.service.TeacherCreateServiceTest;
 import com.se.apiserver.v1.teacher.domain.entity.Teacher;
 import com.se.apiserver.v1.teacher.domain.entity.TeacherType;
 import com.se.apiserver.v1.teacher.infra.repository.TeacherJpaRepository;
@@ -88,8 +90,9 @@ public class DeploymentDeleteServiceTest {
     LectureRoom lectureRoom = createLectureRoom("BVS", 101);
     UsableLectureRoom usableLectureRoom = createUsableLectureRoom(timeTable, lectureRoom);
 
-    Teacher teacher = createTeacher("홍길동");
-    ParticipatedTeacher participatedTeacher = createParticipatedTeacher(teacher, timeTable);
+    Teacher teacher = TeacherCreateServiceTest.createTeacher(teacherJpaRepository, "홍길동 1");
+    ParticipatedTeacher participatedTeacher = ParticipatedTeacherCreateServiceTest
+        .createParticipatedTeacher(participatedTeacherJpaRepository, timeTable, teacher);
 
     Period startPeriod = getPeriod("1");
     Period endPeriod = getPeriod("2");
@@ -136,23 +139,6 @@ public class DeploymentDeleteServiceTest {
     return usableLectureRoomJpaRepository.save(UsableLectureRoom.builder()
         .timeTable(timeTable)
         .lectureRoom(lectureRoom)
-        .build());
-  }
-
-
-  private Teacher createTeacher(String name){
-    return teacherJpaRepository.save(Teacher.builder()
-        .name(name)
-        .type(TeacherType.FULL_PROFESSOR)
-        .department("컴퓨터소프트웨어공학")
-        .autoCreated(false)
-        .build());
-  }
-
-  private ParticipatedTeacher createParticipatedTeacher(Teacher teacher, TimeTable timeTable){
-    return participatedTeacherJpaRepository.save(ParticipatedTeacher.builder()
-        .teacher(teacher)
-        .timeTable(timeTable)
         .build());
   }
 

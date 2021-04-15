@@ -6,12 +6,14 @@ import com.se.apiserver.v1.lectureunabletime.application.error.LectureUnableTime
 import com.se.apiserver.v1.lectureunabletime.domain.entity.DayOfWeek;
 import com.se.apiserver.v1.lectureunabletime.infra.repository.LectureUnableTimeJpaRepository;
 import com.se.apiserver.v1.participatedteacher.application.error.ParticipatedTeacherErrorCode;
+import com.se.apiserver.v1.participatedteacher.application.service.ParticipatedTeacherCreateServiceTest;
 import com.se.apiserver.v1.participatedteacher.domain.entity.ParticipatedTeacher;
 import com.se.apiserver.v1.participatedteacher.infra.repository.ParticipatedTeacherJpaRepository;
 import com.se.apiserver.v1.period.application.error.PeriodErrorCode;
 import com.se.apiserver.v1.period.application.error.PeriodRangeError;
 import com.se.apiserver.v1.period.domain.entity.Period;
 import com.se.apiserver.v1.period.infra.repository.PeriodJpaRepository;
+import com.se.apiserver.v1.teacher.application.service.TeacherCreateServiceTest;
 import com.se.apiserver.v1.teacher.domain.entity.Teacher;
 import com.se.apiserver.v1.teacher.domain.entity.TeacherType;
 import com.se.apiserver.v1.teacher.infra.repository.TeacherJpaRepository;
@@ -49,13 +51,13 @@ public class LectureUnableTimeCreateServiceTest {
   @Test
   void 강의_불가_시간_추가_성공(){
     // Given
-    Teacher teacher = createTeacher("홍길동");
     TimeTable timeTable = createTimeTable("테스트 시간표 1");
-    ParticipatedTeacher participatedTeacher = createParticipatedTeacher(teacher, timeTable);
+    Teacher teacher = TeacherCreateServiceTest.createTeacher(teacherJpaRepository, "홍길동 1");
+    ParticipatedTeacher participatedTeacher = ParticipatedTeacherCreateServiceTest
+        .createParticipatedTeacher(participatedTeacherJpaRepository, timeTable, teacher);
 
     Period startPeriod = getPeriod("1");
     Period endPeriod = getPeriod("2");
-
 
     // 테스트 시간표 1에 소속된 홍길동 1 교원은
     // 테스트 시간표 1에서 금요일 1교시 ~ 2교시는 수업이 불가능하다. 는 예시
@@ -103,9 +105,10 @@ public class LectureUnableTimeCreateServiceTest {
   @Test
   void 강의_불가_시간_추가_시작_교시_종료_교시_교차_실패(){
     // Given
-    Teacher teacher = createTeacher("홍길동");
     TimeTable timeTable = createTimeTable("테스트 시간표 1");
-    ParticipatedTeacher participatedTeacher = createParticipatedTeacher(teacher, timeTable);
+    Teacher teacher = TeacherCreateServiceTest.createTeacher(teacherJpaRepository, "홍길동 1");
+    ParticipatedTeacher participatedTeacher = ParticipatedTeacherCreateServiceTest
+        .createParticipatedTeacher(participatedTeacherJpaRepository, timeTable, teacher);
 
     Period startPeriod = getPeriod("2");
     Period endPeriod = getPeriod("1");
@@ -128,15 +131,6 @@ public class LectureUnableTimeCreateServiceTest {
         .hasMessage(PeriodRangeError.INVALID_PERIOD_RANGE.getMessage());
   }
 
-  private Teacher createTeacher(String name){
-    return teacherJpaRepository.save(Teacher.builder()
-        .name(name)
-        .type(TeacherType.FULL_PROFESSOR)
-        .department("컴퓨터소프트웨어공학")
-        .autoCreated(false)
-        .build());
-  }
-
   private TimeTable createTimeTable(String name){
     return timeTableJpaRepository.save(TimeTable.builder()
         .name(name)
@@ -146,12 +140,6 @@ public class LectureUnableTimeCreateServiceTest {
         .build());
   }
 
-  private ParticipatedTeacher createParticipatedTeacher(Teacher teacher, TimeTable timeTable){
-    return participatedTeacherJpaRepository.save(ParticipatedTeacher.builder()
-        .teacher(teacher)
-        .timeTable(timeTable)
-        .build());
-  }
 
   private Period getPeriod(String name){
     return periodJpaRepository

@@ -31,15 +31,16 @@ public class ParticipatedTeacher extends AccountGenerateEntity {
   private TimeTable timeTable;
 
 
-  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "teacher_id", referencedColumnName = "teacherId", nullable = false)
   private Teacher teacher;
 
-  @Builder
-  public ParticipatedTeacher(Long participatedTeacherId,
-      Teacher teacher, TimeTable timeTable) {
-    this.participatedTeacherId = participatedTeacherId;
+  public ParticipatedTeacher(TimeTable timeTable, Teacher teacher) {
     this.timeTable = timeTable;
+    this.teacher = teacher;
+  }
+
+  public void updateTeacher(Teacher teacher){
     this.teacher = teacher;
   }
 }

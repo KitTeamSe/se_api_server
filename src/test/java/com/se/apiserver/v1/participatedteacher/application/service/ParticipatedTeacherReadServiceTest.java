@@ -4,6 +4,7 @@ import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.common.infra.dto.PageRequest;
 import com.se.apiserver.v1.participatedteacher.application.service.ParticipatedTeacherReadService;
 import com.se.apiserver.v1.participatedteacher.domain.entity.ParticipatedTeacher;
+import com.se.apiserver.v1.teacher.application.service.TeacherCreateServiceTest;
 import com.se.apiserver.v1.teacher.domain.entity.Teacher;
 import com.se.apiserver.v1.teacher.domain.entity.TeacherType;
 import com.se.apiserver.v1.participatedteacher.application.error.ParticipatedTeacherErrorCode;
@@ -42,12 +43,10 @@ public class ParticipatedTeacherReadServiceTest {
     // Given
     TimeTable timeTable = createTimeTable("참여_교원_조회_성공 테스트 시간표 1");
 
-    Teacher teacher = createTeacher("홍길동 1");
+    Teacher teacher = TeacherCreateServiceTest.createTeacher(teacherJpaRepository, "홍길동 1");
 
-    ParticipatedTeacher participatedTeacher = participatedTeacherJpaRepository.save(ParticipatedTeacher.builder()
-        .timeTable(timeTable)
-        .teacher(teacher)
-        .build());
+    ParticipatedTeacher participatedTeacher = ParticipatedTeacherCreateServiceTest
+        .createParticipatedTeacher(participatedTeacherJpaRepository, timeTable, teacher);
 
     // When
     ParticipatedTeacherReadDto.Response response = participatedTeacherReadService.read(participatedTeacher.getParticipatedTeacherId());
@@ -74,19 +73,15 @@ public class ParticipatedTeacherReadServiceTest {
     // Given
     TimeTable timeTable = createTimeTable("참여_교원_조회_성공 테스트 시간표 1");
 
-    Teacher teacher = createTeacher("홍길동 1");
+    Teacher teacher = TeacherCreateServiceTest.createTeacher(teacherJpaRepository, "홍길동 1");
 
-    participatedTeacherJpaRepository.save(ParticipatedTeacher.builder()
-        .timeTable(timeTable)
-        .teacher(teacher)
-        .build());
+    ParticipatedTeacherCreateServiceTest
+        .createParticipatedTeacher(participatedTeacherJpaRepository, timeTable, teacher);
 
-    Teacher teacher2 = createTeacher("고길동 1");
+    Teacher teacher2 = TeacherCreateServiceTest.createTeacher(teacherJpaRepository, "고길동 1");
 
-    participatedTeacherJpaRepository.save(ParticipatedTeacher.builder()
-        .timeTable(timeTable)
-        .teacher(teacher2)
-        .build());
+    ParticipatedTeacherCreateServiceTest
+        .createParticipatedTeacher(participatedTeacherJpaRepository, timeTable, teacher);
 
     // When
     PageImpl responses = participatedTeacherReadService.readAllByTimeTableId(PageRequest.builder()
@@ -105,15 +100,6 @@ public class ParticipatedTeacherReadServiceTest {
         .year(2021)
         .semester(2)
         .status(TimeTableStatus.CREATED)
-        .build());
-  }
-
-  private Teacher createTeacher(String name){
-    return teacherJpaRepository.save(Teacher.builder()
-        .name(name)
-        .department("컴퓨터소프트웨어공학")
-        .type(TeacherType.FULL_PROFESSOR)
-        .autoCreated(false)
         .build());
   }
 }
