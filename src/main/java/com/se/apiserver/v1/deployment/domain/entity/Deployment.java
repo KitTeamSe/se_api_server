@@ -64,21 +64,18 @@ public class Deployment extends AccountGenerateEntity {
   @Embedded
   private PeriodRange periodRange;
 
-  @Builder
-  public Deployment(Long deploymentId, TimeTable timeTable,
+  public Deployment(TimeTable timeTable,
       Division division,
       UsableLectureRoom usableLectureRoom,
       ParticipatedTeacher participatedTeacher,
       DayOfWeek dayOfWeek,
       PeriodRange periodRange) {
 
-    this.deploymentId = deploymentId;
     this.timeTable = timeTable;
     this.division = division;
     this.usableLectureRoom = usableLectureRoom;
     this.participatedTeacher = participatedTeacher;
     this.dayOfWeek = dayOfWeek;
-    this.division = division;
     this.periodRange = periodRange;
   }
 }

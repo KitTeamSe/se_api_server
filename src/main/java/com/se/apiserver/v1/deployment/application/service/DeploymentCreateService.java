@@ -80,15 +80,13 @@ public class DeploymentCreateService {
     // 겹치는 강의가 있는지 검사
     checkOverlap(alertMessage, periodRange, deployments, usableLectureRoom);
 
-    Deployment deployment = Deployment.builder()
-        .timeTable(timeTable)
-        .division(division)
-        .usableLectureRoom(usableLectureRoom)
-        .participatedTeacher(participatedTeacher)
-        .dayOfWeek(request.getDayOfWeek())
-        .division(division)
-        .periodRange(new PeriodRange(startPeriod, endPeriod))
-        .build();
+    Deployment deployment = new Deployment(
+        timeTable,
+        division,
+        usableLectureRoom,
+        participatedTeacher,
+        request.getDayOfWeek(),
+        new PeriodRange(startPeriod, endPeriod));
 
     deploymentJpaRepository.save(deployment);
     updateDeployedTeachingTime(division, division.getDeployedTeachingTime() + periodRange.getTeachingTime());

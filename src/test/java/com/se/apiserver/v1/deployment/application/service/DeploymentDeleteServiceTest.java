@@ -97,14 +97,8 @@ public class DeploymentDeleteServiceTest {
     Period startPeriod = getPeriod("1");
     Period endPeriod = getPeriod("2");
 
-    Deployment deployment = deploymentJpaRepository.save(Deployment.builder()
-        .timeTable(timeTable)
-        .division(openSubject.getDivisions().get(0))
-        .usableLectureRoom(usableLectureRoom)
-        .participatedTeacher(participatedTeacher)
-        .dayOfWeek(DayOfWeek.FRIDAY)
-        .periodRange(new PeriodRange(startPeriod, endPeriod))
-        .build());
+    Deployment deployment = DeploymentCreateServiceTest.createDeployment(deploymentJpaRepository,
+        timeTable, openSubject.getDivisions().get(0), usableLectureRoom, participatedTeacher, DayOfWeek.FRIDAY, startPeriod, endPeriod);
 
     Long id = deployment.getDeploymentId();
 
@@ -132,5 +126,7 @@ public class DeploymentDeleteServiceTest {
         .findByName(name)
         .orElseThrow(() -> new BusinessException(PeriodErrorCode.NO_SUCH_PERIOD));
   }
+
+
 
 }

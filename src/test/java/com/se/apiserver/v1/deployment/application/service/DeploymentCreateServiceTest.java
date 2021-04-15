@@ -2,7 +2,9 @@ package com.se.apiserver.v1.deployment.application.service;
 
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.deployment.application.dto.DeploymentCreateDto;
+import com.se.apiserver.v1.deployment.domain.entity.Deployment;
 import com.se.apiserver.v1.deployment.infra.repository.DeploymentJpaRepository;
+import com.se.apiserver.v1.division.domain.entity.Division;
 import com.se.apiserver.v1.division.infra.repository.DivisionJpaRepository;
 import com.se.apiserver.v1.lectureroom.application.service.LectureRoomCreateServiceTest;
 import com.se.apiserver.v1.lectureroom.domain.entity.LectureRoom;
@@ -16,6 +18,7 @@ import com.se.apiserver.v1.participatedteacher.domain.entity.ParticipatedTeacher
 import com.se.apiserver.v1.participatedteacher.infra.repository.ParticipatedTeacherJpaRepository;
 import com.se.apiserver.v1.period.application.error.PeriodErrorCode;
 import com.se.apiserver.v1.period.domain.entity.Period;
+import com.se.apiserver.v1.period.domain.entity.PeriodRange;
 import com.se.apiserver.v1.period.infra.repository.PeriodJpaRepository;
 import com.se.apiserver.v1.subject.application.service.SubjectCreateServiceTest;
 import com.se.apiserver.v1.subject.domain.entity.Subject;
@@ -113,5 +116,17 @@ public class DeploymentCreateServiceTest {
     return periodJpaRepository
         .findByName(name)
         .orElseThrow(() -> new BusinessException(PeriodErrorCode.NO_SUCH_PERIOD));
+  }
+
+  public static Deployment createDeployment(DeploymentJpaRepository deploymentJpaRepository,
+      TimeTable timeTable, Division division, UsableLectureRoom usableLectureRoom,
+      ParticipatedTeacher participatedTeacher, DayOfWeek dayOfWeek, Period startPeriod, Period endPeriod){
+    return deploymentJpaRepository.save(new Deployment(
+        timeTable,
+        division,
+        usableLectureRoom,
+        participatedTeacher,
+        dayOfWeek,
+        new PeriodRange(startPeriod, endPeriod)));
   }
 }
