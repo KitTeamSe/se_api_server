@@ -41,7 +41,7 @@ public class OpenSubject extends AccountGenerateEntity {
   @JoinColumn(name = "subject_id", referencedColumnName = "subjectId", nullable = false)
   private Subject subject;
 
-  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "openSubject", orphanRemoval = true)
+  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "openSubject", orphanRemoval = true)
   List<Division> divisions = new ArrayList<>();
 
   @Column(nullable = false)
@@ -94,7 +94,7 @@ public class OpenSubject extends AccountGenerateEntity {
 
     if(numberOfDivision > divisions.size()){
       IntStream.range(0, diff).forEach((i) ->
-        this.divisions.add(new Division(this, 0)));
+        this.divisions.add(new Division(this)));
     }
     else{
       divisions.sort((o1, o2) -> (int) (o2.getDivisionId() - o1.getDivisionId()));
