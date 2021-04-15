@@ -1,6 +1,7 @@
 package com.se.apiserver.v1.lectureunabletime.application.service;
 
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
+import com.se.apiserver.v1.lectureroom.application.service.LectureRoomCreateServiceTest;
 import com.se.apiserver.v1.participatedteacher.application.service.ParticipatedTeacherCreateServiceTest;
 import com.se.apiserver.v1.period.domain.entity.PeriodRange;
 import com.se.apiserver.v1.lectureunabletime.application.error.LectureUnableTimeErrorCode;
@@ -14,11 +15,9 @@ import com.se.apiserver.v1.period.domain.entity.Period;
 import com.se.apiserver.v1.period.infra.repository.PeriodJpaRepository;
 import com.se.apiserver.v1.teacher.application.service.TeacherCreateServiceTest;
 import com.se.apiserver.v1.teacher.domain.entity.Teacher;
-import com.se.apiserver.v1.teacher.domain.entity.TeacherType;
 import com.se.apiserver.v1.teacher.infra.repository.TeacherJpaRepository;
 import com.se.apiserver.v1.timetable.application.service.TimeTableCreateServiceTest;
 import com.se.apiserver.v1.timetable.domain.entity.TimeTable;
-import com.se.apiserver.v1.timetable.domain.entity.TimeTableStatus;
 import com.se.apiserver.v1.timetable.infra.repository.TimeTableJpaRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -63,11 +62,8 @@ public class LectureUnableTimeDeleteServiceTest {
 
     // 테스트 시간표 1에 소속된 홍길동 1 교원은
     // 테스트 시간표 1에서 금요일 1교시 ~ 2교시는 수업이 불가능하다. 는 예시
-    LectureUnableTime lectureUnableTime = lectureUnableTimeJpaRepository.save(LectureUnableTime.builder()
-        .participatedTeacher(participatedTeacher)
-        .dayOfWeek(DayOfWeek.FRIDAY)
-        .periodRange(new PeriodRange(startPeriod, endPeriod))
-        .build());
+    LectureUnableTime lectureUnableTime = LectureUnableTimeCreateServiceTest
+        .createLectureUnableTime(lectureUnableTimeJpaRepository, participatedTeacher, DayOfWeek.FRIDAY, startPeriod, endPeriod);
 
     Long id = lectureUnableTime.getLectureUnableTimeId();
 

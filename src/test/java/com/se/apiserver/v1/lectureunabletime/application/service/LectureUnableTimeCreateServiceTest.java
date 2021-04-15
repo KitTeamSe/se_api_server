@@ -2,8 +2,8 @@ package com.se.apiserver.v1.lectureunabletime.application.service;
 
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.lectureunabletime.application.dto.LectureUnableTimeCreateDto;
-import com.se.apiserver.v1.lectureunabletime.application.error.LectureUnableTimeErrorCode;
 import com.se.apiserver.v1.lectureunabletime.domain.entity.DayOfWeek;
+import com.se.apiserver.v1.lectureunabletime.domain.entity.LectureUnableTime;
 import com.se.apiserver.v1.lectureunabletime.infra.repository.LectureUnableTimeJpaRepository;
 import com.se.apiserver.v1.participatedteacher.application.error.ParticipatedTeacherErrorCode;
 import com.se.apiserver.v1.participatedteacher.application.service.ParticipatedTeacherCreateServiceTest;
@@ -12,14 +12,13 @@ import com.se.apiserver.v1.participatedteacher.infra.repository.ParticipatedTeac
 import com.se.apiserver.v1.period.application.error.PeriodErrorCode;
 import com.se.apiserver.v1.period.application.error.PeriodRangeError;
 import com.se.apiserver.v1.period.domain.entity.Period;
+import com.se.apiserver.v1.period.domain.entity.PeriodRange;
 import com.se.apiserver.v1.period.infra.repository.PeriodJpaRepository;
 import com.se.apiserver.v1.teacher.application.service.TeacherCreateServiceTest;
 import com.se.apiserver.v1.teacher.domain.entity.Teacher;
-import com.se.apiserver.v1.teacher.domain.entity.TeacherType;
 import com.se.apiserver.v1.teacher.infra.repository.TeacherJpaRepository;
 import com.se.apiserver.v1.timetable.application.service.TimeTableCreateServiceTest;
 import com.se.apiserver.v1.timetable.domain.entity.TimeTable;
-import com.se.apiserver.v1.timetable.domain.entity.TimeTableStatus;
 import com.se.apiserver.v1.timetable.infra.repository.TimeTableJpaRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -136,6 +135,11 @@ public class LectureUnableTimeCreateServiceTest {
     return periodJpaRepository
         .findByName(name)
         .orElseThrow(() -> new BusinessException(PeriodErrorCode.NO_SUCH_PERIOD));
+  }
+
+  public static LectureUnableTime createLectureUnableTime(LectureUnableTimeJpaRepository lectureUnableTimeJpaRepository,
+      ParticipatedTeacher participatedTeacher, DayOfWeek dayOfWeek, Period startPeriod, Period endPeriod){
+    return lectureUnableTimeJpaRepository.save(new LectureUnableTime(participatedTeacher, dayOfWeek, new PeriodRange(startPeriod, endPeriod)));
   }
 
 }

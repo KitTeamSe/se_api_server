@@ -15,11 +15,9 @@ import com.se.apiserver.v1.period.domain.entity.Period;
 import com.se.apiserver.v1.period.infra.repository.PeriodJpaRepository;
 import com.se.apiserver.v1.teacher.application.service.TeacherCreateServiceTest;
 import com.se.apiserver.v1.teacher.domain.entity.Teacher;
-import com.se.apiserver.v1.teacher.domain.entity.TeacherType;
 import com.se.apiserver.v1.teacher.infra.repository.TeacherJpaRepository;
 import com.se.apiserver.v1.timetable.application.service.TimeTableCreateServiceTest;
 import com.se.apiserver.v1.timetable.domain.entity.TimeTable;
-import com.se.apiserver.v1.timetable.domain.entity.TimeTableStatus;
 import com.se.apiserver.v1.timetable.infra.repository.TimeTableJpaRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -63,11 +61,8 @@ public class LectureUnableTimeUpdateServiceTest {
 
     // 테스트 시간표 1에 소속된 홍길동 1 교원은
     // 테스트 시간표 1에서 금요일 1교시 ~ 2교시는 수업이 불가능하다. 는 예시
-    LectureUnableTime lectureUnableTime = lectureUnableTimeJpaRepository.save(LectureUnableTime.builder()
-        .participatedTeacher(participatedTeacher)
-        .dayOfWeek(DayOfWeek.FRIDAY)
-        .periodRange(new PeriodRange(startPeriod, endPeriod))
-        .build());
+    LectureUnableTime lectureUnableTime = LectureUnableTimeCreateServiceTest
+        .createLectureUnableTime(lectureUnableTimeJpaRepository, participatedTeacher, DayOfWeek.FRIDAY, startPeriod, endPeriod);
     // When
     LectureUnableTimeUpdateDto.Request request = LectureUnableTimeUpdateDto.Request.builder()
         .lectureUnableTimeId(lectureUnableTime.getLectureUnableTimeId())
