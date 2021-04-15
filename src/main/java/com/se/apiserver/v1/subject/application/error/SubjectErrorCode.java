@@ -7,10 +7,10 @@ import lombok.Getter;
 public enum SubjectErrorCode implements ErrorCode {
 
   NO_SUCH_SUBJECT(400, "SE01", "존재하지 않는 교과"),
-  DUPLICATED_SUBJECT(401, "SE02", "교과 코드 중복"),
-  INVALID_GRADE(402, "SE03", "유효하지 않은 대상학년"),
-  INVALID_SEMESTER(403, "SE04", "유효하지 않은 개설학기"),
-  INVALID_CREDIT(404, "SE05", "유효하지 않은 학점");
+  DUPLICATED_SUBJECT(400, "SE02", "교과 코드 중복"),
+  INVALID_GRADE(400, "SE03", "유효하지 않은 대상학년"),
+  INVALID_SEMESTER(400, "SE04", "유효하지 않은 개설학기"),
+  INVALID_CREDIT(400, "SE05", "유효하지 않은 학점");
 
   private final int status;
   private final String code;

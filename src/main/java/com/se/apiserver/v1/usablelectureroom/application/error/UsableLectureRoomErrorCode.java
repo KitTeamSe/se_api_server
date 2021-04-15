@@ -7,7 +7,7 @@ import lombok.Getter;
 public enum UsableLectureRoomErrorCode implements ErrorCode {
 
   NO_SUCH_USABLE_LECTURE_ROOM(400, "ULRE01", "존재하지 않는 사용 가능 강의실"),
-  DUPLICATED_USABLE_LECTURE_ROOM(401, "ULRE02", "해당 강의실은 이미 해당 시간표에 사용중");
+  DUPLICATED_USABLE_LECTURE_ROOM(400, "ULRE02", "해당 강의실은 이미 해당 시간표에 사용중");
 
   private final int status;
   private final String code;

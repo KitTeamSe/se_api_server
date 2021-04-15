@@ -7,10 +7,10 @@ import lombok.Getter;
 public enum PeriodErrorCode implements ErrorCode {
 
   NO_SUCH_PERIOD(400, "PE01", "존재하지 않는 교시"),
-  DUPLICATED_PERIOD_ORDER(401, "PE02", "교시 순서 중복"),
-  DUPLICATED_PERIOD_NAME(402, "PE03", "교시 이름 중복"),
-  CROSSING_START_END_TIME(403, "PE04", "시작시간과 종료시간이 교차"),
-  INVALID_PERIOD_ORDER(404, "PE05", "유효하지 않은 교시 순서");
+  DUPLICATED_PERIOD_ORDER(400, "PE02", "교시 순서 중복"),
+  DUPLICATED_PERIOD_NAME(400, "PE03", "교시 이름 중복"),
+  CROSSING_START_END_TIME(400, "PE04", "시작시간과 종료시간이 교차"),
+  INVALID_PERIOD_ORDER(400, "PE05", "유효하지 않은 교시 순서");
 
   private final int status;
   private final String code;
