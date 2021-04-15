@@ -26,17 +26,7 @@ public class SubjectUpdateServiceTest {
   @Test
   void 교과_수정_성공(){
     // Given
-    Subject subject = subjectJpaRepository.save(Subject.builder()
-        .curriculum("컴퓨터소프트웨어공학")
-        .type(SubjectType.MAJOR)
-        .code("CS00001")
-        .name("과목 1")
-        .grade(1)
-        .semester(1)
-        .credit(3)
-        .autoCreated(false)
-        .build()
-    );
+    Subject subject = SubjectCreateServiceTest.createSubject(subjectJpaRepository, "전자공학개론", "GE00013");
 
     Long id = subject.getSubjectId();
 
@@ -59,17 +49,7 @@ public class SubjectUpdateServiceTest {
   @Test
   void 교과_수정_코드_동일_과목명만_변경_성공(){
     // Given
-    Subject subject = subjectJpaRepository.save(Subject.builder()
-        .curriculum("컴퓨터소프트웨어공학")
-        .type(SubjectType.MAJOR)
-        .code("CS00001")
-        .name("과목 1")
-        .grade(1)
-        .semester(1)
-        .credit(3)
-        .autoCreated(false)
-        .build()
-    );
+    Subject subject = SubjectCreateServiceTest.createSubject(subjectJpaRepository, "전자공학개론", "CS00001");
 
     Long id = subject.getSubjectId();
 
@@ -93,29 +73,9 @@ public class SubjectUpdateServiceTest {
   @Test
   void 교과_수정_코드_변경_성공(){
     // Given
-    Subject subject = subjectJpaRepository.save(Subject.builder()
-        .curriculum("컴퓨터소프트웨어공학")
-        .type(SubjectType.MAJOR)
-        .code("CS00001")
-        .name("과목 1")
-        .grade(1)
-        .semester(1)
-        .credit(3)
-        .autoCreated(false)
-        .build()
-    );
+    Subject subject = SubjectCreateServiceTest.createSubject(subjectJpaRepository, "전자공학개론", "CS00001");
 
-    subjectJpaRepository.save(Subject.builder()
-        .curriculum("컴퓨터소프트웨어공학")
-        .type(SubjectType.MAJOR)
-        .code("CS00002")
-        .name("과목 2")
-        .grade(1)
-        .semester(2)
-        .credit(4)
-        .autoCreated(false)
-        .build()
-    );
+    SubjectCreateServiceTest.createSubject(subjectJpaRepository, "XDA", "CS00002");
 
     Long id = subject.getSubjectId();
 
@@ -137,29 +97,9 @@ public class SubjectUpdateServiceTest {
   @Test
   void 교과_수정_중복된_코드_실패(){
     // Given
-    Subject subject = subjectJpaRepository.save(Subject.builder()
-        .curriculum("컴퓨터소프트웨어공학")
-        .type(SubjectType.MAJOR)
-        .code("CS00001")
-        .name("과목 1")
-        .grade(1)
-        .semester(1)
-        .credit(3)
-        .autoCreated(false)
-        .build()
-    );
+    Subject subject = SubjectCreateServiceTest.createSubject(subjectJpaRepository, "전자공학개론", "CS00001");
 
-    subjectJpaRepository.save(Subject.builder()
-        .curriculum("컴퓨터소프트웨어공학")
-        .type(SubjectType.MAJOR)
-        .code("CS00002")
-        .name("과목 2")
-        .grade(1)
-        .semester(2)
-        .credit(4)
-        .autoCreated(false)
-        .build()
-    );
+    SubjectCreateServiceTest.createSubject(subjectJpaRepository, "DADA", "CS00002");
 
     Long id = subject.getSubjectId();
 

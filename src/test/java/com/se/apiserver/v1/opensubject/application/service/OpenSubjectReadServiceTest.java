@@ -6,9 +6,11 @@ import com.se.apiserver.v1.opensubject.application.dto.OpenSubjectReadDto;
 import com.se.apiserver.v1.opensubject.application.error.OpenSubjectErrorCode;
 import com.se.apiserver.v1.opensubject.domain.entity.OpenSubject;
 import com.se.apiserver.v1.opensubject.infra.repository.OpenSubjectJpaRepository;
+import com.se.apiserver.v1.subject.application.service.SubjectCreateServiceTest;
 import com.se.apiserver.v1.subject.domain.entity.Subject;
 import com.se.apiserver.v1.subject.domain.entity.SubjectType;
 import com.se.apiserver.v1.subject.infra.repository.SubjectJpaRepository;
+import com.se.apiserver.v1.timetable.application.service.TimeTableCreateServiceTest;
 import com.se.apiserver.v1.timetable.domain.entity.TimeTable;
 import com.se.apiserver.v1.timetable.domain.entity.TimeTableStatus;
 import com.se.apiserver.v1.timetable.infra.repository.TimeTableJpaRepository;
@@ -39,17 +41,13 @@ public class OpenSubjectReadServiceTest {
   @Test
   void 개설_교과_조회_성공(){
     // Given
-    TimeTable timeTable = createTimeTable("개설_교과_조회_성공 테스트 시간표");
+    TimeTable timeTable = TimeTableCreateServiceTest
+        .createTimeTable(timeTableJpaRepository, "테스트 시간표 1");
 
-    Subject subject = createSubject("테스트 교과", "DE00002");
+    Subject subject = SubjectCreateServiceTest
+        .createSubject(subjectJpaRepository, "전자공학개론", "GE00013");
 
-    OpenSubject openSubject = openSubjectJpaRepository.save(OpenSubject.builder()
-        .timeTable(timeTable)
-        .subject(subject)
-        .numberOfDivision(1)
-        .teachingTimePerWeek(subject.getCredit())
-        .autoCreated(false)
-        .build());
+    OpenSubject openSubject = OpenSubjectCreateServiceTest.createOpenSubject(openSubjectJpaRepository, timeTable, subject, 3);
 
     // When
     OpenSubjectReadDto.Response response = openSubjectReadService.read(openSubject.getOpenSubjectId());
@@ -74,27 +72,18 @@ public class OpenSubjectReadServiceTest {
   @Test
   void 개설_교과_전체_조회_성공(){
     // Given
-    TimeTable timeTable = createTimeTable("개설_교과_전체_조회_성공 테스트 시간표");
+    TimeTable timeTable = TimeTableCreateServiceTest
+        .createTimeTable(timeTableJpaRepository, "테스트 시간표 1");
 
-    Subject subject = createSubject("테스트 교과", "CS00003");
+    Subject subject = SubjectCreateServiceTest
+        .createSubject(subjectJpaRepository, "전자공학개론", "GE00013");
 
-    openSubjectJpaRepository.save(OpenSubject.builder()
-        .timeTable(timeTable)
-        .subject(subject)
-        .numberOfDivision(1)
-        .teachingTimePerWeek(subject.getCredit())
-        .autoCreated(false)
-        .build());
+    OpenSubjectCreateServiceTest.createOpenSubject(openSubjectJpaRepository, timeTable, subject, 3);
 
-    Subject subject2 = createSubject("테스트 교과 2", "CS00004");
+    Subject subject2 = SubjectCreateServiceTest
+        .createSubject(subjectJpaRepository, "전자공학개론2", "GE00014");
 
-    openSubjectJpaRepository.save(OpenSubject.builder()
-        .timeTable(timeTable)
-        .subject(subject2)
-        .numberOfDivision(1)
-        .teachingTimePerWeek(subject2.getCredit())
-        .autoCreated(false)
-        .build());
+    OpenSubjectCreateServiceTest.createOpenSubject(openSubjectJpaRepository, timeTable, subject2, 3);
 
     // When
     PageImpl responses = openSubjectReadService.readAllByTimeTableId(PageRequest.builder()
@@ -105,27 +94,5 @@ public class OpenSubjectReadServiceTest {
 
     // Then
     Assertions.assertThat(responses.getTotalElements()).isEqualTo(2);
-  }
-
-  private TimeTable createTimeTable(String name){
-    return timeTableJpaRepository.save(TimeTable.builder()
-        .name(name)
-        .year(2021)
-        .semester(2)
-        .status(TimeTableStatus.CREATED)
-        .build());
-  }
-
-  private Subject createSubject(String name, String code){
-    return subjectJpaRepository.save(Subject.builder()
-        .name(name)
-        .code(code)
-        .curriculum("컴퓨터소프트웨어공학")
-        .type(SubjectType.MAJOR)
-        .credit(3)
-        .semester(1)
-        .grade(1)
-        .autoCreated(false)
-        .build());
   }
 }

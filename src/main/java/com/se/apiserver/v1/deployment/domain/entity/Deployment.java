@@ -3,6 +3,7 @@ package com.se.apiserver.v1.deployment.domain.entity;
 import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.deployment.application.error.DeploymentErrorCode;
+import com.se.apiserver.v1.division.domain.entity.Division;
 import com.se.apiserver.v1.period.domain.entity.PeriodRange;
 import com.se.apiserver.v1.usablelectureroom.domain.entity.UsableLectureRoom;
 import com.se.apiserver.v1.lectureunabletime.domain.entity.DayOfWeek;
@@ -40,8 +41,8 @@ public class Deployment extends AccountGenerateEntity {
   private TimeTable timeTable;
 
   @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
-  @JoinColumn(name = "open_subject_id", referencedColumnName = "openSubjectId", nullable = false)
-  private OpenSubject openSubject;
+  @JoinColumn(name = "division_id", referencedColumnName = "divisionId", nullable = false)
+  private Division division;
 
   @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
   @JoinColumn(name = "usable_lecture_room_id", referencedColumnName = "usableLectureRoomId", nullable = false)
@@ -55,34 +56,24 @@ public class Deployment extends AccountGenerateEntity {
   @Enumerated(EnumType.STRING)
   private DayOfWeek dayOfWeek;
 
-  @Column(nullable = false)
-  private Integer division;
-
   @Embedded
   private PeriodRange periodRange;
 
   @Builder
   public Deployment(Long deploymentId, TimeTable timeTable,
-      OpenSubject openSubject,
+      Division division,
       UsableLectureRoom usableLectureRoom,
       ParticipatedTeacher participatedTeacher,
-      DayOfWeek dayOfWeek, Integer division,
+      DayOfWeek dayOfWeek,
       PeriodRange periodRange) {
-
-    validateDivision(division);
 
     this.deploymentId = deploymentId;
     this.timeTable = timeTable;
-    this.openSubject = openSubject;
+    this.division = division;
     this.usableLectureRoom = usableLectureRoom;
     this.participatedTeacher = participatedTeacher;
     this.dayOfWeek = dayOfWeek;
     this.division = division;
     this.periodRange = periodRange;
-  }
-  
-  private void validateDivision(Integer division){
-    if(division <= 0)
-      throw new BusinessException(DeploymentErrorCode.INVALID_DIVISION);
   }
 }

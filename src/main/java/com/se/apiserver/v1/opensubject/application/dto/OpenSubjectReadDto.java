@@ -58,7 +58,7 @@ public class OpenSubjectReadDto {
           .openSubjectId(openSubject.getOpenSubjectId())
           .timeTableId(openSubject.getTimeTable().getTimeTableId())
           .subjectId(openSubject.getSubject().getSubjectId())
-          .numberOfDivision(openSubject.getNumberOfDivision())
+          .numberOfDivision(openSubject.getDivisions().size())
           .teachingTimePerWeek(openSubject.getTeachingTimePerWeek())
           .autoCreated(openSubject.getAutoCreated())
           .note(openSubject.getNote())

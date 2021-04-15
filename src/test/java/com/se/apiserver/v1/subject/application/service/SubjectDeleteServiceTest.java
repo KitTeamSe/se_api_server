@@ -24,17 +24,7 @@ public class SubjectDeleteServiceTest {
   @Test
   void 교과_삭제_성공(){
     // Given
-    Subject subject = subjectJpaRepository.save(Subject.builder()
-        .curriculum("컴퓨터소프트웨어공학")
-        .type(SubjectType.MAJOR)
-        .code("CS00001")
-        .name("과목 1")
-        .grade(1)
-        .semester(1)
-        .credit(3)
-        .autoCreated(false)
-        .build()
-    );
+    Subject subject = SubjectCreateServiceTest.createSubject(subjectJpaRepository, "전자공학개론", "GE00013");
 
     Long id = subject.getSubjectId();
 

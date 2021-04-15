@@ -1,8 +1,11 @@
-package com.se.apiserver.v1.opensubject.application.service;
+package com.se.apiserver.v1.division.application.service;
 
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
-import com.se.apiserver.v1.opensubject.application.dto.OpenSubjectUpdateDto;
+import com.se.apiserver.v1.division.application.dto.DivisionCreateDto;
+import com.se.apiserver.v1.division.domain.entity.Division;
+import com.se.apiserver.v1.division.infra.repository.DivisionJpaRepository;
 import com.se.apiserver.v1.opensubject.application.error.OpenSubjectErrorCode;
+import com.se.apiserver.v1.opensubject.application.service.OpenSubjectCreateServiceTest;
 import com.se.apiserver.v1.opensubject.domain.entity.OpenSubject;
 import com.se.apiserver.v1.opensubject.infra.repository.OpenSubjectJpaRepository;
 import com.se.apiserver.v1.subject.application.service.SubjectCreateServiceTest;
@@ -21,13 +24,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
-public class OpenSubjectUpdateServiceTest {
+public class DivisionCreateServiceTest {
+
+  @Autowired
+  DivisionCreateService divisionCreateService;
+
+  @Autowired
+  DivisionJpaRepository divisionJpaRepository;
 
   @Autowired
   OpenSubjectJpaRepository openSubjectJpaRepository;
-
-  @Autowired
-  OpenSubjectUpdateService openSubjectUpdateService;
 
   @Autowired
   TimeTableJpaRepository timeTableJpaRepository;
@@ -36,46 +42,37 @@ public class OpenSubjectUpdateServiceTest {
   SubjectJpaRepository subjectJpaRepository;
 
   @Test
-  void 개설_교과_수정_성공(){
+  void 분반_생성_성공(){
     // Given
     TimeTable timeTable = TimeTableCreateServiceTest
         .createTimeTable(timeTableJpaRepository, "테스트 시간표 1");
 
     Subject subject = SubjectCreateServiceTest
         .createSubject(subjectJpaRepository, "전자공학개론", "GE00013");
-
-    OpenSubject openSubject = OpenSubjectCreateServiceTest.createOpenSubject(openSubjectJpaRepository, timeTable, subject, 3);
+    OpenSubject openSubject = OpenSubjectCreateServiceTest
+        .createOpenSubject(openSubjectJpaRepository, timeTable, subject, 3);
 
     // When
-    OpenSubjectUpdateDto.Request request = OpenSubjectUpdateDto.Request.builder()
-        .openSubjectId(openSubject.getOpenSubjectId())
-        .numberOfDivision(2)
-        .build();
-
-    Long id = openSubjectUpdateService.update(request);
+    Long id = openSubject.getDivisions().get(0).getDivisionId();
 
     // Then
-    OpenSubject changed = openSubjectJpaRepository
-        .findById(id)
-        .orElseThrow(() -> new BusinessException(OpenSubjectErrorCode.NO_SUCH_OPEN_SUBJECT));
-
-    Assertions.assertThat(2).isEqualTo(changed.getDivisions().size());
+    Assertions.assertThat(divisionJpaRepository.findById(id).isPresent()).isEqualTo(true);
   }
 
   @Test
-  void 개설_교과_수정_존재하지_않는_개설_교과_실패(){
+  void 분반_생성_존재하지_않는_개설_교과_실패(){
     // Given
-    Long id = 7777L;
+    Long openSubjectId = 17777L;
 
-    // When
-    OpenSubjectUpdateDto.Request request = OpenSubjectUpdateDto.Request.builder()
-        .openSubjectId(id)
-        .numberOfDivision(2)
+    DivisionCreateDto.Request request = DivisionCreateDto.Request.builder()
+        .openSubjectId(openSubjectId)
         .build();
 
+    // When
     // Then
-    Assertions.assertThatThrownBy(() -> {
-      openSubjectUpdateService.update(request);
+    Assertions.assertThatThrownBy(() ->{
+      divisionCreateService.create(request);
     }).isInstanceOf(BusinessException.class).hasMessage(OpenSubjectErrorCode.NO_SUCH_OPEN_SUBJECT.getMessage());
   }
+
 }
