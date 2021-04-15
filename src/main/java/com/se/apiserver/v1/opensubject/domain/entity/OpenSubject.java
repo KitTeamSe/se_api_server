@@ -21,7 +21,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.Size;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -38,11 +37,11 @@ public class OpenSubject extends AccountGenerateEntity {
   @JoinColumn(name = "time_table_id", referencedColumnName = "timeTableId", nullable = false)
   private TimeTable timeTable;
 
-  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "subject_id", referencedColumnName = "subjectId", nullable = false)
   private Subject subject;
 
-  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "openSubject", orphanRemoval = true)
+  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "openSubject", orphanRemoval = true)
   List<Division> divisions = new ArrayList<>();
 
   @Column(nullable = false)
@@ -54,10 +53,8 @@ public class OpenSubject extends AccountGenerateEntity {
   @Size(max = 255)
   private String note;
 
-  @Builder
-  public OpenSubject(Long openSubjectId,
-      TimeTable timeTable, Subject subject, Integer numberOfDivision,
-      Integer teachingTimePerWeek, Boolean autoCreated, @Size(max=255) String note) {
+  public OpenSubject(TimeTable timeTable, Subject subject, Integer numberOfDivision,
+      Integer teachingTimePerWeek, Boolean autoCreated) {
 
     if(numberOfDivision == null)
       numberOfDivision = 1;
@@ -65,15 +62,19 @@ public class OpenSubject extends AccountGenerateEntity {
     validateNumberOfDivision(numberOfDivision);
     validateTeachingTimePerWeek(teachingTimePerWeek);
 
-    this.openSubjectId = openSubjectId;
     this.timeTable = timeTable;
     this.subject = subject;
     this.teachingTimePerWeek = teachingTimePerWeek;
     this.autoCreated = autoCreated;
-    this.note = note;
 
-    IntStream.range(0, numberOfDivision).forEach((i) ->
-      this.divisions.add(Division.builder().openSubject(this).build()));
+    addDivisions(numberOfDivision);
+  }
+
+  public OpenSubject(TimeTable timeTable, Subject subject, Integer numberOfDivision,
+      Integer teachingTimePerWeek, Boolean autoCreated, @Size(max=255) String note) {
+
+    this(timeTable, subject, numberOfDivision, teachingTimePerWeek, autoCreated);
+    this.note = note;
   }
 
   public void validateNumberOfDivision(Integer numberOfDivision){
@@ -93,14 +94,13 @@ public class OpenSubject extends AccountGenerateEntity {
 
     if(numberOfDivision > divisions.size()){
       IntStream.range(0, diff).forEach((i) ->
-        this.divisions.add(Division.builder().openSubject(this).deployedTeachingTime(0).build()));
+        this.divisions.add(new Division(this, 0)));
     }
     else{
       divisions.sort((o1, o2) -> (int) (o2.getDivisionId() - o1.getDivisionId()));
-      IntStream.range(0, diff).forEach((i) -> {
-        divisions.get(0).remove();
-        this.divisions.remove(0);
-      });
+
+      IntStream.range(0, diff).forEach((i) ->
+        divisions.get(0).deleteFromOpenSubject());
     }
   }
 
@@ -111,5 +111,14 @@ public class OpenSubject extends AccountGenerateEntity {
 
   public void updateNote(String note){
     this.note = note;
+  }
+
+  public void updateSubject(Subject subject) {
+    this.subject = subject;
+  }
+
+  private void addDivisions(int numberOfDivision){
+    IntStream.range(0, numberOfDivision).forEach((i) ->
+        this.divisions.add(new Division(this)));
   }
 }

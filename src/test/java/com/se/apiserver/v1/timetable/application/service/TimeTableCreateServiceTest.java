@@ -60,4 +60,13 @@ public class TimeTableCreateServiceTest {
         .isInstanceOf(BusinessException.class)
         .hasMessage(TimeTableErrorCode.DUPLICATED_TIME_TABLE_NAME.getMessage());
   }
+
+  public static TimeTable createTimeTable(TimeTableJpaRepository timeTableJpaRepository, String name){
+    return timeTableJpaRepository.save(TimeTable.builder()
+        .name(name)
+        .year(2021)
+        .semester(2)
+        .status(TimeTableStatus.CREATED)
+        .build());
+  }
 }

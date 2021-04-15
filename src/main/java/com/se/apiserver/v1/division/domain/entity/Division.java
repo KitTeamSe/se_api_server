@@ -3,7 +3,6 @@ package com.se.apiserver.v1.division.domain.entity;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.division.application.error.DivisionErrorCode;
 import com.se.apiserver.v1.opensubject.domain.entity.OpenSubject;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,7 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -33,21 +31,20 @@ public class Division {
   @Column(nullable = false)
   private Integer deployedTeachingTime;
 
-  @Builder
-  public Division(Long divisionId, OpenSubject openSubject, Integer deployedTeachingTime){
+  public Division(OpenSubject openSubject){
+    this.openSubject = openSubject;
+    this.deployedTeachingTime = 0;
+  }
 
-    if(deployedTeachingTime == null)
-      deployedTeachingTime = 0;
-
+  public Division(OpenSubject openSubject, Integer deployedTeachingTime){
     validateDeployedTeachingTime(deployedTeachingTime);
 
-    this.divisionId = divisionId;
     this.openSubject = openSubject;
     this.deployedTeachingTime = deployedTeachingTime;
   }
 
   public void validateDeployedTeachingTime(Integer deployedTeachingTime){
-    if(deployedTeachingTime < 0)
+    if(deployedTeachingTime == null || deployedTeachingTime < 0)
       throw new BusinessException(DivisionErrorCode.INVALID_DEPLOYED_TEACHING_TIME);
   }
 
@@ -55,7 +52,8 @@ public class Division {
     this.deployedTeachingTime = deployedTeachingTime;
   }
 
-  public void remove(){
-    this.openSubject = null;
+  public void deleteFromOpenSubject(){
+    if(this.openSubject.getDivisions().contains(this))
+      this.openSubject.getDivisions().remove(this);
   }
 }

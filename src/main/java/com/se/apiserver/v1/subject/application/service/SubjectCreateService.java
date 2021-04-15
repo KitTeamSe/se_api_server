@@ -22,17 +22,15 @@ public class SubjectCreateService {
     if(subjectJpaRepository.findByCode(request.getCode()).isPresent())
       throw new BusinessException(SubjectErrorCode.DUPLICATED_SUBJECT);
 
-    Subject subject = Subject.builder()
-        .curriculum(request.getCurriculum())
-        .type(request.getType())
-        .code(request.getCode())
-        .name(request.getName())
-        .grade(request.getGrade())
-        .semester(request.getSemester())
-        .credit(request.getCredit())
-        .autoCreated(false)
-        .note(request.getNote())
-        .build();
+    Subject subject = new Subject(request.getCurriculum(),
+        request.getType(),
+        request.getCode(),
+        request.getName(),
+        request.getGrade(),
+        request.getSemester(),
+        request.getCredit(),
+        false,
+        request.getNote());
 
     return subjectJpaRepository.save(subject).getSubjectId();
   }

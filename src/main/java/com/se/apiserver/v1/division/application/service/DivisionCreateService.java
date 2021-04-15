@@ -34,10 +34,7 @@ public class DivisionCreateService {
     if(numberOfCreatedDivision >= openSubject.getDivisions().size())
       throw new BusinessException(DivisionErrorCode.INVALID_DIVISION);
 
-    Division division = Division.builder()
-        .openSubject(openSubject)
-        .deployedTeachingTime(0)
-        .build();
+    Division division = new Division(openSubject);
 
     return divisionJpaRepository.save(division).getDivisionId();
   }

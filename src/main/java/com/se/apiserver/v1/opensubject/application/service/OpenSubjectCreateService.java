@@ -43,14 +43,13 @@ public class OpenSubjectCreateService {
     if(request.getTeachingTimePerWeek() == null)
       request.setTeachingTimePerWeek(subject.getCredit());
 
-    OpenSubject openSubject = OpenSubject.builder()
-        .timeTable(timeTable)
-        .subject(subject)
-        .numberOfDivision(request.getNumberOfDivision())
-        .teachingTimePerWeek(request.getTeachingTimePerWeek())
-        .autoCreated(false)
-        .note(request.getNote())
-        .build();
+    OpenSubject openSubject = new OpenSubject(
+        timeTable,
+        subject,
+        request.getNumberOfDivision(),
+        request.getTeachingTimePerWeek(),
+        false,
+        request.getNote());
 
     return openSubjectJpaRepository.save(openSubject).getOpenSubjectId();
   }

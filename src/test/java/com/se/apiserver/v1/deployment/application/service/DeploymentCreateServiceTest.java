@@ -8,6 +8,7 @@ import com.se.apiserver.v1.division.infra.repository.DivisionJpaRepository;
 import com.se.apiserver.v1.lectureroom.domain.entity.LectureRoom;
 import com.se.apiserver.v1.lectureroom.infra.repository.LectureRoomJpaRepository;
 import com.se.apiserver.v1.lectureunabletime.domain.entity.DayOfWeek;
+import com.se.apiserver.v1.opensubject.application.service.OpenSubjectCreateServiceTest;
 import com.se.apiserver.v1.opensubject.domain.entity.OpenSubject;
 import com.se.apiserver.v1.opensubject.infra.repository.OpenSubjectJpaRepository;
 import com.se.apiserver.v1.participatedteacher.domain.entity.ParticipatedTeacher;
@@ -15,12 +16,14 @@ import com.se.apiserver.v1.participatedteacher.infra.repository.ParticipatedTeac
 import com.se.apiserver.v1.period.application.error.PeriodErrorCode;
 import com.se.apiserver.v1.period.domain.entity.Period;
 import com.se.apiserver.v1.period.infra.repository.PeriodJpaRepository;
+import com.se.apiserver.v1.subject.application.service.SubjectCreateServiceTest;
 import com.se.apiserver.v1.subject.domain.entity.Subject;
 import com.se.apiserver.v1.subject.domain.entity.SubjectType;
 import com.se.apiserver.v1.subject.infra.repository.SubjectJpaRepository;
 import com.se.apiserver.v1.teacher.domain.entity.Teacher;
 import com.se.apiserver.v1.teacher.domain.entity.TeacherType;
 import com.se.apiserver.v1.teacher.infra.repository.TeacherJpaRepository;
+import com.se.apiserver.v1.timetable.application.service.TimeTableCreateServiceTest;
 import com.se.apiserver.v1.timetable.domain.entity.TimeTable;
 import com.se.apiserver.v1.timetable.domain.entity.TimeTableStatus;
 import com.se.apiserver.v1.timetable.infra.repository.TimeTableJpaRepository;
@@ -72,11 +75,10 @@ public class DeploymentCreateServiceTest {
   @Test
   void 배치_추가_성공(){
     // Given
-    TimeTable timeTable = createTimeTable("테스트 시간표 1");
+    TimeTable timeTable = TimeTableCreateServiceTest.createTimeTable(timeTableJpaRepository, "테스트 시간표 1");
 
-    Subject subject = createSubject("전자공학개론", "GE00013");
-    OpenSubject openSubject = createOpenSubject(timeTable, subject);
-    Division division = createDivision(openSubject);
+    Subject subject = SubjectCreateServiceTest.createSubject(subjectJpaRepository, "전자공학개론", "GE00013");
+    OpenSubject openSubject = OpenSubjectCreateServiceTest.createOpenSubject(openSubjectJpaRepository, timeTable, subject, 3);
 
     LectureRoom lectureRoom = createLectureRoom("BVS", 101);
     UsableLectureRoom usableLectureRoom = createUsableLectureRoom(timeTable, lectureRoom);
@@ -89,7 +91,7 @@ public class DeploymentCreateServiceTest {
 
     DeploymentCreateDto.Request request = DeploymentCreateDto.Request.builder()
         .timeTableId(timeTable.getTimeTableId())
-        .divisionId(division.getDivisionId())
+        .divisionId(openSubject.getDivisions().get(0).getDivisionId())
         .usableLectureRoomId(usableLectureRoom.getUsableLectureRoomId())
         .participatedTeacherId(participatedTeacher.getParticipatedTeacherId())
         .dayOfWeek(DayOfWeek.FRIDAY)
@@ -103,46 +105,6 @@ public class DeploymentCreateServiceTest {
     // Then
     Assertions.assertThat(deploymentJpaRepository.findById(resposne.getDeploymentId()).isPresent()).isEqualTo(true);
   }
-
-  private TimeTable createTimeTable(String name){
-    return timeTableJpaRepository.save(TimeTable.builder()
-        .name(name)
-        .year(2021)
-        .semester(2)
-        .status(TimeTableStatus.CREATED)
-        .build());
-  }
-
-  private Subject createSubject(String name, String code){
-    return subjectJpaRepository.save(Subject.builder()
-        .name(name)
-        .code(code)
-        .curriculum("컴퓨터소프트웨어공학")
-        .grade(1)
-        .credit(3)
-        .semester(2)
-        .type(SubjectType.MAJOR)
-        .autoCreated(false)
-        .build());
-  }
-
-  private OpenSubject createOpenSubject(TimeTable timeTable, Subject subject){
-    return openSubjectJpaRepository.save(OpenSubject.builder()
-        .timeTable(timeTable)
-        .subject(subject)
-        .numberOfDivision(1)
-        .teachingTimePerWeek(subject.getCredit())
-        .autoCreated(false)
-        .build());
-  }
-
-  private Division createDivision(OpenSubject openSubject){
-    return divisionJpaRepository.save(Division.builder()
-        .openSubject(openSubject)
-        .deployedTeachingTime(0)
-        .build());
-  }
-
 
   private LectureRoom createLectureRoom(String building, Integer roomNumber){
     return lectureRoomJpaRepository.save(LectureRoom.builder()

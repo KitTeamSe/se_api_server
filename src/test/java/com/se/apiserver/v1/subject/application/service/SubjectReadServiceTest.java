@@ -28,17 +28,7 @@ public class SubjectReadServiceTest {
   @Test
   void 교과_조회_성공(){
     // Given
-    Subject subject = subjectJpaRepository.save(Subject.builder()
-        .curriculum("컴퓨터소프트웨어공학")
-        .type(SubjectType.MAJOR)
-        .code("CS00002")
-        .name("전자공학개론")
-        .grade(1)
-        .semester(1)
-        .credit(3)
-        .autoCreated(false)
-        .build()
-    );
+    Subject subject = SubjectCreateServiceTest.createSubject(subjectJpaRepository, "전자공학개론", "GE00013");
 
     Long id = subject.getSubjectId();
 
@@ -86,17 +76,7 @@ public class SubjectReadServiceTest {
 
   private void createMultipleSubjects(int count){
     for(int i = 0 ; i < count ; i++){
-      subjectJpaRepository.save(Subject.builder()
-          .curriculum("컴퓨터소프트웨어공학")
-          .type(SubjectType.MAJOR)
-          .code("CS0000" + i)
-          .name("과목 " + i)
-          .grade(1)
-          .semester(1)
-          .credit(3)
-          .autoCreated(false)
-          .build()
-      );
+      SubjectCreateServiceTest.createSubject(subjectJpaRepository, "코드 " + i, "CO0000" + i);
     }
   }
   
