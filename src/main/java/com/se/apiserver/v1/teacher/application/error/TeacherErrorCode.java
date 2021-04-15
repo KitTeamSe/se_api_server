@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 public enum TeacherErrorCode implements ErrorCode {
   NO_SUCH_TEACHER(400, "TE01", "존재하지 않는 교원"),
-  DUPLICATED_TEACHER(401, "TE02", "교원 중복");
+  DUPLICATED_TEACHER(400, "TE02", "교원 중복");
 
   private final int status;
   private final String code;
