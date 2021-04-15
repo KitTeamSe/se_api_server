@@ -11,6 +11,7 @@ import com.se.apiserver.v1.participatedteacher.domain.entity.ParticipatedTeacher
 import com.se.apiserver.v1.participatedteacher.infra.repository.ParticipatedTeacherJpaRepository;
 import com.se.apiserver.v1.period.application.error.PeriodErrorCode;
 import com.se.apiserver.v1.period.application.error.PeriodRangeError;
+import com.se.apiserver.v1.period.application.service.PeriodCreateServiceTest;
 import com.se.apiserver.v1.period.domain.entity.Period;
 import com.se.apiserver.v1.period.domain.entity.PeriodRange;
 import com.se.apiserver.v1.period.infra.repository.PeriodJpaRepository;
@@ -56,8 +57,8 @@ public class LectureUnableTimeCreateServiceTest {
     ParticipatedTeacher participatedTeacher = ParticipatedTeacherCreateServiceTest
         .createParticipatedTeacher(participatedTeacherJpaRepository, timeTable, teacher);
 
-    Period startPeriod = getPeriod("1");
-    Period endPeriod = getPeriod("2");
+    Period startPeriod = PeriodCreateServiceTest.getPeriod(periodJpaRepository,"1");
+    Period endPeriod = PeriodCreateServiceTest.getPeriod(periodJpaRepository,"2");
 
     // 테스트 시간표 1에 소속된 홍길동 1 교원은
     // 테스트 시간표 1에서 금요일 1교시 ~ 2교시는 수업이 불가능하다. 는 예시
@@ -80,8 +81,8 @@ public class LectureUnableTimeCreateServiceTest {
     // Given
     Long participatedTeacherId = 132123L;
 
-    Period startPeriod = getPeriod("1");
-    Period endPeriod = getPeriod("2");
+    Period startPeriod = PeriodCreateServiceTest.getPeriod(periodJpaRepository,"1");
+    Period endPeriod = PeriodCreateServiceTest.getPeriod(periodJpaRepository,"2");
 
 
     // 테스트 시간표 1에 소속된 홍길동 1 교원은
@@ -110,8 +111,8 @@ public class LectureUnableTimeCreateServiceTest {
     ParticipatedTeacher participatedTeacher = ParticipatedTeacherCreateServiceTest
         .createParticipatedTeacher(participatedTeacherJpaRepository, timeTable, teacher);
 
-    Period startPeriod = getPeriod("2");
-    Period endPeriod = getPeriod("1");
+    Period startPeriod = PeriodCreateServiceTest.getPeriod(periodJpaRepository,"2");
+    Period endPeriod = PeriodCreateServiceTest.getPeriod(periodJpaRepository,"1");
 
 
     // 테스트 시간표 1에 소속된 홍길동 1 교원은
@@ -129,12 +130,6 @@ public class LectureUnableTimeCreateServiceTest {
         lectureUnableTimeCreateService.create(request))
         .isInstanceOf(BusinessException.class)
         .hasMessage(PeriodRangeError.INVALID_PERIOD_RANGE.getMessage());
-  }
-
-  private Period getPeriod(String name){
-    return periodJpaRepository
-        .findByName(name)
-        .orElseThrow(() -> new BusinessException(PeriodErrorCode.NO_SUCH_PERIOD));
   }
 
   public static LectureUnableTime createLectureUnableTime(LectureUnableTimeJpaRepository lectureUnableTimeJpaRepository,

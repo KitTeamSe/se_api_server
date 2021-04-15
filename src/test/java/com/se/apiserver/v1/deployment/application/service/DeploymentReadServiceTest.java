@@ -18,6 +18,7 @@ import com.se.apiserver.v1.participatedteacher.application.service.ParticipatedT
 import com.se.apiserver.v1.participatedteacher.domain.entity.ParticipatedTeacher;
 import com.se.apiserver.v1.participatedteacher.infra.repository.ParticipatedTeacherJpaRepository;
 import com.se.apiserver.v1.period.application.error.PeriodErrorCode;
+import com.se.apiserver.v1.period.application.service.PeriodCreateServiceTest;
 import com.se.apiserver.v1.period.domain.entity.Period;
 import com.se.apiserver.v1.period.domain.entity.PeriodRange;
 import com.se.apiserver.v1.period.infra.repository.PeriodJpaRepository;
@@ -98,8 +99,8 @@ public class DeploymentReadServiceTest {
     ParticipatedTeacher participatedTeacher = ParticipatedTeacherCreateServiceTest
         .createParticipatedTeacher(participatedTeacherJpaRepository, timeTable, teacher);
 
-    Period startPeriod = getPeriod("1");
-    Period endPeriod = getPeriod("2");
+    Period startPeriod = PeriodCreateServiceTest.getPeriod(periodJpaRepository, "1");
+    Period endPeriod = PeriodCreateServiceTest.getPeriod(periodJpaRepository,"2");
 
     Deployment deployment = DeploymentCreateServiceTest.createDeployment(deploymentJpaRepository,
         timeTable, openSubject.getDivisions().get(0), usableLectureRoom, participatedTeacher, DayOfWeek.FRIDAY, startPeriod, endPeriod);
@@ -140,8 +141,8 @@ public class DeploymentReadServiceTest {
     ParticipatedTeacher participatedTeacher = ParticipatedTeacherCreateServiceTest
         .createParticipatedTeacher(participatedTeacherJpaRepository, timeTable, teacher);
 
-    Period startPeriod = getPeriod("1");
-    Period endPeriod = getPeriod("2");
+    Period startPeriod = PeriodCreateServiceTest.getPeriod(periodJpaRepository,"1");
+    Period endPeriod = PeriodCreateServiceTest.getPeriod(periodJpaRepository,"2");
 
     DeploymentCreateServiceTest.createDeployment(deploymentJpaRepository,
         timeTable, openSubject.getDivisions().get(0), usableLectureRoom, participatedTeacher, DayOfWeek.FRIDAY, startPeriod, endPeriod);
@@ -157,12 +158,6 @@ public class DeploymentReadServiceTest {
 
     // Then
     Assertions.assertThat(responses.getTotalElements()).isEqualTo(2);
-  }
-
-  private Period getPeriod(String name){
-    return periodJpaRepository
-        .findByName(name)
-        .orElseThrow(() -> new BusinessException(PeriodErrorCode.NO_SUCH_PERIOD));
   }
 
 }

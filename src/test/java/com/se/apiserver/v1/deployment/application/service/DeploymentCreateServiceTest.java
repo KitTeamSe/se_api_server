@@ -17,6 +17,7 @@ import com.se.apiserver.v1.participatedteacher.application.service.ParticipatedT
 import com.se.apiserver.v1.participatedteacher.domain.entity.ParticipatedTeacher;
 import com.se.apiserver.v1.participatedteacher.infra.repository.ParticipatedTeacherJpaRepository;
 import com.se.apiserver.v1.period.application.error.PeriodErrorCode;
+import com.se.apiserver.v1.period.application.service.PeriodCreateServiceTest;
 import com.se.apiserver.v1.period.domain.entity.Period;
 import com.se.apiserver.v1.period.domain.entity.PeriodRange;
 import com.se.apiserver.v1.period.infra.repository.PeriodJpaRepository;
@@ -92,8 +93,8 @@ public class DeploymentCreateServiceTest {
     ParticipatedTeacher participatedTeacher = ParticipatedTeacherCreateServiceTest
         .createParticipatedTeacher(participatedTeacherJpaRepository, timeTable, teacher);
 
-    Period startPeriod = getPeriod("1");
-    Period endPeriod = getPeriod("2");
+    Period startPeriod = PeriodCreateServiceTest.getPeriod(periodJpaRepository,"1");
+    Period endPeriod = PeriodCreateServiceTest.getPeriod(periodJpaRepository,"2");
 
     DeploymentCreateDto.Request request = DeploymentCreateDto.Request.builder()
         .timeTableId(timeTable.getTimeTableId())
@@ -110,12 +111,6 @@ public class DeploymentCreateServiceTest {
 
     // Then
     Assertions.assertThat(deploymentJpaRepository.findById(resposne.getDeploymentId()).isPresent()).isEqualTo(true);
-  }
-
-  private Period getPeriod(String name){
-    return periodJpaRepository
-        .findByName(name)
-        .orElseThrow(() -> new BusinessException(PeriodErrorCode.NO_SUCH_PERIOD));
   }
 
   public static Deployment createDeployment(DeploymentJpaRepository deploymentJpaRepository,

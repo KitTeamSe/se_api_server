@@ -3,6 +3,7 @@ package com.se.apiserver.v1.lectureunabletime.application.service;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.lectureroom.application.service.LectureRoomCreateServiceTest;
 import com.se.apiserver.v1.participatedteacher.application.service.ParticipatedTeacherCreateServiceTest;
+import com.se.apiserver.v1.period.application.service.PeriodCreateServiceTest;
 import com.se.apiserver.v1.period.domain.entity.PeriodRange;
 import com.se.apiserver.v1.lectureunabletime.application.error.LectureUnableTimeErrorCode;
 import com.se.apiserver.v1.lectureunabletime.domain.entity.DayOfWeek;
@@ -56,8 +57,8 @@ public class LectureUnableTimeDeleteServiceTest {
     ParticipatedTeacher participatedTeacher = ParticipatedTeacherCreateServiceTest
         .createParticipatedTeacher(participatedTeacherJpaRepository, timeTable, teacher);
 
-    Period startPeriod = getPeriod("1");
-    Period endPeriod = getPeriod("2");
+    Period startPeriod = PeriodCreateServiceTest.getPeriod(periodJpaRepository,"1");
+    Period endPeriod = PeriodCreateServiceTest.getPeriod(periodJpaRepository,"2");
 
 
     // 테스트 시간표 1에 소속된 홍길동 1 교원은
@@ -83,11 +84,5 @@ public class LectureUnableTimeDeleteServiceTest {
     Assertions.assertThatThrownBy(() ->{
       lectureUnableTimeDeleteService.delete(id);
     }).isInstanceOf(BusinessException.class).hasMessage(LectureUnableTimeErrorCode.NO_SUCH_LECTURE_UNABLE_TIME.getMessage());
-  }
-
-  private Period getPeriod(String name){
-    return periodJpaRepository
-        .findByName(name)
-        .orElseThrow(() -> new BusinessException(PeriodErrorCode.NO_SUCH_PERIOD));
   }
 }

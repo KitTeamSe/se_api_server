@@ -27,13 +27,8 @@ public class PeriodCreateService {
     // 교시 이름이 유니크한지 검사
     checkUniqueName(request.getName());
 
-    Period period = Period.builder()
-        .periodOrder(request.getPeriodOrder())
-        .name(request.getName())
-        .startTime(request.getStartTime())
-        .endTime(request.getEndTime())
-        .note(request.getNote())
-        .build();
+    Period period = new Period(request.getPeriodOrder(), request.getName(),
+        request.getStartTime(), request.getEndTime(), request.getNote());
 
     periodJpaRepository.save(period);
 
