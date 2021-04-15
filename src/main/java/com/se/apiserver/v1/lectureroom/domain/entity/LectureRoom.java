@@ -43,9 +43,6 @@ public class LectureRoom extends AccountGenerateEntity {
   @Size(max = 255)
   private String note;
 
-  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "lectureRoom", orphanRemoval = true)
-  private List<UsableLectureRoom> usableLectureRooms;
-
   public LectureRoom(@Size(min = 1, max = 30) String building, Integer roomNumber, Integer capacity) {
     validateCapacity(capacity);
 
@@ -57,11 +54,6 @@ public class LectureRoom extends AccountGenerateEntity {
   public LectureRoom(String building, Integer roomNumber, Integer capacity, @Size(max=255) String note) {
     this(building, roomNumber, capacity);
     this.note = note;
-  }
-
-  public LectureRoom(String building, Integer roomNumber, Integer capacity, String note, List<UsableLectureRoom> usableLectureRooms) {
-    this(building, roomNumber, capacity, note);
-    addUsableLectureRooms(usableLectureRooms);
   }
   
   public void validateCapacity(Integer capacity){
@@ -84,9 +76,5 @@ public class LectureRoom extends AccountGenerateEntity {
 
   public void updateNote(String note){
     this.note = note;
-  }
-
-  public void addUsableLectureRooms(List<UsableLectureRoom> usableLectureRooms){
-    usableLectureRooms.forEach((ulr) -> ulr.updateLectureRoom(this));
   }
 }

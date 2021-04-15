@@ -26,6 +26,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
@@ -36,19 +38,22 @@ public class Deployment extends AccountGenerateEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long deploymentId;
 
-  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+  @ManyToOne(fetch = FetchType.LAZY)
+  @OnDelete(action = OnDeleteAction.CASCADE)
   @JoinColumn(name = "time_table_id", referencedColumnName = "timeTableId", nullable = false)
   private TimeTable timeTable;
 
-  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+  @ManyToOne(fetch = FetchType.LAZY)
+  @OnDelete(action = OnDeleteAction.CASCADE)
   @JoinColumn(name = "division_id", referencedColumnName = "divisionId", nullable = false)
   private Division division;
 
-  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+  @ManyToOne(fetch = FetchType.LAZY)
+  @OnDelete(action = OnDeleteAction.CASCADE)
   @JoinColumn(name = "usable_lecture_room_id", referencedColumnName = "usableLectureRoomId", nullable = false)
   private UsableLectureRoom usableLectureRoom;
 
-  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "participated_teacher_id", referencedColumnName = "participatedTeacherId", nullable = false)
   private ParticipatedTeacher participatedTeacher;
 

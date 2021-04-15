@@ -23,6 +23,8 @@ import javax.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
@@ -34,10 +36,12 @@ public class OpenSubject extends AccountGenerateEntity {
   private Long openSubjectId;
 
   @ManyToOne(fetch = FetchType.LAZY)
+  @OnDelete(action = OnDeleteAction.CASCADE)
   @JoinColumn(name = "time_table_id", referencedColumnName = "timeTableId", nullable = false)
   private TimeTable timeTable;
 
   @ManyToOne(fetch = FetchType.LAZY)
+  @OnDelete(action = OnDeleteAction.CASCADE)
   @JoinColumn(name = "subject_id", referencedColumnName = "subjectId", nullable = false)
   private Subject subject;
 
@@ -111,14 +115,6 @@ public class OpenSubject extends AccountGenerateEntity {
 
   public void updateNote(String note){
     this.note = note;
-  }
-
-  public void updateSubject(Subject subject) {
-    this.subject = subject;
-  }
-
-  public void updateTimeTable(TimeTable timeTable){
-    this.timeTable = timeTable;
   }
 
   private void addDivisions(int numberOfDivision){

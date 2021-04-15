@@ -17,6 +17,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
@@ -28,22 +30,17 @@ public class UsableLectureRoom extends AccountGenerateEntity {
   private Long usableLectureRoomId;
 
   @ManyToOne(fetch = FetchType.LAZY)
+  @OnDelete(action = OnDeleteAction.CASCADE)
   @JoinColumn(name = "time_table_id", referencedColumnName = "timeTableId", nullable = false)
   private TimeTable timeTable;
 
   @ManyToOne(fetch = FetchType.LAZY)
+  @OnDelete(action = OnDeleteAction.CASCADE)
   @JoinColumn(name = "lecture_room_id", referencedColumnName = "lectureRoomId", nullable = false)
   private LectureRoom lectureRoom;
 
   public UsableLectureRoom(TimeTable timeTable, LectureRoom lectureRoom) {
     this.timeTable = timeTable;
-    this.lectureRoom = lectureRoom;
-  }
-
-  public void updateTimeTable(TimeTable timeTable){
-    this.timeTable = timeTable;
-  }
-  public void updateLectureRoom(LectureRoom lectureRoom){
     this.lectureRoom = lectureRoom;
   }
 }

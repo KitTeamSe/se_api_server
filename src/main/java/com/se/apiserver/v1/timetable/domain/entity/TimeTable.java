@@ -48,15 +48,6 @@ public class TimeTable extends AccountGenerateEntity {
   @Enumerated(EnumType.STRING)
   private TimeTableStatus status;
 
-  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "timeTable", orphanRemoval = true)
-  private List<ParticipatedTeacher> participatedTeachers = new ArrayList<>();
-
-  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "timeTable", orphanRemoval = true)
-  private List<UsableLectureRoom> usableLectureRooms = new ArrayList<>();
-
-  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "timeTable", orphanRemoval = true)
-  private List<OpenSubject> openSubjects = new ArrayList<>();
-
   public TimeTable(@Size(min = 1, max = 50) String name, Integer year, Integer semester, TimeTableStatus status) {
     validateYear(year);
     validateSemester(semester);
@@ -65,17 +56,6 @@ public class TimeTable extends AccountGenerateEntity {
     this.year = year;
     this.semester = semester;
     this.status = status;
-  }
-
-  public TimeTable(String name, Integer year, Integer semester, TimeTableStatus status,
-      List<ParticipatedTeacher> participatedTeachers,
-      List<UsableLectureRoom> usableLectureRooms,
-      List<OpenSubject> openSubjects){
-    this(name, year, semester, status);
-
-    addParticipatedTeachers(participatedTeachers);
-    addUsableLectureRooms(usableLectureRooms);
-    addOpenSubjects(openSubjects);
   }
 
   private void validateYear(Integer year){
@@ -104,17 +84,5 @@ public class TimeTable extends AccountGenerateEntity {
 
   public void updateStatus(TimeTableStatus status){
     this.status = status;
-  }
-
-  private void addParticipatedTeachers(List<ParticipatedTeacher> participatedTeachers){
-    participatedTeachers.forEach((pt) -> pt.updateTimeTable(this));
-  }
-
-  private void addUsableLectureRooms(List<UsableLectureRoom> usableLectureRooms){
-    usableLectureRooms.forEach((ulr) -> ulr.updateTimeTable(this));
-  }
-
-  private void addOpenSubjects(List<OpenSubject> openSubjects){
-    openSubjects.forEach((os) -> os.updateTimeTable(this));
   }
 }
