@@ -57,7 +57,6 @@ public class TimeTable extends AccountGenerateEntity {
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "timeTable", orphanRemoval = true)
   private List<OpenSubject> openSubjects = new ArrayList<>();
 
-
   public TimeTable(@Size(min = 1, max = 50) String name, Integer year, Integer semester, TimeTableStatus status) {
     validateYear(year);
     validateSemester(semester);
@@ -112,7 +111,7 @@ public class TimeTable extends AccountGenerateEntity {
   }
 
   private void addUsableLectureRooms(List<UsableLectureRoom> usableLectureRooms){
-//    usableLectureRooms.forEach((ulr) -> ulr.updateTimeTable(this));
+    usableLectureRooms.forEach((ulr) -> ulr.updateTimeTable(this));
   }
 
   private void addOpenSubjects(List<OpenSubject> openSubjects){

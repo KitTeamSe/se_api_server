@@ -5,6 +5,7 @@ import com.se.apiserver.v1.deployment.application.dto.DeploymentCreateDto;
 import com.se.apiserver.v1.deployment.infra.repository.DeploymentJpaRepository;
 import com.se.apiserver.v1.division.domain.entity.Division;
 import com.se.apiserver.v1.division.infra.repository.DivisionJpaRepository;
+import com.se.apiserver.v1.lectureroom.application.service.LectureRoomCreateServiceTest;
 import com.se.apiserver.v1.lectureroom.domain.entity.LectureRoom;
 import com.se.apiserver.v1.lectureroom.infra.repository.LectureRoomJpaRepository;
 import com.se.apiserver.v1.lectureunabletime.domain.entity.DayOfWeek;
@@ -29,6 +30,7 @@ import com.se.apiserver.v1.timetable.application.service.TimeTableCreateServiceT
 import com.se.apiserver.v1.timetable.domain.entity.TimeTable;
 import com.se.apiserver.v1.timetable.domain.entity.TimeTableStatus;
 import com.se.apiserver.v1.timetable.infra.repository.TimeTableJpaRepository;
+import com.se.apiserver.v1.usablelectureroom.application.service.UsableLectureRoomCreateServiceTest;
 import com.se.apiserver.v1.usablelectureroom.domain.entity.UsableLectureRoom;
 import com.se.apiserver.v1.usablelectureroom.infra.repository.UsableLectureRoomJpaRepository;
 import org.assertj.core.api.Assertions;
@@ -82,8 +84,10 @@ public class DeploymentCreateServiceTest {
     Subject subject = SubjectCreateServiceTest.createSubject(subjectJpaRepository, "전자공학개론", "GE00013");
     OpenSubject openSubject = OpenSubjectCreateServiceTest.createOpenSubject(openSubjectJpaRepository, timeTable, subject, 3);
 
-    LectureRoom lectureRoom = createLectureRoom("BVS", 101);
-    UsableLectureRoom usableLectureRoom = createUsableLectureRoom(timeTable, lectureRoom);
+    LectureRoom lectureRoom = LectureRoomCreateServiceTest
+        .createLectureRoom(lectureRoomJpaRepository, "BVS", 101);
+    UsableLectureRoom usableLectureRoom = UsableLectureRoomCreateServiceTest
+        .createUsableLectureRoom(usableLectureRoomJpaRepository, timeTable, lectureRoom);
 
     Teacher teacher = TeacherCreateServiceTest.createTeacher(teacherJpaRepository, "홍길동 1");
     ParticipatedTeacher participatedTeacher = ParticipatedTeacherCreateServiceTest
@@ -107,21 +111,6 @@ public class DeploymentCreateServiceTest {
 
     // Then
     Assertions.assertThat(deploymentJpaRepository.findById(resposne.getDeploymentId()).isPresent()).isEqualTo(true);
-  }
-
-  private LectureRoom createLectureRoom(String building, Integer roomNumber){
-    return lectureRoomJpaRepository.save(LectureRoom.builder()
-        .building(building)
-        .roomNumber(roomNumber)
-        .capacity(50)
-        .build());
-  }
-
-  private UsableLectureRoom createUsableLectureRoom(TimeTable timeTable, LectureRoom lectureRoom){
-    return usableLectureRoomJpaRepository.save(UsableLectureRoom.builder()
-        .timeTable(timeTable)
-        .lectureRoom(lectureRoom)
-        .build());
   }
 
   private Period getPeriod(String name){

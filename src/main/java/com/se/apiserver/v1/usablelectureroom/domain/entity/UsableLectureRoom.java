@@ -27,19 +27,23 @@ public class UsableLectureRoom extends AccountGenerateEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long usableLectureRoomId;
 
-  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "time_table_id", referencedColumnName = "timeTableId", nullable = false)
   private TimeTable timeTable;
 
-  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "lecture_room_id", referencedColumnName = "lectureRoomId", nullable = false)
   private LectureRoom lectureRoom;
 
-  @Builder
-  public UsableLectureRoom(Long usableLectureRoomId,
-      TimeTable timeTable, LectureRoom lectureRoom) {
-    this.usableLectureRoomId = usableLectureRoomId;
+  public UsableLectureRoom(TimeTable timeTable, LectureRoom lectureRoom) {
     this.timeTable = timeTable;
+    this.lectureRoom = lectureRoom;
+  }
+
+  public void updateTimeTable(TimeTable timeTable){
+    this.timeTable = timeTable;
+  }
+  public void updateLectureRoom(LectureRoom lectureRoom){
     this.lectureRoom = lectureRoom;
   }
 }

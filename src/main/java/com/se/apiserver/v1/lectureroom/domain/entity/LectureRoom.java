@@ -4,11 +4,16 @@ import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
 import com.se.apiserver.v1.common.domain.entity.BaseEntity;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.lectureroom.application.error.LectureRoomErrorCode;
+import com.se.apiserver.v1.usablelectureroom.domain.entity.UsableLectureRoom;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.Size;
 
 import lombok.AccessLevel;
@@ -38,17 +43,25 @@ public class LectureRoom extends AccountGenerateEntity {
   @Size(max = 255)
   private String note;
 
-  @Builder
-  public LectureRoom(Long lectureRoomId,
-      @Size(min = 1, max = 30) String building, Integer roomNumber, Integer capacity, @Size(max=255) String note) {
+  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "lectureRoom", orphanRemoval = true)
+  private List<UsableLectureRoom> usableLectureRooms;
 
+  public LectureRoom(@Size(min = 1, max = 30) String building, Integer roomNumber, Integer capacity) {
     validateCapacity(capacity);
 
-    this.lectureRoomId = lectureRoomId;
     this.building = building;
     this.roomNumber = roomNumber;
     this.capacity = capacity;
+  }
+
+  public LectureRoom(String building, Integer roomNumber, Integer capacity, @Size(max=255) String note) {
+    this(building, roomNumber, capacity);
     this.note = note;
+  }
+
+  public LectureRoom(String building, Integer roomNumber, Integer capacity, String note, List<UsableLectureRoom> usableLectureRooms) {
+    this(building, roomNumber, capacity, note);
+    addUsableLectureRooms(usableLectureRooms);
   }
   
   public void validateCapacity(Integer capacity){
@@ -71,5 +84,9 @@ public class LectureRoom extends AccountGenerateEntity {
 
   public void updateNote(String note){
     this.note = note;
+  }
+
+  public void addUsableLectureRooms(List<UsableLectureRoom> usableLectureRooms){
+    usableLectureRooms.forEach((ulr) -> ulr.updateLectureRoom(this));
   }
 }

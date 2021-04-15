@@ -1,6 +1,7 @@
 package com.se.apiserver.v1.usablelectureroom.application.service;
 
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
+import com.se.apiserver.v1.lectureroom.application.service.LectureRoomCreateServiceTest;
 import com.se.apiserver.v1.lectureroom.domain.entity.LectureRoom;
 import com.se.apiserver.v1.lectureroom.infra.repository.LectureRoomJpaRepository;
 import com.se.apiserver.v1.timetable.application.service.TimeTableCreateServiceTest;
@@ -36,12 +37,10 @@ public class UsableLectureRoomDeleteServiceTest {
   void 사용_가능_강의실_삭제_성공(){
     // Given
     TimeTable timeTable = TimeTableCreateServiceTest.createTimeTable(timeTableJpaRepository, "테스트 시간표 1");
-    LectureRoom lectureRoom = createLectureRoom("XDA", 101);
-
-    UsableLectureRoom usableLectureRoom = usableLectureRoomJpaRepository.save(UsableLectureRoom.builder()
-        .timeTable(timeTable)
-        .lectureRoom(lectureRoom)
-        .build());
+    LectureRoom lectureRoom = LectureRoomCreateServiceTest
+        .createLectureRoom(lectureRoomJpaRepository, "D", 107);
+    UsableLectureRoom usableLectureRoom = UsableLectureRoomCreateServiceTest
+        .createUsableLectureRoom(usableLectureRoomJpaRepository, timeTable, lectureRoom);
 
     Long id = usableLectureRoom.getUsableLectureRoomId();
 
@@ -62,13 +61,5 @@ public class UsableLectureRoomDeleteServiceTest {
     Assertions.assertThatThrownBy(() ->{
       usableLectureRoomDeleteService.delete(id);
     }).isInstanceOf(BusinessException.class).hasMessage(UsableLectureRoomErrorCode.NO_SUCH_USABLE_LECTURE_ROOM.getMessage());
-  }
-
-  private LectureRoom createLectureRoom(String building, Integer roomNumber){
-    return lectureRoomJpaRepository.save(LectureRoom.builder()
-        .building(building)
-        .roomNumber(roomNumber)
-        .capacity(50)
-        .build());
   }
 }

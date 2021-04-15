@@ -2,6 +2,7 @@ package com.se.apiserver.v1.usablelectureroom.application.service;
 
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.lectureroom.application.error.LectureRoomErrorCode;
+import com.se.apiserver.v1.lectureroom.application.service.LectureRoomCreateServiceTest;
 import com.se.apiserver.v1.lectureroom.domain.entity.LectureRoom;
 import com.se.apiserver.v1.lectureroom.infra.repository.LectureRoomJpaRepository;
 import com.se.apiserver.v1.timetable.application.error.TimeTableErrorCode;
@@ -40,7 +41,8 @@ public class UsableLectureRoomCreateServiceTest {
     // Given
     TimeTable timeTable = TimeTableCreateServiceTest.createTimeTable(timeTableJpaRepository, "테스트 시간표 1");
 
-    LectureRoom lectureRoom = createLectureRoom("D", 107);
+    LectureRoom lectureRoom = LectureRoomCreateServiceTest
+        .createLectureRoom(lectureRoomJpaRepository, "D", 107);
 
     UsableLectureRoomCreateDto.Request request = UsableLectureRoomCreateDto.Request.builder()
         .timeTableId(timeTable.getTimeTableId())
@@ -59,12 +61,10 @@ public class UsableLectureRoomCreateServiceTest {
     // Given
     TimeTable timeTable = TimeTableCreateServiceTest.createTimeTable(timeTableJpaRepository, "테스트 시간표 1");
 
-    LectureRoom lectureRoom = createLectureRoom("D", 108);
+    LectureRoom lectureRoom = LectureRoomCreateServiceTest
+        .createLectureRoom(lectureRoomJpaRepository, "D", 108);
 
-    usableLectureRoomJpaRepository.save(UsableLectureRoom.builder()
-        .timeTable(timeTable)
-        .lectureRoom(lectureRoom)
-        .build());
+    createUsableLectureRoom(usableLectureRoomJpaRepository, timeTable, lectureRoom);
 
     UsableLectureRoomCreateDto.Request request = UsableLectureRoomCreateDto.Request.builder()
         .timeTableId(timeTable.getTimeTableId())
@@ -81,7 +81,8 @@ public class UsableLectureRoomCreateServiceTest {
   @Test
   void 사용_가능_강의실_생성_존재하지_않는_시간표_실패(){
     // Given
-    LectureRoom lectureRoom = createLectureRoom("D", 109);
+    LectureRoom lectureRoom = LectureRoomCreateServiceTest
+        .createLectureRoom(lectureRoomJpaRepository, "D", 109);
 
     Long timeTableId = 17777L;
 
@@ -117,12 +118,9 @@ public class UsableLectureRoomCreateServiceTest {
     }).isInstanceOf(BusinessException.class).hasMessage(LectureRoomErrorCode.NO_SUCH_LECTURE_ROOM.getMessage());
   }
 
-  private LectureRoom createLectureRoom(String building, Integer roomNumber){
-    return lectureRoomJpaRepository.save(LectureRoom.builder()
-        .building(building)
-        .roomNumber(roomNumber)
-        .capacity(50)
-        .build());
+  public static UsableLectureRoom createUsableLectureRoom(UsableLectureRoomJpaRepository usableLectureRoomJpaRepository,
+      TimeTable timeTable, LectureRoom lectureRoom){
+    return usableLectureRoomJpaRepository.save(new UsableLectureRoom(timeTable, lectureRoom));
   }
 
 }
