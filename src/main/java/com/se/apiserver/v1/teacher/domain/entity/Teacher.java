@@ -2,6 +2,8 @@ package com.se.apiserver.v1.teacher.domain.entity;
 
 import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
 import com.se.apiserver.v1.common.domain.entity.BaseEntity;
+import com.se.apiserver.v1.participatedteacher.domain.entity.ParticipatedTeacher;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,16 +39,16 @@ public class Teacher extends AccountGenerateEntity {
   @Size(max = 255)
   private String note;
 
-  @Builder
-  public Teacher(Long teacherId,
-      @Size(min = 2, max = 20) String name,
-      TeacherType type,
-      @Size(min = 2, max = 30) String department, Boolean autoCreated, @Size(max = 255) String note) {
-    this.teacherId = teacherId;
+  public Teacher(@Size(min = 2, max = 20) String name, TeacherType type,
+      @Size(min = 2, max = 30) String department, Boolean autoCreated) {
     this.name = name;
     this.type = type;
     this.department = department;
     this.autoCreated = autoCreated;
+  }
+
+  public Teacher(String name, TeacherType type, String department, Boolean autoCreated, @Size(max = 255) String note) {
+    this(name, type, department, autoCreated);
     this.note = note;
   }
 

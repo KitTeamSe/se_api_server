@@ -16,13 +16,8 @@ public class TeacherCreateService {
 
   @Transactional
   public Long create(TeacherCreateDto.Request request){
-    Teacher teacher = Teacher.builder()
-        .name(request.getName())
-        .type(request.getType())
-        .department(request.getDepartment())
-        .autoCreated(false)
-        .note(request.getNote())
-        .build();
+    Teacher teacher = new Teacher(request.getName(), request.getType(),
+        request.getDepartment(), false, request.getNote());
 
     return teacherJpaRepository.save(teacher).getTeacherId();
   }

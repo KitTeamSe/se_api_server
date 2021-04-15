@@ -59,12 +59,7 @@ public class PeriodCreateServiceTest {
   @Test
   void 교시_생성_교시_순서_중복_실패(){
     // Given
-    periodJpaRepository.save(Period.builder()
-        .periodOrder(101)
-        .name("101")
-        .startTime(LocalTime.of(9, 0, 0))
-        .endTime(LocalTime.of(9, 50, 0))
-        .build());
+    createPeriod(periodJpaRepository, 101, "101", LocalTime.of(9, 0, 0), LocalTime.of(9, 50, 0));
 
     PeriodCreateDto.Request request = PeriodCreateDto.Request.builder()
         .periodOrder(101)
@@ -83,12 +78,7 @@ public class PeriodCreateServiceTest {
   @Test
   void 교시_생성_교시_이름_중복_실패(){
     // Given
-    periodJpaRepository.save(Period.builder()
-        .periodOrder(101)
-        .name("101")
-        .startTime(LocalTime.of(9, 0, 0))
-        .endTime(LocalTime.of(9, 50, 0))
-        .build());
+    createPeriod(periodJpaRepository, 101, "101", LocalTime.of(9, 0, 0), LocalTime.of(9, 50, 0));
 
     PeriodCreateDto.Request request = PeriodCreateDto.Request.builder()
         .periodOrder(102)
@@ -102,5 +92,15 @@ public class PeriodCreateServiceTest {
     Assertions.assertThatThrownBy(() ->{
       periodCreateService.create(request);
     }).isInstanceOf(BusinessException.class).hasMessage(PeriodErrorCode.DUPLICATED_PERIOD_NAME.getMessage());
+  }
+
+  public static Period createPeriod(PeriodJpaRepository periodJpaRepository, Integer periodOrder, String name, LocalTime startTime, LocalTime endTime){
+    return periodJpaRepository.save(new Period(periodOrder, name, startTime, endTime));
+  }
+
+  public static Period getPeriod(PeriodJpaRepository periodJpaRepository, String name){
+    return periodJpaRepository
+        .findByName(name)
+        .orElseThrow(() -> new BusinessException(PeriodErrorCode.NO_SUCH_PERIOD));
   }
 }

@@ -40,21 +40,20 @@ public class Period extends AccountGenerateEntity {
   @Size(max = 255)
   private String note;
 
-  @Builder
-  public Period(Long periodId, Integer periodOrder,
-      @Size(min = 1, max = 20) String name, LocalTime startTime, LocalTime endTime,
-      @Size(max = 255) String note) {
-
+  public Period(Integer periodOrder, @Size(min = 1, max = 20) String name, LocalTime startTime, LocalTime endTime) {
     validatePeriodOrder(periodOrder);
 
-    this.periodId = periodId;
     this.periodOrder = periodOrder;
     this.name = name;
     this.startTime = startTime;
     this.endTime = endTime;
-    this.note = note;
 
     validateTimeCrossing();
+  }
+
+  public Period(Integer periodOrder, String name, LocalTime startTime, LocalTime endTime, @Size(max = 255) String note) {
+    this(periodOrder, name, startTime, endTime);
+    this.note = note;
   }
 
   public void validateTimeCrossing(){

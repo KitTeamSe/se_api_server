@@ -23,6 +23,8 @@ import javax.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
@@ -33,15 +35,17 @@ public class OpenSubject extends AccountGenerateEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long openSubjectId;
 
-  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+  @ManyToOne(fetch = FetchType.LAZY)
+  @OnDelete(action = OnDeleteAction.CASCADE)
   @JoinColumn(name = "time_table_id", referencedColumnName = "timeTableId", nullable = false)
   private TimeTable timeTable;
 
   @ManyToOne(fetch = FetchType.LAZY)
+  @OnDelete(action = OnDeleteAction.CASCADE)
   @JoinColumn(name = "subject_id", referencedColumnName = "subjectId", nullable = false)
   private Subject subject;
 
-  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "openSubject", orphanRemoval = true)
+  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "openSubject", orphanRemoval = true)
   List<Division> divisions = new ArrayList<>();
 
   @Column(nullable = false)
@@ -94,7 +98,7 @@ public class OpenSubject extends AccountGenerateEntity {
 
     if(numberOfDivision > divisions.size()){
       IntStream.range(0, diff).forEach((i) ->
-        this.divisions.add(new Division(this, 0)));
+        this.divisions.add(new Division(this)));
     }
     else{
       divisions.sort((o1, o2) -> (int) (o2.getDivisionId() - o1.getDivisionId()));
@@ -111,10 +115,6 @@ public class OpenSubject extends AccountGenerateEntity {
 
   public void updateNote(String note){
     this.note = note;
-  }
-
-  public void updateSubject(Subject subject) {
-    this.subject = subject;
   }
 
   private void addDivisions(int numberOfDivision){

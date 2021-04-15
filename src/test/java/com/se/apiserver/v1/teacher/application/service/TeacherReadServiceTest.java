@@ -29,13 +29,7 @@ public class TeacherReadServiceTest {
   @Test
   void 교원_조회_성공(){
     // Given
-    Teacher teacher = teacherJpaRepository.save(Teacher.builder()
-        .name("홍길동")
-        .type(TeacherType.FULL_PROFESSOR)
-        .department("컴퓨터소프트웨어공학")
-        .autoCreated(false)
-        .note("홍길동의 비고")
-        .build());
+    Teacher teacher = TeacherCreateServiceTest.createTeacher(teacherJpaRepository, "홍길동");
 
     // When
     TeacherReadDto.Response response = teacherReadService.read(teacher.getTeacherId());
@@ -62,19 +56,9 @@ public class TeacherReadServiceTest {
   @Test
   void 교원_전체_조회_성공(){
     // Given
-    teacherJpaRepository.save(Teacher.builder()
-        .name("홍길동")
-        .type(TeacherType.FULL_PROFESSOR)
-        .autoCreated(false)
-        .department("컴퓨터소프트웨어공학")
-        .build());
+    TeacherCreateServiceTest.createTeacher(teacherJpaRepository, "홍길동");
 
-    teacherJpaRepository.save(Teacher.builder()
-        .name("도길동")
-        .type(TeacherType.ASSISTANT)
-        .autoCreated(false)
-        .department("기계공학")
-        .build());
+    TeacherCreateServiceTest.createTeacher(teacherJpaRepository, "고길동");
 
     // When
     PageImpl responses = teacherReadService.readAll(PageRequest.builder()

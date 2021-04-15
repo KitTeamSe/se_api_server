@@ -2,8 +2,10 @@ package com.se.apiserver.v1.usablelectureroom.application.service;
 
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.common.infra.dto.PageRequest;
+import com.se.apiserver.v1.lectureroom.application.service.LectureRoomCreateServiceTest;
 import com.se.apiserver.v1.lectureroom.domain.entity.LectureRoom;
 import com.se.apiserver.v1.lectureroom.infra.repository.LectureRoomJpaRepository;
+import com.se.apiserver.v1.timetable.application.service.TimeTableCreateServiceTest;
 import com.se.apiserver.v1.timetable.domain.entity.TimeTable;
 import com.se.apiserver.v1.timetable.domain.entity.TimeTableStatus;
 import com.se.apiserver.v1.timetable.infra.repository.TimeTableJpaRepository;
@@ -38,16 +40,11 @@ public class UsableLectureRoomReadServiceTest {
   @Test
   void 사용_가능_강의실_조회_성공(){
     // Given
-    TimeTable timeTable = createTimeTable("사용_가능_강의실_조회_성공 테스트 시간표");
-
-    LectureRoom lectureRoom = createLectureRoom("G", 107);
-
-
-
-    UsableLectureRoom usableLectureRoom = usableLectureRoomJpaRepository.save(UsableLectureRoom.builder()
-        .timeTable(timeTable)
-        .lectureRoom(lectureRoom)
-        .build());
+    TimeTable timeTable = TimeTableCreateServiceTest.createTimeTable(timeTableJpaRepository, "테스트 시간표 1");
+    LectureRoom lectureRoom = LectureRoomCreateServiceTest
+        .createLectureRoom(lectureRoomJpaRepository, "A", 107);
+    UsableLectureRoom usableLectureRoom = UsableLectureRoomCreateServiceTest
+        .createUsableLectureRoom(usableLectureRoomJpaRepository, timeTable, lectureRoom);
 
     // When
     UsableLectureRoomReadDto.Response response = usableLectureRoomReadService.read(usableLectureRoom.getUsableLectureRoomId());
@@ -72,21 +69,16 @@ public class UsableLectureRoomReadServiceTest {
   @Test
   void 사용_가능_강의실_전체_조회_성공(){
     // Given
-    TimeTable timeTable = createTimeTable("사용_가능_강의실_전체_조회_성공 테스트 시간표");
+    TimeTable timeTable = TimeTableCreateServiceTest.createTimeTable(timeTableJpaRepository, "테스트 시간표 1");
+    LectureRoom lectureRoom = LectureRoomCreateServiceTest
+        .createLectureRoom(lectureRoomJpaRepository, "D", 107);
+    UsableLectureRoomCreateServiceTest
+        .createUsableLectureRoom(usableLectureRoomJpaRepository, timeTable, lectureRoom);
 
-    LectureRoom lectureRoom = createLectureRoom("X", 101);
-
-    usableLectureRoomJpaRepository.save(UsableLectureRoom.builder()
-        .timeTable(timeTable)
-        .lectureRoom(lectureRoom)
-        .build());
-
-    LectureRoom lectureRoom2 = createLectureRoom("XD", 103);
-
-    usableLectureRoomJpaRepository.save(UsableLectureRoom.builder()
-        .timeTable(timeTable)
-        .lectureRoom(lectureRoom2)
-        .build());
+    LectureRoom lectureRoom2 = LectureRoomCreateServiceTest
+        .createLectureRoom(lectureRoomJpaRepository, "G", 108);
+    UsableLectureRoom usableLectureRoom = UsableLectureRoomCreateServiceTest
+        .createUsableLectureRoom(usableLectureRoomJpaRepository, timeTable, lectureRoom2);
 
     // When
     PageImpl responses = usableLectureRoomReadService.readAllByTimeTableId(PageRequest.builder()
@@ -97,22 +89,5 @@ public class UsableLectureRoomReadServiceTest {
 
     // Then
     Assertions.assertThat(responses.getTotalElements()).isEqualTo(2);
-  }
-
-  private TimeTable createTimeTable(String name){
-    return timeTableJpaRepository.save(TimeTable.builder()
-        .name(name)
-        .year(2021)
-        .semester(2)
-        .status(TimeTableStatus.CREATED)
-        .build());
-  }
-
-  private LectureRoom createLectureRoom(String building, Integer roomNumber){
-    return lectureRoomJpaRepository.save(LectureRoom.builder()
-        .building(building)
-        .roomNumber(roomNumber)
-        .capacity(50)
-        .build());
   }
 }

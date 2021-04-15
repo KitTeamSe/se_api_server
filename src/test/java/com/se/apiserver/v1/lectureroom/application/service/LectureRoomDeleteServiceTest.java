@@ -23,11 +23,8 @@ public class LectureRoomDeleteServiceTest {
   @Test
   void 강의실_삭제_성공(){
     // Given
-    LectureRoom lectureRoom = lectureRoomJpaRepository.save(LectureRoom.builder()
-        .building("D")
-        .roomNumber(330)
-        .capacity(30)
-        .build());
+    LectureRoom lectureRoom = LectureRoomCreateServiceTest
+        .createLectureRoom(lectureRoomJpaRepository, "D", 330);
 
     Long id = lectureRoom.getLectureRoomId();
 

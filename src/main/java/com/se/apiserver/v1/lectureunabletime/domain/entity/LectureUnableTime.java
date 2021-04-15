@@ -22,6 +22,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
@@ -33,7 +35,8 @@ public class LectureUnableTime extends AccountGenerateEntity {
   private Long lectureUnableTimeId;
 
   // 참여 교원
-  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+  @ManyToOne(fetch = FetchType.LAZY)
+  @OnDelete(action = OnDeleteAction.CASCADE)
   @JoinColumn(name = "participated_teacher_id", referencedColumnName = "participatedTeacherId", nullable = false)
   private ParticipatedTeacher participatedTeacher;
 
@@ -47,18 +50,18 @@ public class LectureUnableTime extends AccountGenerateEntity {
   @Size(max = 255)
   private String note;
 
-  @Builder
-  public LectureUnableTime(Long lectureUnableTimeId,
-      ParticipatedTeacher participatedTeacher,
-      DayOfWeek dayOfWeek, PeriodRange periodRange, @Size(max = 255) String note) {
+  public LectureUnableTime(ParticipatedTeacher participatedTeacher,
+      DayOfWeek dayOfWeek, PeriodRange periodRange){
 
-    this.lectureUnableTimeId = lectureUnableTimeId;
     this.participatedTeacher = participatedTeacher;
     this.dayOfWeek = dayOfWeek;
     this.periodRange = periodRange;
-    this.note = note;
   }
 
+  public LectureUnableTime(ParticipatedTeacher participatedTeacher, DayOfWeek dayOfWeek, PeriodRange periodRange, @Size(max = 255) String note) {
+    this(participatedTeacher, dayOfWeek, periodRange);
+    this.note = note;
+  }
 
   public void updateDayOfWeek(DayOfWeek dayOfWeek){
     this.dayOfWeek = dayOfWeek;

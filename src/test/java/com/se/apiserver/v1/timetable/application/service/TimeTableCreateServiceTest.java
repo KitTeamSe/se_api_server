@@ -41,12 +41,7 @@ public class TimeTableCreateServiceTest {
   @Test
   void 시간표_추가_이름_중복_실패(){
     // Given
-    timeTableJpaRepository.save(TimeTable.builder()
-        .name("중복 테스트 시간표 1")
-        .year(2021)
-        .semester(2)
-        .status(TimeTableStatus.CREATED)
-        .build());
+    createTimeTable(timeTableJpaRepository, "중복 테스트 시간표 1");
 
     // When
     TimeTableCreateDto.Request request = TimeTableCreateDto.Request.builder()
@@ -62,11 +57,10 @@ public class TimeTableCreateServiceTest {
   }
 
   public static TimeTable createTimeTable(TimeTableJpaRepository timeTableJpaRepository, String name){
-    return timeTableJpaRepository.save(TimeTable.builder()
-        .name(name)
-        .year(2021)
-        .semester(2)
-        .status(TimeTableStatus.CREATED)
-        .build());
+    return timeTableJpaRepository.save(new TimeTable(
+        name,
+        2021,
+        2,
+        TimeTableStatus.CREATED));
   }
 }

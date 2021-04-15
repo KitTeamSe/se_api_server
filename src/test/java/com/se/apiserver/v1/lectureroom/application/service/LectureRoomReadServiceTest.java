@@ -27,11 +27,8 @@ public class LectureRoomReadServiceTest {
   @Test
   void 강의실_조회_성공(){
     // Given
-    LectureRoom lectureRoom = lectureRoomJpaRepository.save(LectureRoom.builder()
-        .building("D")
-        .roomNumber(330)
-        .capacity(30)
-        .build());
+    LectureRoom lectureRoom = LectureRoomCreateServiceTest
+        .createLectureRoom(lectureRoomJpaRepository, "D", 330);
 
     // When
     LectureRoomReadDto.Response response = lectureRoomReadService.read(lectureRoom.getLectureRoomId());
@@ -57,17 +54,11 @@ public class LectureRoomReadServiceTest {
   @Test
   void 강의실_전체_조회_성공(){
     // Given
-    lectureRoomJpaRepository.save(lectureRoomJpaRepository.save(LectureRoom.builder()
-        .building("D")
-        .roomNumber(330)
-        .capacity(30)
-        .build()));
+    LectureRoomCreateServiceTest
+        .createLectureRoom(lectureRoomJpaRepository, "D", 330);
 
-    lectureRoomJpaRepository.save(lectureRoomJpaRepository.save(LectureRoom.builder()
-        .building("DB")
-        .roomNumber(107)
-        .capacity(40)
-        .build()));
+    LectureRoomCreateServiceTest
+        .createLectureRoom(lectureRoomJpaRepository, "DB", 107);
 
     // When
     PageImpl responses = lectureRoomReadService.readAll(PageRequest.builder()

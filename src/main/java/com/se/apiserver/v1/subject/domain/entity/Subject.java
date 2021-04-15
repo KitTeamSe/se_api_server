@@ -61,9 +61,6 @@ public class Subject extends AccountGenerateEntity {
   @Size(max = 255)
   private String note;
 
-  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "subject", orphanRemoval = true)
-  private List<OpenSubject> openSubjects = new ArrayList<>();
-
   public Subject(@Size(min = 2, max = 30) String curriculum,
       SubjectType type, @Size(min = 2, max = 30) String code,
       @Size(min = 1, max = 50) String name, Integer grade, Integer semester,
@@ -89,13 +86,6 @@ public class Subject extends AccountGenerateEntity {
 
     this(curriculum, type, code, name, grade, semester, credit, autoCreated);
     this.note = note;
-  }
-
-  public Subject(String curriculum, SubjectType type, String code, String name, Integer grade, Integer semester,
-      Integer credit, Boolean autoCreated, String note, List<OpenSubject> openSubjects){
-
-    this(curriculum, type, code, name, grade, semester, credit, autoCreated, note);
-    addOpenSubjects(openSubjects);
   }
 
   public void validateGrade(Integer grade){
@@ -146,9 +136,5 @@ public class Subject extends AccountGenerateEntity {
 
   public void updateNote(String note){
     this.note = note;
-  }
-
-  private void addOpenSubjects(List<OpenSubject> openSubjects){
-    openSubjects.forEach((os) -> os.updateSubject(this));
   }
 }
