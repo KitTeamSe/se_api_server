@@ -2,9 +2,11 @@ package com.se.apiserver.v1.division.infra.api;
 
 import com.se.apiserver.v1.common.infra.dto.PageRequest;
 import com.se.apiserver.v1.common.infra.dto.SuccessResponse;
+import com.se.apiserver.v1.division.application.dto.DivisionCheckDto;
 import com.se.apiserver.v1.division.application.dto.DivisionCreateDto;
 import com.se.apiserver.v1.division.application.dto.DivisionReadDto;
 import com.se.apiserver.v1.division.application.dto.DivisionReadDto.Response;
+import com.se.apiserver.v1.division.application.service.DivisionCheckService;
 import com.se.apiserver.v1.division.application.service.DivisionCreateService;
 import com.se.apiserver.v1.division.application.service.DivisionDeleteService;
 import com.se.apiserver.v1.division.application.service.DivisionReadService;
@@ -34,6 +36,7 @@ public class DivisionApiController {
   private final DivisionCreateService divisionCreateService;
   private final DivisionReadService divisionReadService;
   private final DivisionDeleteService divisionDeleteService;
+  private final DivisionCheckService divisionCheckService;
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
   @PostMapping(path = "/division")
@@ -67,5 +70,13 @@ public class DivisionApiController {
   public SuccessResponse delete(@PathVariable(value = "id") Long id){
     divisionDeleteService.delete(id);
     return new SuccessResponse<>(HttpStatus.OK.value(), "분반 삭제에 성공했습니다.");
+  }
+
+  @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
+  @GetMapping(path = "/division/check/{id}")
+  @ApiOperation("분반 배치 확인")
+  @ResponseStatus(value = HttpStatus.OK)
+  public SuccessResponse<DivisionCheckDto.Response> check(@PathVariable(value = "id") Long id){
+    return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", divisionCheckService.check(id));
   }
 }
