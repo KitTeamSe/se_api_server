@@ -30,9 +30,6 @@ public class DivisionReadServiceTest {
   DivisionReadService divisionReadService;
 
   @Autowired
-  DivisionJpaRepository divisionJpaRepository;
-
-  @Autowired
   OpenSubjectJpaRepository openSubjectJpaRepository;
 
   @Autowired

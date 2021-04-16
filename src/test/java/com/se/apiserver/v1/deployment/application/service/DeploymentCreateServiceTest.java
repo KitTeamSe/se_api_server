@@ -2,6 +2,7 @@ package com.se.apiserver.v1.deployment.application.service;
 
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.deployment.application.dto.DeploymentCreateDto;
+import com.se.apiserver.v1.deployment.application.error.DeploymentErrorCode;
 import com.se.apiserver.v1.deployment.domain.entity.Deployment;
 import com.se.apiserver.v1.deployment.infra.repository.DeploymentJpaRepository;
 import com.se.apiserver.v1.division.domain.entity.Division;
@@ -59,9 +60,6 @@ public class DeploymentCreateServiceTest {
   OpenSubjectJpaRepository openSubjectJpaRepository;
 
   @Autowired
-  DivisionJpaRepository divisionJpaRepository;
-
-  @Autowired
   LectureRoomJpaRepository lectureRoomJpaRepository;
 
   @Autowired
@@ -107,21 +105,29 @@ public class DeploymentCreateServiceTest {
         .build();
 
     // When
-    DeploymentCreateDto.Resposne resposne = deploymentCreateService.create(request);
+    DeploymentCreateDto.Resposne response = deploymentCreateService.create(request);
 
     // Then
-    Assertions.assertThat(deploymentJpaRepository.findById(resposne.getDeploymentId()).isPresent()).isEqualTo(true);
+    Assertions.assertThat(deploymentJpaRepository.findById(response.getDeploymentId()).isPresent()).isEqualTo(true);
   }
 
-  public static Deployment createDeployment(DeploymentJpaRepository deploymentJpaRepository,
+  public static Deployment createDeployment(DeploymentJpaRepository deploymentJpaRepository, DeploymentCreateService deploymentCreateService,
       TimeTable timeTable, Division division, UsableLectureRoom usableLectureRoom,
       ParticipatedTeacher participatedTeacher, DayOfWeek dayOfWeek, Period startPeriod, Period endPeriod){
-    return deploymentJpaRepository.save(new Deployment(
-        timeTable,
-        division,
-        usableLectureRoom,
-        participatedTeacher,
-        dayOfWeek,
-        new PeriodRange(startPeriod, endPeriod)));
+
+    DeploymentCreateDto.Request request = DeploymentCreateDto.Request.builder()
+        .timeTableId(timeTable.getTimeTableId())
+        .divisionId(division.getDivisionId())
+        .usableLectureRoomId(usableLectureRoom.getUsableLectureRoomId())
+        .participatedTeacherId(participatedTeacher.getParticipatedTeacherId())
+        .dayOfWeek(DayOfWeek.FRIDAY)
+        .startPeriodId(startPeriod.getPeriodId())
+        .endPeriodId(endPeriod.getPeriodId())
+        .build();
+
+    DeploymentCreateDto.Resposne response = deploymentCreateService.create(request);
+
+    return deploymentJpaRepository.findById(response.getDeploymentId()).orElseThrow(() -> new BusinessException(DeploymentErrorCode.NO_SUCH_DEPLOYMENT));
   }
+
 }

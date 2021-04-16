@@ -3,6 +3,7 @@ package com.se.apiserver.v1.deployment.application.service;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.common.infra.dto.PageRequest;
 import com.se.apiserver.v1.deployment.application.dto.DeploymentReadDto;
+import com.se.apiserver.v1.deployment.application.dto.DeploymentReadDto.Response;
 import com.se.apiserver.v1.deployment.application.error.DeploymentErrorCode;
 import com.se.apiserver.v1.deployment.domain.entity.Deployment;
 import com.se.apiserver.v1.deployment.infra.repository.DeploymentJpaRepository;
@@ -34,6 +35,7 @@ import com.se.apiserver.v1.timetable.infra.repository.TimeTableJpaRepository;
 import com.se.apiserver.v1.usablelectureroom.application.service.UsableLectureRoomCreateServiceTest;
 import com.se.apiserver.v1.usablelectureroom.domain.entity.UsableLectureRoom;
 import com.se.apiserver.v1.usablelectureroom.infra.repository.UsableLectureRoomJpaRepository;
+import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +64,7 @@ public class DeploymentReadServiceTest {
   OpenSubjectJpaRepository openSubjectJpaRepository;
 
   @Autowired
-  DivisionJpaRepository divisionJpaRepository;
+  DeploymentCreateService deploymentCreateService;
 
   @Autowired
   LectureRoomJpaRepository lectureRoomJpaRepository;
@@ -102,7 +104,7 @@ public class DeploymentReadServiceTest {
     Period startPeriod = PeriodCreateServiceTest.getPeriod(periodJpaRepository, "1");
     Period endPeriod = PeriodCreateServiceTest.getPeriod(periodJpaRepository,"2");
 
-    Deployment deployment = DeploymentCreateServiceTest.createDeployment(deploymentJpaRepository,
+    Deployment deployment = DeploymentCreateServiceTest.createDeployment(deploymentJpaRepository, deploymentCreateService,
         timeTable, openSubject.getDivisions().get(0), usableLectureRoom, participatedTeacher, DayOfWeek.FRIDAY, startPeriod, endPeriod);
 
     Long id = deployment.getDeploymentId();
@@ -144,10 +146,10 @@ public class DeploymentReadServiceTest {
     Period startPeriod = PeriodCreateServiceTest.getPeriod(periodJpaRepository,"1");
     Period endPeriod = PeriodCreateServiceTest.getPeriod(periodJpaRepository,"2");
 
-    DeploymentCreateServiceTest.createDeployment(deploymentJpaRepository,
+    DeploymentCreateServiceTest.createDeployment(deploymentJpaRepository, deploymentCreateService,
         timeTable, openSubject.getDivisions().get(0), usableLectureRoom, participatedTeacher, DayOfWeek.FRIDAY, startPeriod, endPeriod);
 
-    DeploymentCreateServiceTest.createDeployment(deploymentJpaRepository,
+    DeploymentCreateServiceTest.createDeployment(deploymentJpaRepository, deploymentCreateService,
         timeTable, openSubject.getDivisions().get(0), usableLectureRoom, participatedTeacher, DayOfWeek.MONDAY, startPeriod, endPeriod);
 
     PageImpl responses = deploymentReadService.readAllByTimeTableId(PageRequest.builder()
@@ -158,6 +160,47 @@ public class DeploymentReadServiceTest {
 
     // Then
     Assertions.assertThat(responses.getTotalElements()).isEqualTo(2);
+  }
+
+  @Test
+  void 배치_특정_시점_전체_조회_성공(){
+    TimeTable timeTable = TimeTableCreateServiceTest.createTimeTable(timeTableJpaRepository, "테스트 시간표 1");
+
+    Subject subject = SubjectCreateServiceTest.createSubject(subjectJpaRepository, "전자공학개론", "GE00013");
+    OpenSubject openSubject = OpenSubjectCreateServiceTest.createOpenSubject(openSubjectJpaRepository, timeTable, subject, 3);
+
+    LectureRoom lectureRoom = LectureRoomCreateServiceTest
+        .createLectureRoom(lectureRoomJpaRepository, "BVS", 101);
+    UsableLectureRoom usableLectureRoom = UsableLectureRoomCreateServiceTest
+        .createUsableLectureRoom(usableLectureRoomJpaRepository, timeTable, lectureRoom);
+
+    Teacher teacher = TeacherCreateServiceTest.createTeacher(teacherJpaRepository, "홍길동 1");
+    ParticipatedTeacher participatedTeacher = ParticipatedTeacherCreateServiceTest
+        .createParticipatedTeacher(participatedTeacherJpaRepository, timeTable, teacher);
+
+    Period startPeriod = PeriodCreateServiceTest.getPeriod(periodJpaRepository,"1");
+    Period endPeriod = PeriodCreateServiceTest.getPeriod(periodJpaRepository,"3");
+    Period startPeriod2 = PeriodCreateServiceTest.getPeriod(periodJpaRepository,"2");
+    Period endPeriod2 = PeriodCreateServiceTest.getPeriod(periodJpaRepository,"5");
+
+    // 금요일 1~3교시
+    DeploymentCreateServiceTest.createDeployment(deploymentJpaRepository, deploymentCreateService,
+        timeTable, openSubject.getDivisions().get(0), usableLectureRoom, participatedTeacher, DayOfWeek.FRIDAY, startPeriod, endPeriod);
+
+    // 금요일 2~5교시
+    DeploymentCreateServiceTest.createDeployment(deploymentJpaRepository, deploymentCreateService,
+        timeTable, openSubject.getDivisions().get(0), usableLectureRoom, participatedTeacher, DayOfWeek.FRIDAY, startPeriod2, endPeriod2);
+
+    // When
+    List<Response> responses = deploymentReadService
+        .readAllByPeriod(DeploymentReadDto.PeriodRequest.builder()
+            .timeTableId(timeTable.getTimeTableId())
+            .dayOfWeek(DayOfWeek.FRIDAY)
+            .periodId(endPeriod.getPeriodId())
+            .build());
+
+    // Then
+    Assertions.assertThat(responses.size()).isEqualTo(2);
   }
 
 }
