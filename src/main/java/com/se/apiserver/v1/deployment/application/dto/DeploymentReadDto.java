@@ -16,14 +16,17 @@ public class DeploymentReadDto {
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
-  @ApiModel("배치 조회 요청")
-  static public class Request{
+  @ApiModel("특정 시간에 추가된 배치 조회 요청")
+  static public class PeriodRequest {
 
     @ApiModelProperty(notes = "시간표 번호", example = "1")
     private Long timeTableId;
 
-    @ApiModelProperty(notes = "페이장 정보")
-    private PageRequest pageRequest;
+    @ApiModelProperty(notes = "요일", example = "MONDAY")
+    private DayOfWeek dayOfWeek;
+
+    @ApiModelProperty(notes = "교시 번호", example = "1")
+    private Long periodId;
   }
 
   @Data
