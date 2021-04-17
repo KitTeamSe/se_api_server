@@ -54,4 +54,8 @@ public class PeriodRange {
   public int getTeachingTime(){
     return endPeriod.getPeriodOrder() - startPeriod.getPeriodOrder() + 1;
   }
+
+  public boolean contains(Period period){
+    return startPeriod.getPeriodOrder() <= period.getPeriodOrder() && period.getPeriodOrder() <= endPeriod.getPeriodOrder();
+  }
 }

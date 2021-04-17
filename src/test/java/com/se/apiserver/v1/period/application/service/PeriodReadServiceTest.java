@@ -28,12 +28,8 @@ public class PeriodReadServiceTest {
   @Test
   void 교시_조회_성공(){
     // Given
-    Period period = periodJpaRepository.save(Period.builder()
-        .periodOrder(101)
-        .name("101")
-        .startTime(LocalTime.of(9, 0, 0))
-        .endTime(LocalTime.of(9, 50, 0))
-        .build());
+    Period period = PeriodCreateServiceTest
+        .createPeriod(periodJpaRepository, 101, "101", LocalTime.of(9, 0, 0), LocalTime.of(9, 50, 0));
 
     // When
     PeriodReadDto.Response response = periodReadService.read(period.getPeriodId());
@@ -60,19 +56,11 @@ public class PeriodReadServiceTest {
   @Test
   void 교시_전체_조회_성공(){
     // Given
-    periodJpaRepository.save(Period.builder()
-        .periodOrder(101)
-        .name("101")
-        .startTime(LocalTime.of(9, 0, 0))
-        .endTime(LocalTime.of(9, 50, 0))
-        .build());
+    PeriodCreateServiceTest
+        .createPeriod(periodJpaRepository, 101, "101", LocalTime.of(9, 0, 0), LocalTime.of(9, 50, 0));
 
-    periodJpaRepository.save(Period.builder()
-        .periodOrder(102)
-        .name("102")
-        .startTime(LocalTime.of(10, 0, 0))
-        .endTime(LocalTime.of(10, 50, 0))
-        .build());
+    PeriodCreateServiceTest
+        .createPeriod(periodJpaRepository, 102, "102", LocalTime.of(10, 0, 0), LocalTime.of(10, 50, 0));
 
     // When
     PageImpl responses = periodReadService.readAll(PageRequest.builder()

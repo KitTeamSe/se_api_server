@@ -24,12 +24,8 @@ public class PeriodUpdateServiceTest {
   @Test
   void 교시_수정_성공(){
     // Given
-    Period period = periodJpaRepository.save(Period.builder()
-        .periodOrder(101)
-        .name("101")
-        .startTime(LocalTime.of(9, 0, 0))
-        .endTime(LocalTime.of(9, 50, 0))
-        .build());
+    Period period = PeriodCreateServiceTest
+        .createPeriod(periodJpaRepository, 101, "101", LocalTime.of(9, 0, 0), LocalTime.of(9, 50, 0));
 
     Long id = period.getPeriodId();
 

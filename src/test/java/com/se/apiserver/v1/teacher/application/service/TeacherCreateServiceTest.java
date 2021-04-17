@@ -1,6 +1,7 @@
 package com.se.apiserver.v1.teacher.application.service;
 
 import com.se.apiserver.v1.teacher.application.service.TeacherCreateService;
+import com.se.apiserver.v1.teacher.domain.entity.Teacher;
 import com.se.apiserver.v1.teacher.domain.entity.TeacherType;
 import com.se.apiserver.v1.teacher.application.dto.TeacherCreateDto;
 import com.se.apiserver.v1.teacher.infra.repository.TeacherJpaRepository;
@@ -35,6 +36,10 @@ public class TeacherCreateServiceTest {
 
     // Then
     Assertions.assertThat(teacherJpaRepository.findById(id).isPresent()).isEqualTo(true);
+  }
+
+  public static Teacher createTeacher(TeacherJpaRepository teacherJpaRepository, String name){
+    return teacherJpaRepository.save(new Teacher(name, TeacherType.FULL_PROFESSOR, "컴퓨터소프트웨어공학", false));
   }
 
 }

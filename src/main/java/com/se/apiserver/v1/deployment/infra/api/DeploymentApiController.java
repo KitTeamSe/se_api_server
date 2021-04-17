@@ -5,11 +5,13 @@ import com.se.apiserver.v1.common.infra.dto.SuccessResponse;
 import com.se.apiserver.v1.deployment.application.dto.DeploymentCreateDto;
 import com.se.apiserver.v1.deployment.application.dto.DeploymentReadDto;
 import com.se.apiserver.v1.deployment.application.dto.DeploymentReadDto.Response;
+import com.se.apiserver.v1.deployment.application.dto.DeploymentReadDto.PeriodRequest;
 import com.se.apiserver.v1.deployment.application.service.DeploymentCreateService;
 import com.se.apiserver.v1.deployment.application.service.DeploymentDeleteService;
 import com.se.apiserver.v1.deployment.application.service.DeploymentReadService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
@@ -53,7 +55,7 @@ public class DeploymentApiController {
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
   @GetMapping(path = "/deployment")
-  @ApiOperation("시간표에 추가된 배치 조회")
+  @ApiOperation("시간표에 추가된 배치 전체 조회")
   @ResponseStatus(value = HttpStatus.OK)
   public SuccessResponse<PageImpl<Response>> readAll(@Validated PageRequest pageRequest, Long timeTableId){
     return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", deploymentReadService.readAllByTimeTableId(pageRequest.of(), timeTableId));
@@ -66,5 +68,13 @@ public class DeploymentApiController {
   public SuccessResponse delete(@PathVariable(value = "id") Long id){
     deploymentDeleteService.delete(id);
     return new SuccessResponse<>(HttpStatus.OK.value(), "배치 삭제에 성공했습니다.");
+  }
+
+  @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
+  @PostMapping(path = "/deployment/period")
+  @ApiOperation("특정 시간표의 특정 요일, 특정 시간에 추가된 배치 전체 조회")
+  @ResponseStatus(value = HttpStatus.OK)
+  public SuccessResponse<List<Response>> readAllByPeriod(@RequestBody @Validated PeriodRequest request){
+    return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", deploymentReadService.readAllByPeriod(request));
   }
 }

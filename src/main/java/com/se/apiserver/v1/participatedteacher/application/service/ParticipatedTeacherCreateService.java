@@ -39,10 +39,7 @@ public class ParticipatedTeacherCreateService {
       throw new BusinessException(ParticipatedTeacherErrorCode.DUPLICATED_PARTICIPATED_TEACHER);
     }
 
-    ParticipatedTeacher participatedTeacher = ParticipatedTeacher.builder()
-        .timeTable(timeTable)
-        .teacher(teacher)
-        .build();
+    ParticipatedTeacher participatedTeacher = new ParticipatedTeacher(timeTable, teacher);
 
     participatedTeacherJpaRepository.save(participatedTeacher);
 

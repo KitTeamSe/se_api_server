@@ -39,12 +39,7 @@ public class LectureUnableTimeCreateService {
         .findById(request.getEndPeriodId())
         .orElseThrow(() -> new BusinessException(PeriodErrorCode.NO_SUCH_PERIOD));
 
-    LectureUnableTime lectureUnableTime = LectureUnableTime.builder()
-        .participatedTeacher(participatedTeacher)
-        .dayOfWeek(request.getDayOfWeek())
-        .periodRange(new PeriodRange(startPeriod, endPeriod))
-        .note(request.getNote())
-        .build();
+    LectureUnableTime lectureUnableTime = new LectureUnableTime(participatedTeacher, request.getDayOfWeek(), new PeriodRange(startPeriod, endPeriod), request.getNote());
 
     lectureUnableTimeJpaRepository.save(lectureUnableTime);
 

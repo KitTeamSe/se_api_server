@@ -27,13 +27,7 @@ public class TeacherUpdateServiceTest {
   @Test
   void 교원_수정_성공(){
     // Given
-    Teacher teacher = teacherJpaRepository.save(Teacher.builder()
-        .name("홍길동")
-        .type(TeacherType.FULL_PROFESSOR)
-        .department("컴퓨터소프트웨어공학")
-        .autoCreated(false)
-        .note("홍길동의 비고")
-        .build());
+    Teacher teacher = TeacherCreateServiceTest.createTeacher(teacherJpaRepository, "홍길동");
 
     Long id = teacher.getTeacherId();
 

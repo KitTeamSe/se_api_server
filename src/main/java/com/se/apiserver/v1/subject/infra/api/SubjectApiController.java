@@ -73,7 +73,7 @@ public class SubjectApiController {
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
   @DeleteMapping(path = "/subject/{id}")
   @ResponseStatus(value = HttpStatus.OK)
-  @ApiOperation(value = "강의실 삭제")
+  @ApiOperation(value = "교과 삭제")
   public SuccessResponse delete(@PathVariable(value = "id") Long id){
     subjectDeleteService.delete(id);
     return new SuccessResponse<>(HttpStatus.OK.value(), "교과 삭제에 성공했습니다.");

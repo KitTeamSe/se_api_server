@@ -6,10 +6,12 @@ import com.se.apiserver.v1.opensubject.application.error.OpenSubjectErrorCode;
 import com.se.apiserver.v1.opensubject.domain.entity.OpenSubject;
 import com.se.apiserver.v1.opensubject.infra.repository.OpenSubjectJpaRepository;
 import com.se.apiserver.v1.subject.application.error.SubjectErrorCode;
+import com.se.apiserver.v1.subject.application.service.SubjectCreateServiceTest;
 import com.se.apiserver.v1.subject.domain.entity.Subject;
 import com.se.apiserver.v1.subject.domain.entity.SubjectType;
 import com.se.apiserver.v1.subject.infra.repository.SubjectJpaRepository;
 import com.se.apiserver.v1.timetable.application.error.TimeTableErrorCode;
+import com.se.apiserver.v1.timetable.application.service.TimeTableCreateServiceTest;
 import com.se.apiserver.v1.timetable.domain.entity.TimeTable;
 import com.se.apiserver.v1.timetable.domain.entity.TimeTableStatus;
 import com.se.apiserver.v1.timetable.infra.repository.TimeTableJpaRepository;
@@ -38,9 +40,11 @@ public class OpenSubjectCreateServiceTest {
   @Test
   void 개설_교과_생성_성공(){
     // Given
-    TimeTable timeTable = createTimeTable("개설_교과_생성_성공 테스트 시간표 1");
+    TimeTable timeTable = TimeTableCreateServiceTest
+        .createTimeTable(timeTableJpaRepository, "테스트 시간표 1");
 
-    Subject subject = createSubject("D", "ASDASD");
+    Subject subject = SubjectCreateServiceTest
+        .createSubject(subjectJpaRepository, "전자공학개론", "GE00013");
 
     OpenSubjectCreateDto.Request request = OpenSubjectCreateDto.Request.builder()
         .timeTableId(timeTable.getTimeTableId())
@@ -60,17 +64,13 @@ public class OpenSubjectCreateServiceTest {
   @Test
   void 개설_교과_생성_교과_이미_개설됨_실패(){
     // Given
-    TimeTable timeTable = createTimeTable("개설_교과_생성_교과_이미_개설됨_실패 테스트 시간표 1");
+    TimeTable timeTable = TimeTableCreateServiceTest
+        .createTimeTable(timeTableJpaRepository, "테스트 시간표 1");
 
-    Subject subject = createSubject("D", "CS00001");
+    Subject subject = SubjectCreateServiceTest
+        .createSubject(subjectJpaRepository, "전자공학개론", "GE00013");
 
-    openSubjectJpaRepository.save(OpenSubject.builder()
-        .timeTable(timeTable)
-        .subject(subject)
-        .numberOfDivision(1)
-        .teachingTimePerWeek(subject.getCredit())
-        .autoCreated(false)
-        .build());
+    createOpenSubject(openSubjectJpaRepository, timeTable, subject, 1);
 
     OpenSubjectCreateDto.Request request = OpenSubjectCreateDto.Request.builder()
         .timeTableId(timeTable.getTimeTableId())
@@ -90,7 +90,8 @@ public class OpenSubjectCreateServiceTest {
   @Test
   void 개설_교과_생성_존재하지_않는_시간표_실패(){
     // Given
-    Subject subject = createSubject("D", "CS00003");
+    Subject subject = SubjectCreateServiceTest
+        .createSubject(subjectJpaRepository, "전자공학개론", "GE00013");
 
     Long timeTableId = 17777L;
 
@@ -113,7 +114,8 @@ public class OpenSubjectCreateServiceTest {
     // Given
     Long subjectId = 1666L;
 
-    TimeTable timeTable = createTimeTable("개설_교과_생성_존재하지_않는_교과_실패 테스트 시간표 1");
+    TimeTable timeTable = TimeTableCreateServiceTest
+        .createTimeTable(timeTableJpaRepository, "테스트 시간표 1");
 
     OpenSubjectCreateDto.Request request = OpenSubjectCreateDto.Request.builder()
         .timeTableId(timeTable.getTimeTableId())
@@ -130,25 +132,9 @@ public class OpenSubjectCreateServiceTest {
     }).isInstanceOf(BusinessException.class).hasMessage(SubjectErrorCode.NO_SUCH_SUBJECT.getMessage());
   }
 
-  private TimeTable createTimeTable(String name){
-    return timeTableJpaRepository.save(TimeTable.builder()
-        .name(name)
-        .year(2021)
-        .semester(2)
-        .status(TimeTableStatus.CREATED)
-        .build());
-  }
-
-  private Subject createSubject(String name, String code){
-    return subjectJpaRepository.save(Subject.builder()
-        .name(name)
-        .code(code)
-        .curriculum("컴퓨터소프트웨어공학")
-        .type(SubjectType.MAJOR)
-        .credit(3)
-        .semester(1)
-        .grade(1)
-        .autoCreated(false)
-        .build());
+  public static OpenSubject createOpenSubject(OpenSubjectJpaRepository openSubjectJpaRepository,
+      TimeTable timeTable, Subject subject, int numberOfDivision){
+    return openSubjectJpaRepository.save(new OpenSubject(
+        timeTable, subject, numberOfDivision, subject.getCredit(), false));
   }
 }

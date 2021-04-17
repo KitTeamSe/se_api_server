@@ -40,18 +40,16 @@ public class OpenSubjectCreateService {
     }
 
     // 주간 강의 시간이 정해져있지 않으면 교과의 학점을 그대로 사용.
-    if(request.getTeachingTimePerWeek() == null){
+    if(request.getTeachingTimePerWeek() == null)
       request.setTeachingTimePerWeek(subject.getCredit());
-    }
 
-    OpenSubject openSubject = OpenSubject.builder()
-        .timeTable(timeTable)
-        .subject(subject)
-        .numberOfDivision(request.getNumberOfDivision())
-        .teachingTimePerWeek(request.getTeachingTimePerWeek())
-        .autoCreated(false)
-        .note(request.getNote())
-        .build();
+    OpenSubject openSubject = new OpenSubject(
+        timeTable,
+        subject,
+        request.getNumberOfDivision(),
+        request.getTeachingTimePerWeek(),
+        false,
+        request.getNote());
 
     return openSubjectJpaRepository.save(openSubject).getOpenSubjectId();
   }

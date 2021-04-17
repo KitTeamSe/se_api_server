@@ -28,12 +28,7 @@ public class TimeTableReadServiceTest {
   @Test
   void 시간표_조회_성공(){
     // Given
-    TimeTable timeTable = timeTableJpaRepository.save(TimeTable.builder()
-        .name("테스트 시간표 1")
-        .year(2021)
-        .semester(2)
-        .status(TimeTableStatus.CREATED)
-        .build());
+    TimeTable timeTable = TimeTableCreateServiceTest.createTimeTable(timeTableJpaRepository, "테스트 시간표 1");
 
     // When
     TimeTableReadDto.Response response = timeTableReadService.read(timeTable.getTimeTableId());
@@ -61,19 +56,8 @@ public class TimeTableReadServiceTest {
   @Test
   void 시간표_전체_조회_성공(){
     // Given
-    timeTableJpaRepository.save(TimeTable.builder()
-        .name("테스트 시간표 10")
-        .year(2021)
-        .semester(1)
-        .status(TimeTableStatus.CREATED)
-        .build());
-
-    timeTableJpaRepository.save(TimeTable.builder()
-        .name("테스트 시간표 11")
-        .year(2021)
-        .semester(2)
-        .status(TimeTableStatus.CREATED)
-        .build());
+    TimeTableCreateServiceTest.createTimeTable(timeTableJpaRepository, "테스트 시간표 10");
+    TimeTableCreateServiceTest.createTimeTable(timeTableJpaRepository, "테스트 시간표 11");
 
     // When
     PageImpl responses = timeTableReadService.readAll(PageRequest.builder()

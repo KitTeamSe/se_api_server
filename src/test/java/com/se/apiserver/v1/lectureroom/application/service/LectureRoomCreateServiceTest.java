@@ -40,11 +40,7 @@ public class LectureRoomCreateServiceTest {
   @Test
   void 강의실_추가_중복_실패(){
     // Given
-    LectureRoom lectureRoom = lectureRoomJpaRepository.save(LectureRoom.builder()
-        .building("D")
-        .roomNumber(330)
-        .capacity(30)
-        .build());
+    createLectureRoom(lectureRoomJpaRepository, "D", 330);
 
     // When
     LectureRoomCreateDto.Request req = LectureRoomCreateDto.Request.builder()
@@ -60,11 +56,7 @@ public class LectureRoomCreateServiceTest {
   @Test
   void 강의실_추가_건물만_같음_성공(){
     // Given
-    LectureRoom lectureRoom = lectureRoomJpaRepository.save(LectureRoom.builder()
-        .building("D")
-        .roomNumber(330)
-        .capacity(30)
-        .build());
+    createLectureRoom(lectureRoomJpaRepository, "D", 330);
 
     // When
     LectureRoomCreateDto.Request req = LectureRoomCreateDto.Request.builder()
@@ -82,11 +74,7 @@ public class LectureRoomCreateServiceTest {
   @Test
   void 강의실_추가_호수만_같음_성공(){
     // Given
-    LectureRoom lectureRoom = lectureRoomJpaRepository.save(LectureRoom.builder()
-        .building("D")
-        .roomNumber(330)
-        .capacity(30)
-        .build());
+    createLectureRoom(lectureRoomJpaRepository, "D", 330);
 
     // When
     LectureRoomCreateDto.Request req = LectureRoomCreateDto.Request.builder()
@@ -99,6 +87,11 @@ public class LectureRoomCreateServiceTest {
 
     // Then
     Assertions.assertThat(lectureRoomJpaRepository.findById(id).isPresent()).isEqualTo(true);
+  }
+
+  public static LectureRoom createLectureRoom(LectureRoomJpaRepository lectureRoomJpaRepository,
+      String building, Integer roomNumber){
+    return lectureRoomJpaRepository.save(new LectureRoom(building, roomNumber, 50));
   }
 
 

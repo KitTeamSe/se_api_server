@@ -25,11 +25,8 @@ public class LectureRoomUpdateServiceTest {
   @Test
   void 강의실_수정_정원_수정_성공(){
     // Given
-    LectureRoom lectureRoom = lectureRoomJpaRepository.save(LectureRoom.builder()
-        .building("D")
-        .roomNumber(330)
-        .capacity(30)
-        .build());
+    LectureRoom lectureRoom = LectureRoomCreateServiceTest
+        .createLectureRoom(lectureRoomJpaRepository, "D", 330);
 
     Long id = lectureRoom.getLectureRoomId();
 
@@ -56,11 +53,8 @@ public class LectureRoomUpdateServiceTest {
   @Test
   void 강의실_수정_건물_수정_성공(){
     // Given
-    LectureRoom lectureRoom = lectureRoomJpaRepository.save(LectureRoom.builder()
-        .building("D")
-        .roomNumber(330)
-        .capacity(30)
-        .build());
+    LectureRoom lectureRoom = LectureRoomCreateServiceTest
+        .createLectureRoom(lectureRoomJpaRepository, "D", 330);
 
     Long id = lectureRoom.getLectureRoomId();
 
@@ -86,11 +80,8 @@ public class LectureRoomUpdateServiceTest {
   @Test
   void 강의실_수정_호수_수정_성공(){
     // Given
-    LectureRoom lectureRoom = lectureRoomJpaRepository.save(LectureRoom.builder()
-        .building("D")
-        .roomNumber(330)
-        .capacity(30)
-        .build());
+    LectureRoom lectureRoom = LectureRoomCreateServiceTest
+        .createLectureRoom(lectureRoomJpaRepository, "D", 330);
 
     Long id = lectureRoom.getLectureRoomId();
 
@@ -116,11 +107,8 @@ public class LectureRoomUpdateServiceTest {
   @Test
   void 강의실_수정_변경사항_없는_성공(){
     // Given
-    LectureRoom lectureRoom = lectureRoomJpaRepository.save(LectureRoom.builder()
-        .building("D")
-        .roomNumber(330)
-        .capacity(30)
-        .build());
+    LectureRoom lectureRoom = LectureRoomCreateServiceTest
+        .createLectureRoom(lectureRoomJpaRepository, "D", 330);
 
     Long id = lectureRoom.getLectureRoomId();
 
@@ -129,7 +117,7 @@ public class LectureRoomUpdateServiceTest {
         .lectureRoomId(id)
         .building("D")
         .roomNumber(330)
-        .capacity(30)
+        .capacity(50)
         .build();
 
 
@@ -142,7 +130,7 @@ public class LectureRoomUpdateServiceTest {
     // Then
     Assertions.assertThat(response.getBuilding()).isEqualTo("D");
     Assertions.assertThat(response.getRoomNumber()).isEqualTo(330);
-    Assertions.assertThat(response.getCapacity()).isEqualTo(30);
+    Assertions.assertThat(response.getCapacity()).isEqualTo(50);
   }
 
   @Test
@@ -167,17 +155,11 @@ public class LectureRoomUpdateServiceTest {
   @Test
   void 강의실_수정_강의실_중복_실패(){
     // Given
-    lectureRoomJpaRepository.save(LectureRoom.builder()
-        .building("DB")
-        .roomNumber(107)
-        .capacity(30)
-        .build());
+    LectureRoomCreateServiceTest
+        .createLectureRoom(lectureRoomJpaRepository, "DB", 107);
 
-    LectureRoom lectureRoom = lectureRoomJpaRepository.save(LectureRoom.builder()
-        .building("D")
-        .roomNumber(330)
-        .capacity(30)
-        .build());
+    LectureRoom lectureRoom = LectureRoomCreateServiceTest
+        .createLectureRoom(lectureRoomJpaRepository, "D", 330);
 
     Long id = lectureRoom.getLectureRoomId();
 

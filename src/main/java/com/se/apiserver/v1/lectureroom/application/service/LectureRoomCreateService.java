@@ -25,12 +25,11 @@ public class LectureRoomCreateService {
       throw new BusinessException(LectureRoomErrorCode.DUPLICATED_LECTURE_ROOM);
     }
 
-    LectureRoom lectureRoom = LectureRoom.builder()
-        .building(request.getBuilding())
-        .roomNumber(request.getRoomNumber())
-        .capacity(request.getCapacity())
-        .note(request.getNote())
-        .build();
+    LectureRoom lectureRoom = new LectureRoom(
+        request.getBuilding(),
+        request.getRoomNumber(),
+        request.getCapacity(),
+        request.getNote());
 
     lectureRoomJpaRepository.save(lectureRoom);
 

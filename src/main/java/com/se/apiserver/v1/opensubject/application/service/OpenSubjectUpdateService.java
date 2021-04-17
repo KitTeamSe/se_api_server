@@ -37,7 +37,9 @@ public class OpenSubjectUpdateService {
       openSubject.updateNote(note);
     }
 
-    return openSubjectJpaRepository.save(openSubject).getOpenSubjectId();
+    openSubjectJpaRepository.save(openSubject);
+
+    return openSubject.getOpenSubjectId();
   }
 
 }

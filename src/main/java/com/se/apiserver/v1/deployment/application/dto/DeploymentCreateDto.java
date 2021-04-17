@@ -21,8 +21,8 @@ public class DeploymentCreateDto {
     @ApiModelProperty(notes = "시간표 번호", example = "1")
     private Long timeTableId;
 
-    @ApiModelProperty(notes = "개설 교과 번호", example = "1")
-    private Long openSubjectId;
+    @ApiModelProperty(notes = "분반 번호", example = "1")
+    private Long divisionId;
 
     @ApiModelProperty(notes = "사용 가능 강의실 번호", example = "1")
     private Long usableLectureRoomId;
@@ -32,9 +32,6 @@ public class DeploymentCreateDto {
 
     @ApiModelProperty(notes = "요일", example = "THURSDAY")
     private DayOfWeek dayOfWeek;
-
-    @ApiModelProperty(notes = "분반", example = "1")
-    private Integer division;
 
     @ApiModelProperty(notes = "시작 교시 번호", example = "1")
     private Long startPeriodId;

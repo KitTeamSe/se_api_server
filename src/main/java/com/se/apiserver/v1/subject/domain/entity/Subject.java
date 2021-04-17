@@ -2,17 +2,22 @@ package com.se.apiserver.v1.subject.domain.entity;
 
 import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
+import com.se.apiserver.v1.opensubject.domain.entity.OpenSubject;
 import com.se.apiserver.v1.subject.application.error.SubjectErrorCode;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.Size;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -56,18 +61,15 @@ public class Subject extends AccountGenerateEntity {
   @Size(max = 255)
   private String note;
 
-  @Builder
-  public Subject(Long subjectId,
-      @Size(min = 2, max = 30) String curriculum,
+  public Subject(@Size(min = 2, max = 30) String curriculum,
       SubjectType type, @Size(min = 2, max = 30) String code,
       @Size(min = 1, max = 50) String name, Integer grade, Integer semester,
-      Integer credit, Boolean autoCreated, @Size(max=255) String note) {
+      Integer credit, Boolean autoCreated){
 
     validateGrade(grade);
     validateSemester(semester);
     validateCredit(credit);
 
-    this.subjectId = subjectId;
     this.curriculum = curriculum;
     this.type = type;
     this.code = code;
@@ -76,6 +78,13 @@ public class Subject extends AccountGenerateEntity {
     this.semester = semester;
     this.credit = credit;
     this.autoCreated = autoCreated;
+  }
+
+  public Subject(String curriculum, SubjectType type, String code,
+      String name, Integer grade, Integer semester,
+      Integer credit, Boolean autoCreated, @Size(max=255) String note){
+
+    this(curriculum, type, code, name, grade, semester, credit, autoCreated);
     this.note = note;
   }
 
