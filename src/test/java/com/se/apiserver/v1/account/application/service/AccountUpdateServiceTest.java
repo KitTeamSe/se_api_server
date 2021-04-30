@@ -70,7 +70,7 @@ class AccountUpdateServiceTest {
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("1",
                 "1", Arrays.asList(new SimpleGrantedAuthority("ACCOUNT_ACCESS"))));
         //when
-        boolean res = accountUpdateService.update(
+        accountUpdateService.update(
                 AccountUpdateDto.Request.builder()
                         .id("user")
                         .nickname("newwww")
@@ -81,7 +81,6 @@ class AccountUpdateServiceTest {
         );
         //then
         account = accountJpaRepository.findById(1L).get();
-        Assertions.assertThat(res).isEqualTo(true);
         Assertions.assertThat(account.getNickname()).isEqualTo("newwww");
         Assertions.assertThat(account.getStudentId()).isEqualTo("20005555");
         Assertions.assertThat(account.getQuestion().getQuestionId()).isEqualTo(question2.getQuestionId());
@@ -95,7 +94,7 @@ class AccountUpdateServiceTest {
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("2",
                 "2", Arrays.asList(new SimpleGrantedAuthority("ACCOUNT_MANAGE"))));
         //when
-        boolean res = accountUpdateService.update(
+        accountUpdateService.update(
                 AccountUpdateDto.Request.builder()
                         .id("admin")
                         .nickname("newwww")
@@ -106,7 +105,6 @@ class AccountUpdateServiceTest {
         );
         //then
         account = accountJpaRepository.findById(2L).get();
-        Assertions.assertThat(res).isEqualTo(true);
         Assertions.assertThat(account.getNickname()).isEqualTo("newwww");
         Assertions.assertThat(account.getStudentId()).isEqualTo("20005555");
         Assertions.assertThat(account.getQuestion().getQuestionId()).isEqualTo(question2.getQuestionId());
@@ -117,7 +115,7 @@ class AccountUpdateServiceTest {
     void 업데이트_닉네임중복_실패() {
         //given
         createData();
-        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("test2",
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("2",
                 "test2", Arrays.asList(new SimpleGrantedAuthority("ACCOUNT_MANAGE"))));
         //when
         //then
