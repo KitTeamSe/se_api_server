@@ -1,6 +1,8 @@
 package com.se.apiserver.v1.menu.application.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.se.apiserver.v1.menu.domain.entity.Menu;
 import com.se.apiserver.v1.menu.domain.entity.MenuType;
 import lombok.AllArgsConstructor;
@@ -15,69 +17,74 @@ import java.util.Set;
 public class MenuReadDto {
 
 
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    static public class ReadAllResponse{
+  @Data
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @Builder
+  static public class ReadAllResponse {
 
-        private Long menuId;
+    @JsonUnwrapped
+    private ReadResponse readResponse;
 
-        private String nameEng;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<ReadAllResponse> child;
 
-        private String nameKor;
+    @JsonValue
 
-        private Integer menuOrder;
+    public static MenuReadDto.ReadAllResponse fromEntity(Menu menu, Set<String> authorities) {
+      MenuReadDto.ReadAllResponse.ReadAllResponseBuilder responseBuilder = ReadAllResponse.builder()
+          .readResponse(ReadResponse.fromEntity(menu));
 
-        private String description;
+      List<ReadAllResponse> tmp = new ArrayList<>();
+      for (Menu child : menu.getChild()) {
+          if (child.canAccess(authorities)) {
+              tmp.add(fromEntity(child, authorities));
+          }
+      }
+      responseBuilder.child(tmp);
+      return responseBuilder.build();
+    }
+  }
 
-        private MenuType menuType;
+  @Data
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @Builder
+  static public class ReadResponse {
 
-        @JsonInclude(JsonInclude.Include.NON_NULL)
-        private List<ReadAllResponse> child;
+    private Long menuId;
 
-        public static MenuReadDto.ReadAllResponse   fromEntity(Menu menu, Set<String> authorities){
-            MenuReadDto.ReadAllResponse.ReadAllResponseBuilder responseBuilder = ReadAllResponse.builder()
-                    .menuId(menu.getMenuId())
-                    .menuOrder(menu.getMenuOrder())
-                    .description(menu.getDescription())
-                    .nameEng(menu.getNameEng())
-                    .nameKor(menu.getNameKor())
-                    .menuType(menu.getMenuType());
+    private String nameEng;
 
-            List<ReadAllResponse> tmp = new ArrayList<>();
-            for(Menu child : menu.getChild()){
-                if(child.canAccess(authorities))
-                    tmp.add(fromEntity(child, authorities));
-            }
-            responseBuilder.child(tmp);
-            return responseBuilder.build();
-        }
+    private String nameKor;
+
+    private Integer menuOrder;
+
+    private MenuType menuType;
+
+    private Long parentId;
+
+    private String url;
+
+    private String description;
+
+    public static MenuReadDto.ReadResponse fromEntity(Menu menu) {
+      return ReadResponse.builder()
+          .menuId(menu.getMenuId())
+          .nameEng(menu.getNameEng())
+          .nameKor(menu.getNameKor())
+          .menuOrder(menu.getMenuOrder())
+          .description(menu.getDescription())
+          .menuType(menu.getMenuType())
+          .url(menu.getUrl())
+          .parentId(getParent(menu))
+          .build();
     }
 
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    static public class ReadResponse {
-        private Long menuId;
-
-        private String nameEng;
-
-        private String nameKor;
-
-        private Integer menuOrder;
-
-        private String description;
-
-        public static MenuReadDto.ReadResponse fromEntity(Menu menu){
-            return ReadResponse.builder()
-                    .menuId(menu.getMenuId())
-                    .nameEng(menu.getNameEng())
-                    .nameKor(menu.getNameKor())
-                    .menuOrder(menu.getMenuOrder())
-                    .description(menu.getDescription())
-                    .build();
-        }
+    private static Long getParent(Menu menu) {
+      if(menu.getParent() == null)
+        return null;
+      return menu.getParent().getMenuId();
     }
+  }
 }

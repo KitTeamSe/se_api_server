@@ -23,7 +23,6 @@ public class MenuCreateService {
         validateDuplicateNameKor(request.getNameKor());
         validateDuplicateNameEng(request.getNameEng());
         validateDuplicateUrl(request.getUrl());
-
         boolean hasParent = (request.getParentId() != null);
         Menu menu = generateMenu(request, hasParent);
 
