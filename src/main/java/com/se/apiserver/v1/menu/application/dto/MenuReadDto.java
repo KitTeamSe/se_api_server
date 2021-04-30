@@ -36,7 +36,7 @@ public class MenuReadDto {
         @JsonInclude(JsonInclude.Include.NON_NULL)
         private List<ReadAllResponse> child;
 
-        public static MenuReadDto.ReadAllResponse fromEntity(Menu menu, Set<String> authorities){
+        public static MenuReadDto.ReadAllResponse   fromEntity(Menu menu, Set<String> authorities){
             MenuReadDto.ReadAllResponse.ReadAllResponseBuilder responseBuilder = ReadAllResponse.builder()
                     .menuId(menu.getMenuId())
                     .menuOrder(menu.getMenuOrder())
@@ -47,7 +47,7 @@ public class MenuReadDto {
 
             List<ReadAllResponse> tmp = new ArrayList<>();
             for(Menu child : menu.getChild()){
-                if(authorities.contains(child.getAuthority().getAuthority()))
+                if(child.canAccess(authorities))
                     tmp.add(fromEntity(child, authorities));
             }
             responseBuilder.child(tmp);
