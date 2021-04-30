@@ -51,7 +51,7 @@ public class BlacklistApiController {
     }
 
     @PreAuthorize("hasAuthority('ACCESS_MANAGE')")
-    @PostMapping("/blacklist/{id}")
+    @DeleteMapping("/blacklist/{id}")
     @ApiOperation("블랙리스트 삭제")
     @ResponseStatus(value = HttpStatus.OK)
     public SuccessResponse delete(@PathVariable(value = "id") Long id){
