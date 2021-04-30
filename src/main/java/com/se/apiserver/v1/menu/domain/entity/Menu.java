@@ -45,6 +45,7 @@ public class Menu extends AccountGenerateEntity {
   private String description;
 
   @Column(length = 20, nullable = false)
+  @Enumerated(EnumType.STRING)
   private MenuType menuType;
 
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
