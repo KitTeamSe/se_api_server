@@ -60,7 +60,7 @@ public class AuthorityGroupApiController {
         return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 수정되었습니다", authorityGroupUpdateService.update(request));
     }
 
-    @PutMapping("/authority-group/{id}")
+    @DeleteMapping("/authority-group/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "권한 그룹 삭제")
     @PreAuthorize("hasAuthority('AUTHORITY_MANAGE')")
