@@ -2,6 +2,8 @@ package com.se.apiserver.v1.account.application.service;
 
 import com.se.apiserver.v1.account.application.error.AccountErrorCode;
 import com.se.apiserver.v1.account.domain.entity.Account;
+import com.se.apiserver.v1.account.domain.entity.AccountType;
+import com.se.apiserver.v1.account.domain.entity.InformationOpenAgree;
 import com.se.apiserver.v1.account.domain.entity.Question;
 import com.se.apiserver.v1.account.application.dto.AccountUpdateDto;
 import com.se.apiserver.v1.account.infra.repository.AccountJpaRepository;
@@ -24,53 +26,76 @@ public class AccountUpdateService {
     private final AccountContextService accountContextService;
 
     @Transactional
-    public boolean update(AccountUpdateDto.Request request) {
+    public void update(AccountUpdateDto.Request request) {
         Account account = accountJpaRepository.findByIdString(request.getId()).orElseThrow(() -> new BusinessException(AccountErrorCode.NO_SUCH_ACCOUNT));
-
-        if(!accountContextService.isOwner(account) && !accountContextService.hasAuthority("ACCOUNT_MANAGE"))
-            throw new AccessDeniedException("비정상적인 접근");
-
-        account.updateIfNotNull(request.getName(), request.getType(), request.getInformationOpenAgree());
-
-        if(request.getPassword() != null)
-            updatePassword(account, request.getPassword());
-
-        if(request.getNickname() != null)
-            updateNickname(account, request.getNickname());
-
-        if(request.getQuestionId() == null && request.getAnswer() != null)
-            throw new BusinessException(AccountErrorCode.QNA_INVALID_INPUT);
-
-        if(request.getQuestionId() != null && request.getAnswer() == null)
-            throw new BusinessException(AccountErrorCode.QNA_INVALID_INPUT);
-
-        if(request.getQuestionId() != null && request.getAnswer() != null)
-            updateQnA(account, request.getQuestionId(), request.getAnswer());
-
-        if(request.getStudentId() != null)
-            updateStudentId(account, request.getStudentId());
+        checkInvalidAccess(account, Account.MANAGE_TOKEN);
+        updateNameIfNotNull(account, request.getName());
+        updateTypeIfNotNull(account, request.getType());
+        updateInformationAgreeIfNotNull(account, request.getInformationOpenAgree());
+        updatePasswordIfNotEmpty(account, request.getPassword());
+        updateNicknameIfNotNull(account,request.getNickname());
+        updateQnaIfValid(account, request.getQuestionId(), request.getAnswer());
+        updateStudentIdIfNotNull(account, request.getStudentId());
         accountJpaRepository.save(account);
-        return true;
     }
 
-    public void updateStudentId(Account account, String studentId) {
+    private void updateStudentIdIfNotNull(Account account, String studentId) {
+        if(studentId != null){
+            validateDuplicatedStudentId(studentId);
+            account.updateStudentId(studentId);
+        }
+    }
+
+    private void validateDuplicatedStudentId(String studentId) {
         if(accountJpaRepository.findByStudentId(studentId).isPresent())
             throw new BusinessException(AccountErrorCode.DUPLICATED_STUDENT_ID);
-        account.updateStudentId(studentId);
     }
 
-    public void updateQnA(Account account, Long questionId, String answer) {
+    private void checkInvalidAccess(Account account, String manageToken) {
+        if(!accountContextService.isOwner(account) && !accountContextService.hasAuthority(manageToken))
+            throw new AccessDeniedException("비정상적인 접근");
+    }
+
+    private void updateQnaIfValid(Account account, Long questionId, String answer) {
+        if(questionId == null || answer == null)
+            throw new BusinessException(AccountErrorCode.QNA_INVALID_INPUT);
         Question question = questionJpaRepository.findById(questionId).orElseThrow(() -> new BusinessException(AccountErrorCode.NO_SUCH_QUESTION));
         account.updateQnA(question, answer);
     }
 
-    public void updateNickname(Account account, String nickname) {
-        if(!accountJpaRepository.findByNickname(nickname).isEmpty())
-            throw new BusinessException(AccountErrorCode.DUPLICATED_NICKNAME);
-        account.updateNickname(nickname);
+    private void updateNicknameIfNotNull(Account account, String nickname) {
+        if(nickname != null){
+            validateDuplicatedNickname(nickname);
+            account.updateNickname(nickname);
+        }
     }
 
-    public void updatePassword(Account account, String rowPassword) {
-        account.changePassword(passwordEncoder.encode(rowPassword));
+    private void validateDuplicatedNickname(String nickname) {
+        if(accountJpaRepository.findByNickname(nickname).isPresent())
+            throw new BusinessException(AccountErrorCode.DUPLICATED_NICKNAME);
+    }
+
+    private void updatePasswordIfNotEmpty(Account account, String password) {
+        if(password != null && password.length() > 0){
+            account.updatePassword(passwordEncoder.encode(password));
+        }
+    }
+
+    private void updateInformationAgreeIfNotNull(Account account, InformationOpenAgree informationOpenAgree) {
+        if(informationOpenAgree != null){
+            account.updateInformationOpenAgree(informationOpenAgree);
+        }
+    }
+
+    private void updateTypeIfNotNull(Account account, AccountType type) {
+        if(type != null){
+            account.updateType(type);
+        }
+    }
+
+    private void updateNameIfNotNull(Account account, String name) {
+        if(name != null){
+            account.updateName(name);
+        }
     }
 }

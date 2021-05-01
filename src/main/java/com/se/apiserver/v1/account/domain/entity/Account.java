@@ -16,6 +16,7 @@ import javax.validation.constraints.Size;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Account extends BaseEntity {
+    public static final String MANAGE_TOKEN = "ACCOUNT_MANAGE";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -91,15 +92,6 @@ public class Account extends BaseEntity {
         this.answer = answer;
     }
 
-    public void updateIfNotNull(String name, AccountType type, InformationOpenAgree informationOpenAgree) {
-        if (name != null)
-            this.name = name;
-        if (type != null)
-            this.type = type;
-        if (informationOpenAgree != null)
-            this.informationOpenAgree = informationOpenAgree;
-    }
-
     public void updateQnA(Question question, String answer) {
         this.question = question;
         this.answer = answer;
@@ -113,9 +105,19 @@ public class Account extends BaseEntity {
         this.studentId = studentId;
     }
 
-    public void changePassword(String newHashedPassword) {
+    public void updatePassword(String newHashedPassword) {
         this.password = newHashedPassword;
     }
 
+    public void updateInformationOpenAgree(InformationOpenAgree informationOpenAgree) {
+        this.informationOpenAgree = informationOpenAgree;
+    }
 
+    public void updateType(AccountType type) {
+        this.type = type;
+    }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
 }

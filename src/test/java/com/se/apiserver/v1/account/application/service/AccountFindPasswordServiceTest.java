@@ -52,10 +52,9 @@ class AccountFindPasswordServiceTest {
         //given
         createAccount();
         //when
-        boolean res = accountFindPasswordService.findPassword(new AccountFindPasswordDto.Request("test", "test@test.com", question.getQuestionId(),
+        accountFindPasswordService.findPassword(new AccountFindPasswordDto.Request("test", "test@test.com", question.getQuestionId(),
                 "ans"));
         //then
-        Assertions.assertThat(res).isEqualTo(true);
     }
 
     @Test

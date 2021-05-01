@@ -20,20 +20,16 @@ public class AccountFindPasswordService {
   private final AccountJpaRepository accountJpaRepository;
   private final PasswordEncoder passwordEncoder;
   private final JavaMailSender mailSender;
-  private final AccountUpdateService accountUpdateService;
 
   @Value("${spring.mail.username}")
   private String SERVER_EMAIL;
 
-  public boolean findPassword(Request request) {
+  public void findPassword(Request request) {
     Account account = accountJpaRepository.findByIdString(request.getId()).orElseThrow(() -> new BusinessException(AccountErrorCode.NO_SUCH_ACCOUNT));
-    if(!account.getEmail().equals(request.getEmail()))
-      throw new BusinessException(AccountErrorCode.EMAIL_NOT_MATCH);
-    if(account.getQuestion().getQuestionId() != request.getQuestionId() || !account.getAnswer().equals(request.getAnswer()))
-      throw new BusinessException(AccountErrorCode.QA_NOT_MATCH);
-
+    validateEmailMatch(account, request.getEmail());
+    validateQuestionMatch(account, request.getQuestionId(), request.getAnswer());
     String randomPassword = RandomString.make();
-    accountUpdateService.updatePassword(account, randomPassword);
+    account.updatePassword(passwordEncoder.encode(randomPassword));
     accountJpaRepository.save(account);
 
     SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
@@ -42,7 +38,15 @@ public class AccountFindPasswordService {
     simpleMailMessage.setFrom(SERVER_EMAIL);
     simpleMailMessage.setTo(account.getEmail());
     mailSender.send(simpleMailMessage);
+  }
 
-    return true;
+  private void validateQuestionMatch(Account account, Long questionId, String answer) {
+    if(account.getQuestion().getQuestionId() != questionId || !account.getAnswer().equals(answer))
+      throw new BusinessException(AccountErrorCode.QA_NOT_MATCH);
+  }
+
+  private void validateEmailMatch(Account account, String email) {
+    if(!account.getEmail().equals(email))
+      throw new BusinessException(AccountErrorCode.EMAIL_NOT_MATCH);
   }
 }

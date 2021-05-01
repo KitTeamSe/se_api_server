@@ -21,28 +21,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class AccountCreateService {
 
     private final AccountJpaRepository accountJpaRepository;
-
     private final QuestionJpaRepository questionJpaRepository;
-
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public Long signUp(AccountCreateDto.Request request, String ip) {
+        validateDuplicatedNickname(request.getNickname());
+        validateDuplicatedIdString(request.getId());
+        validateDuplicatedStudentId(request.getStudentId());
+        validateDuplicatedEmail(request.getEmail());
+
         Question question = questionJpaRepository.findById(request.getQuestionId()).orElseThrow(() -> new BusinessException(AccountErrorCode.NO_SUCH_ACCOUNT));
-
-        if (accountJpaRepository.findByNickname(request.getNickname()).isPresent())
-            throw new BusinessException(AccountErrorCode.DUPLICATED_NICKNAME);
-
-        if (accountJpaRepository.findByIdString(request.getId()).isPresent())
-            throw new BusinessException(AccountErrorCode.DUPLICATED_ID);
-
-        if (accountJpaRepository.findByStudentId(request.getStudentId()).isPresent())
-            throw new BusinessException(AccountErrorCode.DUPLICATED_STUDENT_ID);
-
-        if (accountJpaRepository.findByEmail(request.getEmail()).isPresent())
-            throw new BusinessException(AccountErrorCode.DUPLICATED_EMAIL);
-
-
         Account account = Account.builder()
                 .idString(request.getId())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -59,6 +48,26 @@ public class AccountCreateService {
                 .build();
         accountJpaRepository.save(account);
         return account.getAccountId();
+    }
+
+    private void validateDuplicatedEmail(String email) {
+        if (accountJpaRepository.findByEmail(email).isPresent())
+            throw new BusinessException(AccountErrorCode.DUPLICATED_EMAIL);
+    }
+
+    private void validateDuplicatedStudentId(String studentId) {
+        if (accountJpaRepository.findByStudentId(studentId).isPresent())
+            throw new BusinessException(AccountErrorCode.DUPLICATED_STUDENT_ID);
+    }
+
+    private void validateDuplicatedIdString(String id) {
+        if (accountJpaRepository.findByIdString(id).isPresent())
+            throw new BusinessException(AccountErrorCode.DUPLICATED_ID);
+    }
+
+    private void validateDuplicatedNickname(String nickname) {
+        if (accountJpaRepository.findByNickname(nickname).isPresent())
+            throw new BusinessException(AccountErrorCode.DUPLICATED_NICKNAME);
     }
 
 }

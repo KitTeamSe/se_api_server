@@ -21,8 +21,12 @@ public class AccountDeleteService {
     @Transactional
     public void delete(AccountDeleteDto.Request request) {
         Account account = accountJpaRepository.findByIdString(request.getId()).orElseThrow(()->new BusinessException(AccountErrorCode.NO_SUCH_ACCOUNT));
+        validateAccessible(account);
+        accountJpaRepository.delete(account);
+    }
+
+    private void validateAccessible(Account account) {
         if(!accountContextService.isOwner(account) && !accountContextService.hasAuthority("ACCOUNT_MANAGE"))
             throw new AccessDeniedException("비정상적인 접근");
-        accountJpaRepository.delete(account);
     }
 }
