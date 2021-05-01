@@ -2,6 +2,7 @@ package com.se.apiserver.v1.account.application.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.se.apiserver.v1.account.domain.entity.Account;
 import com.se.apiserver.v1.account.domain.entity.AccountType;
 import com.se.apiserver.v1.account.domain.entity.InformationOpenAgree;
 
@@ -43,6 +44,25 @@ public class AccountReadDto {
 
     @JsonInclude(Include.NON_NULL)
     private Long accountId;
+
+    public static Response fromEntity(Account account, Boolean isLegalAccess) {
+        Response.ResponseBuilder responseBuilder = Response.builder();
+        responseBuilder
+            .idString(account.getIdString())
+            .name(account.getNickname())
+            .nickname(account.getNickname())
+            .email(account.getEmail())
+            .type(account.getType());
+        if (isLegalAccess) {
+          responseBuilder
+              .phoneNumber(account.getPhoneNumber())
+              .studentId(account.getStudentId())
+              .informationOpenAgree(account.getInformationOpenAgree())
+              .lastSignInIp(account.getLastSignInIp())
+              .accountId(account.getAccountId());
+        }
+        return responseBuilder.build();
+    }
   }
 
   @Data

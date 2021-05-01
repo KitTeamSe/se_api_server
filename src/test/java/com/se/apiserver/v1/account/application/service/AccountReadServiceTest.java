@@ -65,7 +65,7 @@ public class AccountReadServiceTest {
         Account res = accountJpaRepository.findByIdString("test").get();
 
         Assertions.assertThat(dto.getLastSignInIp()).isEqualTo(null);
-        Assertions.assertThat(dto.getAccountId()).isEqualTo(null);
+        Assertions.assertThat(dto.getAccountId()).isEqualTo(account.getAccountId());
         Assertions.assertThat(dto.getStudentId()).isEqualTo(res.getStudentId());
         Assertions.assertThat(dto.getPhoneNumber()).isEqualTo(res.getPhoneNumber());
         Assertions.assertThat(dto.getInformationOpenAgree()).isEqualTo(res.getInformationOpenAgree());
@@ -120,6 +120,8 @@ public class AccountReadServiceTest {
     @Test
     void 회원_검색_페이지() {
         //given
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("1",
+            "1", Arrays.asList(new SimpleGrantedAuthority("ACCOUNT_ACCESS"))));
         //when
         PageImpl search = accountReadService.search(AccountReadDto.SearchRequest.builder()
                 .pageRequest(PageRequest.builder().page(1).size(10).direction(Sort.Direction.ASC).build())
