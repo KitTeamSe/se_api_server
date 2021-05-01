@@ -66,10 +66,9 @@ public class PeriodApiController {
   @PutMapping(path = "/period")
   @ResponseStatus(value = HttpStatus.OK)
   @ApiOperation(value = "교시 수정")
-  public SuccessResponse<PeriodReadDto.Response> update(@RequestBody @Validated
+  public SuccessResponse<Long> update(@RequestBody @Validated
       PeriodUpdateDto.Request request){
-    periodUpdateService.update(request);
-    return new SuccessResponse<>(HttpStatus.OK.value(), "교시 수정에 성공했습니다.");
+    return new SuccessResponse<>(HttpStatus.OK.value(), "교시 수정에 성공했습니다.", periodUpdateService.update(request));
   }
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")

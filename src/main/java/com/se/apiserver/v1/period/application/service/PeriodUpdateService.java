@@ -20,7 +20,7 @@ public class PeriodUpdateService {
   private final PeriodJpaRepository periodJpaRepository;
 
   @Transactional
-  public PeriodReadDto.Response update(PeriodUpdateDto.Request request){
+  public Long update(PeriodUpdateDto.Request request){
     Period period = periodJpaRepository
         .findById(request.getPeriodId())
         .orElseThrow(() -> new BusinessException(PeriodErrorCode.NO_SUCH_PERIOD));
@@ -53,7 +53,7 @@ public class PeriodUpdateService {
     period.validateTimeCrossing();
 
     periodJpaRepository.save(period);
-    return PeriodReadDto.Response.fromEntity(period);
+    return period.getPeriodId();
   }
 
   private void checkPeriodOrderDuplicate(PeriodUpdateDto.Request request){
