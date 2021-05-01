@@ -1,5 +1,7 @@
 package com.se.apiserver.v1.period.application.service;
 
+import com.se.apiserver.v1.common.domain.exception.BusinessException;
+import com.se.apiserver.v1.period.application.error.PeriodErrorCode;
 import com.se.apiserver.v1.period.domain.entity.Period;
 import com.se.apiserver.v1.period.application.dto.PeriodReadDto;
 import com.se.apiserver.v1.period.application.dto.PeriodUpdateDto;
@@ -35,10 +37,13 @@ public class PeriodUpdateServiceTest {
         .name("1A")
         .build();
 
-    PeriodReadDto.Response response = periodUpdateService.update(request);
+    Long receivedId = periodUpdateService.update(request);
+
+    Period receivedPeriod = periodJpaRepository.findById(receivedId)
+        .orElseThrow(() -> new BusinessException(PeriodErrorCode.NO_SUCH_PERIOD));
 
     // Then
-    Assertions.assertThat(response.getName()).isEqualTo("1A");
+    Assertions.assertThat(receivedPeriod.getName()).isEqualTo("1A");
   }
 
 }
