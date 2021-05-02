@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MenuDeleteService {
     private final MenuJpaRepository menuJpaRepository;
 
+    @Transactional
     public boolean delete(Long id) {
         Menu menu = menuJpaRepository.findById(id).orElseThrow(() -> new BusinessException(MenuErrorCode.NO_SUCH_MENU));
         validateIsRemovable(menu);
