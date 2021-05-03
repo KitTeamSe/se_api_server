@@ -18,20 +18,20 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class MultipartFileUploadService {
 
-  private final String domain;
-  private final long maxFileSize;
+  private final String BASE_URL;
+  private final long MAX_FILE_SIZE;
 
   @Autowired
   public MultipartFileUploadService(MultipartFileProperties properties){
-    domain = properties.getDomain();
-    maxFileSize = properties.getMaxFileSize();
+    BASE_URL = "http://" + properties.getDomain() + "/file/upload/uploadFile/";
+    MAX_FILE_SIZE = properties.getMaxFileSize();
   }
 
   public String storeFile(MultipartFile file) {
     if(file.getSize() <= 0)
       throw new BusinessException(MultipartFileUploadErrorCode.INVALID_FILE_SIZE);
 
-    if(file.getSize() >= maxFileSize)
+    if(file.getSize() >= MAX_FILE_SIZE)
       throw new BusinessException(MultipartFileUploadErrorCode.FILE_SIZE_LIMIT_EXCEEDED);
 
     // Body 생성
@@ -48,10 +48,15 @@ public class MultipartFileUploadService {
     RestTemplate restTemplate = new RestTemplate();
 
     try{
-      return restTemplate.postForObject(
-          new URI("http://" + domain + "/file/upload/uploadFile/1"),
+      String response = restTemplate.postForObject(
+          new URI(BASE_URL),
           request,
           String.class);
+
+      // TODO: 자신의 domain을 동적으로 받을 수 있게 수정할 것.
+      String fileName = response.substring(response.lastIndexOf('/') + 1);
+      String downloadUrl = "http://localhost:8080/" + "multipart-file/download/" + fileName;
+      return downloadUrl;
     }
     catch (Exception e){
       throw new BusinessException(MultipartFileUploadErrorCode.INTERNAL_FILE_SERVER_ERROR);
