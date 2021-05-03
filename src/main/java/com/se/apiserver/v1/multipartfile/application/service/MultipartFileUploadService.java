@@ -19,13 +19,21 @@ import org.springframework.web.multipart.MultipartFile;
 public class MultipartFileUploadService {
 
   private final String domain;
+  private final long maxFileSize;
 
   @Autowired
   public MultipartFileUploadService(MultipartFileProperties properties){
     domain = properties.getDomain();
+    maxFileSize = properties.getMaxFileSize();
   }
 
   public String storeFile(MultipartFile file) {
+    if(file.getSize() <= 0)
+      throw new BusinessException(MultipartFileUploadErrorCode.INVALID_FILE_SIZE);
+
+    if(file.getSize() >= maxFileSize)
+      throw new BusinessException(MultipartFileUploadErrorCode.FILE_SIZE_LIMIT_EXCEEDED);
+
     // Body 생성
     MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
     parameters.add("file", file.getResource());
@@ -46,7 +54,7 @@ public class MultipartFileUploadService {
           String.class);
     }
     catch (Exception e){
-      throw new BusinessException(MultipartFileUploadErrorCode.UNKNOWN_UPLOAD_ERROR_CAUSED);
+      throw new BusinessException(MultipartFileUploadErrorCode.INTERNAL_FILE_SERVER_ERROR);
     }
   }
 }

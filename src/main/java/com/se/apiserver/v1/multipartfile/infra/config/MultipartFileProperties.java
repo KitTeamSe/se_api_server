@@ -11,5 +11,5 @@ import org.springframework.stereotype.Component;
 @Setter
 public class MultipartFileProperties {
   private String domain;
-
+  private long maxFileSize;
 }

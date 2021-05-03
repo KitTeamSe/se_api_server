@@ -38,7 +38,6 @@ public class MultipartFileUploadController {
   @ApiOperation("복수 파일 업로드(스웨거에서 동작하지 않음)")
   @ResponseStatus(value = HttpStatus.OK)
   public List<SuccessResponse<String>> uploadMultipleFiles(@RequestPart MultipartFile[] files){
-    int a = 3;
     return Arrays.asList(files)
         .stream()
         .map(file -> uploadFile(file))
