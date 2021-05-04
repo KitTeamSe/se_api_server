@@ -25,11 +25,11 @@ public class PostUpdateDto {
   @Builder
   @NoArgsConstructor
   @AllArgsConstructor
-  @ApiModel("게시글 등록 요청")
+  @ApiModel("게시글 수정 요청")
   static public class Request{
     @NotNull
     @Min(1)
-    @ApiModelProperty(notes = "게시판 아이디", example = "1")
+    @ApiModelProperty(notes = "게시물 아이디", example = "1")
     private Long postId;
 
     @NotNull
