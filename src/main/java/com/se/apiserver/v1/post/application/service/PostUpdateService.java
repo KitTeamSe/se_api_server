@@ -48,7 +48,7 @@ public class PostUpdateService {
             post.validateAccountAccess(contextAccount, authorities);
         }
 
-        if(request.getAnonymousPassword() != null){
+        if(post.getAnonymous() != null && request.getAnonymousPassword() != null){
             validateAnonymousAccess(post.getAnonymous(), request.getAnonymousPassword());
         }
 
