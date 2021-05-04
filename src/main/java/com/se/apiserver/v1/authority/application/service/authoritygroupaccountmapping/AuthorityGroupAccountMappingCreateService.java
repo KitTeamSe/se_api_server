@@ -23,6 +23,7 @@ public class AuthorityGroupAccountMappingCreateService {
     private final AccountJpaRepository accountJpaRepository;
     private final AuthorityGroupJpaRepository authorityGroupJpaRepository;
 
+    @Transactional
     public Long create(AuthorityGroupAccountMappingCreateDto.Request request){
         validateAlreadyExistMapping(request.getAccountId(), request.getGroupId());
 

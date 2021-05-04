@@ -9,6 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 public interface PostJpaRepository extends JpaRepository<Post,Long> {
-    @Query("select b from Board b where b = :board")
+    @Query("select p from Post p where p.board = :board")
     Page<Post> findAllByBoard(Board board, Pageable pageable);
 }

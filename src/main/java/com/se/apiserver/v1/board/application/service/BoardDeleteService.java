@@ -15,6 +15,7 @@ public class BoardDeleteService {
 
     private final BoardJpaRepository boardJpaRepository;
 
+    @Transactional
     public boolean delete(Long id){
         Board board = boardJpaRepository.findById(id).orElseThrow(() -> new BusinessException(BoardErrorCode.NO_SUCH_BOARD));
         boardJpaRepository.delete(board);

@@ -17,6 +17,7 @@ public class TagListeningDeleteService {
     private final TagListeningJpaRepository tagListeningJpaRepository;
     private final AccountContextService accountContextService;
 
+    @Transactional
     public boolean delete(Long id){
         TagListening tagListening = tagListeningJpaRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(TagListeningErrorCode.NO_SUCH_TAG_TAG_LISTENING));

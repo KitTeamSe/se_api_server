@@ -15,6 +15,7 @@ public class TagDeleteService {
 
     private final TagJpaRepository tagJpaRepository;
 
+    @Transactional
     public boolean delete(Long id) {
         Tag tag = tagJpaRepository.findById(id).orElseThrow(() -> new BusinessException(TagErrorCode.NO_SUCH_TAG));
         tagJpaRepository.delete(tag);

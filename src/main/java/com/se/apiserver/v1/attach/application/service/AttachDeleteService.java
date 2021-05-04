@@ -15,6 +15,7 @@ public class AttachDeleteService {
 
   private final AttachJpaRepository attachJpaRepository;
 
+  @Transactional
   public boolean delete(Long id) {
     Attach attach = attachJpaRepository.findById(id)
         .orElseThrow(() -> new BusinessException(AttachErrorCode.NO_SUCH_ATTACH));
