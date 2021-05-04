@@ -24,7 +24,6 @@ public class Anonymous {
 
   @Column(length = 255)
   @Size(min = 2, max = 255)
-  @JsonIgnore
   private String anonymousPassword;
 
 

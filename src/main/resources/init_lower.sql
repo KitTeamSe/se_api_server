@@ -16,7 +16,7 @@ insert into authority (authority_id, name_eng, name_kor) values (15,'REPORT_ACCE
 insert into authority (authority_id, name_eng, name_kor) values (16,'REPORT_MANAGE','신고_관리');
 insert into authority (authority_id, name_eng, name_kor) values (17,'AUTHORITY_MANAGE','권한_관리');
 insert into authority (authority_id, name_eng, name_kor) values (18,'SCHEDULE_MANAGE','시간표_관리');
-insert into authority (authority_id, name_eng, name_kor) values (19,'MENU_MANAGE','메누_관리');
+insert into authority (authority_id, name_eng, name_kor) values (19,'MENU_MANAGE','메뉴_관리');
 
 
 insert into authority_group (authority_group_id, description, name, type) values (1,'비로그인 사용자','DEFAULT', 'ANONYMOUS');

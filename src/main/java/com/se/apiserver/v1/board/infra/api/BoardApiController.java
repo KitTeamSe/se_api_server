@@ -51,7 +51,7 @@ public class BoardApiController {
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "게시판 수정")
     public SuccessResponse<Long> update(@RequestBody @Validated BoardUpdateDto.Request request){
-        return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 조회되었습니다", boardUpdateService.update(request));
+        return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 수정되었습니다", boardUpdateService.update(request));
     }
 
     @DeleteMapping(value = "/board/{id}")

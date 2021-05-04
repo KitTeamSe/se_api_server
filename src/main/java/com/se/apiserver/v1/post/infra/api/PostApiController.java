@@ -39,7 +39,7 @@ public class PostApiController {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation("게시글 수정")
     public SuccessResponse<Long> update(@RequestBody @Validated PostUpdateDto.Request request){
-        return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 수정되었습니다", postUpdateService.update(request));
+        return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 수정되었습니다", postUpdateService.update(request));
     }
 
     @DeleteMapping("/post/{id}")
