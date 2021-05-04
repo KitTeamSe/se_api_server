@@ -13,17 +13,17 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Service
 @RequiredArgsConstructor
 public class MultipartFileUploadService {
-
-  private final String BASE_URL;
+  private final String FILE_SERVER_BASE_URL;
   private final long MAX_FILE_SIZE;
 
   @Autowired
   public MultipartFileUploadService(MultipartFileProperties properties){
-    BASE_URL = "http://" + properties.getDomain() + "/file/upload/uploadFile/";
+    FILE_SERVER_BASE_URL = "http://" + properties.getDomain() + "/file/upload/uploadFile/";
     MAX_FILE_SIZE = properties.getMaxFileSize();
   }
 
@@ -47,19 +47,24 @@ public class MultipartFileUploadService {
     // Post 요청
     RestTemplate restTemplate = new RestTemplate();
 
+    // 다운로드 URL 생성
+    String hostBaseUrl = getCurrentHostUrl() + "/multipart-file/download/";
+
     try{
       String response = restTemplate.postForObject(
-          new URI(BASE_URL),
+          new URI(FILE_SERVER_BASE_URL),
           request,
           String.class);
 
-      // TODO: 자신의 domain을 동적으로 받을 수 있게 수정할 것.
       String fileName = response.substring(response.lastIndexOf('/') + 1);
-      String downloadUrl = "http://localhost:8080/" + "multipart-file/download/" + fileName;
-      return downloadUrl;
+      return hostBaseUrl + fileName;
     }
     catch (Exception e){
       throw new BusinessException(MultipartFileUploadErrorCode.INTERNAL_FILE_SERVER_ERROR);
     }
+  }
+
+  private String getCurrentHostUrl(){
+    return ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
   }
 }
