@@ -23,6 +23,7 @@ public class AuthorityGroupAuthorityMappingCreateService {
     private final AuthorityJpaRepository authorityJpaRepository;
     private final AuthorityGroupJpaRepository authorityGroupJpaRepository;
 
+    @Transactional
     public Long create(AuthorityGroupAuthorityMappingCreateDto.Request request){
         validateAlreadyExistMapping(request.getAuthorityId(), request.getGroupId());
         Authority authority = authorityJpaRepository.findById(request.getAuthorityId())

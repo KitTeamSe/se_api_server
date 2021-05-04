@@ -20,6 +20,7 @@ public class BoardCreateService {
     private final MenuJpaRepository menuJpaRepository;
     private final AuthorityJpaRepository authorityJpaRepository;
 
+    @Transactional
     public Long create(BoardCreateDto.Request request){
         validateDuplicateNameKor(request.getNameKor());
         validateDuplicateNameEng(request.getNameEng());

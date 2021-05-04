@@ -15,6 +15,7 @@ public class PostDeleteService {
 
     private final PostJpaRepository postJpaRepository;
 
+    @Transactional
     public boolean delete(Long postId){
         Post post = postJpaRepository.findById(postId)
                 .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));

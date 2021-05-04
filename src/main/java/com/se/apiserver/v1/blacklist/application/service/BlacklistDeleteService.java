@@ -15,6 +15,7 @@ public class BlacklistDeleteService {
 
     private final BlacklistJpaRepository blacklistJpaRepository;
 
+    @Transactional
     public void delete(Long id) {
         Blacklist blacklist = blacklistJpaRepository.findById(id).orElseThrow(() -> new BusinessException(BlacklistErrorCode.NO_SUCH_BLACKLIST));
         blacklistJpaRepository.delete(blacklist);

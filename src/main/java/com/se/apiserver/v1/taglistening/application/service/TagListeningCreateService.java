@@ -22,6 +22,7 @@ public class TagListeningCreateService {
     private final TagJpaRepository tagJpaRepository;
     private final AccountContextService accountContextService;
 
+    @Transactional
     public Long create(TagListeningCreateDto.Request request){
         Tag tag = tagJpaRepository.findById(request.getTagId())
                 .orElseThrow(() -> new BusinessException(TagErrorCode.NO_SUCH_TAG));

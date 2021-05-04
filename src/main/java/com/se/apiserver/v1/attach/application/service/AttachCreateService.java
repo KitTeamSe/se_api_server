@@ -25,6 +25,7 @@ public class AttachCreateService {
   private final PostJpaRepository postJpaRepository;
   private final ReplyJpaRepository replyJpaRepository;
 
+  @Transactional
   public AttachReadDto.Response create(AttachCreateDto.Request request){
     validateInvalidInput(request.getPostId(), request.getReplyId());
     Attach attach = getAttach(request);
