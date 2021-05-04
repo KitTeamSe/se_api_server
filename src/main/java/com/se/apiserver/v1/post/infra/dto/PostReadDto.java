@@ -9,7 +9,6 @@ import com.se.apiserver.v1.post.domain.entity.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -36,9 +35,15 @@ public class PostReadDto {
 
     private String title;
 
+    private String previewText;
+
+    private String nickname;
+
     private LocalDateTime createAt;
 
     public static ListResponse fromEntity(Post post){
+      String nickname = post.getAccount() != null ? post.getAccount().getNickname() : post.getAnonymous().getAnonymousNickname();
+      String previewText = post.getPostContent().getText().length() <= 30 ? post.getPostContent().getText() : post.getPostContent().getText().substring(0, 30);
       return ListResponse.builder()
               .postId(post.getPostId())
               .boardId(post.getBoard().getBoardId())
@@ -47,6 +52,8 @@ public class PostReadDto {
               .isNotice(post.getIsNotice())
               .isSecret(post.getIsSecret())
               .title(post.getPostContent().getTitle())
+              .previewText(previewText)
+              .nickname(nickname)
               .createAt(post.getCreatedAt())
               .build();
     }
