@@ -38,24 +38,20 @@ public class MultipartFileUploadService {
     MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
     parameters.add("file", file.getResource());
 
-    // Header 생성
-    HttpHeaders headers = new HttpHeaders();
-
     // Body + Header
-    HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(parameters, headers);
+    HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(parameters, new HttpHeaders());
 
     // Post 요청
-    RestTemplate restTemplate = new RestTemplate();
-
-    // 다운로드 URL 생성
-    String hostBaseUrl = getCurrentHostUrl() + "/multipart-file/download/";
-
     try{
+      RestTemplate restTemplate = new RestTemplate();
+
       String response = restTemplate.postForObject(
           new URI(FILE_SERVER_BASE_URL),
           request,
           String.class);
 
+      // 다운로드 URL 생성
+      String hostBaseUrl = getCurrentHostUrl() + "/multipart-file/download/";
       String fileName = response.substring(response.lastIndexOf('/') + 1);
       return hostBaseUrl + fileName;
     }
