@@ -23,7 +23,7 @@ public class MultipartFileUploadService {
 
   @Autowired
   public MultipartFileUploadService(MultipartFileProperties properties){
-    FILE_SERVER_BASE_URL = "http://" + properties.getDomain() + "/file/upload/uploadFile/";
+    FILE_SERVER_BASE_URL = "http://" + properties.getFileServerDomain() + "/file/upload/uploadFile/";
     MAX_FILE_SIZE = properties.getMaxFileSize();
   }
 

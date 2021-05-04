@@ -7,8 +7,7 @@ import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -21,27 +20,18 @@ public class MultipartFileDownloadService {
 
   @Autowired
   public MultipartFileDownloadService(MultipartFileProperties properties){
-    BASE_URL = "http://" + properties.getDomain() + "/file/download/";
+    BASE_URL = "http://" + properties.getFileServerDomain() + "/file/download/";
   }
 
-  public ResponseEntity<Resource> downloadResource(String saveName){
-
+  public ResponseEntity<Resource> download(String saveName){
     RestTemplate rest = new RestTemplate();
-    String url = BASE_URL + saveName;
-
-    Resource resource;
+    String downloadUrl = BASE_URL + saveName;
 
     try{
-      resource = rest.getForObject(new URI(url), Resource.class);
+      return rest.exchange(new URI(downloadUrl), HttpMethod.GET, null, Resource.class);
     }
     catch (Exception e){
       throw new BusinessException(MultipartFileDownloadErrorCode.INTERNAL_FILE_SERVER_ERROR);
     }
-
-    return ResponseEntity.ok()
-        .contentType(MediaType.APPLICATION_OCTET_STREAM)
-        .header(
-            HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-        .body(resource);
   }
 }

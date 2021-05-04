@@ -1,8 +1,6 @@
 package com.se.apiserver.v1.multipartfile.infra.api;
 
 import io.swagger.annotations.Api;
-import java.io.UnsupportedEncodingException;
-import javax.servlet.http.HttpServletRequest;
 import com.se.apiserver.v1.multipartfile.application.service.MultipartFileDownloadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -21,8 +19,7 @@ public class MultipartFileDownloadController {
   private MultipartFileDownloadService multipartFileDownloadService;
 
   @GetMapping("/{saveName:.+}")
-  public ResponseEntity<Resource> downloadFile(@PathVariable String saveName, HttpServletRequest request)
-      throws UnsupportedEncodingException {
-    return multipartFileDownloadService.downloadResource(saveName);
+  public ResponseEntity<Resource> downloadFile(@PathVariable String saveName) {
+    return multipartFileDownloadService.download(saveName);
   }
 }
