@@ -31,7 +31,7 @@ public class MultipartFileUploadController {
   @ResponseStatus(value = HttpStatus.OK)
   public SuccessResponse<String> uploadFile(@RequestParam("file") MultipartFile file){
     // 파일 서버에 전송.
-    return new SuccessResponse<>(HttpStatus.OK.value(), "파일 업로드에 성공했습니다.", multipartFileUploadService.storeFile(file));
+    return new SuccessResponse<>(HttpStatus.OK.value(), "파일 업로드에 성공했습니다.", multipartFileUploadService.upload(file));
   }
 
   @RequestMapping(value = "/multiple/", method = RequestMethod.POST)

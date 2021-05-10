@@ -5,8 +5,8 @@ import lombok.Getter;
 
 @Getter
 public enum MultipartFileDownloadErrorCode implements ErrorCode {
-  INTERNAL_FILE_SERVER_ERROR(400, "MFDE01", "내부 파일 서버에서 오류 발생"),
-  UNKNOWN_DOWNLOAD_ERROR(400, "MFDE02", "다운로드 도중 알 수 없는 에러 발생");
+  FAILED_TO_CONNECT_FILE_SERVER(400, "MFDLE01", "파일 서버에 접속할 수 없음"),
+  UNKNOWN_FILE_DOWNLOAD_ERROR(400, "MFDLE02", "파일 다운로드 중 알 수 없는 에러 발생");
 
   private final String code;
   private final String message;

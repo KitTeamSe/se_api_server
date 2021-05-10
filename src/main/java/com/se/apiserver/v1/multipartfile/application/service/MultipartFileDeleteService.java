@@ -1,33 +1,35 @@
 package com.se.apiserver.v1.multipartfile.application.service;
 
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
+import com.se.apiserver.v1.multipartfile.application.error.MultipartFileDeleteErrorCode;
 import com.se.apiserver.v1.multipartfile.application.error.MultipartFileDownloadErrorCode;
 import com.se.apiserver.v1.multipartfile.infra.config.MultipartFileProperties;
+
 import java.net.URI;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-public class MultipartFileDownloadService extends MultipartFileService{
+public class MultipartFileDeleteService extends MultipartFileService {
 
-  private final String DOWNLOAD_URL;
+  private final String DELETE_URL;
 
-  public MultipartFileDownloadService(MultipartFileProperties properties){
+  public MultipartFileDeleteService(MultipartFileProperties properties) {
     super(properties);
-    DOWNLOAD_URL = super.BASE_URL + "download/";
+    DELETE_URL = super.BASE_URL + "delete/";
   }
 
-  public ResponseEntity<Resource> download(String saveName){
+  public void delete(final String saveName){
     RestTemplate rest = new RestTemplate();
-    String downloadUrl = DOWNLOAD_URL + saveName;
+
+    String downloadUrl = DELETE_URL + saveName;
 
     try{
-      return rest.exchange(new URI(downloadUrl), HttpMethod.GET, null, Resource.class);
+      rest.exchange(new URI(downloadUrl), HttpMethod.GET, null, Resource.class);
     }
     catch(HttpStatusCodeException e){
       throw super.getBusinessExceptionFromFileServerResponse(e);
@@ -36,7 +38,7 @@ public class MultipartFileDownloadService extends MultipartFileService{
       throw new BusinessException(MultipartFileDownloadErrorCode.FAILED_TO_CONNECT_FILE_SERVER);
     }
     catch (Exception e){
-      throw new BusinessException(MultipartFileDownloadErrorCode.UNKNOWN_FILE_DOWNLOAD_ERROR);
+      throw new BusinessException(MultipartFileDeleteErrorCode.UNKNOWN_FILE_DELETE_ERROR);
     }
   }
 }
