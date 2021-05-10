@@ -30,7 +30,7 @@ public class MultipartFileDownloadService extends MultipartFileService{
       return rest.exchange(new URI(downloadUrl), HttpMethod.GET, null, Resource.class);
     }
     catch(HttpStatusCodeException e){
-      throw super.getBusinessExceptionFromFileServerResponse(e);
+      throw super.getBusinessExceptionFromFileServerException(e);
     }
     catch(ResourceAccessException rae){
       throw new BusinessException(MultipartFileDownloadErrorCode.FAILED_TO_CONNECT_FILE_SERVER);

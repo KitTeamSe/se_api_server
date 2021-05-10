@@ -19,7 +19,7 @@ public abstract class MultipartFileService {
     BASE_URL = "http://" + properties.getFileServerDomain() + "/file/";
   }
 
-  protected BusinessException getBusinessExceptionFromFileServerResponse(HttpStatusCodeException e){
+  protected BusinessException getBusinessExceptionFromFileServerException(HttpStatusCodeException e){
     try{
       String errorCodeJson = e.getResponseBodyAsString();
       FileServerErrorCodeProxy errorCode = new ObjectMapper().readValue(errorCodeJson, FileServerErrorCodeProxy.class);
