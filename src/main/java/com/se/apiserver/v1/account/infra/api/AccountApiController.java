@@ -118,7 +118,7 @@ public class AccountApiController {
     @ApiOperation(value = "회원 정보 조회")
     public SuccessResponse<AccountReadDto.Response> deleteAccount(@PathVariable(name = "id") String id) {
         accountReadService.read(id);
-        return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 삭제되었습니다.");
+        return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 조회되었습니다.");
     }
 
     //TODO 페이징 리퀘스트, 리스폰스 샘플 코드, 추후 삭제 요망
