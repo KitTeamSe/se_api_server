@@ -41,4 +41,11 @@ public class MultipartFileDeleteService extends MultipartFileService {
       throw new BusinessException(MultipartFileDeleteErrorCode.UNKNOWN_FILE_DELETE_ERROR);
     }
   }
+
+  public void deleteByDownloadUrl(final String downloadUrl){
+    if(downloadUrl == null || downloadUrl.isEmpty())
+      throw new BusinessException(MultipartFileDeleteErrorCode.EMPTY_DOWNLOAD_URL);
+    String fileName = downloadUrl.substring(downloadUrl.lastIndexOf('/') + 1);
+    this.delete(fileName);
+  }
 }
