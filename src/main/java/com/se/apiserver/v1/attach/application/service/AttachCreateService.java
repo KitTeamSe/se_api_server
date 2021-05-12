@@ -34,7 +34,7 @@ public class AttachCreateService {
   }
 
   private void validateInvalidInput(Long postId, Long replyId) {
-    if(postId != null & replyId != null)
+    if(postId != null && replyId != null)
       throw new BusinessException(AttachErrorCode.INVALID_INPUT);
   }
 
