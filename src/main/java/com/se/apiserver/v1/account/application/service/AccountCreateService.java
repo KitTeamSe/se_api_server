@@ -42,7 +42,7 @@ public class AccountCreateService {
                 .email(request.getEmail())
                 .lastSignInIp(ip)
                 .informationOpenAgree(InformationOpenAgree.DISAGREE)
-                .type(AccountType.ASSISTANT)
+                .type(request.getType())
                 .question(question)
                 .answer(request.getAnswer())
                 .build();

@@ -2,6 +2,8 @@ package com.se.apiserver.v1.common.infra.security.filter;
 
 
 import com.se.apiserver.v1.blacklist.application.service.BlacklistDetailService;
+import com.se.apiserver.v1.common.domain.error.GlobalErrorCode;
+import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.GenericFilterBean;
@@ -22,12 +24,10 @@ public class IpBlacklistFilters extends GenericFilterBean {
   @Override
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
       throws IOException, ServletException {
-    HttpServletRequest req = (HttpServletRequest) request;
-    HttpServletResponse res = (HttpServletResponse) response;
+
     String ip = request.getRemoteAddr();
     if(blacklistDetailService.isBaned(ip)){
-      res.sendError(HttpStatus.BAD_REQUEST.value(), "차단된 사용자입니다");
-      return;
+      throw new BusinessException(GlobalErrorCode.BANNED_IP);
     }
     chain.doFilter(request, response);
   }

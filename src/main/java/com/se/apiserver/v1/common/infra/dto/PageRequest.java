@@ -17,10 +17,10 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 public class PageRequest {
 
-  @ApiModelProperty(example = "1", notes = "페이지, 1 이상이여야 함")
+  @ApiModelProperty(example = "1", notes = "페이지, 1 이상만 가능")
   @Min(value = 1)
   private int page;
-  @ApiModelProperty(example = "10", notes = "페이지의 사이즈, 1 이상이여야 함")
+  @ApiModelProperty(example = "50", notes = "페이지의 사이즈, 10 이상 50 이하만 가능")
   @Min(value = 10)
   private int size;
 
@@ -32,7 +32,7 @@ public class PageRequest {
   }
 
   public void setSize(int size) {
-    int DEFAULT_SIZE = 10;
+    int DEFAULT_SIZE = 50;
     int MAX_SIZE = 50;
     this.size = size > MAX_SIZE ? DEFAULT_SIZE : size;
   }

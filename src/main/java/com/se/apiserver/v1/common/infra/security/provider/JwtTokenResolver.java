@@ -2,7 +2,10 @@ package com.se.apiserver.v1.common.infra.security.provider;
 
 
 import com.se.apiserver.v1.account.application.service.AccountContextService;
+import com.se.apiserver.v1.common.domain.error.GlobalErrorCode;
+import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -56,8 +59,14 @@ public class JwtTokenResolver {
   public boolean validateToken(String token) {
     try {
       Jws<Claims> claims = Jwts.parser().setSigningKey(securityKey).parseClaimsJws(token);
-      return !claims.getBody().getExpiration().before(new Date());
-    } catch (Exception e) {
+      if(claims.getBody().getExpiration().before(new Date()))
+        throw new BusinessException(GlobalErrorCode.EXPIRED_JWT_TOKEN);
+      return true;
+    }
+    catch (ExpiredJwtException e){
+      throw new BusinessException(GlobalErrorCode.EXPIRED_JWT_TOKEN);
+    }
+    catch (Exception e) {
       return false;
     }
   }
