@@ -43,7 +43,11 @@ public class PostReadDto {
 
     public static ListResponse fromEntity(Post post){
       String nickname = post.getAccount() != null ? post.getAccount().getNickname() : post.getAnonymous().getAnonymousNickname();
-      String previewText = post.getPostContent().getText().length() <= 30 ? post.getPostContent().getText() : post.getPostContent().getText().substring(0, 30);
+      String previewText = "";
+      if(post.getIsSecret() == PostIsSecret.NORMAL){
+        previewText = post.getPostContent().getText().length() <= 30 ? post.getPostContent().getText() : post.getPostContent().getText().substring(0, 30);
+      }
+
       return ListResponse.builder()
               .postId(post.getPostId())
               .boardId(post.getBoard().getBoardId())
@@ -80,7 +84,7 @@ public class PostReadDto {
     private String accountNickname;
 
     @JsonInclude(Include.NON_NULL)
-    private Anonymous anonymous;
+    private String anonymousNickname;
 
     @JsonInclude(Include.NON_NULL)
     private PostContent postContent;
@@ -110,12 +114,7 @@ public class PostReadDto {
       }
 
       if(post.getAnonymous() != null)
-        builder.anonymous(post.getAnonymous());
-
-      builder.attaches(post.getAttaches().stream()
-          .map(a -> AttachDto.fromEntity(a))
-          .collect(Collectors.toList())
-      );
+        builder.anonymousNickname(post.getAnonymous().getAnonymousNickname());
 
       builder.tags(post.getTags().stream()
           .map(t -> TagDto.fromEntity(t))
@@ -125,6 +124,11 @@ public class PostReadDto {
       if (post.getIsSecret() == PostIsSecret.SECRET && !isOwnerOrManager) {
         return builder.build();
       }
+
+      builder.attaches(post.getAttaches().stream()
+          .map(a -> AttachDto.fromEntity(a))
+          .collect(Collectors.toList())
+      );
 
       return builder
           .postContent(post.getPostContent())
