@@ -1,10 +1,12 @@
 package com.se.apiserver.v1.common.infra.security.config;
 
+import com.se.apiserver.v1.common.infra.security.filter.FilterChainExceptionHandler;
 import com.se.apiserver.v1.common.infra.security.filter.IpBlacklistFilters;
 import com.se.apiserver.v1.common.infra.security.filter.JwtAuthenticationFilters;
 import com.se.apiserver.v1.common.infra.security.provider.JwtTokenResolver;
 import com.se.apiserver.v1.blacklist.application.service.BlacklistDetailService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -25,6 +27,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final BlacklistDetailService blacklistDetailService;
 
+    @Autowired
+    private FilterChainExceptionHandler filterChainExceptionHandler;
+
     @Override
     protected AuthenticationManager authenticationManager() throws Exception {
         return super.authenticationManager();
@@ -43,7 +48,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilters(jwtTokenResolver), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new IpBlacklistFilters(blacklistDetailService), JwtAuthenticationFilters.class);
+                .addFilterBefore(new IpBlacklistFilters(blacklistDetailService), JwtAuthenticationFilters.class)
+                .addFilterBefore(filterChainExceptionHandler, IpBlacklistFilters.class);
 
     }
 

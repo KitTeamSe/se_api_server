@@ -7,6 +7,7 @@ import com.se.apiserver.v1.board.infra.repository.BoardJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.post.domain.entity.Post;
 import com.se.apiserver.v1.post.application.error.PostErrorCode;
+import com.se.apiserver.v1.post.domain.entity.PostIsSecret;
 import com.se.apiserver.v1.post.infra.dto.PostReadDto;
 import com.se.apiserver.v1.post.infra.repository.PostJpaRepository;
 import lombok.RequiredArgsConstructor;
@@ -58,6 +59,8 @@ public class PostReadService {
 
     private boolean isOwnerOrHasManageAuthority(Post post) {
         Set<String> authorities = accountContextService.getContextAuthorities();
+        if(post.getAccount() == null)
+            return post.getIsSecret() == PostIsSecret.NORMAL;
         if(authorities.contains(Post.MANAGE_AUTHORITY) || post.isOwner(accountContextService.getContextAccount()))
             return true;
         return false;

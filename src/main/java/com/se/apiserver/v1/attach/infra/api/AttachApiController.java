@@ -3,7 +3,6 @@ package com.se.apiserver.v1.attach.infra.api;
 import com.se.apiserver.v1.attach.application.service.AttachCreateService;
 import com.se.apiserver.v1.attach.application.service.AttachDeleteService;
 import com.se.apiserver.v1.attach.application.service.AttachReadService;
-import com.se.apiserver.v1.attach.application.dto.AttachCreateDto;
 import com.se.apiserver.v1.attach.application.dto.AttachReadDto;
 import com.se.apiserver.v1.common.infra.dto.PageRequest;
 import com.se.apiserver.v1.common.infra.dto.SuccessResponse;
@@ -13,15 +12,15 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @Api(tags = "첨부파일 관리")
@@ -36,8 +35,11 @@ public class AttachApiController {
   @PostMapping("/attach")
   @ResponseStatus(HttpStatus.CREATED)
   @ApiOperation("첨부파일 생성")
-  public SuccessResponse<AttachReadDto.Response> create(@RequestBody @Validated AttachCreateDto.Request request){
-    return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 등록되었습니다", attachCreateService.create(request));
+  public SuccessResponse<AttachReadDto.Response> create(@RequestParam(value = "postId", required = false) Long postId,
+      @RequestParam(value = "replyId", required = false) Long replyId,
+      @RequestParam(value = "multipartFile") MultipartFile multipartFile){
+    return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 등록되었습니다",
+        attachCreateService.create(postId, replyId, multipartFile));
   }
 
   @DeleteMapping("/attach/{id}")

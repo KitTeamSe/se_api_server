@@ -59,7 +59,7 @@ public class PostApiController {
 
     @GetMapping("/post/secret")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation("게시글 조회")
+    @ApiOperation("비밀 게시글 조회")
     public SuccessResponse<PostReadDto.Response> readSecret(Long postId, String password){
         return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 조회되었습니다",
                 postReadService.readAnonymousSecretPost(postId,password));
@@ -67,7 +67,7 @@ public class PostApiController {
 
     @GetMapping("/post")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation("게시글 조회")
+    @ApiOperation("게시판에 따른 게시글 목록 조회")
     public SuccessResponse<PageImpl<PostReadDto.ListResponse>> readSecret(PageRequest pageRequest, Long boardId){
         return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 조회되었습니다",
                 postReadService.readBoardPostList(pageRequest.of(),boardId));
