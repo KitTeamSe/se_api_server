@@ -1,9 +1,8 @@
-package com.se.apiserver.v1.post.infra.dto;
+package com.se.apiserver.v1.post.application.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.se.apiserver.v1.attach.domain.entity.Attach;
-import com.se.apiserver.v1.common.domain.entity.Anonymous;
 import com.se.apiserver.v1.post.domain.entity.*;
 
 import java.time.LocalDateTime;
