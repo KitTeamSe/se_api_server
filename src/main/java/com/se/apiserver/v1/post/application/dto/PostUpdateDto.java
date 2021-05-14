@@ -1,25 +1,30 @@
-package com.se.apiserver.v1.post.infra.dto;
+package com.se.apiserver.v1.post.application.dto;
 
-import com.se.apiserver.v1.common.domain.entity.Anonymous;
-import com.se.apiserver.v1.post.domain.entity.*;
+import com.se.apiserver.v1.post.domain.entity.PostContent;
+import com.se.apiserver.v1.post.domain.entity.PostIsNotice;
+import com.se.apiserver.v1.post.domain.entity.PostIsSecret;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.List;
+import lombok.Singular;
 
-public class PostCreateDto {
+public class PostUpdateDto {
   @Data
   @Builder
   @NoArgsConstructor
   @AllArgsConstructor
-  @ApiModel("게시글 등록 요청")
+  @ApiModel("게시글 수정 요청")
   static public class Request{
+    @NotNull
+    @Min(1)
+    @ApiModelProperty(notes = "게시물 아이디", example = "1")
+    private Long postId;
+
     @NotNull
     @Min(1)
     @ApiModelProperty(notes = "게시판 아이디", example = "1")
@@ -28,8 +33,8 @@ public class PostCreateDto {
     @NotNull
     private PostContent postContent;
 
-    @ApiModelProperty(notes = "익명 사용자 정보, 회원으로 등록일 경우 생략")
-    private Anonymous anonymous;
+    @ApiModelProperty(notes = "익명 사용자 비밀번호, 회원으로 등록일 경우 생략")
+    private String anonymousPassword;
 
     @NotNull
     @ApiModelProperty(notes = "공지로 설정할 것인지(관리자용)", example = "NORMAL")
@@ -41,30 +46,11 @@ public class PostCreateDto {
 
     @ApiModelProperty(notes = "첨부 파일들")
     @Singular("attachmentList")
-    private List<AttachDto> attachmentList;
+    private List<PostCreateDto.AttachDto> attachmentList;
 
     @ApiModelProperty(notes = "태그들")
     @Singular("tagList")
-    private List<TagDto> tagList;
-  }
-
-  @ApiModel("첨부 파일")
-  @Getter
-  @NoArgsConstructor
-  @AllArgsConstructor
-  @Builder
-  static public class AttachDto{
-    private Long attachId;
-  }
-
-  @ApiModel("게시글 태그 등록")
-  @Getter
-  @NoArgsConstructor
-  @AllArgsConstructor
-  @Builder
-  static public class TagDto{
-    @ApiModelProperty(notes = "태그 아이디", example = "1")
-    private Long tagId;
+    private List<PostCreateDto.TagDto> tagList;
   }
 
 }

@@ -8,7 +8,7 @@ import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.post.domain.entity.Post;
 import com.se.apiserver.v1.post.application.error.PostErrorCode;
 import com.se.apiserver.v1.post.domain.entity.PostIsSecret;
-import com.se.apiserver.v1.post.infra.dto.PostReadDto;
+import com.se.apiserver.v1.post.application.dto.PostReadDto;
 import com.se.apiserver.v1.post.infra.repository.PostJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
