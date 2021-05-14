@@ -22,12 +22,12 @@ public class Report extends BaseEntity {
   private Long reportId;
 
   @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
-  @JoinColumn(name = "reply_id", referencedColumnName = "replyId")
-  private Reply reply;
-
-  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
   @JoinColumn(name = "post_id", referencedColumnName = "postId")
   private Post post;
+
+  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+  @JoinColumn(name = "reply_id", referencedColumnName = "replyId")
+  private Reply reply;
 
   @Column(length = 255, nullable = false)
   @Size(min = 2, max = 255)
@@ -37,11 +37,6 @@ public class Report extends BaseEntity {
   @Size(min = 2, max = 20)
   @Enumerated(EnumType.STRING)
   private ReportStatus status;
-
-  @Column(length = 20, nullable = false)
-  @Size(min = 2, max = 20)
-  @Enumerated(EnumType.STRING)
-  private ProcessType processType;
 
   @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
   @JoinColumn(name = "processor", referencedColumnName = "accountId")
@@ -55,18 +50,20 @@ public class Report extends BaseEntity {
   @JoinColumn(name = "reported", referencedColumnName = "accountId", nullable = false)
   private Account reported;
 
-  @Builder
-  public Report(Long reportId, Reply reply, Post post, @Size(min = 2, max = 255) String text,
-      @Size(min = 2, max = 20) ReportStatus status, @Size(min = 2, max = 20) ProcessType processType, Account processor,
+  public Report(Post post, Reply reply, @Size(min = 2, max = 255) String text,
+      @Size(min = 2, max = 20) ReportStatus status, Account processor,
       Account reporter, Account reported) {
-    this.reportId = reportId;
-    this.reply = reply;
     this.post = post;
+    this.reply = reply;
     this.text = text;
     this.status = status;
-    this.processType = processType;
     this.processor = processor;
     this.reporter = reporter;
     this.reported = reported;
+  }
+
+  public Report(Post post, Reply reply, @Size(min = 2, max = 255) String text,
+      Account reporter, Account reported) {
+    this(post, reply, text, ReportStatus.SUBMITTED, null, reporter, reported);
   }
 }
