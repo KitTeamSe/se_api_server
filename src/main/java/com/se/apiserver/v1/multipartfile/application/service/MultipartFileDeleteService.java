@@ -2,13 +2,13 @@ package com.se.apiserver.v1.multipartfile.application.service;
 
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.multipartfile.application.error.MultipartFileDeleteErrorCode;
-import com.se.apiserver.v1.multipartfile.application.error.MultipartFileDownloadErrorCode;
 
 import java.net.URI;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.ResourceAccessException;
@@ -32,17 +32,29 @@ public class MultipartFileDeleteService extends MultipartFileService {
       throw super.getBusinessExceptionFromFileServerException(e);
     }
     catch(ResourceAccessException rae){
-      throw new BusinessException(MultipartFileDownloadErrorCode.FAILED_TO_CONNECT_FILE_SERVER);
+      throw new BusinessException(MultipartFileDeleteErrorCode.FAILED_TO_CONNECT_FILE_SERVER);
     }
     catch (Exception e){
       throw new BusinessException(MultipartFileDeleteErrorCode.UNKNOWN_FILE_DELETE_ERROR);
     }
   }
 
-  public void deleteByDownloadUrl(final String downloadUrl){
-    if(downloadUrl == null || downloadUrl.isEmpty())
-      throw new BusinessException(MultipartFileDeleteErrorCode.EMPTY_DOWNLOAD_URL);
-    String fileName = downloadUrl.substring(downloadUrl.lastIndexOf('/') + 1);
-    this.delete(fileName);
+  public void delete(final String[] saveName){
+    RestTemplate rest = new RestTemplate();
+
+    String downloadUrl = DELETE_URL + "deleteMultipleFiles";
+
+    try{
+      rest.postForObject(new URI(downloadUrl), saveName, ResponseEntity.class);
+    }
+    catch(HttpStatusCodeException e){
+      throw super.getBusinessExceptionFromFileServerException(e);
+    }
+    catch(ResourceAccessException rae){
+      throw new BusinessException(MultipartFileDeleteErrorCode.FAILED_TO_CONNECT_FILE_SERVER);
+    }
+    catch (Exception e){
+      throw new BusinessException(MultipartFileDeleteErrorCode.UNKNOWN_FILE_DELETE_ERROR);
+    }
   }
 }

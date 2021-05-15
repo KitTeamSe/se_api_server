@@ -27,7 +27,7 @@ public class AttachDeleteService {
         .orElseThrow(() -> new BusinessException(AttachErrorCode.NO_SUCH_ATTACH));
 
     try{
-      multipartFileDeleteService.deleteByDownloadUrl(attach.getDownloadUrl());
+      multipartFileDeleteService.delete(attach.getSaveName());
     }
     catch (BusinessException e){
       String errorCode = e.getErrorCode().getCode();

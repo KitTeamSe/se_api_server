@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 public enum MultipartFileUploadErrorCode implements ErrorCode {
-  FAILED_TO_ACCESS_INTERNAL_FILE_SERVER(400, "MFULE01", "파일 서버에 접속할 수 없음"),
+  FAILED_TO_CONNECT_FILE_SERVER(400, "MFULE01", "파일 서버에 접속할 수 없음"),
   UNKNOWN_FILE_UPLOAD_ERROR(400, "MFULE02", "파일 업로드 중 알 수 없는 오류 발생"),
   INVALID_FILE_SIZE(400, "MFULE03", "유효하지 않은 파일 크기"),
   FILE_SIZE_LIMIT_EXCEEDED(400, "MFULE04", "파일 용량 초과");

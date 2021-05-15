@@ -87,4 +87,8 @@ public class Attach extends BaseEntity {
         if(this.post.getAttaches().contains(this))
             this.post.getAttaches().remove(this);
     }
+
+    public String getSaveName(){
+        return downloadUrl.substring(downloadUrl.lastIndexOf('/') + 1);
+    }
 }

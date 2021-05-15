@@ -6,6 +6,8 @@ import com.se.apiserver.v1.multipartfile.application.error.MultipartFileDownload
 import com.se.apiserver.v1.multipartfile.application.error.MultipartFileUploadErrorCode;
 import java.net.URI;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -45,6 +47,43 @@ public class MultipartFileUploadService extends MultipartFileService {
 
       // 내부 파일 서버 URL로부터, 외부 다운로드 URL 생성 후 반환
       return createExternalDownloadUrl(internalFileDownloadUrl);
+    }
+    catch(HttpStatusCodeException e){
+      throw super.getBusinessExceptionFromFileServerException(e);
+    }
+    catch(ResourceAccessException rae){
+      throw new BusinessException(MultipartFileUploadErrorCode.FAILED_TO_CONNECT_FILE_SERVER);
+    }
+    catch (Exception e){
+      throw new BusinessException(MultipartFileUploadErrorCode.UNKNOWN_FILE_UPLOAD_ERROR);
+    }
+  }
+
+  public String[] upload(MultipartFile[] files) {
+    // 파일 크기 검증
+    for(MultipartFile file : files)
+      validateFileSize(file.getSize());
+
+    // Body 생성
+    MultiValueMap<String, MultipartFile[]> parameters = new LinkedMultiValueMap<>();
+    parameters.add("files", files);
+
+    // Body + Header
+    HttpEntity<MultiValueMap<String, MultipartFile[]>> request = new HttpEntity<>(parameters, new HttpHeaders());
+
+    // Post 요청
+    try{
+      RestTemplate restTemplate = new RestTemplate();
+
+      String[] internalFileDownloadUrls = restTemplate.postForObject(
+          new URI(UPLOAD_URL + "uploadMultipleFiles"),
+          request,
+          String[].class);
+
+      // 내부 파일 서버 URL로부터, 외부 다운로드 URL 생성 후 반환
+      return Arrays.stream(internalFileDownloadUrls)
+          .map(s -> createExternalDownloadUrl(s))
+          .collect(Collectors.toList()).toArray(new String[0]);
     }
     catch(HttpStatusCodeException e){
       throw super.getBusinessExceptionFromFileServerException(e);
