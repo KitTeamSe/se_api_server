@@ -5,19 +5,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.multipartfile.application.error.FileServerErrorCodeProxy;
 import com.se.apiserver.v1.multipartfile.application.error.MultipartFileDeleteErrorCode;
-import com.se.apiserver.v1.multipartfile.infra.config.MultipartFileProperties;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+@RequiredArgsConstructor
 public abstract class MultipartFileService {
 
-  protected final String BASE_URL;
-
-  @Autowired
-  public MultipartFileService(MultipartFileProperties properties){
-    BASE_URL = "http://" + properties.getFileServerDomain() + "/file/";
-  }
+  @Value("${se-file-server.max-file-size}")
+  protected long MAX_FILE_SIZE;
 
   protected BusinessException getBusinessExceptionFromFileServerException(HttpStatusCodeException e){
     try{
