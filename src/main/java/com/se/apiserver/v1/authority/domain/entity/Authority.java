@@ -1,14 +1,13 @@
 package com.se.apiserver.v1.authority.domain.entity;
 
 import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
-import com.se.apiserver.v1.common.domain.entity.BaseEntity;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 
-import com.se.apiserver.v1.menu.domain.entity.Menu;
 import lombok.*;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 
 @Entity
@@ -28,6 +27,9 @@ public class Authority extends AccountGenerateEntity implements GrantedAuthority
   @Size(min = 2, max = 40)
   private String nameKor;
 
+  @OneToMany(mappedBy = "authority", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+  private List<AuthorityGroupAuthorityMapping> authorityGroupAuthorityMapping = new ArrayList<>();
+
   @Override
   public String getAuthority() {
     return nameEng;
@@ -44,5 +46,9 @@ public class Authority extends AccountGenerateEntity implements GrantedAuthority
 
   public void updateNameKor(String nameKor) {
     this.nameKor = nameKor;
+  }
+
+  public void addAuthorityGroupAuthorityMapping(AuthorityGroupAuthorityMapping authorityGroupAuthorityMapping){
+    this.authorityGroupAuthorityMapping.add(authorityGroupAuthorityMapping);
   }
 }
