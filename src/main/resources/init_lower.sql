@@ -97,3 +97,8 @@ insert into board (board_id, name_eng, name_kor, menu_id) values (1, 'freeboard'
 insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (28,20,1);
 insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (29,20,2);
 insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (30,20,3);
+
+insert into tag (tag_id, text) values (1, '1학년');
+insert into tag (tag_id, text) values (2, '2학년');
+insert into tag (tag_id, text) values (3, '3학년');
+insert into tag (tag_id, text) values (4, '4학년');
