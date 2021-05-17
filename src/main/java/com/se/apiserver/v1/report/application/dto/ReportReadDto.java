@@ -1,8 +1,5 @@
 package com.se.apiserver.v1.report.application.dto;
 
-import com.se.apiserver.v1.account.domain.entity.Account;
-import com.se.apiserver.v1.post.domain.entity.Post;
-import com.se.apiserver.v1.reply.domain.entity.Reply;
 import com.se.apiserver.v1.report.domain.entity.Report;
 import com.se.apiserver.v1.report.domain.entity.ReportStatus;
 import io.swagger.annotations.ApiModel;
@@ -42,18 +39,20 @@ public class ReportReadDto {
 
     @ApiModelProperty(notes = "신고 대상", example = "1")
     private String reportedNickname;
+
+    public static Response fromEntity(Report report){
+      return Response.builder()
+          .reportId(report.getReportId())
+          .postId(report.getPost().getPostId())
+          .replyId(report.getReply().getReplyId())
+          .text(report.getText())
+          .status(report.getStatus())
+          .processorNickname(report.getProcessor().getNickname())
+          .reporterNickname(report.getReporter().getNickname())
+          .reportedNickname(report.getReported().getNickname())
+          .build();
+    }
   }
 
-  public static Response fromEntity(Report report){
-    return Response.builder()
-        .reportId(report.getReportId())
-        .postId(report.getPost().getPostId())
-        .replyId(report.getReply().getReplyId())
-        .text(report.getText())
-        .status(report.getStatus())
-        .processorNickname(report.getProcessor().getNickname())
-        .reporterNickname(report.getReporter().getNickname())
-        .reportedNickname(report.getReported().getNickname())
-        .build();
-  }
+
 }

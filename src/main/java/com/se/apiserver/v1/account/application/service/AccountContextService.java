@@ -5,6 +5,7 @@ import com.se.apiserver.v1.account.application.error.AccountErrorCode;
 import com.se.apiserver.v1.account.infra.repository.AccountJpaRepository;
 import com.se.apiserver.v1.authority.infra.repository.AuthorityJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
+import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Set;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Service
 @RequiredArgsConstructor
@@ -66,6 +69,12 @@ public class AccountContextService implements UserDetailsService {
 
   private Long getCurrentAccountId() {
     return Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
+  }
+
+  private String getCurrentClientIP(){
+    HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+        .getRequest();
+    return request.getRemoteAddr();
   }
 
   public boolean isSignIn(){

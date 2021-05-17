@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 public enum ReportErrorCode implements ErrorCode {
-  SUCH_NO_REPORT(400, "REC01", "존재하지 않는 신고"),
+  NO_SUCH_REPORT(400, "REC01", "존재하지 않는 신고"),
   INVALID_INPUT(400, "REC02", "입력 값이 올바르지 않음");
 
   private final int status;
