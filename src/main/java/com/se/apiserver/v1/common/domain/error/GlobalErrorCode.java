@@ -13,7 +13,7 @@ public enum GlobalErrorCode implements ErrorCode {
   INVALID_JSON_INPUT(400, "GE04", "올바르지 않은 JSON 입력"),
   EXPIRED_JWT_TOKEN(400, "GE05", "JWT 토큰 기한 만료"),
   BANNED_IP(400, "GE06", "차단된 사용자"),
-  UNKNOWN_FILTER_ERROR(400, "GE07", "알 수 없는 필터 오류");
+  UNKNOWN_NON_BUSINESS_ERROR(400, "GE07", "처리되지 않은 오류 발생");
 
   private final String code;
   private final String message;
