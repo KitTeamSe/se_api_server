@@ -33,7 +33,7 @@ public class ReportReadService {
     Page<Report> all = reportJpaRepository.findAll(pageable);
     List<Response> responseList = all
         .stream()
-        .map(lr -> ReportReadDto.Response.fromEntity(lr))
+        .map(rl -> ReportReadDto.Response.fromEntity(rl))
         .collect(Collectors.toList());
     return new PageImpl(responseList, all.getPageable(), all.getTotalElements());
   }
