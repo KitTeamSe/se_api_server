@@ -35,9 +35,12 @@ public class ReportCreateService {
     if(request.getReportType() == null)
       throw new BusinessException(ReportErrorCode.INVALID_INPUT);
 
-    Report report;
+    if(!accountContextService.isSignIn())
+      throw new BusinessException(ReportErrorCode.ANONYMOUS_CANT_REPORT);
+
     Account reporter = accountContextService.getContextAccount();
 
+    Report report;
     switch(request.getReportType()){
       case POST:
         Post post = postJpaRepository.findById(request.getTargetId())

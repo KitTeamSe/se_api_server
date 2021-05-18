@@ -33,7 +33,6 @@ public class ReportApiController {
   private final ReportCreateService reportCreateService;
   private final ReportReadService reportReadService;
 
-  @PreAuthorize("hasAnyAuthority('ACCESS_MANAGE')")
   @PostMapping(path = "/report")
   @ResponseStatus(value = HttpStatus.CREATED)
   @ApiOperation(value = "신고 추가")
