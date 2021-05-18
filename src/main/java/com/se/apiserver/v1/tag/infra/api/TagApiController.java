@@ -75,7 +75,7 @@ public class TagApiController {
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "태그 삭제")
     @PreAuthorize("hasAuthority('TAG_MANAGE')")
-    public SuccessResponse delete(@PathVariable(value = "text") Long id) {
+    public SuccessResponse delete(@PathVariable(value = "id") Long id) {
         tagDeleteService.delete(id);
         return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 삭제되었습니다.");
     }

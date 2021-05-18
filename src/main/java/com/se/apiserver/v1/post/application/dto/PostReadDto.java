@@ -40,6 +40,9 @@ public class PostReadDto {
 
     private LocalDateTime createAt;
 
+    @JsonInclude(Include.NON_NULL)
+    private List<TagDto> tags;
+
     public static ListResponse fromEntity(Post post){
       String nickname = post.getAccount() != null ? post.getAccount().getNickname() : post.getAnonymous().getAnonymousNickname();
       String previewText = "";
@@ -47,7 +50,14 @@ public class PostReadDto {
         previewText = post.getPostContent().getText().length() <= 30 ? post.getPostContent().getText() : post.getPostContent().getText().substring(0, 30);
       }
 
-      return ListResponse.builder()
+      ListResponseBuilder builder = ListResponse.builder();
+
+      builder.tags(post.getTags().stream()
+          .map(t -> TagDto.fromEntity(t))
+          .collect(Collectors.toList())
+      );
+
+      return builder
               .postId(post.getPostId())
               .boardId(post.getBoard().getBoardId())
               .views(post.getViews())

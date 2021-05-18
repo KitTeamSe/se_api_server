@@ -62,7 +62,7 @@ public class Post extends BaseEntity {
   @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, orphanRemoval = true)
   private List<Attach> attaches = new ArrayList<>();
 
-  @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, orphanRemoval = true)
+  @OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, orphanRemoval = true)
   private List<PostTagMapping> tags = new ArrayList<>();
 
   public Post(Board board, PostContent postContent, PostIsNotice isNotice,
@@ -165,13 +165,12 @@ public class Post extends BaseEntity {
             });
   }
 
-  public void updateTags(List<PostTagMapping> tags) {
-    tags.stream()
-            .forEach(t -> {
-              if(!this.tags.contains(t)){
-                addTag(t);
-              }
-            });
+  public void updateTags(List<PostTagMapping> postTagMappings) {
+    this.tags.forEach(t -> {
+      t.setPost(null);
+    });
+    this.tags.clear();
+    addTags(postTagMappings);
   }
 
   public void update(Board board, PostContent postContent, PostIsNotice isNotice,
