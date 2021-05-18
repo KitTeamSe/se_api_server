@@ -54,4 +54,16 @@ public abstract class Report extends BaseEntity {
   protected Report(@Size(min = 2, max = 255) String description, Account reporter) {
     this(description, ReportStatus.SUBMITTED, reporter, null);
   }
+
+  public void updateDescription(String description){
+    this.description = description;
+  }
+
+  public void updateReportStatus(ReportStatus reportStatus){
+    this.reportStatus = reportStatus;
+  }
+
+  public void updateProcessor(Account processor){
+    this.processor = processor;
+  }
 }
