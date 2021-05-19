@@ -1,10 +1,14 @@
+
 package com.se.apiserver.v1.multipartfile.application.service;
 
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.multipartfile.application.error.MultipartFileDownloadErrorCode;
 import com.se.apiserver.v1.multipartfile.application.error.MultipartFileUploadErrorCode;
-import com.se.apiserver.v1.multipartfile.infra.config.MultipartFileProperties;
 import java.net.URI;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
@@ -17,14 +21,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class MultipartFileUploadService extends MultipartFileService {
-  private final String UPLOAD_URL;
-  private final long MAX_FILE_SIZE;
 
-  public MultipartFileUploadService(MultipartFileProperties properties){
-    super(properties);
-    UPLOAD_URL = super.BASE_URL + "upload/uploadFile/";
-    MAX_FILE_SIZE = properties.getMaxFileSize();
-  }
+  @Value("${se-file-server.upload-url}")
+  private String UPLOAD_URL;
 
   public String upload(MultipartFile file) {
     // 파일 크기 검증
@@ -42,12 +41,49 @@ public class MultipartFileUploadService extends MultipartFileService {
       RestTemplate restTemplate = new RestTemplate();
 
       String internalFileDownloadUrl = restTemplate.postForObject(
-          new URI(UPLOAD_URL),
-          request,
-          String.class);
+              new URI(UPLOAD_URL),
+              request,
+              String.class);
 
       // 내부 파일 서버 URL로부터, 외부 다운로드 URL 생성 후 반환
       return createExternalDownloadUrl(internalFileDownloadUrl);
+    }
+    catch(HttpStatusCodeException e){
+      throw super.getBusinessExceptionFromFileServerException(e);
+    }
+    catch(ResourceAccessException rae){
+      throw new BusinessException(MultipartFileUploadErrorCode.FAILED_TO_CONNECT_FILE_SERVER);
+    }
+    catch (Exception e){
+      throw new BusinessException(MultipartFileUploadErrorCode.UNKNOWN_FILE_UPLOAD_ERROR);
+    }
+  }
+
+  public String[] upload(MultipartFile[] files) {
+    // 파일 크기 검증
+    for(MultipartFile file : files)
+      validateFileSize(file.getSize());
+
+    // Body 생성
+    MultiValueMap<String, MultipartFile[]> parameters = new LinkedMultiValueMap<>();
+    parameters.add("files", files);
+
+    // Body + Header
+    HttpEntity<MultiValueMap<String, MultipartFile[]>> request = new HttpEntity<>(parameters, new HttpHeaders());
+
+    // Post 요청
+    try{
+      RestTemplate restTemplate = new RestTemplate();
+
+      String[] internalFileDownloadUrls = restTemplate.postForObject(
+          new URI(UPLOAD_URL + "uploadMultipleFiles"),
+          request,
+          String[].class);
+
+      // 내부 파일 서버 URL로부터, 외부 다운로드 URL 생성 후 반환
+      return Arrays.stream(internalFileDownloadUrls)
+          .map(s -> createExternalDownloadUrl(s))
+          .collect(Collectors.toList()).toArray(new String[0]);
     }
     catch(HttpStatusCodeException e){
       throw super.getBusinessExceptionFromFileServerException(e);
@@ -67,7 +103,7 @@ public class MultipartFileUploadService extends MultipartFileService {
     if(fileSize >= MAX_FILE_SIZE)
       throw new BusinessException(MultipartFileUploadErrorCode.FILE_SIZE_LIMIT_EXCEEDED);
   }
-  
+
   private String createExternalDownloadUrl(String fileServerResponse){
     String hostBaseUrl = super.getCurrentHostUrl() + "/multipart-file/download/";
     String fileName = fileServerResponse.substring(fileServerResponse.lastIndexOf('/') + 1);

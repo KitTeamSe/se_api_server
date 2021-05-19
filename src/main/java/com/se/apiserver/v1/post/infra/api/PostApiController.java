@@ -10,12 +10,15 @@ import com.se.apiserver.v1.post.application.dto.PostCreateDto;
 import com.se.apiserver.v1.post.application.dto.PostReadDto;
 import com.se.apiserver.v1.post.application.dto.PostUpdateDto;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @Api(tags = "게시글 관리")
@@ -28,17 +31,22 @@ public class PostApiController {
     private final PostReadService postReadService;
     private final PostDeleteService postDeleteService;
 
-    @PostMapping("/post")
+    @PostMapping(value = "/post", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.ALL_VALUE})
     @ResponseStatus(HttpStatus.CREATED)
-    @ApiOperation("게시글 생성")
-    public SuccessResponse<Long> create(@RequestBody @Validated PostCreateDto.Request request){
-        return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 등록되었습니다", postCreateService.create(request));
+    @ApiOperation(value = "게시글 생성")
+    @ApiImplicitParam(
+            name = "data", required = true, dataType = "PostCreateRequestDto", paramType = "body"
+    )
+
+    public SuccessResponse<Long> create(@RequestPart(value = "data", name = "data") @Validated PostCreateDto.Request request, @RequestPart(value = "file", required = false) MultipartFile[] files){
+        System.out.println("dasdsadsa");
+        return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 등록되었습니다", postCreateService.create(request, files));
     }
 
     @PutMapping("/post")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation("게시글 수정")
-    public SuccessResponse<Long> update(@RequestBody @Validated PostUpdateDto.Request request){
+    public SuccessResponse<Long> update(@RequestBody @Validated PostUpdateDto.Request request, @RequestParam("files") MultipartFile[] files){
         return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 수정되었습니다", postUpdateService.update(request));
     }
 

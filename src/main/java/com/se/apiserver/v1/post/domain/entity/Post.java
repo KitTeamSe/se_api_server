@@ -66,7 +66,7 @@ public class Post extends BaseEntity {
   private List<PostTagMapping> tags = new ArrayList<>();
 
   public Post(Board board, PostContent postContent, PostIsNotice isNotice,
-              PostIsSecret isSecret, Set<String> authorities, List<Attach> attaches,
+              PostIsSecret isSecret, Set<String> authorities,
               List<PostTagMapping> tags ) {
     validateBoardAccessAuthority(board, authorities);
     this.board = board;
@@ -91,17 +91,17 @@ public class Post extends BaseEntity {
 
 
   public Post(Account account, Board board,  PostContent postContent,
-              PostIsNotice isNotice, PostIsSecret isSecret, Set<String> authorities,
-              List<Attach> attaches, List<PostTagMapping> tags) {
-    this(board, postContent, isNotice, isSecret, authorities, attaches, tags);
+              PostIsNotice isNotice, PostIsSecret isSecret, Set<String> authorities
+          , List<PostTagMapping> tags) {
+    this(board, postContent, isNotice, isSecret, authorities, tags);
     validateBoardAccessAuthority(board, authorities);
     this.account = account;
   }
 
   public Post(Anonymous anonymous, Board board,  PostContent postContent,
               PostIsNotice isNotice, PostIsSecret isSecret, Set<String> authorities,
-              List<Attach> attaches, List<PostTagMapping> tags) {
-    this(board, postContent, isNotice, isSecret, authorities, attaches, tags);
+              List<PostTagMapping> tags) {
+    this(board, postContent, isNotice, isSecret, authorities, tags);
     this.anonymous = anonymous;
   }
 
