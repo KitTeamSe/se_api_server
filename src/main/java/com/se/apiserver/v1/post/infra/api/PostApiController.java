@@ -10,14 +10,27 @@ import com.se.apiserver.v1.post.application.dto.PostCreateDto;
 import com.se.apiserver.v1.post.application.dto.PostReadDto;
 import com.se.apiserver.v1.post.application.dto.PostUpdateDto;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Encoding;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
@@ -31,14 +44,13 @@ public class PostApiController {
     private final PostReadService postReadService;
     private final PostDeleteService postDeleteService;
 
-    @PostMapping(value = "/post", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.ALL_VALUE})
+    @PostMapping(value = "/post", consumes = MediaType.MULTIPART_FORM_DATA_VALUE )
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "게시글 생성")
-    @ApiImplicitParam(
-            name = "data", required = true, dataType = "PostCreateRequestDto", paramType = "body"
-    )
-
-    public SuccessResponse<Long> create(@RequestPart(value = "data", name = "data") @Validated PostCreateDto.Request request, @RequestPart(value = "file", required = false) MultipartFile[] files){
+    @RequestBody(content = @Content(encoding = @Encoding(name = "postCreateDto", contentType = "application/json")))
+    public SuccessResponse<Long> create(
+        @RequestPart(value = "request") @Parameter(schema =@Schema(type = "string", format = "binary")) PostCreateDto.Request request,
+        @RequestPart(value = "files", required = false) final MultipartFile[] files){
         System.out.println("dasdsadsa");
         return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 등록되었습니다", postCreateService.create(request, files));
     }
