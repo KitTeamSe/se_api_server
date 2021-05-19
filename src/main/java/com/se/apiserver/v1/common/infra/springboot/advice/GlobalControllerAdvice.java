@@ -61,6 +61,7 @@ public class GlobalControllerAdvice {
 
   @ExceptionHandler(JsonProcessingException.class)
   protected ResponseEntity<ErrorResponse> handleJsonProcessingException(final JsonProcessingException e) {
+    e.printStackTrace();
     final ErrorResponse response = ErrorResponse.of(GlobalErrorCode.INVALID_JSON_INPUT);
     return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
   }

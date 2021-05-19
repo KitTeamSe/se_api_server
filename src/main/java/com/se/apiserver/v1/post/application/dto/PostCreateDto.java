@@ -16,7 +16,7 @@ public class PostCreateDto {
   @Builder
   @NoArgsConstructor
   @AllArgsConstructor
-  @ApiModel("게시글 등록 요청")
+  @ApiModel(value = "PostCreateRequestDto")
   static public class Request{
     @NotNull
     @Min(1)
@@ -36,10 +36,6 @@ public class PostCreateDto {
     @NotNull
     @ApiModelProperty(notes = "비밀글로 설정할 것인지(관리자용)", example = "NORMAL")
     private PostIsSecret isSecret;
-
-    @ApiModelProperty(notes = "첨부 파일들")
-    @Singular("attachmentList")
-    private List<AttachDto> attachmentList;
 
     @ApiModelProperty(notes = "태그들")
     @Singular("tagList")

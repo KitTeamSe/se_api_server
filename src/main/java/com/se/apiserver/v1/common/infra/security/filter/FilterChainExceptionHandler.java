@@ -28,6 +28,7 @@ public class FilterChainExceptionHandler extends OncePerRequestFilter {
     catch (Exception e){
       // 비지니스 익셉션이 아닌 경우
       logger.error(e);
+      e.printStackTrace();
       resolver.resolveException(request, response, null, new BusinessException(GlobalErrorCode.UNKNOWN_NON_BUSINESS_ERROR));
     }
   }
