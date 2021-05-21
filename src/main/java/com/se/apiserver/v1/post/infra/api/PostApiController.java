@@ -14,6 +14,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -31,22 +32,18 @@ public class PostApiController {
     private final PostReadService postReadService;
     private final PostDeleteService postDeleteService;
 
-    @PostMapping(value = "/post", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.ALL_VALUE})
+    @PostMapping(value = "/post")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "게시글 생성")
-    @ApiImplicitParam(
-            name = "data", required = true, dataType = "PostCreateRequestDto", paramType = "body"
-    )
-
-    public SuccessResponse<Long> create(@RequestPart(value = "data", name = "data") @Validated PostCreateDto.Request request, @RequestPart(value = "file", required = false) MultipartFile[] files){
+    public SuccessResponse<Long> create(@RequestBody @Validated PostCreateDto.Request request){
         System.out.println("dasdsadsa");
-        return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 등록되었습니다", postCreateService.create(request, files));
+        return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 등록되었습니다", postCreateService.create(request));
     }
 
     @PutMapping("/post")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation("게시글 수정")
-    public SuccessResponse<Long> update(@RequestBody @Validated PostUpdateDto.Request request, @RequestParam("files") MultipartFile[] files){
+    public SuccessResponse<Long> update(@RequestBody @Validated PostUpdateDto.Request request){
         return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 수정되었습니다", postUpdateService.update(request));
     }
 
@@ -79,5 +76,12 @@ public class PostApiController {
     public SuccessResponse<PageImpl<PostReadDto.ListResponse>> readSecret(PageRequest pageRequest, Long boardId){
         return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 조회되었습니다",
                 postReadService.readBoardPostList(pageRequest.of(),boardId));
+    }
+
+    @PostMapping("/post/search")
+    @ResponseStatus(value = HttpStatus.OK)
+    @ApiOperation(value = "게시글 검색")
+    public SuccessResponse<Pageable> searchPost(@RequestBody @Validated PostReadDto.SearchRequest searchRequest) {
+        return new SuccessResponse(HttpStatus.OK.value(), "조회 성공", postReadService.search(searchRequest));
     }
 }

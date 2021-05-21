@@ -3,17 +3,41 @@ package com.se.apiserver.v1.post.application.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.se.apiserver.v1.attach.domain.entity.Attach;
+import com.se.apiserver.v1.common.infra.dto.PageRequest;
 import com.se.apiserver.v1.post.domain.entity.*;
 
+import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 public class PostReadDto {
+
+  @Data
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @Builder
+  static public class SearchRequest{
+
+    @ApiModelProperty(notes = "게시판 아이디", example = "1")
+    private Long boardId;
+
+    @ApiModelProperty(notes = "검색 키워드", example = "검색할 문자열")
+    @Size(min = 1)
+    private String keyword;
+
+    @ApiModelProperty(notes = "검색 유형(TITLE_TEXT, TITLE, TEXT, REPLY...", example = "TITLE_TEXT")
+    private PostSearchType postSearchType;
+
+    @NotNull
+    private PageRequest pageRequest;
+  }
 
   @Data
   @NoArgsConstructor
