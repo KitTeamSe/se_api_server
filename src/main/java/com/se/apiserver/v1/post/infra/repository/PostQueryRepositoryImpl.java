@@ -34,8 +34,7 @@ public class PostQueryRepositoryImpl extends QuerydslRepositorySupport implement
 
     switch (searchRequest.getPostSearchType()){
       case TITLE_TEXT:
-        query.where(post.postContent.title.contains(keyword));
-        query.where(post.postContent.text.contains(keyword));
+        query.where(post.postContent.title.contains(keyword).or(post.postContent.text.contains(keyword)));
         break;
       case TITLE:
         query.where(post.postContent.title.contains(keyword));
@@ -47,12 +46,10 @@ public class PostQueryRepositoryImpl extends QuerydslRepositorySupport implement
         query.where(post.replies.any().text.contains(keyword));
         break;
       case NICKNAME:
-        query.where(post.account.nickname.contains(keyword));
-        query.where(post.anonymous.anonymousNickname.contains(keyword));
+        query.where(post.account.nickname.contains(keyword).or(post.anonymous.anonymousNickname.contains(keyword)));
         break;
       case USERID:
-        query.where(post.anonymous.anonymousNickname.contains(keyword));
-        query.where(post.account.idString.contains(keyword));
+        query.where(post.anonymous.anonymousNickname.contains(keyword).or(post.account.idString.contains(keyword)));
       case TAG:
         query.where(post.tags.any().tag.text.contains(keyword));
         break;
