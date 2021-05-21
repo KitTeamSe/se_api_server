@@ -2,71 +2,68 @@ package com.se.apiserver.v1.report.domain.entity;
 
 import com.se.apiserver.v1.common.domain.entity.BaseEntity;
 import com.se.apiserver.v1.account.domain.entity.Account;
-import com.se.apiserver.v1.post.domain.entity.Post;
-import com.se.apiserver.v1.reply.domain.entity.Reply;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "ReportType", discriminatorType = DiscriminatorType.STRING)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Report extends BaseEntity {
+public abstract class Report extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long reportId;
 
-  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
-  @JoinColumn(name = "reply_id", referencedColumnName = "replyId")
-  private Reply reply;
-
-  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
-  @JoinColumn(name = "post_id", referencedColumnName = "postId")
-  private Post post;
-
   @Column(length = 255, nullable = false)
   @Size(min = 2, max = 255)
-  private String text;
+  private String description;
 
-  @Column(length = 20, nullable = false)
-  @Size(min = 2, max = 20)
+  @Column(nullable = false)
   @Enumerated(EnumType.STRING)
-  private ReportStatus status;
-
-  @Column(length = 20, nullable = false)
-  @Size(min = 2, max = 20)
-  @Enumerated(EnumType.STRING)
-  private ProcessType processType;
+  private ReportStatus reportStatus;
 
   @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
-  @JoinColumn(name = "processor", referencedColumnName = "accountId")
-  private Account processor;
-
-  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
-  @JoinColumn(name = "reporter", referencedColumnName = "accountId")
+  @JoinColumn(name = "reporter_id", referencedColumnName = "accountId", nullable = false)
   private Account reporter;
 
   @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
-  @JoinColumn(name = "reported", referencedColumnName = "accountId", nullable = false)
-  private Account reported;
+  @JoinColumn(name = "processor_id", referencedColumnName = "accountId")
+  private Account processor;
 
-  @Builder
-  public Report(Long reportId, Reply reply, Post post, @Size(min = 2, max = 255) String text,
-      @Size(min = 2, max = 20) ReportStatus status, @Size(min = 2, max = 20) ProcessType processType, Account processor,
-      Account reporter, Account reported) {
-    this.reportId = reportId;
-    this.reply = reply;
-    this.post = post;
-    this.text = text;
-    this.status = status;
-    this.processType = processType;
-    this.processor = processor;
+  public abstract Long getTargetId();
+
+  @Transient
+  public ReportType getReportType(){
+    return ReportType.valueOf(this.getClass().getAnnotation(DiscriminatorValue.class).value());
+  }
+
+  public Report(@Size(min = 2, max = 255) String description,
+      ReportStatus reportStatus, Account reporter, Account processor) {
+    this.description = description;
+    this.reportStatus = reportStatus;
     this.reporter = reporter;
-    this.reported = reported;
+    this.processor = processor;
+  }
+
+  protected Report(@Size(min = 2, max = 255) String description, Account reporter) {
+    this(description, ReportStatus.SUBMITTED, reporter, null);
+  }
+
+  public void updateDescription(String description){
+    this.description = description;
+  }
+
+  public void updateReportStatus(ReportStatus reportStatus){
+    this.reportStatus = reportStatus;
+  }
+
+  public void updateProcessor(Account processor){
+    this.processor = processor;
   }
 }
