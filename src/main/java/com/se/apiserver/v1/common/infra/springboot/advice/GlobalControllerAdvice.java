@@ -1,6 +1,7 @@
 package com.se.apiserver.v1.common.infra.springboot.advice;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.se.apiserver.v1.common.domain.error.ErrorCode;
 import com.se.apiserver.v1.common.domain.error.GlobalErrorCode;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
@@ -59,10 +60,17 @@ public class GlobalControllerAdvice {
     return new ResponseEntity<>(response, HttpStatus.valueOf(errorCode.getStatus()));
   }
 
-  @ExceptionHandler(JsonProcessingException.class)
-  protected ResponseEntity<ErrorResponse> handleJsonProcessingException(final JsonProcessingException e) {
+  @ExceptionHandler(JsonParseException.class)
+  protected ResponseEntity<ErrorResponse> handleJsonParseException(final JsonParseException e) {
     e.printStackTrace();
     final ErrorResponse response = ErrorResponse.of(GlobalErrorCode.INVALID_JSON_INPUT);
+    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(InvalidFormatException.class)
+  protected ResponseEntity<ErrorResponse> handleInvalidFormatException(final InvalidFormatException e) {
+    e.printStackTrace();
+    final ErrorResponse response = ErrorResponse.of(GlobalErrorCode.INVALID_ENUM_INPUT);
     return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
   }
 }
