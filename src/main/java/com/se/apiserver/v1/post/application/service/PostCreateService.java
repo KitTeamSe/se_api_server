@@ -43,15 +43,15 @@ public class PostCreateService {
     private final MultipartFileUploadService multipartFileUploadService;
 
     @Transactional
-    public Long create(PostCreateDto.Request request, MultipartFile[] files) {
+    public Long create(PostCreateDto.Request request) {
         Post post = createPost(request);
 
-        String[] fileUrls = multipartFileUploadService.upload(files);
-        List<Attach> attachList = IntStream.range(0, files.length)
-                .mapToObj(idx -> {
-                    return new Attach(fileUrls[idx], files[idx].getName());
-                }).collect(Collectors.toList());
-        post.updateAttaches(attachList);
+//        String[] fileUrls = multipartFileUploadService.upload(files);
+//        List<Attach> attachList = IntStream.range(0, files.length)
+//                .mapToObj(idx -> {
+//                    return new Attach(fileUrls[idx], files[idx].getName());
+//                }).collect(Collectors.toList());
+//        post.updateAttaches(attachList);
         postJpaRepository.save(post);
         return post.getPostId();
     }
