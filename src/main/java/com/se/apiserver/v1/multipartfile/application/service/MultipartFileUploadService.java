@@ -2,12 +2,12 @@
 package com.se.apiserver.v1.multipartfile.application.service;
 
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
+import com.se.apiserver.v1.multipartfile.application.dto.MultipartFileUploadDto.Response;
 import com.se.apiserver.v1.multipartfile.application.error.MultipartFileDownloadErrorCode;
 import com.se.apiserver.v1.multipartfile.application.error.MultipartFileUploadErrorCode;
 import java.net.URI;
 
-import java.util.Arrays;
-import java.util.stream.Collectors;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -25,7 +25,7 @@ public class MultipartFileUploadService extends MultipartFileService {
   @Value("${se-file-server.upload-url}")
   private String UPLOAD_URL;
 
-  public String upload(MultipartFile file) {
+  public Response upload(MultipartFile file) {
     // 파일 크기 검증
     validateFileSize(file.getSize());
 
@@ -40,13 +40,15 @@ public class MultipartFileUploadService extends MultipartFileService {
     try{
       RestTemplate restTemplate = new RestTemplate();
 
-      String internalFileDownloadUrl = restTemplate.postForObject(
-              new URI(UPLOAD_URL),
-              request,
-              String.class);
+      Response response = restTemplate.postForObject(
+          new URI(UPLOAD_URL),
+          request,
+          Response.class
+      );
 
-      // 내부 파일 서버 URL로부터, 외부 다운로드 URL 생성 후 반환
-      return createExternalDownloadUrl(internalFileDownloadUrl);
+      // 외부 다운로드 URL 설정 후 반환
+      response.setFileDownloadUrl(createDownloadUrl(response.getSaveName()));
+      return response;
     }
     catch(HttpStatusCodeException e){
       throw super.getBusinessExceptionFromFileServerException(e);
@@ -59,7 +61,7 @@ public class MultipartFileUploadService extends MultipartFileService {
     }
   }
 
-  public String[] upload(MultipartFile[] files) {
+  public List<Response> upload(MultipartFile[] files) {
     // 파일 크기 검증
     for(MultipartFile file : files)
       validateFileSize(file.getSize());
@@ -75,15 +77,18 @@ public class MultipartFileUploadService extends MultipartFileService {
     try{
       RestTemplate restTemplate = new RestTemplate();
 
-      String[] internalFileDownloadUrls = restTemplate.postForObject(
+      List<Response> responses = restTemplate.postForObject(
           new URI(UPLOAD_URL + "uploadMultipleFiles"),
           request,
-          String[].class);
+          List.class
+      );
 
-      // 내부 파일 서버 URL로부터, 외부 다운로드 URL 생성 후 반환
-      return Arrays.stream(internalFileDownloadUrls)
-          .map(s -> createExternalDownloadUrl(s))
-          .collect(Collectors.toList()).toArray(new String[0]);
+      // 다운로드 URL 설정 후 반환
+      for(Response r : responses){
+        r.setFileDownloadUrl(createDownloadUrl(r.getSaveName()));
+      }
+
+      return responses;
     }
     catch(HttpStatusCodeException e){
       throw super.getBusinessExceptionFromFileServerException(e);
@@ -104,9 +109,8 @@ public class MultipartFileUploadService extends MultipartFileService {
       throw new BusinessException(MultipartFileUploadErrorCode.FILE_SIZE_LIMIT_EXCEEDED);
   }
 
-  private String createExternalDownloadUrl(String fileServerResponse){
+  private String createDownloadUrl(String saveName){
     String hostBaseUrl = super.getCurrentHostUrl() + "/multipart-file/download/";
-    String fileName = fileServerResponse.substring(fileServerResponse.lastIndexOf('/') + 1);
-    return hostBaseUrl + fileName;
+    return hostBaseUrl + saveName;
   }
 }
