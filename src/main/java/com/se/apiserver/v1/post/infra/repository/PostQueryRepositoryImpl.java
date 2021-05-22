@@ -1,6 +1,7 @@
 package com.se.apiserver.v1.post.infra.repository;
 
 import com.querydsl.jpa.JPQLQuery;
+import com.se.apiserver.v1.account.domain.entity.QAccount;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.post.application.dto.PostReadDto.SearchRequest;
 import com.se.apiserver.v1.post.application.error.PostSearchErrorCode;
@@ -26,6 +27,7 @@ public class PostQueryRepositoryImpl extends QuerydslRepositorySupport implement
       throw new BusinessException(PostSearchErrorCode.INVALID_SEARCH_KEYWORD);
 
     QPost post = QPost.post;
+    QAccount account = QAccount.account;
 
     JPQLQuery query = from(post);
     query.where(post.board.boardId.eq(searchRequest.getBoardId()));
@@ -46,9 +48,11 @@ public class PostQueryRepositoryImpl extends QuerydslRepositorySupport implement
         query.where(post.replies.any().text.contains(keyword));
         break;
       case NICKNAME:
+        query.leftJoin(post.account, account);
         query.where(post.account.nickname.contains(keyword).or(post.anonymous.anonymousNickname.contains(keyword)));
         break;
       case USERID:
+        query.leftJoin(post.account, account);
         query.where(post.anonymous.anonymousNickname.contains(keyword).or(post.account.idString.contains(keyword)));
       case TAG:
         query.where(post.tags.any().tag.text.contains(keyword));
