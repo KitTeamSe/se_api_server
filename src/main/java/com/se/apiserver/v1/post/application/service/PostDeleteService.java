@@ -29,7 +29,10 @@ public class PostDeleteService {
                     return attach.getSaveName();
                 })
                 .toArray(String[]::new);
-        multipartFileDeleteService.delete(attachSaveNameList);
+
+        if(attachSaveNameList.length > 0)
+            multipartFileDeleteService.delete(attachSaveNameList);
+
         postJpaRepository.delete(post);
         return true;
     }
