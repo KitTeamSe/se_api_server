@@ -1,6 +1,8 @@
 package com.se.apiserver.v1.post.application.service;
 
 import com.se.apiserver.v1.account.application.service.AccountContextService;
+import com.se.apiserver.v1.account.domain.entity.Account;
+import com.se.apiserver.v1.authority.domain.entity.Authority;
 import com.se.apiserver.v1.board.domain.entity.Board;
 import com.se.apiserver.v1.board.application.error.BoardErrorCode;
 import com.se.apiserver.v1.board.infra.repository.BoardJpaRepository;
@@ -35,6 +37,11 @@ public class PostReadService {
     public PostReadDto.Response read(Long postId){
         Post post = postJpaRepository.findById(postId)
                 .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));
+        Board board = post.getBoard();
+        Account account = accountContextService.getContextAccount();
+        Set<String> authorities = accountContextService.getContextAuthorities();
+
+        board.validateAccessAuthority(authorities);
         return PostReadDto.Response.fromEntity(post, isOwnerOrHasManageAuthority(post));
     }
 
