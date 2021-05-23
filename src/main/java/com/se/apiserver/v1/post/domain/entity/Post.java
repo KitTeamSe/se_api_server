@@ -50,6 +50,10 @@ public class Post extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private PostIsSecret isSecret;
 
+  @Column(length = 10, nullable = false)
+  @Enumerated(EnumType.STRING)
+  private PostIsDeleted postIsDeleted;
+
   @Column(nullable = false)
   private Integer views;
 
@@ -73,6 +77,7 @@ public class Post extends BaseEntity {
     this.postContent = postContent;
     updateNotice(isNotice, authorities);
     this.isSecret = isSecret;
+    this.postIsDeleted = PostIsDeleted.NORMAL;
     this.views = 0;
     this.numReply = 0;
     addAttaches(attaches);
@@ -191,5 +196,12 @@ public class Post extends BaseEntity {
     if(this.anonymous == null)
       throw new BusinessException(PostErrorCode.NOT_ANONYMOUS_POST);
     return anonymous.getAnonymousPassword();
+  }
+
+  public void delete() {
+    if(this.postIsDeleted == PostIsDeleted.DELETED)
+      throw new BusinessException(PostErrorCode.DELETED_POST);
+
+    this.postIsDeleted = PostIsDeleted.DELETED;
   }
 }
