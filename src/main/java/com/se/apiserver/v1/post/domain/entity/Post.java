@@ -67,7 +67,7 @@ public class Post extends BaseEntity {
 
   public Post(Board board, PostContent postContent, PostIsNotice isNotice,
               PostIsSecret isSecret, Set<String> authorities,
-              List<PostTagMapping> tags ) {
+              List<PostTagMapping> tags, List<Attach> attaches) {
     validateBoardAccessAuthority(board, authorities);
     this.board = board;
     this.postContent = postContent;
@@ -79,6 +79,20 @@ public class Post extends BaseEntity {
     addTags(tags);
   }
 
+  public Post(Account account, Board board,  PostContent postContent,
+              PostIsNotice isNotice, PostIsSecret isSecret, Set<String> authorities
+          , List<PostTagMapping> tags, List<Attach> attaches) {
+    this(board, postContent, isNotice, isSecret, authorities, tags, attaches);
+    validateBoardAccessAuthority(board, authorities);
+    this.account = account;
+  }
+
+  public Post(Anonymous anonymous, Board board,  PostContent postContent,
+              PostIsNotice isNotice, PostIsSecret isSecret, Set<String> authorities,
+              List<PostTagMapping> tags, List<Attach> attaches) {
+    this(board, postContent, isNotice, isSecret, authorities, tags, attaches);
+    this.anonymous = anonymous;
+  }
   private void updateNotice(PostIsNotice isNotice, Set<String> authorities) {
     validateNoticeAccess(isNotice, authorities);
     this.isNotice = isNotice;
@@ -87,22 +101,6 @@ public class Post extends BaseEntity {
   public void updateBoard(Board board, Set<String> authorities) {
     hasManageAuthority(authorities);
     this.board = board;
-  }
-
-
-  public Post(Account account, Board board,  PostContent postContent,
-              PostIsNotice isNotice, PostIsSecret isSecret, Set<String> authorities
-          , List<PostTagMapping> tags) {
-    this(board, postContent, isNotice, isSecret, authorities, tags);
-    validateBoardAccessAuthority(board, authorities);
-    this.account = account;
-  }
-
-  public Post(Anonymous anonymous, Board board,  PostContent postContent,
-              PostIsNotice isNotice, PostIsSecret isSecret, Set<String> authorities,
-              List<PostTagMapping> tags) {
-    this(board, postContent, isNotice, isSecret, authorities, tags);
-    this.anonymous = anonymous;
   }
 
   public void validateNoticeAccess(PostIsNotice isNotice, Set<String> authorities) {

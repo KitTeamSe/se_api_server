@@ -36,7 +36,6 @@ public class PostApiController {
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "게시글 생성")
     public SuccessResponse<Long> create(@RequestBody @Validated PostCreateDto.Request request){
-        System.out.println("dasdsadsa");
         return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 등록되었습니다", postCreateService.create(request));
     }
 

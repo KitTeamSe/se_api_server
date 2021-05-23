@@ -40,18 +40,10 @@ public class PostCreateService {
     private final PasswordEncoder passwordEncoder;
     private final TagJpaRepository tagJpaRepository;
     private final AttachJpaRepository attachJpaRepository;
-    private final MultipartFileUploadService multipartFileUploadService;
 
     @Transactional
     public Long create(PostCreateDto.Request request) {
         Post post = createPost(request);
-
-//        String[] fileUrls = multipartFileUploadService.upload(files);
-//        List<Attach> attachList = IntStream.range(0, files.length)
-//                .mapToObj(idx -> {
-//                    return new Attach(fileUrls[idx], files[idx].getName());
-//                }).collect(Collectors.toList());
-//        post.updateAttaches(attachList);
         postJpaRepository.save(post);
         return post.getPostId();
     }
@@ -61,11 +53,11 @@ public class PostCreateService {
                 .orElseThrow(() -> new BusinessException(BoardErrorCode.NO_SUCH_BOARD));
         Set<String> authorities = accountContextService.getContextAuthorities();
         List<PostTagMapping> tags = getTags(request.getTagList());
-
+        List<Attach> attaches = getAttaches(request.getAttachmentList());
         if(accountContextService.isSignIn()){
             Account contextAccount = accountContextService.getContextAccount();
             Post post = new Post(contextAccount, board, request.getPostContent(), request.getIsNotice(),
-                    request.getIsSecret(), authorities, tags);
+                    request.getIsSecret(), authorities, tags, attaches);
             postJpaRepository.save(post);
             return post;
         }
@@ -73,7 +65,7 @@ public class PostCreateService {
         validateAnonymousInput(request);
         request.getAnonymous().setAnonymousPassword(passwordEncoder.encode(request.getAnonymous().getAnonymousPassword()));
         Post post = new Post(request.getAnonymous(), board, request.getPostContent(), request.getIsNotice()
-                ,request.getIsSecret(), authorities, tags);
+                ,request.getIsSecret(), authorities, tags, attaches);
         return post;
     }
 
