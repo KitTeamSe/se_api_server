@@ -20,9 +20,6 @@ public class PostDeleteDto {
         @ApiModelProperty(notes = "게시글 아이디", example = "1")
         private Long postId;
 
-        @Size(min = 2, max = 20)
-        private String anonymousNickname;
-
         @Size(min = 2, max = 255)
         private String anonymousPassword;
     }
