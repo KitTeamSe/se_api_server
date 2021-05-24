@@ -6,19 +6,31 @@ import lombok.Data;
 @Data
 public class SuccessResponse<E> {
 
-  private int code;
+  private int status;
+  private String code;
   private String message;
+
   @JsonInclude(JsonInclude.Include.NON_NULL)
   private E data;
 
-  public SuccessResponse(int code, String message, E data) {
-    this.code = code;
+  public SuccessResponse(int status, String message) {
+    this.status = status;
     this.message = message;
+    this.code = "SR01";
+  }
+
+  public SuccessResponse(int status, String message, E data) {
+    this(status, message);
     this.data = data;
   }
 
-  public SuccessResponse(int code, String message) {
+  public SuccessResponse(int status, String message, String code) {
+    this(status, message);
     this.code = code;
-    this.message = message;
+  }
+
+  public SuccessResponse(int status, String message, String code, E data) {
+    this(status, message, data);
+    this.code = code;
   }
 }
