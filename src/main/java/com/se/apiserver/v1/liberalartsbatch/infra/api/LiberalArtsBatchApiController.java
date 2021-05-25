@@ -1,8 +1,7 @@
-package com.se.apiserver.v1.liberalartsbatchfile.infra.api;
+package com.se.apiserver.v1.liberalartsbatch.infra.api;
 
 import com.se.apiserver.v1.common.infra.dto.SuccessResponse;
-import com.se.apiserver.v1.liberalartsbatchfile.application.service.LiberalArtsBatchFileDownloadService;
-import com.se.apiserver.v1.liberalartsbatchfile.application.service.LiberalArtsBatchFileUploadService;
+import com.se.apiserver.v1.liberalartsbatch.application.service.LiberalArtsBatchUploadService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -19,10 +18,10 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/liberal-arts-batch-file")
-@Api(tags = "교양 배치 파일 업로드")
-public class LiberalArtsBatchFileUploadApiController {
+@Api(tags = "교양 배치 파일")
+public class LiberalArtsBatchApiController {
 
-  private final LiberalArtsBatchFileUploadService liberalArtsBatchfileUploadService;
+  private final LiberalArtsBatchUploadService liberalArtsBatchfileUploadService;
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
   @PostMapping(path = "/upload")
