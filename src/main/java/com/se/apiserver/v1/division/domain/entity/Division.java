@@ -3,6 +3,7 @@ package com.se.apiserver.v1.division.domain.entity;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.division.application.error.DivisionErrorCode;
 import com.se.apiserver.v1.opensubject.domain.entity.OpenSubject;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -26,7 +27,7 @@ public class Division {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long divisionId;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
   @OnDelete(action = OnDeleteAction.CASCADE)
   @JoinColumn(name = "open_subject_id", referencedColumnName = "openSubjectId")
   private OpenSubject openSubject;

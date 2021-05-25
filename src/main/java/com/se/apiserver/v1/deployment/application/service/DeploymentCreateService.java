@@ -86,7 +86,7 @@ public class DeploymentCreateService {
         usableLectureRoom,
         participatedTeacher,
         request.getDayOfWeek(),
-        new PeriodRange(startPeriod, endPeriod));
+        new PeriodRange(startPeriod, endPeriod), false);
 
     deploymentJpaRepository.save(deployment);
     updateDeployedTeachingTime(division, division.getDeployedTeachingTime() + periodRange.getTeachingTime());

@@ -40,19 +40,27 @@ public class LectureRoom extends AccountGenerateEntity {
   @Column(nullable = false)
   private Integer capacity;
 
+  @Column(nullable = false)
+  private Boolean autoCreated;
+
   @Size(max = 255)
   private String note;
 
-  public LectureRoom(@Size(min = 1, max = 30) String building, Integer roomNumber, Integer capacity) {
-    validateCapacity(capacity);
-
+  public LectureRoom(@Size(min = 1, max = 30) String building, Integer roomNumber, Boolean autoCreated) {
     this.building = building;
     this.roomNumber = roomNumber;
+    this.autoCreated = autoCreated;
+    this.capacity = 100;
+  }
+
+  public LectureRoom(@Size(min = 1, max = 30) String building, Integer roomNumber, Integer capacity, Boolean autoCreated) {
+    this(building, roomNumber, autoCreated);
+    validateCapacity(capacity);
     this.capacity = capacity;
   }
 
-  public LectureRoom(String building, Integer roomNumber, Integer capacity, @Size(max=255) String note) {
-    this(building, roomNumber, capacity);
+  public LectureRoom(String building, Integer roomNumber, Integer capacity, Boolean autoCreated, @Size(max=255) String note) {
+    this(building, roomNumber, capacity, autoCreated);
     this.note = note;
   }
   

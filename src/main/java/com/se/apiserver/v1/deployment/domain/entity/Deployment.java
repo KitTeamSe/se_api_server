@@ -22,6 +22,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -38,22 +39,22 @@ public class Deployment extends AccountGenerateEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long deploymentId;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
   @OnDelete(action = OnDeleteAction.CASCADE)
   @JoinColumn(name = "time_table_id", referencedColumnName = "timeTableId", nullable = false)
   private TimeTable timeTable;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
   @OnDelete(action = OnDeleteAction.CASCADE)
   @JoinColumn(name = "division_id", referencedColumnName = "divisionId", nullable = false)
   private Division division;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
   @OnDelete(action = OnDeleteAction.CASCADE)
   @JoinColumn(name = "usable_lecture_room_id", referencedColumnName = "usableLectureRoomId", nullable = false)
   private UsableLectureRoom usableLectureRoom;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
   @JoinColumn(name = "participated_teacher_id", referencedColumnName = "participatedTeacherId", nullable = false)
   private ParticipatedTeacher participatedTeacher;
 
@@ -64,18 +65,34 @@ public class Deployment extends AccountGenerateEntity {
   @Embedded
   private PeriodRange periodRange;
 
+  @Column(nullable = false)
+  private Boolean autoCreated;
+
+  @Size(max = 255)
+  private String note;
+
   public Deployment(TimeTable timeTable,
       Division division,
       UsableLectureRoom usableLectureRoom,
       ParticipatedTeacher participatedTeacher,
       DayOfWeek dayOfWeek,
-      PeriodRange periodRange) {
-
+      PeriodRange periodRange, Boolean autoCreated) {
     this.timeTable = timeTable;
     this.division = division;
     this.usableLectureRoom = usableLectureRoom;
     this.participatedTeacher = participatedTeacher;
     this.dayOfWeek = dayOfWeek;
     this.periodRange = periodRange;
+    this.autoCreated = autoCreated;
+  }
+
+  public Deployment(TimeTable timeTable,
+      Division division,
+      UsableLectureRoom usableLectureRoom,
+      ParticipatedTeacher participatedTeacher,
+      DayOfWeek dayOfWeek,
+      PeriodRange periodRange, Boolean autoCreated, @Size(max = 5) String note) {
+    this(timeTable, division, usableLectureRoom, participatedTeacher, dayOfWeek, periodRange, autoCreated);
+    this.note = note;
   }
 }

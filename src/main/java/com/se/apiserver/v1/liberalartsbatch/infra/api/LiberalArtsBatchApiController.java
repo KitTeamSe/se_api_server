@@ -24,10 +24,10 @@ public class LiberalArtsBatchApiController {
   private final LiberalArtsBatchUploadService liberalArtsBatchUploadService;
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
-  @PostMapping(path = "/upload")
+  @PostMapping(path = "/upload/{timeTableId}")
   @ResponseStatus(value = HttpStatus.OK)
   @ApiOperation(value = "교양 배치 파일 업로드")
-  public SuccessResponse upload(@PathVariable(value = "id") Long timeTableId, @RequestParam("file") MultipartFile file){
+  public SuccessResponse upload(@PathVariable(value = "timeTableId") Long timeTableId, @RequestParam("file") MultipartFile file){
     liberalArtsBatchUploadService.upload(timeTableId, file);
     return new SuccessResponse(HttpStatus.OK.value(), "교양 배치 파일 업로드에 성공했습니다.");
   }

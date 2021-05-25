@@ -35,12 +35,12 @@ public class OpenSubject extends AccountGenerateEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long openSubjectId;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
   @OnDelete(action = OnDeleteAction.CASCADE)
   @JoinColumn(name = "time_table_id", referencedColumnName = "timeTableId", nullable = false)
   private TimeTable timeTable;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
   @OnDelete(action = OnDeleteAction.CASCADE)
   @JoinColumn(name = "subject_id", referencedColumnName = "subjectId", nullable = false)
   private Subject subject;
@@ -76,7 +76,6 @@ public class OpenSubject extends AccountGenerateEntity {
 
   public OpenSubject(TimeTable timeTable, Subject subject, Integer numberOfDivision,
       Integer teachingTimePerWeek, Boolean autoCreated, @Size(max=255) String note) {
-
     this(timeTable, subject, numberOfDivision, teachingTimePerWeek, autoCreated);
     this.note = note;
   }

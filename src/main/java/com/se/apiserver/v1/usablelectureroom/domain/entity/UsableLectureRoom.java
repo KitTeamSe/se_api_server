@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,18 +30,30 @@ public class UsableLectureRoom extends AccountGenerateEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long usableLectureRoomId;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
   @OnDelete(action = OnDeleteAction.CASCADE)
   @JoinColumn(name = "time_table_id", referencedColumnName = "timeTableId", nullable = false)
   private TimeTable timeTable;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
   @OnDelete(action = OnDeleteAction.CASCADE)
   @JoinColumn(name = "lecture_room_id", referencedColumnName = "lectureRoomId", nullable = false)
   private LectureRoom lectureRoom;
 
-  public UsableLectureRoom(TimeTable timeTable, LectureRoom lectureRoom) {
+  @Column(nullable = false)
+  private Boolean autoCreated;
+
+  @Size(max = 255)
+  private String note;
+
+  public UsableLectureRoom(TimeTable timeTable, LectureRoom lectureRoom, Boolean autoCreated) {
     this.timeTable = timeTable;
     this.lectureRoom = lectureRoom;
+    this.autoCreated = autoCreated;
+  }
+
+  public UsableLectureRoom(TimeTable timeTable, LectureRoom lectureRoom, Boolean autoCreated, @Size(max = 25) String note) {
+    this(timeTable, lectureRoom, autoCreated);
+    this.note = note;
   }
 }

@@ -23,7 +23,7 @@ public class LectureRoomCreateDto {
     @ApiModelProperty(notes = "호수(방 번호)", example = "107")
     private Integer roomNumber;
 
-    @ApiModelProperty(notes = "정원", example = "50")
+    @ApiModelProperty(notes = "정원", example = "100")
     private Integer capacity;
 
     @ApiModelProperty(notes = "비고", example = "정원이 50명인 DB 107")

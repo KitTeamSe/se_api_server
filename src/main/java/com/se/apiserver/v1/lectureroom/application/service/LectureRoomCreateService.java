@@ -29,6 +29,7 @@ public class LectureRoomCreateService {
         request.getBuilding(),
         request.getRoomNumber(),
         request.getCapacity(),
+        false,
         request.getNote());
 
     lectureRoomJpaRepository.save(lectureRoom);

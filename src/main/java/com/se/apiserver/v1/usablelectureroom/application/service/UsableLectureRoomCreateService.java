@@ -40,7 +40,7 @@ public class UsableLectureRoomCreateService {
       throw new BusinessException(UsableLectureRoomErrorCode.DUPLICATED_USABLE_LECTURE_ROOM);
     }
 
-    UsableLectureRoom participatedTeacher = new UsableLectureRoom(timeTable, lectureRoom);
+    UsableLectureRoom participatedTeacher = new UsableLectureRoom(timeTable, lectureRoom, false);
 
     usableLectureRoomJpaRepository.save(participatedTeacher);
 
