@@ -34,11 +34,11 @@ public class ReportReadDto {
     @ApiModelProperty(notes = "신고 상태", example = "SUBMITTED")
     private ReportStatus status;
 
-    @ApiModelProperty(notes = "처리자 닉네임", example = "admin")
-    private String processorNickname;
+    @ApiModelProperty(notes = "처리자 ID", example = "1")
+    private Long processorId;
 
-    @ApiModelProperty(notes = "신고자 닉네임", example = "advertiser")
-    private String reporterNickname;
+    @ApiModelProperty(notes = "신고자 ID", example = "1")
+    private Long reporterId;
 
     public static Response fromEntity(Report report){
       return Response.builder()
@@ -47,8 +47,8 @@ public class ReportReadDto {
           .reportType(report.getReportType())
           .description(report.getDescription())
           .status(report.getReportStatus())
-          .processorNickname(report.getProcessor() == null ? null : report.getProcessor().getNickname())
-          .reporterNickname(report.getReporter().getNickname())
+          .processorId(report.getProcessor() == null ? null : report.getProcessor().getAccountId())
+          .reporterId(report.getReporter().getAccountId())
           .build();
     }
   }
