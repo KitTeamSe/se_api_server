@@ -18,7 +18,7 @@ public class Tag extends AccountGenerateEntity {
   private Long tagId;
 
 
-  @Column(length = 30, nullable = false, unique = true)
+  @Column(columnDefinition = "VARCHAR(30) UNIQUE NOT NULL, FULLTEXT KEY textFulltext (text)")
   @Size(min = 1, max = 30)
   private String text;
 
