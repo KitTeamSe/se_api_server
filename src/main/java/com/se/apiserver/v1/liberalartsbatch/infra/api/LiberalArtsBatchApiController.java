@@ -17,18 +17,18 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/liberal-arts-batch-file")
-@Api(tags = "교양 배치 파일")
+@RequestMapping("/api/v1/liberal-arts-batch")
+@Api(tags = "교양 배치(batch) 작업")
 public class LiberalArtsBatchApiController {
 
-  private final LiberalArtsBatchUploadService liberalArtsBatchfileUploadService;
+  private final LiberalArtsBatchUploadService liberalArtsBatchUploadService;
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
   @PostMapping(path = "/upload")
   @ResponseStatus(value = HttpStatus.OK)
   @ApiOperation(value = "교양 배치 파일 업로드")
   public SuccessResponse upload(@PathVariable(value = "id") Long timeTableId, @RequestParam("file") MultipartFile file){
-    liberalArtsBatchfileUploadService.upload(timeTableId, file);
+    liberalArtsBatchUploadService.upload(timeTableId, file);
     return new SuccessResponse(HttpStatus.OK.value(), "교양 배치 파일 업로드에 성공했습니다.");
   }
 }

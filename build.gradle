@@ -43,6 +43,10 @@ dependencies {
 	implementation 'com.querydsl:querydsl-jpa'
 
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
+	compile group: 'org.apache.poi', name: 'poi', version: '3.11'
+	compile group: 'org.apache.poi', name: 'poi-ooxml', version: '3.11'
+	compile group: 'commons-io', name: 'commons-io', version: '2.4'
 }
 
 jacoco {
