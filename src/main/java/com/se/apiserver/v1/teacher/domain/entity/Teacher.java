@@ -21,7 +21,7 @@ public class Teacher extends AccountGenerateEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long teacherId;
 
-  @Size(min = 2, max = 20)
+  @Size(min = 2, max = 100)
   @Column(nullable = false)
   private String name;
 
@@ -39,7 +39,7 @@ public class Teacher extends AccountGenerateEntity {
   @Size(max = 255)
   private String note;
 
-  public Teacher(@Size(min = 2, max = 20) String name, TeacherType type,
+  public Teacher(@Size(min = 2, max = 100) String name, TeacherType type,
       @Size(min = 2, max = 30) String department, Boolean autoCreated) {
     this.name = name;
     this.type = type;

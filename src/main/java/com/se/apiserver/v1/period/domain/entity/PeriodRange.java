@@ -16,11 +16,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PeriodRange {
 
-  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "start_period_id", referencedColumnName = "periodId", nullable = false)
   private Period startPeriod;
 
-  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "end_period_id", referencedColumnName = "periodId", nullable = false)
   private Period endPeriod;
 

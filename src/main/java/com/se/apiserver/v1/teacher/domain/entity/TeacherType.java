@@ -5,5 +5,6 @@ public enum TeacherType {
   FIXED_TERM_PROFESSOR,
   ASSISTANT,
   STUDENT,
+  AUTO_CREATED,
   ETC
 }

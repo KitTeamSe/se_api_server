@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,17 +36,34 @@ public class Division {
   @Column(nullable = false)
   private Integer deployedTeachingTime;
 
-  public Division(OpenSubject openSubject){
+  @Column(nullable = false)
+  private Boolean autoCreated;
+
+  @Size(max = 255)
+  private String note;
+
+  public Division(OpenSubject openSubject, Boolean autoCreated){
     this.openSubject = openSubject;
     this.deployedTeachingTime = 0;
+    this.autoCreated = autoCreated;
   }
 
-  public Division(OpenSubject openSubject, Integer deployedTeachingTime){
-    validateDeployedTeachingTime(deployedTeachingTime);
+  public Division(OpenSubject openSubject, Boolean autoCreated, @Size(max = 255) String note){
+    this(openSubject, autoCreated);
+    this.note = note;
+  }
 
-    this.openSubject = openSubject;
+  public Division(OpenSubject openSubject, Integer deployedTeachingTime, Boolean autoCreated){
+    this(openSubject, autoCreated);
+    validateDeployedTeachingTime(deployedTeachingTime);
     this.deployedTeachingTime = deployedTeachingTime;
   }
+
+  public Division(OpenSubject openSubject, Integer deployedTeachingTime, Boolean autoCreated, @Size(max = 255) String note){
+    this(openSubject, deployedTeachingTime, autoCreated);
+    this.note = note;
+  }
+
 
   public void validateDeployedTeachingTime(Integer deployedTeachingTime){
     if(deployedTeachingTime == null || deployedTeachingTime < 0)

@@ -1,6 +1,7 @@
 package com.se.apiserver.v1.teacher.infra.repository;
 
 import com.se.apiserver.v1.teacher.domain.entity.Teacher;
+import com.se.apiserver.v1.teacher.domain.entity.TeacherType;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -12,4 +13,6 @@ public interface TeacherJpaRepository extends JpaRepository<Teacher, Long> {
   Optional<Teacher> findByName(String name);
 
   Optional<Teacher> findByDepartment(String department);
+
+  Optional<Teacher> findByNameAndType(String name, TeacherType teacherType);
 }

@@ -97,7 +97,7 @@ public class OpenSubject extends AccountGenerateEntity {
 
     if(numberOfDivision > divisions.size()){
       IntStream.range(0, diff).forEach((i) ->
-        this.divisions.add(new Division(this)));
+        this.divisions.add(new Division(this, true)));
     }
     else{
       divisions.sort((o1, o2) -> (int) (o2.getDivisionId() - o1.getDivisionId()));
@@ -118,6 +118,6 @@ public class OpenSubject extends AccountGenerateEntity {
 
   private void addDivisions(int numberOfDivision){
     IntStream.range(0, numberOfDivision).forEach((i) ->
-        this.divisions.add(new Division(this)));
+        this.divisions.add(new Division(this, true)));
   }
 }

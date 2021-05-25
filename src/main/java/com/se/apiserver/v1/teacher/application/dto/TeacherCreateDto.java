@@ -19,7 +19,7 @@ public class TeacherCreateDto {
   static public class Request{
 
     @ApiModelProperty(notes = "이름", example = "홍길동")
-    @Size(min = 2, max = 20)
+    @Size(min = 2, max = 100)
     private String name;
 
     @ApiModelProperty(notes = "교원 구분", example = "FULL_PROFESSOR")

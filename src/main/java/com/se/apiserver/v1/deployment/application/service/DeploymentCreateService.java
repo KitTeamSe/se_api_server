@@ -48,7 +48,6 @@ public class DeploymentCreateService {
 
   @Transactional
   public DeploymentCreateDto.Resposne create(DeploymentCreateDto.Request request){
-
     // (필수) 정보 fetch
     TimeTable timeTable = findTimeTable(request.getTimeTableId());
     Division division = findDivision(request.getDivisionId());          // 분반이 유효한가?
@@ -58,35 +57,21 @@ public class DeploymentCreateService {
     Period endPeriod = findPeriod(request.getEndPeriodId());
     PeriodRange periodRange = new PeriodRange(startPeriod, endPeriod);
 
-    List<LectureUnableTime> lectureUnableTimes = lectureUnableTimeJpaRepository.findAllByParticipatedTeacher(participatedTeacher);
+    return saveDeployment(timeTable, division, usableLectureRoom, participatedTeacher, periodRange, request.getDayOfWeek(), false, null);
+  }
 
-    DeploymentAlertMessage alertMessage = new DeploymentAlertMessage();
+  public DeploymentCreateDto.Resposne saveDeployment(TimeTable timeTable, Division division, UsableLectureRoom usableLectureRoom,
+      ParticipatedTeacher participatedTeacher, PeriodRange periodRange, DayOfWeek dayOfWeek, Boolean autoCreated, String note){
 
-    // 교원 강의 불가 시간 검사
-    checkLectureUnableTime(alertMessage, lectureUnableTimes, periodRange, request.getDayOfWeek());
-
-    // 이 배치로 인해 주간 수업 시간이 초과되는가?
-    checkOverTeaching(alertMessage, timeTable, division, periodRange);
-
-    // 시간표에 포함된 모든 배치 정보 중 요일이 같은 배치 정보 가져옴
-    List<Deployment> deployments = deploymentJpaRepository.findAllByTimeTableAndDayOfWeek(timeTable, request.getDayOfWeek());
-
-    // 해당 학년이 동 시간대에 강의 받는 중인지 검사
-    checkSameGradeLectured(alertMessage, periodRange, deployments, division.getOpenSubject().getSubject().getGrade());
-    
-    // 교원이 동 시간대에 강의중인지 검사
-    checkTeacherLectures(alertMessage, periodRange, deployments, participatedTeacher);
-
-    // 겹치는 강의가 있는지 검사
-    checkOverlap(alertMessage, periodRange, deployments, usableLectureRoom);
+    DeploymentAlertMessage alertMessage = buildAlertMessage(timeTable, division, usableLectureRoom, participatedTeacher, periodRange, dayOfWeek);
 
     Deployment deployment = new Deployment(
         timeTable,
         division,
         usableLectureRoom,
         participatedTeacher,
-        request.getDayOfWeek(),
-        new PeriodRange(startPeriod, endPeriod), false);
+        dayOfWeek,
+        periodRange, autoCreated, note);
 
     deploymentJpaRepository.save(deployment);
     updateDeployedTeachingTime(division, division.getDeployedTeachingTime() + periodRange.getTeachingTime());
@@ -145,7 +130,7 @@ public class DeploymentCreateService {
 
   // 교원의 강의 불가 시간 검사
   private void checkLectureUnableTime(DeploymentAlertMessage alertMessage, List<LectureUnableTime> lectureUnableTimes, PeriodRange periodRange, DayOfWeek dayOfWeek){
-    if(!lectureUnableTimes.isEmpty())
+    if(lectureUnableTimes!= null && !lectureUnableTimes.isEmpty())
       if(!isLectureUnableTimeIncluded(lectureUnableTimes, periodRange, dayOfWeek))
         alertMessage.addAlertMessages(DeploymentErrorCode.TEACHER_LECTURE_UNABLE_TIME);
   }
@@ -197,5 +182,35 @@ public class DeploymentCreateService {
   private void updateDeployedTeachingTime(Division division, Integer newTeachingTime){
     division.updateDeployedTeachingTime(newTeachingTime);
     divisionJpaRepository.save(division);
+  }
+
+  private DeploymentAlertMessage buildAlertMessage(TimeTable timeTable, Division division,
+      UsableLectureRoom usableLectureRoom, ParticipatedTeacher participatedTeacher,
+      PeriodRange periodRange, DayOfWeek dayOfWeek){
+
+    DeploymentAlertMessage alertMessage = new DeploymentAlertMessage();
+    List<LectureUnableTime> lectureUnableTimes = null;
+    if(participatedTeacher.getParticipatedTeacherId() != null)
+      lectureUnableTimes = lectureUnableTimeJpaRepository.findAllByParticipatedTeacher(participatedTeacher);
+
+    // 교원 강의 불가 시간 검사
+    checkLectureUnableTime(alertMessage, lectureUnableTimes, periodRange, dayOfWeek);
+
+    // 이 배치로 인해 주간 수업 시간이 초과되는가?
+    checkOverTeaching(alertMessage, timeTable, division, periodRange);
+
+    // 시간표에 포함된 모든 배치 정보 중 요일이 같은 배치 정보 가져옴
+    List<Deployment> deployments = deploymentJpaRepository.findAllByTimeTableAndDayOfWeek(timeTable, dayOfWeek);
+
+    // 해당 학년이 동 시간대에 강의 받는 중인지 검사
+    checkSameGradeLectured(alertMessage, periodRange, deployments, division.getOpenSubject().getSubject().getGrade());
+
+    // 교원이 동 시간대에 강의중인지 검사
+    checkTeacherLectures(alertMessage, periodRange, deployments, participatedTeacher);
+
+    // 겹치는 강의가 있는지 검사
+    checkOverlap(alertMessage, periodRange, deployments, usableLectureRoom);
+
+    return alertMessage;
   }
 }
