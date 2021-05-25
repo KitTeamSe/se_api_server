@@ -33,8 +33,7 @@ public class PostDeleteService {
         Set<String> authoritySet = accountContextService.getContextAuthorities();
         Post post = postJpaRepository.findById(postId)
                 .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));
-        post.validateAccountAccess(account, authoritySet);
-        post.delete();
+        post.delete(account, authoritySet);
         postJpaRepository.save(post);
         return true;
     }
@@ -46,7 +45,6 @@ public class PostDeleteService {
         String inputPassword = request.getAnonymousPassword();
         if(!passwordEncoder.matches(inputPassword, post.getAnonymousPassword()))
             throw new BusinessException(PostErrorCode.ANONYMOUS_PASSWORD_INCORRECT);
-
         post.delete();
         postJpaRepository.save(post);
         return true;

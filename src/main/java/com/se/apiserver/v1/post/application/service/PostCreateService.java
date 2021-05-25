@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -52,12 +53,14 @@ public class PostCreateService {
         Board board = boardJpaRepository.findById(request.getBoardId())
                 .orElseThrow(() -> new BusinessException(BoardErrorCode.NO_SUCH_BOARD));
         Set<String> authorities = accountContextService.getContextAuthorities();
-        List<PostTagMapping> tags = getTags(request.getTagList());
+        List<PostTagMapping> tags = getTagsIfSignIn(request.getTagList());
+
         List<Attach> attaches = getAttaches(request.getAttachmentList());
+        String ip = accountContextService.getCurrentClientIP();
         if(accountContextService.isSignIn()){
             Account contextAccount = accountContextService.getContextAccount();
             Post post = new Post(contextAccount, board, request.getPostContent(), request.getIsNotice(),
-                    request.getIsSecret(), authorities, tags, attaches);
+                    request.getIsSecret(), authorities, tags, attaches, ip);
             postJpaRepository.save(post);
             return post;
         }
@@ -65,7 +68,7 @@ public class PostCreateService {
         validateAnonymousInput(request);
         request.getAnonymous().setAnonymousPassword(passwordEncoder.encode(request.getAnonymous().getAnonymousPassword()));
         Post post = new Post(request.getAnonymous(), board, request.getPostContent(), request.getIsNotice()
-                ,request.getIsSecret(), authorities, tags, attaches);
+                ,request.getIsSecret(), authorities, tags, attaches, ip);
         return post;
     }
 
@@ -74,7 +77,10 @@ public class PostCreateService {
             throw new BusinessException(PostErrorCode.INVALID_INPUT);
     }
 
-    private List<PostTagMapping> getTags(List<PostCreateDto.TagDto> tagList) {
+    // only signed user can add tags
+    private List<PostTagMapping> getTagsIfSignIn(List<PostCreateDto.TagDto> tagList) {
+        if(!accountContextService.isSignIn())
+            return new ArrayList<>();
         return tagList.stream()
                 .map(t -> PostTagMapping.builder()
                         .tag(tagJpaRepository.findById(t.getTagId())

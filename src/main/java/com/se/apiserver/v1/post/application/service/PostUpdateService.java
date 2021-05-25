@@ -23,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -43,23 +44,27 @@ public class PostUpdateService {
         Set<String> authorities = accountContextService.getContextAuthorities();
         Post post = postJpaRepository.findById(request.getPostId())
                 .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));
-        if(accountContextService.isSignIn()){
-            Account contextAccount = accountContextService.getContextAccount();
-            post.validateAccountAccess(contextAccount, authorities);
-        }
-
-        if(post.getAnonymous() != null && request.getAnonymousPassword() != null){
-            validateAnonymousAccess(post.getAnonymous(), request.getAnonymousPassword());
-        }
 
         Board board = boardJpaRepository.findById(request.getBoardId())
                 .orElseThrow(() -> new BusinessException(BoardErrorCode.NO_SUCH_BOARD));
-
         List<Attach> attachList = getAttaches(request.getAttachmentList());
-        List<PostTagMapping> tags = getTags(request.getTagList());
+        List<PostTagMapping> tags = getTagsIfSignIn(request.getTagList());
+        String ip = accountContextService.getCurrentClientIP();
 
-        post.update(board, request.getPostContent(), request.getIsNotice(), request.getIsSecret(), attachList, tags, authorities);
+        if(accountContextService.isSignIn()){
+            Account contextAccount = accountContextService.getContextAccount();
+            post.validateAccountAccess(contextAccount, authorities);
+            post.update(board, request.getPostContent(), request.getIsNotice(), request.getIsSecret(), attachList, tags, authorities, ip);
+            postJpaRepository.save(post);
+            return post.getPostId();
+        }
 
+        if(post.getAnonymous() == null || request.getAnonymousPassword() == null)
+            throw new BusinessException(PostErrorCode.INVALID_INPUT);
+
+        validateAnonymousAccess(post.getAnonymous(), request.getAnonymousPassword());
+
+        post.update(board, request.getPostContent(), request.getIsNotice(), request.getIsSecret(), attachList, tags, authorities, ip);
         postJpaRepository.save(post);
         return post.getPostId();
     }
@@ -69,7 +74,10 @@ public class PostUpdateService {
             throw new BusinessException(PostErrorCode.ANONYMOUS_PASSWORD_INCORRECT);
     }
 
-    private List<PostTagMapping> getTags(List<PostCreateDto.TagDto> tagList) {
+    // only signed user can add tags
+    private List<PostTagMapping> getTagsIfSignIn(List<PostCreateDto.TagDto> tagList) {
+        if(!accountContextService.isSignIn())
+            return new ArrayList<>();
         return tagList.stream()
                 .map(t -> PostTagMapping.builder()
                         .tag(tagJpaRepository.findById(t.getTagId())
