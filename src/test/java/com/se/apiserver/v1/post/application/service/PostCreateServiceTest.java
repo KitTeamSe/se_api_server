@@ -18,7 +18,7 @@ import com.se.apiserver.v1.post.domain.entity.PostContent;
 import com.se.apiserver.v1.post.domain.entity.PostIsNotice;
 import com.se.apiserver.v1.post.domain.entity.PostIsSecret;
 import com.se.apiserver.v1.post.application.error.PostErrorCode;
-import com.se.apiserver.v1.post.infra.dto.PostCreateDto;
+import com.se.apiserver.v1.post.application.dto.PostCreateDto;
 import com.se.apiserver.v1.attach.infra.repository.AttachJpaRepository;
 import com.se.apiserver.v1.post.infra.repository.PostJpaRepository;
 import com.se.apiserver.v1.tag.domain.entity.Tag;

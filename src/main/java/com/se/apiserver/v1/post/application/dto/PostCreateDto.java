@@ -1,4 +1,4 @@
-package com.se.apiserver.v1.post.infra.dto;
+package com.se.apiserver.v1.post.application.dto;
 
 import com.se.apiserver.v1.common.domain.entity.Anonymous;
 import com.se.apiserver.v1.post.domain.entity.*;
@@ -6,11 +6,9 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class PostCreateDto {
@@ -18,7 +16,7 @@ public class PostCreateDto {
   @Builder
   @NoArgsConstructor
   @AllArgsConstructor
-  @ApiModel("게시글 등록 요청")
+  @ApiModel(value = "PostCreateRequestDto")
   static public class Request{
     @NotNull
     @Min(1)
@@ -38,10 +36,6 @@ public class PostCreateDto {
     @NotNull
     @ApiModelProperty(notes = "비밀글로 설정할 것인지(관리자용)", example = "NORMAL")
     private PostIsSecret isSecret;
-
-    @ApiModelProperty(notes = "첨부 파일들")
-    @Singular("attachmentList")
-    private List<AttachDto> attachmentList;
 
     @ApiModelProperty(notes = "태그들")
     @Singular("tagList")

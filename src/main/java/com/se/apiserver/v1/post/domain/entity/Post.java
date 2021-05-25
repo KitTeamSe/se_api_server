@@ -62,11 +62,11 @@ public class Post extends BaseEntity {
   @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, orphanRemoval = true)
   private List<Attach> attaches = new ArrayList<>();
 
-  @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, orphanRemoval = true)
+  @OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, orphanRemoval = true)
   private List<PostTagMapping> tags = new ArrayList<>();
 
   public Post(Board board, PostContent postContent, PostIsNotice isNotice,
-              PostIsSecret isSecret, Set<String> authorities, List<Attach> attaches,
+              PostIsSecret isSecret, Set<String> authorities,
               List<PostTagMapping> tags ) {
     validateBoardAccessAuthority(board, authorities);
     this.board = board;
@@ -91,17 +91,17 @@ public class Post extends BaseEntity {
 
 
   public Post(Account account, Board board,  PostContent postContent,
-              PostIsNotice isNotice, PostIsSecret isSecret, Set<String> authorities,
-              List<Attach> attaches, List<PostTagMapping> tags) {
-    this(board, postContent, isNotice, isSecret, authorities, attaches, tags);
+              PostIsNotice isNotice, PostIsSecret isSecret, Set<String> authorities
+          , List<PostTagMapping> tags) {
+    this(board, postContent, isNotice, isSecret, authorities, tags);
     validateBoardAccessAuthority(board, authorities);
     this.account = account;
   }
 
   public Post(Anonymous anonymous, Board board,  PostContent postContent,
               PostIsNotice isNotice, PostIsSecret isSecret, Set<String> authorities,
-              List<Attach> attaches, List<PostTagMapping> tags) {
-    this(board, postContent, isNotice, isSecret, authorities, attaches, tags);
+              List<PostTagMapping> tags) {
+    this(board, postContent, isNotice, isSecret, authorities, tags);
     this.anonymous = anonymous;
   }
 
@@ -165,13 +165,12 @@ public class Post extends BaseEntity {
             });
   }
 
-  public void updateTags(List<PostTagMapping> tags) {
-    tags.stream()
-            .forEach(t -> {
-              if(!this.tags.contains(t)){
-                addTag(t);
-              }
-            });
+  public void updateTags(List<PostTagMapping> postTagMappings) {
+    this.tags.forEach(t -> {
+      t.setPost(null);
+    });
+    this.tags.clear();
+    addTags(postTagMappings);
   }
 
   public void update(Board board, PostContent postContent, PostIsNotice isNotice,

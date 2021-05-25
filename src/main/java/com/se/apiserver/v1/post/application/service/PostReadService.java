@@ -7,8 +7,10 @@ import com.se.apiserver.v1.board.infra.repository.BoardJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.post.domain.entity.Post;
 import com.se.apiserver.v1.post.application.error.PostErrorCode;
-import com.se.apiserver.v1.post.infra.dto.PostReadDto;
+import com.se.apiserver.v1.post.domain.entity.PostIsSecret;
+import com.se.apiserver.v1.post.application.dto.PostReadDto;
 import com.se.apiserver.v1.post.infra.repository.PostJpaRepository;
+import com.se.apiserver.v1.post.infra.repository.PostQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -29,6 +31,7 @@ public class PostReadService {
     private final AccountContextService accountContextService;
     private final PasswordEncoder passwordEncoder;
     private final BoardJpaRepository boardJpaRepository;
+    private final PostQueryRepository postQueryRepository;
     public PostReadDto.Response read(Long postId){
         Post post = postJpaRepository.findById(postId)
                 .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));
@@ -58,8 +61,22 @@ public class PostReadService {
 
     private boolean isOwnerOrHasManageAuthority(Post post) {
         Set<String> authorities = accountContextService.getContextAuthorities();
+        if(post.getAccount() == null)
+            return post.getIsSecret() == PostIsSecret.NORMAL;
         if(authorities.contains(Post.MANAGE_AUTHORITY) || post.isOwner(accountContextService.getContextAccount()))
             return true;
         return false;
+    }
+
+    public PageImpl search(PostReadDto.SearchRequest pageRequest){
+        Board board = boardJpaRepository.findById(pageRequest.getBoardId())
+            .orElseThrow(() -> new BusinessException(BoardErrorCode.NO_SUCH_BOARD));
+        Set<String> authorities = accountContextService.getContextAuthorities();
+        board.validateAccessAuthority(authorities);
+
+        Page<Post> postPage = postQueryRepository.search(pageRequest);
+        List<PostReadDto.ListResponse> res = postPage.get().map(post -> PostReadDto.ListResponse.fromEntity(post))
+            .collect(Collectors.toList());
+        return new PageImpl(res, postPage.getPageable(), postPage.getTotalElements());
     }
 }

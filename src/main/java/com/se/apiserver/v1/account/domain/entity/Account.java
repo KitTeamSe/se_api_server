@@ -47,7 +47,7 @@ public class Account extends BaseEntity {
     private AccountType type;
 
     @Size(min = 10, max = 20)
-    @Column(length = 20, unique = true)
+    @Column(length = 20)
     private String phoneNumber;
 
     @Size(min = 4, max = 40)

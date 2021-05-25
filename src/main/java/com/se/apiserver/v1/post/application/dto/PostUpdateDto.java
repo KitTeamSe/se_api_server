@@ -1,22 +1,15 @@
-package com.se.apiserver.v1.post.infra.dto;
+package com.se.apiserver.v1.post.application.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.se.apiserver.v1.common.domain.entity.Anonymous;
-import com.se.apiserver.v1.post.domain.entity.Post;
 import com.se.apiserver.v1.post.domain.entity.PostContent;
 import com.se.apiserver.v1.post.domain.entity.PostIsNotice;
 import com.se.apiserver.v1.post.domain.entity.PostIsSecret;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import lombok.Singular;
 

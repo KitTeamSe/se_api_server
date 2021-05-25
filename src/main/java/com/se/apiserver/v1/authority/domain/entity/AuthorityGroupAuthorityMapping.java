@@ -27,4 +27,12 @@ public class AuthorityGroupAuthorityMapping extends BaseEntity {
     this.authority = authority;
     this.authorityGroup = authorityGroup;
   }
+
+  public void setAuthority(Authority authority) {
+    this.authority = authority;
+    if(authority == null)
+      return;
+    if(!authority.getAuthorityGroupAuthorityMapping().contains(this))
+      authority.addAuthorityGroupAuthorityMapping(this);
+  }
 }

@@ -53,6 +53,8 @@ public class MenuUpdateService {
     private void updateUrlIfExist(Menu menu, String url) {
         if (url == null)
             return;
+        if (menu.getUrl().equals(url))
+            return;
         validateDuplicateUrl(url);
         menu.updateUrl(url);
     }
@@ -60,12 +62,16 @@ public class MenuUpdateService {
     private void updateNameKorIfExist(Menu menu, String nameKor) {
         if (nameKor == null)
             return;
+        if (menu.getNameKor().equals(nameKor))
+            return;
         validateDuplicateNameKor(nameKor);
         menu.updateNameKor(nameKor);
     }
 
     private void updateNameEngIfExist(Menu menu, String nameEng) {
         if (nameEng == null)
+            return;
+        if (menu.getNameEng().equals(nameEng))
             return;
         validateDuplicateNameEng(nameEng);
         menu.updateNameEng(nameEng);
