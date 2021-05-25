@@ -13,9 +13,9 @@ import java.util.stream.Collectors;
 @Getter
 public class ErrorResponse {
 
-  private String message;
-  private String code;
   private int status;
+  private String code;
+  private String message;
 
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
   private List<FieldError> errors = new ArrayList<>();

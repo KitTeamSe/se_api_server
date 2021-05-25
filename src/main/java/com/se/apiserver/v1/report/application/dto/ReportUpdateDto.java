@@ -24,10 +24,7 @@ public class ReportUpdateDto {
     @ApiModelProperty(notes = "변경할 설명", example = "변경된 설명")
     private String description;
 
-    @ApiModelProperty(notes = "변경할 상태", example = "ACCEPTED")
+    @ApiModelProperty(notes = "변경할 상태", example = "PROCESSED")
     private ReportStatus reportStatus;
-
-    @ApiModelProperty(notes = "변경할 처리자 ID", example = "1")
-    private Long processorId;
   }
 }
