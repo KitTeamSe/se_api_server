@@ -1,8 +1,9 @@
 package com.se.apiserver.v1.liberalartsbatch.application.service;
 
+import com.se.apiserver.v1.account.application.service.AccountContextService;
+import com.se.apiserver.v1.account.domain.entity.Account;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.deployment.application.dto.DeploymentCreateDto;
-import com.se.apiserver.v1.deployment.application.error.DeploymentErrorCode;
 import com.se.apiserver.v1.deployment.application.service.DeploymentCreateService;
 import com.se.apiserver.v1.division.domain.entity.Division;
 import com.se.apiserver.v1.lectureroom.domain.entity.LectureRoom;
@@ -26,6 +27,8 @@ import com.se.apiserver.v1.teacher.infra.repository.TeacherJpaRepository;
 import com.se.apiserver.v1.timetable.domain.entity.TimeTable;
 import com.se.apiserver.v1.usablelectureroom.domain.entity.UsableLectureRoom;
 import com.se.apiserver.v1.usablelectureroom.infra.repository.UsableLectureRoomJpaRepository;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;
@@ -56,6 +59,7 @@ public class LiberalArtsBatchParseService {
   private final int COL_LECTURE_ROOM_CAPACITY = 12;
   private final int COL_NOTE = 13;
 
+  private final AccountContextService accountContextService;
   private final SubjectJpaRepository subjectJpaRepository;
   private final OpenSubjectJpaRepository openSubjectJpaRepository;
   private final TeacherJpaRepository teacherJpaRepository;
@@ -69,14 +73,13 @@ public class LiberalArtsBatchParseService {
     // TODO: 엑셀 file 읽어서 DB에 반영;
     Sheet worksheet = workbook.getSheetAt(0);
 
+    String note = createAutoCreatedNote();
+
     for(int i = START_ROW ; i < worksheet.getPhysicalNumberOfRows() ; i++){
       Row row = worksheet.getRow(i);
 
-      if(i == 50)
-        break;
-
       // 교과 정보 생성
-      Subject subject = parseSubject(row, timeTable.getSemester());
+      Subject subject = parseSubject(row, timeTable.getSemester(), note);
 
       // 시작-종료 교시 생성
       PeriodRange periodRange = parsePeriodRange(row);
@@ -84,42 +87,35 @@ public class LiberalArtsBatchParseService {
         continue;
 
       // 개설 교과 생성
-      OpenSubject openSubject = parseOpenSubject(timeTable, subject);
+      OpenSubject openSubject = parseOpenSubject(timeTable, subject, note);
 
       // 분반 생성?
-      Division division = parseDivision(row, openSubject);
+      Division division = parseDivision(row, openSubject, note);
       if(division == null)
         continue;
 
       // 교원 생성
-      Teacher teacher = parseTeacher(row);
+      Teacher teacher = parseTeacher(row, note);
 
       // 참여 교원 생성
-      ParticipatedTeacher participatedTeacher = parseParticipatedTeacher(timeTable, teacher);
+      ParticipatedTeacher participatedTeacher = parseParticipatedTeacher(timeTable, teacher, note);
 
       // 강의실 생성
-      LectureRoom lectureRoom = parseLectureRoom(row);
+      LectureRoom lectureRoom = parseLectureRoom(row, note);
 
       // 사용 가능 강의실 생성
-      UsableLectureRoom usableLectureRoom = parseUsableLectureRoom(timeTable, lectureRoom);
+      UsableLectureRoom usableLectureRoom = parseUsableLectureRoom(timeTable, lectureRoom, note);
 
       // 요일 추출
       DayOfWeek dayOfWeek = parseDayOfWeek(row);
       
       // 배치 생성
       DeploymentCreateDto.Resposne response = deploymentCreateService.saveDeployment(timeTable, division, 
-          usableLectureRoom, participatedTeacher, periodRange, dayOfWeek, true, "autocreated by ~~~");
-
-      // for debug
-      if(response.getDeploymentAlertMessage() != null){
-        for(DeploymentErrorCode errorCode : response.getDeploymentAlertMessage().getAlertErrors()){
-          System.out.println("errorCode = " + errorCode);
-        }
-      }
+          usableLectureRoom, participatedTeacher, periodRange, dayOfWeek, true, note);
     }
   }
 
-  private Subject parseSubject(Row row, int semester){
+  private Subject parseSubject(Row row, int semester, String note){
     String code = getCellValue(row, COL_SUBJECT_CODE, "UNKNOWN");                                  // 교과목코드
     Optional<Subject> subjectOptional = subjectJpaRepository.findByCode(code);
     if(subjectOptional.isPresent())
@@ -130,7 +126,7 @@ public class LiberalArtsBatchParseService {
     String subjectName = getCellValue(row, COL_SUBJECT_NAME, "알 수 없는 교과목명");                    // 교과목명
     int grade = getCellValue(row, COL_SUBJECT_GRADE, 0);                                                // 학년
     int credit = getCellValue(row, COL_SUBJECT_CREDIT, 0);                                              // 학점
-    return new Subject(curriculum, subjectType, code, subjectName, grade, semester, credit, true, "autocreated by ~~~");
+    return new Subject(curriculum, subjectType, code, subjectName, grade, semester, credit, true, note);
   }
 
   private PeriodRange parsePeriodRange(Row row){
@@ -159,13 +155,13 @@ public class LiberalArtsBatchParseService {
     }
   }
 
-  private LectureRoom parseLectureRoom(Row row){
+  private LectureRoom parseLectureRoom(Row row, String note){
     String buildingRawStr = getCellValue(row, COL_LECTURE_ROOM, "XX000");
     if(buildingRawStr.isEmpty())
       buildingRawStr = "XX000";
 
     String building;
-    int roomNumber;
+    String roomNumber;
     try{
       int splitPoint = 0;
       for(int j = 0  ; j < buildingRawStr.length() ; j++){
@@ -175,11 +171,11 @@ public class LiberalArtsBatchParseService {
         }
       }
       building = buildingRawStr.substring(0, splitPoint);
-      roomNumber = Integer.parseInt(buildingRawStr.substring(splitPoint));
+      roomNumber = buildingRawStr.substring(splitPoint);
     }
     catch (Exception e){
       building = "XX";
-      roomNumber = 000;
+      roomNumber = "000";
     }
 
     Optional<LectureRoom> optionalLectureRoom = lectureRoomQueryRepository.findByRoomNumberWithBuilding(building, roomNumber);
@@ -188,20 +184,20 @@ public class LiberalArtsBatchParseService {
 
     int capacity = getCellValue(row, COL_LECTURE_ROOM_CAPACITY, 100);
 
-    return new LectureRoom(building, roomNumber, capacity, true, "autocreated by ~~~");
+    return new LectureRoom(building, roomNumber, capacity, true, note);
   }
 
-  private UsableLectureRoom parseUsableLectureRoom(TimeTable timeTable, LectureRoom lectureRoom){
+  private UsableLectureRoom parseUsableLectureRoom(TimeTable timeTable, LectureRoom lectureRoom, String note){
     if(lectureRoom.getLectureRoomId() != null){
       Optional<UsableLectureRoom> optionalUsableLectureRoom = usableLectureRoomJpaRepository.findByTimeTableAndLectureRoom(timeTable, lectureRoom);
       if(optionalUsableLectureRoom.isPresent())
         return optionalUsableLectureRoom.get();
     }
 
-    return new UsableLectureRoom(timeTable, lectureRoom, true, "autocreated by ~~~");
+    return new UsableLectureRoom(timeTable, lectureRoom, true, note);
   }
 
-  private OpenSubject parseOpenSubject(TimeTable timeTable, Subject subject){
+  private OpenSubject parseOpenSubject(TimeTable timeTable, Subject subject, String note){
     if(subject.getSubjectId() != null){
       Optional<OpenSubject> optionalOpenSubject = openSubjectJpaRepository.findByTimeTableAndSubject(timeTable, subject);
       if(optionalOpenSubject.isPresent())
@@ -210,21 +206,21 @@ public class LiberalArtsBatchParseService {
 
     // TODO: 주간 수업 시간 엑셀에서 파싱해서 계산해야함.
     int teachingTimePerWeek = subject.getCredit();                                                  // 주간 수업 시간 (일단 학점과 동일)
-    return new OpenSubject(timeTable, subject, null, teachingTimePerWeek, true, "autocreated by ~~~");
+    return new OpenSubject(timeTable, subject, 0, teachingTimePerWeek, true, note);
   }
 
-  private Division parseDivision(Row row, OpenSubject openSubject){
-    int division = getCellValue(row, COL_DIVISION, 0);
-    if(division == 0)
+  private Division parseDivision(Row row, OpenSubject openSubject, String note){
+    int divisionNumber = getCellValue(row, COL_DIVISION, 0);
+    if(divisionNumber == 0)
       return null;
 
-    if(openSubject.getDivisions().size() < division){
-      return new Division(openSubject, true, "autocreated by ~~~");
+    if(openSubject.getDivisions().size() < divisionNumber){
+      return new Division(openSubject, true, note);
     }
-    return openSubject.getDivisions().get(division - 1);
+    return openSubject.getDivisions().get(divisionNumber - 1);
   }
 
-  private Teacher parseTeacher(Row row){
+  private Teacher parseTeacher(Row row, String note){
     String teacherName = getCellValue(row, COL_TEACHER_NAME, "알 수 없는 성명");
     TeacherType teacherType = TeacherType.AUTO_CREATED;
 
@@ -233,7 +229,7 @@ public class LiberalArtsBatchParseService {
       return optionalTeacher.get();
 
     String teacherDepartment = "알 수 없는 부서";
-    return new Teacher(teacherName, teacherType, teacherDepartment, true, "autocreated by ~~~");
+    return new Teacher(teacherName, teacherType, teacherDepartment, true, note);
   }
 
   private DayOfWeek parseDayOfWeek(Row row){
@@ -243,14 +239,14 @@ public class LiberalArtsBatchParseService {
     return DayOfWeek.fromShortKorean(dayOfWeekRawStr);
   }
 
-  private ParticipatedTeacher parseParticipatedTeacher(TimeTable timeTable, Teacher teacher){
+  private ParticipatedTeacher parseParticipatedTeacher(TimeTable timeTable, Teacher teacher, String note){
     if(teacher.getTeacherId() != null){
       Optional<ParticipatedTeacher> optionalParticipatedTeacher = participatedTeacherJpaRepository.findByTimeTableAndTeacher(timeTable, teacher);
       if(optionalParticipatedTeacher.isPresent())
         return optionalParticipatedTeacher.get();
     }
 
-    return new ParticipatedTeacher(timeTable, teacher, true, "autocreated by ~~~");
+    return new ParticipatedTeacher(timeTable, teacher, true, note);
   }
 
   private SubjectType getSubjectType(String batchSubjectType){
@@ -284,5 +280,15 @@ public class LiberalArtsBatchParseService {
       e.printStackTrace();
       return defaultValue;
     }
+  }
+
+  private String createAutoCreatedNote(){
+    StringBuilder stringBuilder = new StringBuilder("Auto created at ");
+    String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+    Account creator = accountContextService.getContextAccount();
+    String nickname = "알 수 없음";
+    if(creator != null)
+      nickname = creator.getNickname();
+    return stringBuilder.append(date).append(" by ").append(nickname).toString();
   }
 }

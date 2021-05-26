@@ -57,6 +57,7 @@ public class OpenSubject extends AccountGenerateEntity {
   @Size(max = 255)
   private String note;
 
+  // If numberOfDivision is 0, won't create divisions automatically
   public OpenSubject(TimeTable timeTable, Subject subject, Integer numberOfDivision,
       Integer teachingTimePerWeek, Boolean autoCreated) {
 
@@ -81,7 +82,7 @@ public class OpenSubject extends AccountGenerateEntity {
   }
 
   public void validateNumberOfDivision(Integer numberOfDivision){
-    if(numberOfDivision <= 0)
+    if(numberOfDivision < 0)
       throw new BusinessException(OpenSubjectErrorCode.INVALID_NUMBER_OF_DIVISION);
   }
 

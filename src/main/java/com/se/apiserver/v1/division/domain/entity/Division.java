@@ -1,5 +1,6 @@
 package com.se.apiserver.v1.division.domain.entity;
 
+import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.division.application.error.DivisionErrorCode;
 import com.se.apiserver.v1.opensubject.domain.entity.OpenSubject;
@@ -22,7 +23,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Division {
+public class Division extends AccountGenerateEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
