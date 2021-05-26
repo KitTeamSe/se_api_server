@@ -72,7 +72,7 @@ public class OpenSubject extends AccountGenerateEntity {
     this.teachingTimePerWeek = teachingTimePerWeek;
     this.autoCreated = autoCreated;
 
-    addDivisions(numberOfDivision);
+    updateNumberOfDivision(numberOfDivision);
   }
 
   public OpenSubject(TimeTable timeTable, Subject subject, Integer numberOfDivision,
@@ -97,8 +97,9 @@ public class OpenSubject extends AccountGenerateEntity {
     int diff = Math.abs(divisions.size() - numberOfDivision);
 
     if(numberOfDivision > divisions.size()){
-      IntStream.range(0, diff).forEach((i) ->
-        this.divisions.add(new Division(this, true)));
+      IntStream.range(0, diff).forEach((i) ->{
+        this.divisions.add(new Division(this, 0, 0, true));
+      });
     }
     else{
       divisions.sort((o1, o2) -> (int) (o2.getDivisionId() - o1.getDivisionId()));
@@ -115,10 +116,5 @@ public class OpenSubject extends AccountGenerateEntity {
 
   public void updateNote(String note){
     this.note = note;
-  }
-
-  private void addDivisions(int numberOfDivision){
-    IntStream.range(0, numberOfDivision).forEach((i) ->
-        this.divisions.add(new Division(this, true)));
   }
 }

@@ -35,6 +35,9 @@ public class Division extends AccountGenerateEntity {
   private OpenSubject openSubject;
 
   @Column(nullable = false)
+  private Integer divisionNumber;
+
+  @Column(nullable = false)
   private Integer deployedTeachingTime;
 
   @Column(nullable = false)
@@ -43,28 +46,18 @@ public class Division extends AccountGenerateEntity {
   @Size(max = 255)
   private String note;
 
-  public Division(OpenSubject openSubject, Boolean autoCreated){
+  public Division(OpenSubject openSubject, Integer divisionNumber, Integer deployedTeachingTime, Boolean autoCreated){
     this.openSubject = openSubject;
-    this.deployedTeachingTime = 0;
+    this.divisionNumber = divisionNumber;
+    validateDeployedTeachingTime(deployedTeachingTime);
+    this.deployedTeachingTime = deployedTeachingTime;
     this.autoCreated = autoCreated;
   }
 
-  public Division(OpenSubject openSubject, Boolean autoCreated, @Size(max = 255) String note){
-    this(openSubject, autoCreated);
+  public Division(OpenSubject openSubject, Integer divisionNumber, Integer deployedTeachingTime, Boolean autoCreated, @Size(max = 255) String note){
+    this(openSubject, divisionNumber, deployedTeachingTime, autoCreated);
     this.note = note;
   }
-
-  public Division(OpenSubject openSubject, Integer deployedTeachingTime, Boolean autoCreated){
-    this(openSubject, autoCreated);
-    validateDeployedTeachingTime(deployedTeachingTime);
-    this.deployedTeachingTime = deployedTeachingTime;
-  }
-
-  public Division(OpenSubject openSubject, Integer deployedTeachingTime, Boolean autoCreated, @Size(max = 255) String note){
-    this(openSubject, deployedTeachingTime, autoCreated);
-    this.note = note;
-  }
-
 
   public void validateDeployedTeachingTime(Integer deployedTeachingTime){
     if(deployedTeachingTime == null || deployedTeachingTime < 0)

@@ -36,6 +36,7 @@ public class DivisionCheckService {
 
     DivisionCheckDto.Response response = DivisionCheckDto.Response.builder()
         .divisionId(division.getDivisionId())
+        .divisionNumber(division.getDivisionNumber())
         .isCompleted(errorCode == null)
         .divisionErrorCode(errorCode)
         .deployedTeachingTime(deployedTeachingTime)

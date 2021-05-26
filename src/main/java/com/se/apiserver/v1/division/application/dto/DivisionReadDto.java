@@ -14,25 +14,17 @@ public class DivisionReadDto {
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
-  @ApiModel("분반 조회 요청")
-  static public class Request{
-
-    @ApiModelProperty(notes = "개설 교과 번호", example = "1")
-    private Long openSubjectId;
-  }
-
-  @Data
-  @NoArgsConstructor
-  @AllArgsConstructor
-  @Builder
   @ApiModel("분반 조회 응답")
   static public class Response{
 
-    @ApiModelProperty(notes = "분반 번호", example = "1")
+    @ApiModelProperty(notes = "분반 ID", example = "1")
     private Long divisionId;
 
-    @ApiModelProperty(notes = "개설 교과 번호", example = "1")
+    @ApiModelProperty(notes = "개설 교과 ID", example = "1")
     private Long openSubjectId;
+
+    @ApiModelProperty(notes = "분반 번호", example = "1")
+    private Integer divisionNumber;
 
     @ApiModelProperty(notes = "배치된 주간 수업 시간", example = "1")
     private Integer deployedTeachingTime;
@@ -42,6 +34,7 @@ public class DivisionReadDto {
       return Response.builder()
           .divisionId(division.getDivisionId())
           .openSubjectId(division.getOpenSubject().getOpenSubjectId())
+          .divisionNumber(division.getDivisionNumber())
           .deployedTeachingTime(division.getDeployedTeachingTime())
           .build();
     }

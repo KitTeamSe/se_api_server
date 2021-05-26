@@ -215,7 +215,7 @@ public class LiberalArtsBatchParseService {
       return null;
 
     if(openSubject.getDivisions().size() < divisionNumber){
-      return new Division(openSubject, true, note);
+      return new Division(openSubject, 0, 0, true, note);
     }
     return openSubject.getDivisions().get(divisionNumber - 1);
   }

@@ -13,7 +13,7 @@ public class DivisionDeleteDto {
   @NoArgsConstructor
   @ApiModel("분반 삭제 요청")
   static public class Request{
-    @ApiModelProperty(notes = "삭제할 분반 번호", example = "1")
+    @ApiModelProperty(notes = "삭제할 분반 ID", example = "1")
     private Long divisionId;
   }
 }

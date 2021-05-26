@@ -19,8 +19,11 @@ public class DivisionCheckDto {
   @ApiModel("분반 배치 확인 응답")
   static public class Response{
 
-    @ApiModelProperty(notes = "분반 번호", example = "1")
+    @ApiModelProperty(notes = "분반 ID", example = "1")
     private Long divisionId;
+
+    @ApiModelProperty(notes = "분반 번호", example = "1")
+    private Integer divisionNumber;
 
     @ApiModelProperty(notes = "완료 여부", example = "true")
     private Boolean isCompleted;
