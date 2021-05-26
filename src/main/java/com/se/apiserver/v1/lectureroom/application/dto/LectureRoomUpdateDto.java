@@ -23,7 +23,7 @@ public class LectureRoomUpdateDto {
     private String building;
 
     @ApiModelProperty(notes = "변경할 호수(방 번호)", example = "107")
-    private Integer roomNumber;
+    private String roomNumber;
 
     @ApiModelProperty(notes = "변경할 정원", example = "50")
     private Integer capacity;

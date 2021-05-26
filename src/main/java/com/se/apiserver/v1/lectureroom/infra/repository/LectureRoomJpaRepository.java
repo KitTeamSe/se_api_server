@@ -11,5 +11,5 @@ public interface LectureRoomJpaRepository extends JpaRepository<LectureRoom, Lon
 
   Optional<LectureRoom> findByBuilding(String building);
 
-  Optional<LectureRoom> findByRoomNumber(Integer roomNumber);
+  Optional<LectureRoom> findByRoomNumber(String roomNumber);
 }

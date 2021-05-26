@@ -15,7 +15,7 @@ public class LectureRoomQueryRepositoryImpl extends QuerydslRepositorySupport im
   }
 
   @Override
-  public Optional<LectureRoom> findByRoomNumberWithBuilding(String building, Integer roomNumber){
+  public Optional<LectureRoom> findByRoomNumberWithBuilding(String building, String roomNumber){
     QLectureRoom qLectureRoom = QLectureRoom.lectureRoom;
 
     JPQLQuery<LectureRoom> query = from(qLectureRoom);

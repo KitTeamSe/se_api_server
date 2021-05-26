@@ -35,7 +35,7 @@ public class LectureRoom extends AccountGenerateEntity {
   private String building;
 
   @Column(nullable = false)
-  private Integer roomNumber;
+  private String roomNumber;
 
   @Column(nullable = false)
   private Integer capacity;
@@ -46,20 +46,20 @@ public class LectureRoom extends AccountGenerateEntity {
   @Size(max = 255)
   private String note;
 
-  public LectureRoom(@Size(min = 1, max = 30) String building, Integer roomNumber, Boolean autoCreated) {
+  public LectureRoom(@Size(min = 1, max = 30) String building, String roomNumber, Boolean autoCreated) {
     this.building = building;
     this.roomNumber = roomNumber;
     this.autoCreated = autoCreated;
     this.capacity = 100;
   }
 
-  public LectureRoom(@Size(min = 1, max = 30) String building, Integer roomNumber, Integer capacity, Boolean autoCreated) {
+  public LectureRoom(@Size(min = 1, max = 30) String building, String roomNumber, Integer capacity, Boolean autoCreated) {
     this(building, roomNumber, autoCreated);
     validateCapacity(capacity);
     this.capacity = capacity;
   }
 
-  public LectureRoom(String building, Integer roomNumber, Integer capacity, Boolean autoCreated, @Size(max=255) String note) {
+  public LectureRoom(String building, String roomNumber, Integer capacity, Boolean autoCreated, @Size(max=255) String note) {
     this(building, roomNumber, capacity, autoCreated);
     this.note = note;
   }
@@ -73,7 +73,7 @@ public class LectureRoom extends AccountGenerateEntity {
     this.building = building;
   }
 
-  public void updateRoomNumber(Integer roomNumber){
+  public void updateRoomNumber(String roomNumber){
     this.roomNumber = roomNumber;
   }
 

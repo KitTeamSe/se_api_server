@@ -33,7 +33,7 @@ public class LectureRoomUpdateService {
       changeBuilding = request.getBuilding();
 
     // 변경사항에 호수가 있다면 추가
-    Integer changeRoomNumber = lectureRoom.getRoomNumber();
+    String changeRoomNumber = lectureRoom.getRoomNumber();
     if(request.getRoomNumber() != null)
       changeRoomNumber = request.getRoomNumber();
 
