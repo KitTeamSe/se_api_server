@@ -50,6 +50,10 @@ public class Post extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private PostIsSecret isSecret;
 
+  @Column(length = 10, nullable = false)
+  @Enumerated(EnumType.STRING)
+  private PostIsDeleted postIsDeleted;
+
   @Column(nullable = false)
   private Integer views;
 
@@ -65,18 +69,41 @@ public class Post extends BaseEntity {
   @OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, orphanRemoval = true)
   private List<PostTagMapping> tags = new ArrayList<>();
 
+  @Column(nullable = false, updatable = false)
+  private String createdIp;
+
+  @Column
+  private String lastModifiedIp;
+
+  // 첨부 파일, 태그 모두 존재 입력
   public Post(Board board, PostContent postContent, PostIsNotice isNotice,
               PostIsSecret isSecret, Set<String> authorities,
-              List<PostTagMapping> tags ) {
+              List<PostTagMapping> tags, List<Attach> attaches, String createdIp) {
     validateBoardAccessAuthority(board, authorities);
     this.board = board;
     this.postContent = postContent;
     updateNotice(isNotice, authorities);
     this.isSecret = isSecret;
+    this.postIsDeleted = PostIsDeleted.NORMAL;
     this.views = 0;
     this.numReply = 0;
+    this.createdIp = createdIp;
     addAttaches(attaches);
     addTags(tags);
+  }
+
+  public Post(Account account, Board board,  PostContent postContent,
+              PostIsNotice isNotice, PostIsSecret isSecret, Set<String> authorities
+          , List<PostTagMapping> tags, List<Attach> attaches, String createdIp) {
+    this(board, postContent, isNotice, isSecret, authorities, tags, attaches, createdIp);
+    this.account = account;
+  }
+
+  public Post(Anonymous anonymous, Board board, PostContent postContent,
+              PostIsNotice isNotice, PostIsSecret isSecret, Set<String> authorities
+          , List<PostTagMapping> tags, List<Attach> attaches, String createdIp) {
+    this(board, postContent, isNotice, isSecret, authorities, tags, attaches, createdIp);
+    this.anonymous = anonymous;
   }
 
   private void updateNotice(PostIsNotice isNotice, Set<String> authorities) {
@@ -87,22 +114,6 @@ public class Post extends BaseEntity {
   public void updateBoard(Board board, Set<String> authorities) {
     hasManageAuthority(authorities);
     this.board = board;
-  }
-
-
-  public Post(Account account, Board board,  PostContent postContent,
-              PostIsNotice isNotice, PostIsSecret isSecret, Set<String> authorities
-          , List<PostTagMapping> tags) {
-    this(board, postContent, isNotice, isSecret, authorities, tags);
-    validateBoardAccessAuthority(board, authorities);
-    this.account = account;
-  }
-
-  public Post(Anonymous anonymous, Board board,  PostContent postContent,
-              PostIsNotice isNotice, PostIsSecret isSecret, Set<String> authorities,
-              List<PostTagMapping> tags) {
-    this(board, postContent, isNotice, isSecret, authorities, tags);
-    this.anonymous = anonymous;
   }
 
   public void validateNoticeAccess(PostIsNotice isNotice, Set<String> authorities) {
@@ -125,6 +136,8 @@ public class Post extends BaseEntity {
   }
 
   public void addAttaches(List<Attach> attachList) {
+    if(attachList == null)
+      return;
     attachList.stream()
             .forEach(a -> a.updatePost(this));
   }
@@ -134,6 +147,8 @@ public class Post extends BaseEntity {
   }
 
   public void addTags(List<PostTagMapping> postTagMappings) {
+    if(postTagMappings == null)
+      return;
     postTagMappings.stream()
             .forEach(t -> t.setPost(this));
   }
@@ -174,13 +189,18 @@ public class Post extends BaseEntity {
   }
 
   public void update(Board board, PostContent postContent, PostIsNotice isNotice,
-                     PostIsSecret isSecret, List<Attach> attachList, List<PostTagMapping> tags, Set<String> authorities) {
+                     PostIsSecret isSecret, List<Attach> attachList, List<PostTagMapping> tags, Set<String> authorities, String ip) {
     updateBoard(board, authorities);
     updateContent(postContent);
     updateIsNotice(isNotice, authorities);
     updateIsSecret(isSecret);
     updateAttaches(attachList);
     updateTags(tags);
+    updateLastModifiedIp(ip);
+  }
+
+  private void updateLastModifiedIp(String ip) {
+    this.lastModifiedIp = ip;
   }
 
   public boolean isOwner(Account contextAccount) {
@@ -193,5 +213,17 @@ public class Post extends BaseEntity {
     if(this.anonymous == null)
       throw new BusinessException(PostErrorCode.NOT_ANONYMOUS_POST);
     return anonymous.getAnonymousPassword();
+  }
+
+  public void delete(Account contextAccount, Set<String> authorities) {
+    validateAccountAccess(contextAccount, authorities);
+    delete();
+  }
+
+  public void delete() {
+    if(this.postIsDeleted == PostIsDeleted.DELETED)
+      throw new BusinessException(PostErrorCode.DELETED_POST);
+
+    this.postIsDeleted = PostIsDeleted.DELETED;
   }
 }

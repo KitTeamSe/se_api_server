@@ -2,6 +2,7 @@ package com.se.apiserver.v1.post.infra.api;
 
 import com.se.apiserver.v1.common.infra.dto.PageRequest;
 import com.se.apiserver.v1.common.infra.dto.SuccessResponse;
+import com.se.apiserver.v1.post.application.dto.PostDeleteDto;
 import com.se.apiserver.v1.post.application.service.PostCreateService;
 import com.se.apiserver.v1.post.application.service.PostDeleteService;
 import com.se.apiserver.v1.post.application.service.PostReadService;
@@ -36,7 +37,6 @@ public class PostApiController {
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "게시글 생성")
     public SuccessResponse<Long> create(@RequestBody @Validated PostCreateDto.Request request){
-        System.out.println("dasdsadsa");
         return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 등록되었습니다", postCreateService.create(request));
     }
 
@@ -52,6 +52,15 @@ public class PostApiController {
     @ApiOperation("게시글 삭제")
     public SuccessResponse delete(@PathVariable(value = "id") Long postId){
         postDeleteService.delete(postId);
+        return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 삭제되었습니다");
+    }
+
+
+    @DeleteMapping("/post/anonymous/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation("익명 게시글 삭제")
+    public SuccessResponse delete(@RequestBody @Validated PostDeleteDto.AnonymousPostDeleteRequest request){
+        postDeleteService.delete(request);
         return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 삭제되었습니다");
     }
 

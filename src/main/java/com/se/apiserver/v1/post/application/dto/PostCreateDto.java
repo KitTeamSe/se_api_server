@@ -1,5 +1,6 @@
 package com.se.apiserver.v1.post.application.dto;
 
+import com.se.apiserver.v1.attach.domain.entity.Attach;
 import com.se.apiserver.v1.common.domain.entity.Anonymous;
 import com.se.apiserver.v1.post.domain.entity.*;
 import io.swagger.annotations.ApiModel;
@@ -40,6 +41,10 @@ public class PostCreateDto {
     @ApiModelProperty(notes = "태그들")
     @Singular("tagList")
     private List<TagDto> tagList;
+
+    @ApiModelProperty(notes = "태그들")
+    @Singular("attachmentList")
+    private List<AttachDto> attachmentList;
   }
 
   @ApiModel("첨부 파일")

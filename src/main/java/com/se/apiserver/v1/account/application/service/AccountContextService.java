@@ -71,7 +71,7 @@ public class AccountContextService implements UserDetailsService {
     return Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
   }
 
-  private String getCurrentClientIP(){
+  public String getCurrentClientIP(){
     HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
         .getRequest();
     String ip = request.getHeader("x-forwarded-for");
