@@ -25,7 +25,10 @@ public class IpBlacklistFilters extends GenericFilterBean {
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
       throws IOException, ServletException {
 
-    String ip = request.getRemoteAddr();
+    HttpServletRequest re = (HttpServletRequest) request;
+    String ip = re.getHeader("x-forwarded-for");
+    ip = ip != null ? ip : re.getRemoteAddr();
+
     if(blacklistDetailService.isBaned(ip)){
       throw new BusinessException(GlobalErrorCode.BANNED_IP);
     }

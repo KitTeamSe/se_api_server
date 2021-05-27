@@ -120,4 +120,8 @@ public class Account extends BaseEntity {
     public void updateName(String name) {
         this.name = name;
     }
+
+    public void updateLastSignIp(String ip){
+        this.lastSignInIp = ip;
+    }
 }

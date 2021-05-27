@@ -38,8 +38,8 @@ public class AccountApiController {
     @ResponseStatus(value = HttpStatus.CREATED)
     @ApiOperation(value = "회원 가입")
     public SuccessResponse<Long> signUp(@RequestBody @Validated AccountCreateDto.Request request, HttpServletRequest httpServletRequest) {
-        return new SuccessResponse<>(HttpStatus.CREATED.value(), "회원가입에 성공했습니다.",
-                accountCreateService.signUp(request, httpServletRequest.getRemoteAddr()));
+        Long userId = accountCreateService.signUp(request, getIp(httpServletRequest));
+        return new SuccessResponse<>(HttpStatus.CREATED.value(), "회원가입에 성공했습니다.", userId);
     }
 
     // TODO 인증 서버로 이전
@@ -48,9 +48,9 @@ public class AccountApiController {
             @ApiResponse(code = 400, message = "비밀번호 불일치")})
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "로그인")
-    public SuccessResponse<AccountSignInDto.Response> signIn(@RequestBody @Validated AccountSignInDto.Request request) {
+    public SuccessResponse<AccountSignInDto.Response> signIn(@RequestBody @Validated AccountSignInDto.Request request, HttpServletRequest httpServletRequest) {
         return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 로그인 되었습니다",
-                accountSignInService.signIn(request.getId(), request.getPw()));
+                accountSignInService.signIn(request.getId(), request.getPw(), getIp(httpServletRequest)));
     }
 
     @GetMapping(path = "/account/email/{email}")
@@ -138,5 +138,9 @@ public class AccountApiController {
         return new SuccessResponse(HttpStatus.OK.value(), "조회 성공", accountReadService.search(searchRequest));
     }
 
+    private String getIp(HttpServletRequest httpServletRequest){
+        String ip = httpServletRequest.getHeader("x-forwarded-for");
+        return ip != null ? ip : httpServletRequest.getRemoteAddr();
+    }
 
 }
