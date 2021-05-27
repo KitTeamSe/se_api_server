@@ -74,7 +74,8 @@ public class AccountContextService implements UserDetailsService {
   private String getCurrentClientIP(){
     HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
         .getRequest();
-    return request.getRemoteAddr();
+    String ip = request.getHeader("x-forwarded-for");
+    return ip != null ? ip : request.getRemoteAddr();
   }
 
   public boolean isSignIn(){

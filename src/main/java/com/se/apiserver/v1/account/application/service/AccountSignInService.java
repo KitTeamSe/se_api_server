@@ -20,13 +20,16 @@ public class AccountSignInService {
   private final AccountJpaRepository accountJpaRepository;
   private final PasswordEncoder passwordEncoder;
 
-  public AccountSignInDto.Response signIn(String id, String password) {
+  @Transactional
+  public AccountSignInDto.Response signIn(String id, String password, String ip) {
     Account account = accountJpaRepository.findByIdString(id)
         .orElseThrow(() -> new BusinessException(AccountErrorCode.NO_SUCH_ACCOUNT));
+    if (!passwordEncoder.matches(password, account.getPassword())) {
+        throw new BusinessException(AccountErrorCode.PASSWORD_INCORRECT);
+    }
 
-      if (!passwordEncoder.matches(password, account.getPassword())) {
-          throw new BusinessException(AccountErrorCode.PASSWORD_INCORRECT);
-      }
+    account.updateLastSignIp(ip);
+    accountJpaRepository.save(account);
 
     String token = jwtTokenResolver.createToken(String.valueOf(account.getAccountId()));
     return new AccountSignInDto.Response(token);
