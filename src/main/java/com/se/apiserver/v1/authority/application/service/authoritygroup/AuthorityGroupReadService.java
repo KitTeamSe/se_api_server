@@ -3,6 +3,7 @@ package com.se.apiserver.v1.authority.application.service.authoritygroup;
 import com.se.apiserver.v1.authority.domain.entity.AuthorityGroup;
 import com.se.apiserver.v1.authority.application.error.AuthorityGroupErrorCode;
 import com.se.apiserver.v1.authority.application.dto.authoritygroup.AuthorityGroupReadDto;
+import com.se.apiserver.v1.authority.domain.entity.AuthorityGroupType;
 import com.se.apiserver.v1.authority.infra.repository.AuthorityGroupJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,13 @@ public class AuthorityGroupReadService {
                 .map(a -> AuthorityGroupReadDto.Response.fromEntity(a))
                 .collect(Collectors.toList());
         return new PageImpl(responseList, authorityGroups.getPageable(), authorityGroups.getTotalElements());
+    }
+
+    public AuthorityGroup getDefaultAuthorityGroup(){
+        List<AuthorityGroup> list = authorityGroupJpaRepository.findByType(AuthorityGroupType.DEFAULT);
+        if(list == null || list.isEmpty())
+            throw new BusinessException(AuthorityGroupErrorCode.NO_DEFAULT_AUTHORITY_GROUP);
+        return list.get(0);
     }
 
 }
