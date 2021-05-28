@@ -7,7 +7,6 @@ import com.se.apiserver.v1.board.domain.entity.Board;
 import com.se.apiserver.v1.board.application.error.BoardErrorCode;
 import com.se.apiserver.v1.board.infra.repository.BoardJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
-import com.se.apiserver.v1.multipartfile.application.service.MultipartFileUploadService;
 import com.se.apiserver.v1.post.domain.entity.*;
 import com.se.apiserver.v1.attach.application.error.AttachErrorCode;
 import com.se.apiserver.v1.post.application.error.PostErrorCode;
@@ -20,8 +19,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -79,8 +76,10 @@ public class PostCreateService {
 
     // only signed user can add tags
     private List<PostTagMapping> getTagsIfSignIn(List<PostCreateDto.TagDto> tagList) {
-        if(!accountContextService.isSignIn())
+        if(tagList == null || tagList.size() == 0)
             return new ArrayList<>();
+        if(!accountContextService.isSignIn())
+            throw new BusinessException(TagErrorCode.ANONYMOUS_CAN_NOT_TAG);
         return tagList.stream()
                 .map(t -> PostTagMapping.builder()
                         .tag(tagJpaRepository.findById(t.getTagId())
@@ -90,6 +89,8 @@ public class PostCreateService {
     }
 
     private List<Attach> getAttaches(List<PostCreateDto.AttachDto> attachmentList) {
+        if(attachmentList == null || attachmentList.size() == 0)
+            return new ArrayList<>();
         return attachmentList.stream()
                 .map(a -> attachJpaRepository.findById(a.getAttachId())
                         .orElseThrow(() -> new BusinessException(AttachErrorCode.NO_SUCH_ATTACH))
