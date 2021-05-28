@@ -20,15 +20,15 @@ import org.springframework.web.bind.annotation.*;
 @Api(tags = "알림 내역")
 public class NoticeRecordApiController {
 
-    private final NoticeRecordReadService noticeRecordReadUseCase;
-    private final NoticeRecordDeleteService noticeRecordDeleteUseCase;
+    private final NoticeRecordReadService noticeRecordReadService;
+    private final NoticeRecordDeleteService noticeRecordDeleteService;
 
     @GetMapping(path = "/noticeRecord")
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "전체 알림내역 조회")
     @PreAuthorize("hasAuthority('NOTICE_MANAGE')")
     public SuccessResponse<PageImpl> readAll(@Validated PageRequest pageRequest) {
-        return new SuccessResponse(HttpStatus.OK.value(), "알림내역 목록 조회에 성공했습니다.", noticeRecordReadUseCase.readAll(pageRequest.of()));
+        return new SuccessResponse(HttpStatus.OK.value(), "알림내역 목록 조회에 성공했습니다.", noticeRecordReadService.readAll(pageRequest.of()));
     }
 
     @GetMapping(path = "/noticeRecord/{id}")
@@ -36,7 +36,7 @@ public class NoticeRecordApiController {
     @ApiOperation(value = "알림내역 아이디로 알림내역 조회")
     @PreAuthorize("hasAuthority('NOTICE_ACCESS')")
     public SuccessResponse<NoticeRecordReadDto.Response> readById(@PathVariable(value = "id") Long id) {
-        return new SuccessResponse(HttpStatus.OK.value(), "알림내역 조회에 성공했습니다.", noticeRecordReadUseCase.readById(id));
+        return new SuccessResponse(HttpStatus.OK.value(), "알림내역 조회에 성공했습니다.", noticeRecordReadService.readById(id));
     }
 
     @GetMapping(path = "/noticeRecord/{accountId}")
@@ -44,7 +44,7 @@ public class NoticeRecordApiController {
     @ApiOperation(value = "사용자 아이디로 알림내역 조회")
     @PreAuthorize("hasAuthority('NOTICE_ACCESS')")
     public SuccessResponse<NoticeRecordReadDto.Response> readByAccountId(@PathVariable(value = "accountId") Long accountId) {
-        return new SuccessResponse(HttpStatus.OK.value(), "알림내역 조회에 성공했습니다.", noticeRecordReadUseCase.readByAccountId(accountId));
+        return new SuccessResponse(HttpStatus.OK.value(), "알림내역 조회에 성공했습니다.", noticeRecordReadService.readByAccountId(accountId));
     }
 
     @GetMapping(path = "/noticeRecord/{noticeId}")
@@ -52,7 +52,7 @@ public class NoticeRecordApiController {
     @ApiOperation(value = "알림 아이디로 알림내역 조회")
     @PreAuthorize("hasAuthority('NOTICE_ACCESS')")
     public SuccessResponse<NoticeRecordReadDto.Response> readByNoticeId(@PathVariable(value = "noticeID") Long noticeId) {
-        return new SuccessResponse(HttpStatus.OK.value(), "알림내역 조회에 성공했습니다.", noticeRecordReadUseCase.readByNoticeId(noticeId));
+        return new SuccessResponse(HttpStatus.OK.value(), "알림내역 조회에 성공했습니다.", noticeRecordReadService.readByNoticeId(noticeId));
     }
 
     @DeleteMapping(path = "/noticeRecord/{id}")
@@ -60,7 +60,7 @@ public class NoticeRecordApiController {
     @ApiOperation(value = "알림내역 삭제")
     @PreAuthorize("hasAuthority('NOTICE_ACCESS')")
     public SuccessResponse delete(@PathVariable(value = "id") Long id) {
-        noticeRecordDeleteUseCase.delete(id);
+        noticeRecordDeleteService.delete(id);
         return new SuccessResponse(HttpStatus.OK.value(), "알림 내역 삭제에 성공했습니다.");
     }
 

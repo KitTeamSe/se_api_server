@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class NoticeCreateService {
     private final NoticeJpaRepository noticeJpaRepository;
 
+    @Transactional
     public Long save (NoticeCreateDto.Request request) {
         Notice notice = new Notice(request.getTitle(), request.getMessage(), request.getUrl());
         noticeJpaRepository.save(notice);

@@ -25,8 +25,8 @@ public class NoticeSendService {
 
     private final AccountReceiveTagMappingJpaRepository accountReceiveTagMappingJpaRepository;
     private final PostJpaRepository postJpaRepository;
-    private final NoticeCreateService noticeCreateUseCase;
-    private final NoticeRecordCreateService noticeRecordCreateUseCase;
+    private final NoticeCreateService noticeCreateService;
+    private final NoticeRecordCreateService noticeRecordCreateService;
     String NOTICESEND_URL = "localhost:8088/notice/multi-message";
 
     public void postSend(NoticeSendDto.Request request){
@@ -65,6 +65,7 @@ public class NoticeSendService {
         return accountList;
     }
 
+    @Transactional
     public void send(List<Long> accountList, String title, String message, String url) {
         //전송
         UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(NOTICESEND_URL)
@@ -79,13 +80,13 @@ public class NoticeSendService {
 
         //Notice 등록
         NoticeCreateDto.Request noticeCRequest = new NoticeCreateDto.Request(title, message, url);
-        Long noticeId = noticeCreateUseCase.save(noticeCRequest);
+        Long noticeId = noticeCreateService.save(noticeCRequest);
 
         //NoticeRecord 등록
         for (Long accountId: accountList
              ) {
             NoticeRecordCreateDto.Request noticeRecordCRequest = new NoticeRecordCreateDto.Request(accountId, noticeId);
-            noticeRecordCreateUseCase.create(noticeRecordCRequest);
+            noticeRecordCreateService.create(noticeRecordCRequest);
         }
     }
 }
