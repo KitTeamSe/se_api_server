@@ -50,5 +50,8 @@ public class AuthorityGroup extends AccountGenerateEntity {
 
         if(type == AuthorityGroupType.DEFAULT)
             throw new BusinessException(AuthorityGroupErrorCode.CAN_NOT_DELETE_DEFAULT_GROUP);
+
+        if(type == AuthorityGroupType.SYSTEM)
+            throw new BusinessException(AuthorityGroupErrorCode.CAN_NOT_DELETE_SYSTEM_GROUP);
     }
 }
