@@ -7,5 +7,4 @@ import java.util.List;
 public interface AccountReceiveTagMappingJpaRepository extends JpaRepository<AccountReceiveTagMapping, Long> {
 
     List<AccountReceiveTagMapping> findAccountReceiveTagMappingsByTag_TagIdIn(List<Long> tag_id);
-
 }
