@@ -22,6 +22,7 @@ public class NoticeRecordCreateService {
     private final AccountJpaRepository accountJpaRepository;
     private final NoticeJpaRepository noticeJpaRepository;
 
+    @Transactional
     public Long create(NoticeRecordCreateDto.Request request) {
 
         Account account = accountJpaRepository.findById(request.getAccountId()).orElseThrow(() -> new BusinessException(NoticeRecordErrorCode.NO_SUCH_ACCOUNT));

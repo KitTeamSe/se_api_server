@@ -15,6 +15,7 @@ public class NoticeRecordDeleteService {
 
     private  final NoticeRecordJpaRepository noticeRecordJpaRepository;
 
+    @Transactional
     public boolean delete(Long id) {
         NoticeRecord noticeRecord = noticeRecordJpaRepository.findById(id).orElseThrow(() -> new BusinessException(NoticeRecordErrorCode.NO_SUCH_NOTICERECORD));
         noticeRecordJpaRepository.delete(noticeRecord);
