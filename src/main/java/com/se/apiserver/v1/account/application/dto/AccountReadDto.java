@@ -49,7 +49,7 @@ public class AccountReadDto {
         Response.ResponseBuilder responseBuilder = Response.builder();
         responseBuilder
             .idString(account.getIdString())
-            .name(account.getNickname())
+            .name(account.getName())
             .nickname(account.getNickname())
             .email(account.getEmail())
             .type(account.getType());

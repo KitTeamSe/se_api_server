@@ -18,9 +18,9 @@ insert into authority (authority_id, name_eng, name_kor) values (17,'AUTHORITY_M
 insert into authority (authority_id, name_eng, name_kor) values (18,'SCHEDULE_MANAGE','시간표_관리');
 
 
-insert into authority_group (authority_group_id, description, name, type) values (1,'비로그인 사용자','DEFAULT', 'ANONYMOUS');
-insert into authority_group (authority_group_id, description, name, type) values (2,'로그인 사용자','MEMBER', 'NORMAL');
-insert into authority_group (authority_group_id, description, name, type) values (3,'로그인 관리자','ADMIN', 'DEFAULT');
+insert into authority_group (authority_group_id, description, name, type) values (1,'비로그인 사용자','ANONYMOUS', 'ANONYMOUS');
+insert into authority_group (authority_group_id, description, name, type) values (2,'로그인 사용자','MEMBER', 'DEFAULT');
+insert into authority_group (authority_group_id, description, name, type) values (3,'로그인 관리자','ADMIN', 'SYSTEM');
 
 insert into question (question_id, text) values (1, '다른 이메일 주소는?');
 insert into question (question_id, text) values (2, '나의 보물 1호는 ?');
