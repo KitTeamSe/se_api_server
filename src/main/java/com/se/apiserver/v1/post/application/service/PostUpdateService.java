@@ -51,7 +51,7 @@ public class PostUpdateService {
         List<PostTagMapping> tags = getTagsIfSignIn(request.getTagList());
         String ip = accountContextService.getCurrentClientIP();
 
-        if(accountContextService.isSignIn()){
+        if(accountContextService.isSignIn() && post.getAnonymous() == null){
             Account contextAccount = accountContextService.getContextAccount();
             post.validateAccountAccess(contextAccount, authorities);
             post.update(board, request.getPostContent(), request.getIsNotice(), request.getIsSecret(), attachList, tags, authorities, ip);
