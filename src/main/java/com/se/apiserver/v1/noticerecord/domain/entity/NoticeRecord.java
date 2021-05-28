@@ -1,8 +1,10 @@
-package com.se.apiserver.v1.notice.domain.entity;
+package com.se.apiserver.v1.noticerecord.domain.entity;
 
 import com.se.apiserver.v1.account.domain.entity.Account;
 import com.se.apiserver.v1.common.domain.entity.BaseEntity;
+import com.se.apiserver.v1.notice.domain.entity.Notice;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,6 +27,7 @@ public class NoticeRecord extends BaseEntity {
     @JoinColumn(name = "notice_id", referencedColumnName = "noticeId", nullable = false)
     private Notice notice;
 
+    @Builder
     public NoticeRecord(Long noticeRecordId, Account account, Notice notice) {
         this.noticeRecordId = noticeRecordId;
         this.account = account;

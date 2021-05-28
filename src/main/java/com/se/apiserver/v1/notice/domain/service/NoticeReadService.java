@@ -1,4 +1,4 @@
-package com.se.apiserver.v1.notice.domain.usecase;
+package com.se.apiserver.v1.notice.domain.service;
 
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.notice.domain.entity.Notice;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class NoticeReadUseCase {
+public class NoticeReadService {
 
     private final NoticeJpaRepository noticeJpaRepository;
 

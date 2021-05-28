@@ -1,11 +1,10 @@
-package com.se.apiserver.v1.notice.domain.usecase;
+package com.se.apiserver.v1.notice.domain.service;
 
 import com.se.apiserver.v1.account.domain.entity.AccountReceiveTagMapping;
 import com.se.apiserver.v1.account.infra.repository.AccountReceiveTagMappingJpaRepository;
 import com.se.apiserver.v1.notice.infra.dto.NoticeCreateDto;
 import com.se.apiserver.v1.notice.infra.dto.NoticeSendDto;
-import com.se.apiserver.v1.notice.infra.repository.NoticeJpaRepository;
-import com.se.apiserver.v1.noticerecord.domain.usecase.NoticeRecordCreateUseCase;
+import com.se.apiserver.v1.noticerecord.domain.service.NoticeRecordCreateService;
 import com.se.apiserver.v1.noticerecord.infra.dto.NoticeRecordCreateDto;
 import com.se.apiserver.v1.post.infra.repository.PostJpaRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +21,12 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class NoticeSendUseCase {
+public class NoticeSendService {
 
     private final AccountReceiveTagMappingJpaRepository accountReceiveTagMappingJpaRepository;
     private final PostJpaRepository postJpaRepository;
-    private final NoticeCreateUseCase noticeCreateUseCase;
-    private final NoticeRecordCreateUseCase noticeRecordCreateUseCase;
+    private final NoticeCreateService noticeCreateUseCase;
+    private final NoticeRecordCreateService noticeRecordCreateUseCase;
     String NOTICESEND_URL = "localhost:8088/notice/multi-message";
 
     public void postSend(NoticeSendDto.Request request){
@@ -58,7 +57,7 @@ public class NoticeSendUseCase {
     public List<Long> createAccountList(List<Long> tagIdList) {
         List<Long> accountList = new ArrayList<>();
 
-        List<AccountReceiveTagMapping> accountTagList = accountReceiveTagMappingJpaRepository.findByTagIdIn(tagIdList);
+        List<AccountReceiveTagMapping> accountTagList = accountReceiveTagMappingJpaRepository.findAccountReceiveTagMappingsByTag_TagIdIn(tagIdList);
         for (AccountReceiveTagMapping a: accountTagList
              ) {
             accountList.add(a.getAccount().getAccountId());
@@ -86,7 +85,7 @@ public class NoticeSendUseCase {
         for (Long accountId: accountList
              ) {
             NoticeRecordCreateDto.Request noticeRecordCRequest = new NoticeRecordCreateDto.Request(accountId, noticeId);
-            noticeRecordCreateUseCase.save(noticeRecordCRequest);
+            noticeRecordCreateUseCase.create(noticeRecordCRequest);
         }
     }
 }
