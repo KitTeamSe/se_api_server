@@ -51,7 +51,7 @@ public class PostUpdateService {
         List<PostTagMapping> tags = getTagsIfSignIn(request.getTagList());
         String ip = accountContextService.getCurrentClientIP();
 
-        if(accountContextService.isSignIn()){
+        if(accountContextService.isSignIn() && post.getAnonymous() == null){
             Account contextAccount = accountContextService.getContextAccount();
             post.validateAccountAccess(contextAccount, authorities);
             post.update(board, request.getPostContent(), request.getIsNotice(), request.getIsSecret(), attachList, tags, authorities, ip);
@@ -76,8 +76,10 @@ public class PostUpdateService {
 
     // only signed user can add tags
     private List<PostTagMapping> getTagsIfSignIn(List<PostCreateDto.TagDto> tagList) {
-        if(!accountContextService.isSignIn())
+        if(tagList == null || tagList.size() == 0)
             return new ArrayList<>();
+        if(!accountContextService.isSignIn())
+            throw new BusinessException(TagErrorCode.ANONYMOUS_CAN_NOT_TAG);
         return tagList.stream()
                 .map(t -> PostTagMapping.builder()
                         .tag(tagJpaRepository.findById(t.getTagId())
@@ -87,6 +89,8 @@ public class PostUpdateService {
     }
 
     private List<Attach> getAttaches(List<PostCreateDto.AttachDto> attachmentList) {
+        if(attachmentList == null || attachmentList.size() == 0)
+            return new ArrayList<>();
         return attachmentList.stream()
                 .map(a -> attachJpaRepository.findById(a.getAttachId())
                         .orElseThrow(() -> new BusinessException(AttachErrorCode.NO_SUCH_ATTACH))

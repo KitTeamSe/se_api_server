@@ -34,6 +34,8 @@ public class PostReadService {
     private final PasswordEncoder passwordEncoder;
     private final BoardJpaRepository boardJpaRepository;
     private final PostQueryRepository postQueryRepository;
+
+    @Transactional
     public PostReadDto.Response read(Long postId){
         Post post = postJpaRepository.findById(postId)
                 .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));
@@ -42,14 +44,23 @@ public class PostReadService {
         Set<String> authorities = accountContextService.getContextAuthorities();
 
         board.validateAccessAuthority(authorities);
+
+        post.increaseViews();
+        postJpaRepository.save(post);
+
         return PostReadDto.Response.fromEntity(post, isOwnerOrHasManageAuthority(post));
     }
 
+    @Transactional
     public PostReadDto.Response readAnonymousSecretPost(Long postId, String password){
         Post post = postJpaRepository.findById(postId)
                 .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));
         if(!passwordEncoder.matches(password, post.getAnonymousPassword()))
             throw new BusinessException(PostErrorCode.ANONYMOUS_PASSWORD_INCORRECT);
+
+        post.increaseViews();
+        postJpaRepository.save(post);
+
         return PostReadDto.Response.fromEntity(post, true);
     }
 

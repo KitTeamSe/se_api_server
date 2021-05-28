@@ -226,4 +226,8 @@ public class Post extends BaseEntity {
 
     this.postIsDeleted = PostIsDeleted.DELETED;
   }
+
+  public void increaseViews(){
+    views += 1;
+  }
 }
