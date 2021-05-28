@@ -8,6 +8,7 @@ import com.se.apiserver.v1.noticerecord.domain.service.NoticeRecordCreateService
 import com.se.apiserver.v1.noticerecord.infra.dto.NoticeRecordCreateDto;
 import com.se.apiserver.v1.post.infra.repository.PostJpaRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +29,9 @@ public class NoticeSendService {
     private final PostJpaRepository postJpaRepository;
     private final NoticeCreateService noticeCreateService;
     private final NoticeRecordCreateService noticeRecordCreateService;
-    String NOTICESEND_URL = "localhost:8088/notice/multi-message";
+
+    @Value("${se-notification-server.send-url}")
+    private String SEND_URL;
 
     public void postSend(NoticeSendDto.Request request){
         List<Long> tagIdList = request.getTagIdList();
@@ -68,7 +72,7 @@ public class NoticeSendService {
     @Transactional
     public void send(List<Long> accountList, String title, String message, String url) {
         //전송
-        UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(NOTICESEND_URL)
+        UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(SEND_URL)
                 .queryParam("accountIdList", accountList)
                 .queryParam("title", title)
                 .queryParam("message", message)
