@@ -4,7 +4,6 @@ import com.se.apiserver.v1.account.domain.entity.Account;
 import com.se.apiserver.v1.account.domain.entity.AccountType;
 import com.se.apiserver.v1.account.domain.entity.InformationOpenAgree;
 import com.se.apiserver.v1.account.domain.entity.Question;
-import com.se.apiserver.v1.account.application.dto.AccountDeleteDto;
 import com.se.apiserver.v1.account.infra.repository.AccountJpaRepository;
 import com.se.apiserver.v1.account.infra.repository.QuestionJpaRepository;
 import org.assertj.core.api.Assertions;
@@ -38,7 +37,7 @@ public class AccountDeleteServiceTest {
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("1",
                 "1", Arrays.asList(new SimpleGrantedAuthority("ACCOUNT_ACCESS"))));
         //when
-        accountDeleteService.delete(new AccountDeleteDto.Request("user"));
+        accountDeleteService.delete("user");
         //then
         Assertions.assertThat(accountJpaRepository.findByIdString("user").isPresent()).isEqualTo(false);
     }
@@ -50,7 +49,7 @@ public class AccountDeleteServiceTest {
         //when
         //then
         Assertions.assertThatThrownBy(() -> {
-            accountDeleteService.delete(new AccountDeleteDto.Request("test"));})
+            accountDeleteService.delete("test");})
                 .isInstanceOf(AccessDeniedException.class).hasMessage("비정상적인 접근");
     }
 
@@ -63,7 +62,7 @@ public class AccountDeleteServiceTest {
                 "aaa", Arrays.asList(new SimpleGrantedAuthority("ACCOUNT_ACCESS"))));
         //then
         Assertions.assertThatThrownBy(() -> {
-            accountDeleteService.delete(new AccountDeleteDto.Request("test"));})
+            accountDeleteService.delete("test");})
                 .isInstanceOf(AccessDeniedException.class).hasMessage("비정상적인 접근");
     }
 
@@ -75,7 +74,7 @@ public class AccountDeleteServiceTest {
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("admin",
                 "admin", Arrays.asList(new SimpleGrantedAuthority("ACCOUNT_MANAGE"))));
         //when
-        accountDeleteService.delete(new AccountDeleteDto.Request("test"));
+        accountDeleteService.delete("test");
         //then
         Assertions.assertThat(accountJpaRepository.findByIdString("test").isPresent()).isEqualTo(false);
     }
