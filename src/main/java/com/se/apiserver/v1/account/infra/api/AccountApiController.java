@@ -103,12 +103,12 @@ public class AccountApiController {
         return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 수정되었습니다.");
     }
 
-    @DeleteMapping("/account")
+    @DeleteMapping("/account/{id}")
     @PreAuthorize("hasAnyAuthority('ACCOUNT_ACCESS', 'ACCOUNT_MANAGE')")
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "회원 삭제")
-    public SuccessResponse deleteAccount(@RequestBody @Validated AccountDeleteDto.Request request) {
-        accountDeleteService.delete(request);
+    public SuccessResponse deleteAccount(@PathVariable(name = "id") String id) {
+        accountDeleteService.delete(id);
         return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 삭제되었습니다.");
     }
 
@@ -116,7 +116,7 @@ public class AccountApiController {
     @ResponseStatus(value = HttpStatus.OK)
     @PreAuthorize("hasAnyAuthority('ACCOUNT_ACCESS', 'ACCOUNT_MANAGE')")
     @ApiOperation(value = "회원 정보 조회")
-    public SuccessResponse<AccountReadDto.Response> deleteAccount(@PathVariable(name = "id") String id) {
+    public SuccessResponse<AccountReadDto.Response> readAccount(@PathVariable(name = "id") String id) {
         return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", accountReadService.read(id));
     }
 
