@@ -16,6 +16,7 @@ insert into authority (authority_id, name_eng, name_kor) values (15,'REPORT_ACCE
 insert into authority (authority_id, name_eng, name_kor) values (16,'REPORT_MANAGE','신고_관리');
 insert into authority (authority_id, name_eng, name_kor) values (17,'AUTHORITY_MANAGE','권한_관리');
 insert into authority (authority_id, name_eng, name_kor) values (18,'SCHEDULE_MANAGE','시간표_관리');
+insert into authority (authority_id, name_eng, name_kor) values (19,'NOTICE_MANAGE','알림_관리');
 
 
 insert into authority_group (authority_group_id, description, name, type) values (1,'비로그인 사용자','ANONYMOUS', 'ANONYMOUS');
@@ -75,6 +76,7 @@ insert into authority_group_authority_mapping (authority_group_authority_mapping
 insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (24,16,3);
 insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (25,17,3);
 insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (26,18,3);
+insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (27,19,3);
 
 insert into period (period_id, period_order, name, start_time, end_time) values (1, 1, '1', '09:00:00', '09:50:00');
 insert into period (period_id, period_order, name, start_time, end_time) values (2, 2, '2', '10:00:00', '10:50:00');
