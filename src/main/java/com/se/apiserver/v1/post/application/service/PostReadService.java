@@ -38,7 +38,7 @@ public class PostReadService {
         Post post = postJpaRepository.findById(postId)
                 .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));
         Board board = post.getBoard();
-        Account account = accountContextService.getContextAccount();
+
         Set<String> authorities = accountContextService.getContextAuthorities();
 
         board.validateAccessAuthority(authorities);
