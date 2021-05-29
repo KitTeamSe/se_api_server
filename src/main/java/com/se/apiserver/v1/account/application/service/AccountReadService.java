@@ -34,6 +34,11 @@ public class AccountReadService {
         return Response.fromEntity(account, isLegalAccess(account));
     }
 
+    public Response readMyAccount() {
+        Account account = accountContextService.getContextAccount();
+        return Response.fromEntity(account, true);
+    }
+
     private boolean isLegalAccess(Account account) {
         if(accountContextService.isOwner(account) || accountContextService.hasAuthority(Account.MANAGE_TOKEN))
             return true;

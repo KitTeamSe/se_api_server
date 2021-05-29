@@ -115,9 +115,17 @@ public class AccountApiController {
     @GetMapping("/account/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     @PreAuthorize("hasAnyAuthority('ACCOUNT_ACCESS', 'ACCOUNT_MANAGE')")
-    @ApiOperation(value = "회원 정보 조회")
+    @ApiOperation(value = "아이디로 회원 정보 조회")
     public SuccessResponse<AccountReadDto.Response> readAccount(@PathVariable(name = "id") String id) {
         return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", accountReadService.read(id));
+    }
+
+    @GetMapping("/account/my")
+    @ResponseStatus(value = HttpStatus.OK)
+    @PreAuthorize("hasAnyAuthority('ACCOUNT_ACCESS', 'ACCOUNT_MANAGE')")
+    @ApiOperation(value = "내 회원 정보 조회")
+    public SuccessResponse<AccountReadDto.Response> readMyAccount() {
+        return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", accountReadService.readMyAccount());
     }
 
     //TODO 페이징 리퀘스트, 리스폰스 샘플 코드, 추후 삭제 요망
