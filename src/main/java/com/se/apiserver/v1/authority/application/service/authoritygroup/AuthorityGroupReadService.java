@@ -37,11 +37,15 @@ public class AuthorityGroupReadService {
         return new PageImpl(responseList, authorityGroups.getPageable(), authorityGroups.getTotalElements());
     }
 
-    public AuthorityGroup getDefaultAuthorityGroup(){
-        List<AuthorityGroup> list = authorityGroupJpaRepository.findByType(AuthorityGroupType.DEFAULT);
+    public List<AuthorityGroup> getAuthorityGroupsByType(AuthorityGroupType authorityGroupType){
+        List<AuthorityGroup> list = authorityGroupJpaRepository.findByType(authorityGroupType);
         if(list == null || list.isEmpty())
-            throw new BusinessException(AuthorityGroupErrorCode.NO_DEFAULT_AUTHORITY_GROUP);
-        return list.get(0);
+            throw new BusinessException(AuthorityGroupErrorCode.NO_SUCH_AUTHORITY_GROUP);
+        return list;
+    }
+
+    public AuthorityGroup getDefaultAuthorityGroup(){
+        return getAuthorityGroupsByType(AuthorityGroupType.DEFAULT).get(0);
     }
 
 }
