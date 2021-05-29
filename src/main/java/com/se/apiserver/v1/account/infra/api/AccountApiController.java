@@ -60,7 +60,7 @@ public class AccountApiController {
     @ApiOperation(value = "관리자 전용 로그인")
     public SuccessResponse<AccountSignInDto.Response> signInAsManager(@RequestBody @Validated AccountSignInDto.Request request, HttpServletRequest httpServletRequest) {
         return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 로그인 되었습니다",
-            accountSignInService.signInManager(request.getId(), request.getPw(), getIp(httpServletRequest)));
+            accountSignInService.signInAsManager(request.getId(), request.getPw(), getIp(httpServletRequest)));
     }
 
     @GetMapping(path = "/account/email/{email}")

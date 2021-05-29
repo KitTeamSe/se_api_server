@@ -32,23 +32,37 @@ public class AccountSignInService {
   public AccountSignInDto.Response signIn(String id, String password, String ip) {
     Account account = accountJpaRepository.findByIdString(id)
         .orElseThrow(() -> new BusinessException(AccountErrorCode.NO_SUCH_ACCOUNT));
+
+    String token = signIn(account, password, ip);
+
+    return new AccountSignInDto.Response(token);
+  }
+
+  @Transactional
+  public AccountSignInDto.Response signInAsManager(String id, String password, String ip) {
+    Account account = accountJpaRepository.findByIdString(id)
+        .orElseThrow(() -> new BusinessException(AccountErrorCode.NO_SUCH_ACCOUNT));
+
+    validateManagerAuthority(account);
+
+    String token = signIn(account, password, ip);
+
+    return new AccountSignInDto.Response(token);
+  }
+
+  private String signIn(Account account, String password, String ip){
     if (!passwordEncoder.matches(password, account.getPassword())) {
-        throw new BusinessException(AccountErrorCode.PASSWORD_INCORRECT);
+      throw new BusinessException(AccountErrorCode.PASSWORD_INCORRECT);
     }
 
     account.updateLastSignIp(ip);
     accountJpaRepository.save(account);
 
-    String token = jwtTokenResolver.createToken(String.valueOf(account.getAccountId()));
-    return new AccountSignInDto.Response(token);
+    return jwtTokenResolver.createToken(String.valueOf(account.getAccountId()));
   }
 
-  @Transactional
-  public AccountSignInDto.Response signInManager(String id, String password, String ip) {
-    Account account = accountJpaRepository.findByIdString(id)
-        .orElseThrow(() -> new BusinessException(AccountErrorCode.NO_SUCH_ACCOUNT));
-
-    // 기본적으로 그룹 타입이 SYSTEM인 경우에만 관리자로 인식함.
+  private void validateManagerAuthority(Account account){
+    // 기본적으로 그룹 타입이 SYSTEM인 경우에만 관리자로 인식함. (실제 가진 권한과 무관히게)
     // TODO : 다른 그룹을 관리자로 인식시키려면 로직 수정 필요.
     AuthorityGroup managerGroup = authorityGroupReadService
         .getAuthorityGroupsByType(AuthorityGroupType.SYSTEM).get(0);
@@ -58,15 +72,5 @@ public class AccountSignInService {
 
     if(!isManager)
       throw new BusinessException(GlobalErrorCode.HANDLE_ACCESS_DENIED);
-
-    if (!passwordEncoder.matches(password, account.getPassword())) {
-      throw new BusinessException(AccountErrorCode.PASSWORD_INCORRECT);
-    }
-
-    account.updateLastSignIp(ip);
-    accountJpaRepository.save(account);
-
-    String token = jwtTokenResolver.createToken(String.valueOf(account.getAccountId()));
-    return new AccountSignInDto.Response(token);
   }
 }
