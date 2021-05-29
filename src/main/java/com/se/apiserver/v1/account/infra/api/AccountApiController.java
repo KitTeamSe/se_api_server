@@ -53,6 +53,16 @@ public class AccountApiController {
                 accountSignInService.signIn(request.getId(), request.getPw(), getIp(httpServletRequest)));
     }
 
+    @PostMapping(path = "/signin/manager")
+    @ApiResponses(value = {
+        @ApiResponse(code = 400, message = "비밀번호 불일치")})
+    @ResponseStatus(value = HttpStatus.OK)
+    @ApiOperation(value = "관리자 전용 로그인")
+    public SuccessResponse<AccountSignInDto.Response> signInAsManager(@RequestBody @Validated AccountSignInDto.Request request, HttpServletRequest httpServletRequest) {
+        return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 로그인 되었습니다",
+            accountSignInService.signInManager(request.getId(), request.getPw(), getIp(httpServletRequest)));
+    }
+
     @GetMapping(path = "/account/email/{email}")
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "이메일로 아이디 찾기")
@@ -128,7 +138,6 @@ public class AccountApiController {
         return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", accountReadService.readMyAccount());
     }
 
-    //TODO 페이징 리퀘스트, 리스폰스 샘플 코드, 추후 삭제 요망
     @GetMapping(path = "/account")
     @PreAuthorize("hasAnyAuthority('ACCOUNT_MANAGE')")
     @ResponseStatus(value = HttpStatus.OK)
