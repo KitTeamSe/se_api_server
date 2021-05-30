@@ -9,6 +9,7 @@ import com.se.apiserver.v1.board.application.error.BoardErrorCode;
 import com.se.apiserver.v1.board.infra.repository.BoardJpaRepository;
 import com.se.apiserver.v1.common.domain.entity.Anonymous;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
+import com.se.apiserver.v1.post.application.dto.PostReadDto;
 import com.se.apiserver.v1.post.domain.entity.Post;
 import com.se.apiserver.v1.post.application.error.PostErrorCode;
 import com.se.apiserver.v1.post.application.dto.PostCreateDto;
@@ -39,6 +40,15 @@ public class PostUpdateService {
     private final PasswordEncoder passwordEncoder;
     private final TagJpaRepository tagJpaRepository;
     private final AttachJpaRepository attachJpaRepository;
+
+    public Boolean checkAnonymousPostEditAccess(Long postId, String password){
+        Post post = postJpaRepository.findById(postId)
+                .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));
+        post.validateReadable();
+        validateAnonymousPostPassword(post, password);
+        return true;
+    }
+
 
     @Transactional
     public Long update(PostUpdateDto.Request request) {
@@ -76,6 +86,12 @@ public class PostUpdateService {
     }
 
     // only signed user can add tags
+
+    private void validateAnonymousPostPassword(Post post, String password) {
+        if(!passwordEncoder.matches(password, post.getAnonymousPassword()))
+            throw new BusinessException(PostErrorCode.ANONYMOUS_PASSWORD_INCORRECT);
+    }
+
     private List<Tag> getTagsIfSignIn(List<PostCreateDto.TagDto> tagList) {
         if(tagList == null || tagList.size() == 0)
             return new ArrayList<>();
