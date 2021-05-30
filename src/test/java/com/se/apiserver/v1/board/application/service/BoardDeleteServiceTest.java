@@ -43,7 +43,7 @@ class BoardDeleteServiceTest {
         Board board = boardJpaRepository.findById(id).get();
         Long boardId = board.getBoardId();
         Long menuId = board.getMenu().getMenuId();
-        Long authorityId = board.getMenu().getAuthority().getAuthorityId();
+        Long authorityId = board.getMenu().getAccessAuthority().getAuthorityId();
         boardDeleteService.delete(id);
         //then
         Assertions.assertThat(boardJpaRepository.findById(boardId).isEmpty()).isEqualTo(true);

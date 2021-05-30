@@ -66,8 +66,8 @@ class MenuCreateServiceTest {
         Assertions.assertThat(menu.getNameKor()).isEqualTo("자유게시판");
         Assertions.assertThat(menu.getNameEng()).isEqualTo("freeboard");
         Assertions.assertThat(menu.getMenuOrder()).isEqualTo(1);
-        Assertions.assertThat(menu.getAuthority().getNameEng()).isEqualTo("freeboard");
-        Assertions.assertThat(menu.getAuthority().getNameKor()).isEqualTo("자유게시판");
+        Assertions.assertThat(menu.getAccessAuthority().getNameEng()).isEqualTo("freeboard");
+        Assertions.assertThat(menu.getAccessAuthority().getNameKor()).isEqualTo("자유게시판");
     }
 
     @Test

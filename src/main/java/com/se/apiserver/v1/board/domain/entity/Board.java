@@ -52,4 +52,8 @@ public class Board extends AccountGenerateEntity {
     public void validateAccessAuthority(Set<String> authorities) {
         menu.validateAccessAuthority(authorities);
     }
+
+    public void validateManageAuthority(Set<String> authorities) {
+        menu.validateManageAuthority(authorities);
+    }
 }
