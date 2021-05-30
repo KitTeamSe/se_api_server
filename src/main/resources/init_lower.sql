@@ -52,31 +52,32 @@ insert into authority_group_authority_mapping (authority_group_authority_mapping
 
 insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (3,1,2);
 insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (4,4,2);
-insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (5,8,2);
-insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (6,9,2);
-insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (7,13,2);
-insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (8,15,2);
+insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (5,6,2);
+insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (6,8,2);
+insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (7,9,2);
+insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (8,13,2);
+insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (9,15,2);
 
 
-insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (9,1,3);
-insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (10,2,3);
-insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (11,3,3);
-insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (12,4,3);
-insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (13,5,3);
-insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (14,6,3);
-insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (15,7,3);
-insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (16,8,3);
-insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (17,9,3);
-insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (18,10,3);
-insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (19,11,3);
-insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (20,12,3);
-insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (21,13,3);
-insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (22,14,3);
-insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (23,15,3);
-insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (24,16,3);
-insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (25,17,3);
-insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (26,18,3);
-insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (27,19,3);
+insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (10,1,3);
+insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (11,2,3);
+insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (12,3,3);
+insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (13,4,3);
+insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (14,5,3);
+insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (15,6,3);
+insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (16,7,3);
+insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (17,8,3);
+insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (18,9,3);
+insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (19,10,3);
+insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (20,11,3);
+insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (21,12,3);
+insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (22,13,3);
+insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (23,14,3);
+insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (24,15,3);
+insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (25,16,3);
+insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (26,17,3);
+insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (27,18,3);
+insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (28,19,3);
 
 insert into period (period_id, period_order, name, start_time, end_time) values (1, 1, '1', '09:00:00', '09:50:00');
 insert into period (period_id, period_order, name, start_time, end_time) values (2, 2, '2', '10:00:00', '10:50:00');
@@ -96,9 +97,9 @@ insert into period (period_id, period_order, name, start_time, end_time) values 
 insert into authority (authority_id, name_eng, name_kor) values (20, 'freeboard', '자유게시판');
 insert into menu (menu_id, description, menu_order, menu_type, name_eng, name_kor, url, authority_id) values (1, '자유게시판', 1, 'BOARD', 'freeboard', '자유게시판', 'freeboard', 20);
 insert into board (board_id, name_eng, name_kor, menu_id) values (1, 'freeboard', '자유게시판', 1);
-insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (28,20,1);
-insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (29,20,2);
-insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (30,20,3);
+insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (29,20,1);
+insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (30,20,2);
+insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (31,20,3);
 
 insert into tag (tag_id, text) values (1, '1학년');
 insert into tag (tag_id, text) values (2, '2학년');
