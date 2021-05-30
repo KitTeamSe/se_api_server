@@ -50,7 +50,7 @@ public class PostUpdateService {
         List<Tag> tags = getTagsIfSignIn(request.getTagList());
         String ip = accountContextService.getCurrentClientIP();
 
-        validateNotDeletedPost(post);
+        post.validateReadable();
 
         if(accountContextService.isSignIn() && post.getAnonymous() == null){
             Account contextAccount = accountContextService.getContextAccount();
@@ -97,8 +97,4 @@ public class PostUpdateService {
                 .collect(Collectors.toList());
     }
 
-    private void validateNotDeletedPost(Post post) {
-        if(post.getPostIsDeleted() == PostIsDeleted.DELETED)
-            throw new BusinessException(PostErrorCode.DELETED_POST);
-    }
 }

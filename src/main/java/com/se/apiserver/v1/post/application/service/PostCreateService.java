@@ -43,6 +43,7 @@ public class PostCreateService {
     @Transactional
     public Long create(PostCreateDto.Request request) {
         Post post = createPost(request);
+        post.validateReadable();
         postJpaRepository.save(post);
         return post.getPostId();
     }

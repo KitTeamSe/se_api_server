@@ -233,4 +233,9 @@ public class Post extends BaseEntity {
   public void increaseViews(){
     views += 1;
   }
+
+  public void validateReadable() {
+    if(this.postIsDeleted == PostIsDeleted.DELETED)
+      throw new BusinessException(PostErrorCode.DELETED_POST);
+  }
 }

@@ -43,7 +43,7 @@ public class PostReadService {
         Post post = postJpaRepository.findById(postId)
                 .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));
         Board board = post.getBoard();
-        validateNotDeletedPost(post);
+        post.validateReadable();
         Set<String> authorities = accountContextService.getContextAuthorities();
 
         board.validateAccessAuthority(authorities);
@@ -59,7 +59,8 @@ public class PostReadService {
     public PostReadDto.Response readAnonymousSecretPost(Long postId, String password){
         Post post = postJpaRepository.findById(postId)
                 .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));
-        validateNotDeletedPost(post);
+        post.validateReadable();
+        post.validateReadable();
         validateAnonymousPostPassword(post, password);
         post.increaseViews();
         postJpaRepository.save(post);
@@ -69,7 +70,7 @@ public class PostReadService {
     public Boolean checkAnonymousPostWriteAccess(PostAccessCheckDto.AnonymousPostAccessCheckDto anonymousPostAccessCheckDto){
         Post post = postJpaRepository.findById(anonymousPostAccessCheckDto.getPostId())
                 .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));
-        validateNotDeletedPost(post);
+        post.validateReadable();
         validateAnonymousPostPassword(post, anonymousPostAccessCheckDto.getPassword());
         return true;
     }
@@ -106,11 +107,6 @@ public class PostReadService {
             throw new BusinessException(PostErrorCode.ANONYMOUS_PASSWORD_INCORRECT);
     }
 
-
-    private void validateNotDeletedPost(Post post) {
-        if(post.getPostIsDeleted() == PostIsDeleted.DELETED)
-            throw new BusinessException(PostErrorCode.DELETED_POST);
-    }
 
     private boolean isOwnerOrHasManageAuthority(Post post) {
         Set<String> authorities = accountContextService.getContextAuthorities();
