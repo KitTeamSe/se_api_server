@@ -60,7 +60,6 @@ public class PostReadService {
         Post post = postJpaRepository.findById(postId)
                 .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));
         post.validateReadable();
-        post.validateReadable();
         validateAnonymousPostPassword(post, password);
         post.increaseViews();
         postJpaRepository.save(post);
