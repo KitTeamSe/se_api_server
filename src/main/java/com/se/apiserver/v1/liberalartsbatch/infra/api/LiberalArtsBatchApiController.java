@@ -1,6 +1,7 @@
 package com.se.apiserver.v1.liberalartsbatch.infra.api;
 
 import com.se.apiserver.v1.common.infra.dto.SuccessResponse;
+import com.se.apiserver.v1.liberalartsbatch.application.dto.LiberalArtsBatchUploadDto;
 import com.se.apiserver.v1.liberalartsbatch.application.service.LiberalArtsBatchUploadService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -27,8 +28,7 @@ public class LiberalArtsBatchApiController {
   @PostMapping(path = "/upload/{timeTableId}")
   @ResponseStatus(value = HttpStatus.OK)
   @ApiOperation(value = "교양 배치 파일 업로드")
-  public SuccessResponse upload(@PathVariable(value = "timeTableId") Long timeTableId, @RequestParam("file") MultipartFile file){
-    liberalArtsBatchUploadService.upload(timeTableId, file);
-    return new SuccessResponse(HttpStatus.OK.value(), "교양 배치 파일 업로드에 성공했습니다.");
+  public SuccessResponse<LiberalArtsBatchUploadDto.Response> upload(@PathVariable(value = "timeTableId") Long timeTableId, @RequestParam("file") MultipartFile file){
+    return new SuccessResponse(HttpStatus.OK.value(), "교양 배치 파일 업로드에 성공했습니다.", liberalArtsBatchUploadService.upload(timeTableId, file));
   }
 }

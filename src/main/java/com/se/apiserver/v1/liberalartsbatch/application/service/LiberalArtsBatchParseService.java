@@ -4,13 +4,17 @@ import com.se.apiserver.v1.account.application.service.AccountContextService;
 import com.se.apiserver.v1.account.domain.entity.Account;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.deployment.application.dto.DeploymentCreateDto;
+import com.se.apiserver.v1.deployment.application.error.DeploymentErrorCode;
 import com.se.apiserver.v1.deployment.application.service.DeploymentCreateService;
+import com.se.apiserver.v1.deployment.domain.entity.Deployment;
+import com.se.apiserver.v1.deployment.domain.entity.DeploymentAlertMessage;
 import com.se.apiserver.v1.division.domain.entity.Division;
 import com.se.apiserver.v1.division.infra.repository.DivisionJpaRepository;
 import com.se.apiserver.v1.lectureroom.domain.entity.LectureRoom;
 import com.se.apiserver.v1.lectureroom.infra.repository.LectureRoomQueryRepository;
 import com.se.apiserver.v1.lectureunabletime.domain.entity.DayOfWeek;
-import com.se.apiserver.v1.liberalartsbatch.application.error.LiberalArtsBatchUploadErrorCode;
+import com.se.apiserver.v1.liberalartsbatch.application.dto.LiberalArtsBatchUploadDto;
+import com.se.apiserver.v1.liberalartsbatch.application.error.LiberalArtsBatchParseErrorCode;
 import com.se.apiserver.v1.opensubject.domain.entity.OpenSubject;
 import com.se.apiserver.v1.opensubject.infra.repository.OpenSubjectJpaRepository;
 import com.se.apiserver.v1.participatedteacher.domain.entity.ParticipatedTeacher;
@@ -35,6 +39,8 @@ import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -71,11 +77,21 @@ public class LiberalArtsBatchParseService {
   private final DeploymentCreateService deploymentCreateService;
   private final DivisionJpaRepository divisionJpaRepository;
 
-  public void parse(TimeTable timeTable, Workbook workbook){
+  private static final Logger LOGGER = LoggerFactory.getLogger(LiberalArtsBatchParseService.class);
+
+  @Transactional
+  public LiberalArtsBatchUploadDto.Response parse(TimeTable timeTable, Workbook workbook){
     // TODO: 엑셀 file 읽어서 DB에 반영
+    LOGGER.info("[BatchParseService] Batch parse service requested by " + accountContextService.getContextAccount().getIdString());
+
     Sheet worksheet = workbook.getSheetAt(0);
 
     String note = createAutoCreatedNote();
+
+    int newlyCreatedDeployment = 0;
+
+    StringBuilder errorLogBuilder = new StringBuilder();
+    StringBuilder deploymentAlertLogBuilder = new StringBuilder();
 
     for(int i = START_ROW ; i < worksheet.getPhysicalNumberOfRows() ; i++){
       Row row = worksheet.getRow(i);
@@ -109,38 +125,68 @@ public class LiberalArtsBatchParseService {
         DayOfWeek dayOfWeek = parseDayOfWeek(row);
 
         // 배치 생성
-        DeploymentCreateDto.Resposne response = deploymentCreateService.saveDeployment(timeTable, division,
-            usableLectureRoom, participatedTeacher, periodRange, dayOfWeek, true, note);
+        Deployment deployment = new Deployment(timeTable, division,
+            usableLectureRoom, participatedTeacher, dayOfWeek, periodRange, true, note);
+
+        DeploymentCreateDto.Resposne resposne = deploymentCreateService.saveDeployment(deployment, true);
+        newlyCreatedDeployment++;
 
         // response에 배치 시 발생한 에러들이 기록되므로, 로그에 남기거나 하면 좋을듯.
+        logDeploymentAlert(deploymentAlertLogBuilder, row, resposne.getDeploymentAlertMessage());
+      }
+      catch (BusinessException be){
+        if(be.getErrorCode() != LiberalArtsBatchParseErrorCode.INVALID_SUBJECT_CODE_DATA)
+          logParseError(errorLogBuilder, row, be);
       }
       catch (Exception e){
-        e.printStackTrace();
       }
     }
+
+    LOGGER.info("[BatchParseService] Errors : \n" + errorLogBuilder.toString());
+    LOGGER.info("[BatchParseService] Deployment alerts : \n" + deploymentAlertLogBuilder.toString());
+
+    LOGGER.info("[BatchParseService] Batch parse completed. Total " + newlyCreatedDeployment + " deployed newly.");
+
+    return LiberalArtsBatchUploadDto.Response.builder()
+        .newlyDeployed(newlyCreatedDeployment)
+        .deploymentAlertLog(deploymentAlertLogBuilder.toString())
+        .errorLog(errorLogBuilder.toString())
+        .build();
   }
 
   private Subject parseSubject(Row row, int semester, String note){
     String code = getCellValue(row, COL_SUBJECT_CODE, "UNKNOWN");                                  // 교과목코드
+    if(code.equals("UNKNOWN"))
+      throw new BusinessException(LiberalArtsBatchParseErrorCode.INVALID_SUBJECT_CODE_DATA);
+
+    String subjectName = getCellValue(row, COL_SUBJECT_NAME, "알 수 없는 교과목명");                    // 교과목명
+
     Optional<Subject> subjectOptional = subjectJpaRepository.findByCode(code);
-    if(subjectOptional.isPresent())
-      return subjectOptional.get();
+    if(subjectOptional.isPresent()){
+
+      Subject subject = subjectOptional.get();
+      if(!subject.getName().equals(subjectName))
+        throw new BusinessException(LiberalArtsBatchParseErrorCode.DUPLICATED_SUBJECT_CODE);
+
+      return subject;
+    }
+
 
     String curriculum = getCellValue(row, COL_SUBJECT_CURRICULUM, "알 수 없는 교육과정");               // 교육과정
     SubjectType subjectType = getSubjectType(getCellValue(row, COL_SUBJECT_TYPE, "교선"));              // 교과구분
-    String subjectName = getCellValue(row, COL_SUBJECT_NAME, "알 수 없는 교과목명");                    // 교과목명
     int grade = getCellValue(row, COL_SUBJECT_GRADE, 0);                                                // 학년
     int credit = getCellValue(row, COL_SUBJECT_CREDIT, 0);                                              // 학점
     return new Subject(curriculum, subjectType, code, subjectName, grade, semester, credit, true, note);
   }
 
   private PeriodRange parsePeriodRange(Row row){
-    String periodRangeRawStr = getCellValue(row, COL_PERIOD, "");
-    if(periodRangeRawStr.equals(""))
-      return null;
-
-    Period startPeriod, endPeriod;
     try{
+      String periodRangeRawStr = getCellValue(row, COL_PERIOD, "");
+      if(periodRangeRawStr.equals(""))
+        throw new BusinessException(LiberalArtsBatchParseErrorCode.INVALID_PERIOD_DATA);
+
+      Period startPeriod, endPeriod;
+
       if(periodRangeRawStr.length() < 2){
         startPeriod = periodJpaRepository.findByName(String.valueOf(periodRangeRawStr.charAt(0)))
             .orElseThrow(() -> new BusinessException(PeriodErrorCode.NO_SUCH_PERIOD));
@@ -155,19 +201,16 @@ public class LiberalArtsBatchParseService {
       return new PeriodRange(startPeriod, endPeriod);
     }
     catch (Exception e){
-      // Unknown period parsed! Log it!
-      throw new BusinessException(LiberalArtsBatchUploadErrorCode.INVALID_PERIOD_DATA);
+      throw new BusinessException(LiberalArtsBatchParseErrorCode.INVALID_PERIOD_DATA);
     }
   }
 
   private LectureRoom parseLectureRoom(Row row, String note){
-    String buildingRawStr = getCellValue(row, COL_LECTURE_ROOM, "XX000");
-    if(buildingRawStr.isEmpty())
-      throw new BusinessException(LiberalArtsBatchUploadErrorCode.INVALID_LECTURE_ROOM_DATA);
+    String building, roomNumber;
 
-    String building;
-    String roomNumber;
     try{
+      String buildingRawStr = getCellValue(row, COL_LECTURE_ROOM, "XX000");
+
       int splitPoint = 0;
       for(int j = 0  ; j < buildingRawStr.length() ; j++){
         if(Character.isDigit(buildingRawStr.charAt(j))){
@@ -179,7 +222,7 @@ public class LiberalArtsBatchParseService {
       roomNumber = buildingRawStr.substring(splitPoint);
     }
     catch (Exception e){
-      throw new BusinessException(LiberalArtsBatchUploadErrorCode.INVALID_LECTURE_ROOM_DATA);
+      throw new BusinessException(LiberalArtsBatchParseErrorCode.INVALID_LECTURE_ROOM_DATA);
     }
 
     Optional<LectureRoom> optionalLectureRoom = lectureRoomQueryRepository.findByRoomNumberWithBuilding(building, roomNumber);
@@ -216,7 +259,8 @@ public class LiberalArtsBatchParseService {
   private Division parseDivision(Row row, OpenSubject openSubject, String note){
     int divisionNumber = getCellValue(row, COL_DIVISION, -1);
     if(divisionNumber == -1)
-      throw new BusinessException(LiberalArtsBatchUploadErrorCode.INVALID_DIVISION_NUMBER_DATA);
+      throw new BusinessException(LiberalArtsBatchParseErrorCode.INVALID_DIVISION_NUMBER_DATA);
+
 
     if(openSubject.getOpenSubjectId() != null){
       Optional<Division> optionalDivision = divisionJpaRepository.findByOpenSubjectAndDivisionNumber(openSubject, divisionNumber);
@@ -280,13 +324,11 @@ public class LiberalArtsBatchParseService {
 
       if(defaultValue.getClass().equals(Integer.class))
         return (T) (Integer.valueOf((int)row.getCell(cellNum).getNumericCellValue()));
+    }
+    catch (Exception ignored){
 
-      throw new BusinessException(LiberalArtsBatchUploadErrorCode.INVALID_EXCEL_DATA);
     }
-    catch (Exception e){
-      e.printStackTrace();
-      return defaultValue;
-    }
+    throw new BusinessException(LiberalArtsBatchParseErrorCode.INVALID_EXCEL_DATA);
   }
 
   private String createAutoCreatedNote(){
@@ -297,5 +339,23 @@ public class LiberalArtsBatchParseService {
     if(creator != null)
       nickname = creator.getNickname();
     return stringBuilder.append(date).append(" by ").append(nickname).toString();
+  }
+
+  private void logParseError(StringBuilder errorBuilder, Row row, BusinessException be){
+    String line = be.getMessage() +" at row " + (row.getRowNum() + 1) + ".";
+    errorBuilder.append(line).append("\n");
+  }
+
+  private void logDeploymentAlert(StringBuilder alertBuilder, Row row, DeploymentAlertMessage alertMessage){
+    if(alertMessage == null || alertMessage.isEmpty())
+      return;
+
+    for(DeploymentErrorCode de : alertMessage.getAlertErrors()){
+      if(de == DeploymentErrorCode.SAME_GRADE_LECTURED)
+        continue;
+      String line = de.getMessage() +" at row " + (row.getRowNum() + 1) + ".";
+
+      alertBuilder.append(line).append("\n");
+    }
   }
 }

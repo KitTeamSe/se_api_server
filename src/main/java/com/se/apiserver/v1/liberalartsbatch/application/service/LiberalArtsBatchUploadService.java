@@ -1,6 +1,8 @@
 package com.se.apiserver.v1.liberalartsbatch.application.service;
 
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
+import com.se.apiserver.v1.liberalartsbatch.application.dto.LiberalArtsBatchUploadDto;
+import com.se.apiserver.v1.liberalartsbatch.application.dto.LiberalArtsBatchUploadDto.Response;
 import com.se.apiserver.v1.liberalartsbatch.application.error.LiberalArtsBatchUploadErrorCode;
 import com.se.apiserver.v1.timetable.application.error.TimeTableErrorCode;
 import com.se.apiserver.v1.timetable.domain.entity.TimeTable;
@@ -24,7 +26,7 @@ public class LiberalArtsBatchUploadService {
   private final LiberalArtsBatchParseService parseService;
 
   @Transactional
-  public void upload(Long timeTableId, MultipartFile file) {
+  public LiberalArtsBatchUploadDto.Response upload(Long timeTableId, MultipartFile file) {
     if(file.getSize() <= 0)
       throw new BusinessException(LiberalArtsBatchUploadErrorCode.INVALID_FILE_SIZE);
 
@@ -38,7 +40,13 @@ public class LiberalArtsBatchUploadService {
 
     Workbook workbook = getWorkbook(extension, file);
 
-    parseService.parse(timeTable, workbook);
+    try{
+      LiberalArtsBatchUploadDto.Response response = parseService.parse(timeTable, workbook);
+      return response;
+    }
+    catch (Exception e){
+      return LiberalArtsBatchUploadDto.Response.builder().newlyDeployed(0).build();
+    }
   }
 
   private Workbook getWorkbook(String extension, MultipartFile file){
