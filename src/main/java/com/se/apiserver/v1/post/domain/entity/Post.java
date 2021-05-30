@@ -140,6 +140,10 @@ public class Post extends BaseEntity {
     board.validateAccessAuthority(authorities);
   }
 
+  public void validateBoardAccessAuthority(Set<String> authorities){
+    validateBoardAccessAuthority(this.board, authorities);
+  }
+
   public void addAttaches(List<Attach> attachList) {
     if(attachList == null)
       return;
@@ -243,5 +247,9 @@ public class Post extends BaseEntity {
   public void validateReadable() {
     if(this.postIsDeleted == PostIsDeleted.DELETED)
       throw new BusinessException(PostErrorCode.DELETED_POST);
+  }
+
+  public void addReply(Reply reply) {
+    this.replies.add(reply);
   }
 }
