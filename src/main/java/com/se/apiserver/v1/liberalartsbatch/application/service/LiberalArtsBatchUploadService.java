@@ -28,9 +28,8 @@ public class LiberalArtsBatchUploadService {
     if(file.getSize() <= 0)
       throw new BusinessException(LiberalArtsBatchUploadErrorCode.INVALID_FILE_SIZE);
 
-    TimeTable timeTable = timeTableJpaRepository.findById(timeTableId).orElseThrow(() -> {
-      throw new BusinessException(TimeTableErrorCode.NO_SUCH_TIME_TABLE);
-    });
+    TimeTable timeTable = timeTableJpaRepository.findById(timeTableId)
+        .orElseThrow(() -> {throw new BusinessException(TimeTableErrorCode.NO_SUCH_TIME_TABLE); });
 
     String extension = FilenameUtils.getExtension(file.getOriginalFilename());
 

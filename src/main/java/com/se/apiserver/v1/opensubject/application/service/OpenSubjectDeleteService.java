@@ -17,11 +17,9 @@ public class OpenSubjectDeleteService {
 
   @Transactional
   public void delete(Long openSubjectId){
-    OpenSubject openSubject = openSubjectJpaRepository
-        .findById(openSubjectId)
-        .orElseThrow(() ->
-            new BusinessException(OpenSubjectErrorCode.NO_SUCH_OPEN_SUBJECT)
-        );
+    OpenSubject openSubject = openSubjectJpaRepository.findById(openSubjectId)
+        .orElseThrow(() -> new BusinessException(OpenSubjectErrorCode.NO_SUCH_OPEN_SUBJECT));
+
     openSubjectJpaRepository.delete(openSubject);
   }
 }

@@ -70,7 +70,7 @@ public class LiberalArtsBatchParseService {
   private final DeploymentCreateService deploymentCreateService;
 
   public void parse(TimeTable timeTable, Workbook workbook){
-    // TODO: 엑셀 file 읽어서 DB에 반영;
+    // TODO: 엑셀 file 읽어서 DB에 반영
     Sheet worksheet = workbook.getSheetAt(0);
 
     String note = createAutoCreatedNote();
@@ -89,7 +89,7 @@ public class LiberalArtsBatchParseService {
       // 개설 교과 생성
       OpenSubject openSubject = parseOpenSubject(timeTable, subject, note);
 
-      // 분반 생성?
+      // 분반 생성
       Division division = parseDivision(row, openSubject, note);
       if(division == null)
         continue;
