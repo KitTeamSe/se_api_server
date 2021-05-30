@@ -2,7 +2,6 @@ package com.se.apiserver.v1.authority.application.service.authoritygroup;
 
 import com.se.apiserver.v1.authority.domain.entity.AuthorityGroup;
 import com.se.apiserver.v1.authority.application.error.AuthorityGroupErrorCode;
-import com.se.apiserver.v1.authority.application.dto.authoritygroup.AuthorityGroupReadDto;
 import com.se.apiserver.v1.authority.application.dto.authoritygroup.AuthorityGroupUpdateDto;
 import com.se.apiserver.v1.authority.infra.repository.AuthorityGroupJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
@@ -18,14 +17,14 @@ public class AuthorityGroupUpdateService {
     private final AuthorityGroupJpaRepository authorityGroupJpaRepository;
 
     @Transactional
-    public AuthorityGroupReadDto.Response update(AuthorityGroupUpdateDto.Request request) {
+    public Long update(AuthorityGroupUpdateDto.Request request) {
         validateDuplicateGroupName(request.getName());
         AuthorityGroup authorityGroup = authorityGroupJpaRepository.findById(request.getId())
                 .orElseThrow(() -> new BusinessException(AuthorityGroupErrorCode.NO_SUCH_AUTHORITY_GROUP));
         updateDescriptionIfExist(authorityGroup, request.getDescription());
         updateNameIfExist(authorityGroup, request.getName());
-        authorityGroupJpaRepository.save(authorityGroup);
-        return AuthorityGroupReadDto.Response.fromEntity(authorityGroup);
+
+        return authorityGroupJpaRepository.save(authorityGroup).getAuthorityGroupId();
     }
 
     private void updateNameIfExist(AuthorityGroup authorityGroup, String name) {
