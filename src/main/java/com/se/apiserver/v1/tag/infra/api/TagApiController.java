@@ -42,7 +42,7 @@ public class TagApiController {
     @GetMapping(path = "/tag/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "태그 아이디로 태그 조회")
-    @PreAuthorize("hasAuthority('TAG_MANAGE')")
+    @PreAuthorize("hasAnyAuthority('TAG_ACCESS', 'TAG_MANAGE')")
     public SuccessResponse<TagReadDto.Response> readById(@PathVariable(value = "id") Long id) {
         return new SuccessResponse(HttpStatus.OK.value(), "태그 조회에 성공했습니다.", tagReadService.readById(id));
     }
@@ -50,7 +50,7 @@ public class TagApiController {
     @GetMapping(path = "/tag")
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "전체 태그 조회")
-    @PreAuthorize("hasAuthority('TAG_MANAGE')")
+    @PreAuthorize("hasAnyAuthority('TAG_ACCESS', 'TAG_MANAGE')")
     public SuccessResponse<PageImpl> readAll(@Validated PageRequest pageRequest) {
         return new SuccessResponse(HttpStatus.OK.value(), "태그 목록 조회에 성공했습니다.", tagReadService.readAll(pageRequest.of()));
     }
