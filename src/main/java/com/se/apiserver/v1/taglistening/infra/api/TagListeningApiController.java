@@ -46,7 +46,7 @@ public class TagListeningApiController {
     }
 
     @GetMapping("/tag-listen/{id}")
-    @ResponseStatus(value = HttpStatus.CREATED)
+    @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "수신 태그 조회")
     @PreAuthorize("hasAnyAuthority('TAG_ACCESS', 'TAG_MANAGE')")
     public SuccessResponse<TagListeningReadDto.Response> read(@PathVariable(value = "id") Long id){
@@ -54,16 +54,24 @@ public class TagListeningApiController {
     }
 
     @GetMapping("/tag-listen/account/{id}")
-    @ResponseStatus(value = HttpStatus.CREATED)
-    @ApiOperation(value = "사용자 아이디로 수신 목록 조회")
+    @ResponseStatus(value = HttpStatus.OK)
+    @ApiOperation(value = "사용자 pk로 수신 태그 목록 조회(관리자용)")
+    @PreAuthorize("hasAnyAuthority('TAG_MANAGE')")
+    public SuccessResponse<List<TagListeningReadDto.Response>> readByAccountId(@PathVariable(value = "id") Long accountId){
+        return new SuccessResponse<>(HttpStatus.OK.value(), "조회에 성공했습니다", tagListeningReadService.readByAccountId(accountId));
+    }
+
+    @GetMapping("/tag-listen/account/my")
+    @ResponseStatus(value = HttpStatus.OK)
+    @ApiOperation(value = "내 수신 태그 목록 조회")
     @PreAuthorize("hasAnyAuthority('TAG_ACCESS', 'TAG_MANAGE')")
-    public SuccessResponse<List<TagListeningReadDto.Response>> readMy(@PathVariable(value = "id") Long accountId){
-        return new SuccessResponse<>(HttpStatus.OK.value(), "조회에 성공했습니다", tagListeningReadService.readMy(accountId));
+    public SuccessResponse<List<TagListeningReadDto.Response>> readMy(){
+        return new SuccessResponse<>(HttpStatus.OK.value(), "조회에 성공했습니다", tagListeningReadService.readMy());
     }
 
     @GetMapping("/tag-listen")
-    @ResponseStatus(value = HttpStatus.CREATED)
-    @ApiOperation(value = "전체 수신 태그 조회(페이징)")
+    @ResponseStatus(value = HttpStatus.OK)
+    @ApiOperation(value = "전체 수신 태그 조회(페이징, 관리자용)")
     @PreAuthorize("hasAuthority('TAG_MANAGE')")
     public SuccessResponse<PageImpl> readAll(@Validated PageRequest pageRequest){
         return new SuccessResponse<>(HttpStatus.OK.value(), "조회에 성공했습니다", tagListeningReadService.readAllByPaging(pageRequest.of()));
