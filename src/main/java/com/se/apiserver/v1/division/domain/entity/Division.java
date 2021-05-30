@@ -71,4 +71,12 @@ public class Division extends AccountGenerateEntity {
   public void delete(){
     this.openSubject.getDivisions().remove(this);
   }
+
+  public void updateDivisionNumber(Integer divisionNumber){
+    this.divisionNumber = divisionNumber;
+  }
+
+  public void updateNote(String note){
+    this.note = note;
+  }
 }

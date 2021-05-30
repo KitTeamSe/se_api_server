@@ -28,7 +28,7 @@ public class DivisionCreateService {
     if(divisionJpaRepository.findByOpenSubjectAndDivisionNumber(openSubject, request.getDivisionNumber()).isPresent())
       throw new BusinessException(DivisionErrorCode.DUPLICATED_DIVISION_NUMBER);
 
-    Division division = new Division(openSubject, request.getDivisionNumber(), 0, false);
+    Division division = new Division(openSubject, request.getDivisionNumber(), 0, false, request.getNote());
 
     return divisionJpaRepository.save(division).getDivisionId();
   }

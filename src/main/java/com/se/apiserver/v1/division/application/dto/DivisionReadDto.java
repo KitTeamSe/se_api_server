@@ -29,6 +29,11 @@ public class DivisionReadDto {
     @ApiModelProperty(notes = "배치된 주간 수업 시간", example = "1")
     private Integer deployedTeachingTime;
 
+    @ApiModelProperty(notes = "자동 생성 여부", example = "false")
+    private Boolean autoCreated;
+
+    @ApiModelProperty(notes = "비고", example = "비고입니다.")
+    private String note;
 
     public static Response fromEntity(Division division){
       return Response.builder()
@@ -36,6 +41,8 @@ public class DivisionReadDto {
           .openSubjectId(division.getOpenSubject().getOpenSubjectId())
           .divisionNumber(division.getDivisionNumber())
           .deployedTeachingTime(division.getDeployedTeachingTime())
+          .autoCreated(division.getAutoCreated())
+          .note(division.getNote())
           .build();
     }
   }

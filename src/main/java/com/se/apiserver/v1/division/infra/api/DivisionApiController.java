@@ -1,20 +1,20 @@
 package com.se.apiserver.v1.division.infra.api;
 
-import com.se.apiserver.v1.common.infra.dto.PageRequest;
 import com.se.apiserver.v1.common.infra.dto.SuccessResponse;
 import com.se.apiserver.v1.division.application.dto.DivisionCheckDto;
 import com.se.apiserver.v1.division.application.dto.DivisionCreateDto;
 import com.se.apiserver.v1.division.application.dto.DivisionReadDto;
 import com.se.apiserver.v1.division.application.dto.DivisionReadDto.Response;
+import com.se.apiserver.v1.division.application.dto.DivisionUpdateDto;
 import com.se.apiserver.v1.division.application.service.DivisionCheckService;
 import com.se.apiserver.v1.division.application.service.DivisionCreateService;
 import com.se.apiserver.v1.division.application.service.DivisionDeleteService;
 import com.se.apiserver.v1.division.application.service.DivisionReadService;
+import com.se.apiserver.v1.division.application.service.DivisionUpdateService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -37,14 +38,14 @@ public class DivisionApiController {
   private final DivisionReadService divisionReadService;
   private final DivisionDeleteService divisionDeleteService;
   private final DivisionCheckService divisionCheckService;
+  private final DivisionUpdateService divisionUpdateService;
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
   @PostMapping(path = "/division")
   @ResponseStatus(value = HttpStatus.CREATED)
   @ApiOperation(value = "분반 생성")
   public SuccessResponse<Long> create(@RequestBody @Validated DivisionCreateDto.Request request){
-    return new SuccessResponse<>(HttpStatus.CREATED.value(), "분반 생성에 성공했습니다.", divisionCreateService
-        .create(request));
+    return new SuccessResponse<>(HttpStatus.CREATED.value(), "분반 생성에 성공했습니다.", divisionCreateService.create(request));
   }
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
@@ -61,6 +62,14 @@ public class DivisionApiController {
   @ResponseStatus(value = HttpStatus.OK)
   public SuccessResponse<List<Response>> readAll(Long openSubjectId){
     return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", divisionReadService.readAllByOpenSubjectId(openSubjectId));
+  }
+
+  @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
+  @PutMapping(path = "/division")
+  @ResponseStatus(value = HttpStatus.OK)
+  @ApiOperation(value = "분반 수정")
+  public SuccessResponse<Long> update(@RequestBody @Validated DivisionUpdateDto.Request request){
+    return new SuccessResponse<>(HttpStatus.OK.value(), "분반 수정에 성공했습니다.", divisionUpdateService.update(request));
   }
 
   @PreAuthorize("hasAnyAuthority('SCHEDULE_MANAGE')")
