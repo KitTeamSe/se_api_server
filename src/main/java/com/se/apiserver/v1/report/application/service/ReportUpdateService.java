@@ -1,6 +1,6 @@
 package com.se.apiserver.v1.report.application.service;
 
-import com.se.apiserver.v1.account.application.error.AccountErrorCode;
+import com.se.apiserver.v1.account.application.service.AccountContextService;
 import com.se.apiserver.v1.account.domain.entity.Account;
 import com.se.apiserver.v1.account.infra.repository.AccountJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ReportUpdateService {
 
+  private final AccountContextService accountContextService;
   private final ReportJpaRepository reportJpaRepository;
   private final AccountJpaRepository accountJpaRepository;
 
@@ -36,11 +37,8 @@ public class ReportUpdateService {
       updateReportStatus(report, request.getReportStatus());
     }
 
-    if(request.getReportStatus() != null){
-      Account processor = accountJpaRepository.findById(request.getProcessorId())
-          .orElseThrow(() -> new BusinessException(AccountErrorCode.NO_SUCH_ACCOUNT));
-      updateProcessor(report, processor);
-    }
+    Account processor = accountContextService.getContextAccount();
+    updateProcessor(report, processor);
 
     return reportJpaRepository.save(report).getReportId();
   }

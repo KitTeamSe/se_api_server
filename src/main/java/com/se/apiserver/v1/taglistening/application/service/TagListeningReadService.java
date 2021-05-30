@@ -43,11 +43,13 @@ public class TagListeningReadService {
         return new PageImpl(responseList, all.getPageable(), all.getTotalElements());
     }
 
-    public List<TagListeningReadDto.Response> readMy(Long accountId) {
-        if(!accountContextService.isOwner(accountId) && !accountContextService.hasAuthority("TAG_MANAGE"))
-            throw new AccessDeniedException("권한 없음");
-
+    public List<TagListeningReadDto.Response> readByAccountId(Long accountId) {
         List<TagListening> all = tagListeningJpaRepository.findAllByAccountId(accountId);
         return all.stream().map(a -> TagListeningReadDto.Response.fromEntity(a)).collect(Collectors.toList());
+    }
+
+    public List<TagListeningReadDto.Response> readMy() {
+        Long accountId = accountContextService.getContextAccount().getAccountId();
+        return readByAccountId(accountId);
     }
 }

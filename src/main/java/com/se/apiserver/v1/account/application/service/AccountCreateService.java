@@ -8,6 +8,10 @@ import com.se.apiserver.v1.account.application.error.AccountErrorCode;
 import com.se.apiserver.v1.account.infra.repository.QuestionJpaRepository;
 import com.se.apiserver.v1.account.application.dto.AccountCreateDto;
 import com.se.apiserver.v1.account.infra.repository.AccountJpaRepository;
+import com.se.apiserver.v1.authority.application.dto.authoritygroupaccountmapping.AuthorityGroupAccountMappingCreateDto;
+import com.se.apiserver.v1.authority.application.service.authoritygroup.AuthorityGroupReadService;
+import com.se.apiserver.v1.authority.application.service.authoritygroupaccountmapping.AuthorityGroupAccountMappingCreateService;
+import com.se.apiserver.v1.authority.domain.entity.AuthorityGroup;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,6 +27,8 @@ public class AccountCreateService {
     private final AccountJpaRepository accountJpaRepository;
     private final QuestionJpaRepository questionJpaRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthorityGroupAccountMappingCreateService authorityGroupAccountMappingCreateService;
+    private final AuthorityGroupReadService authorityGroupReadService;
 
     @Transactional
     public Long signUp(AccountCreateDto.Request request, String ip) {
@@ -46,7 +52,11 @@ public class AccountCreateService {
                 .question(question)
                 .answer(request.getAnswer())
                 .build();
+
         accountJpaRepository.save(account);
+
+        mapDefaultAuthorityGroup(account);
+
         return account.getAccountId();
     }
 
@@ -68,6 +78,16 @@ public class AccountCreateService {
     private void validateDuplicatedNickname(String nickname) {
         if (accountJpaRepository.findByNickname(nickname).isPresent())
             throw new BusinessException(AccountErrorCode.DUPLICATED_NICKNAME);
+    }
+
+    private void mapDefaultAuthorityGroup(Account account){
+        AuthorityGroup defaultGroup = authorityGroupReadService.getDefaultAuthorityGroup();
+
+        AuthorityGroupAccountMappingCreateDto.Request request = AuthorityGroupAccountMappingCreateDto.Request.builder()
+            .accountId(account.getAccountId())
+            .groupId(defaultGroup.getAuthorityGroupId())
+            .build();
+        authorityGroupAccountMappingCreateService.create(request);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.se.apiserver.v1.tag.domain.entity;
 
 import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,8 +18,7 @@ public class Tag extends AccountGenerateEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long tagId;
 
-
-  @Column(length = 30, nullable = false, unique = true)
+  @Column(columnDefinition = "VARCHAR(30) UNIQUE NOT NULL, FULLTEXT KEY textFulltext (text)")
   @Size(min = 1, max = 30)
   private String text;
 

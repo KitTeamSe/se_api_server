@@ -67,14 +67,15 @@ public class AccountContextService implements UserDetailsService {
             .orElseThrow(() -> new BusinessException(AccountErrorCode.NO_SUCH_ACCOUNT));
   }
 
-  private Long getCurrentAccountId() {
+  public Long getCurrentAccountId() {
     return Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
   }
 
-  private String getCurrentClientIP(){
+  public String getCurrentClientIP(){
     HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
         .getRequest();
-    return request.getRemoteAddr();
+    String ip = request.getHeader("x-forwarded-for");
+    return ip != null ? ip : request.getRemoteAddr();
   }
 
   public boolean isSignIn(){

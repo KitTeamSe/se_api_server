@@ -4,15 +4,19 @@ import com.se.apiserver.v1.account.domain.entity.AccountType;
 import com.se.apiserver.v1.account.domain.entity.InformationOpenAgree;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import lombok.NoArgsConstructor;
 
 public class AccountUpdateDto {
     @Data
     @ApiModel("회원 정보 수정 요청")
+    @AllArgsConstructor
+    @NoArgsConstructor
     @Builder
     static public class Request{
 

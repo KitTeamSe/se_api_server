@@ -38,8 +38,8 @@ public class AccountApiController {
     @ResponseStatus(value = HttpStatus.CREATED)
     @ApiOperation(value = "회원 가입")
     public SuccessResponse<Long> signUp(@RequestBody @Validated AccountCreateDto.Request request, HttpServletRequest httpServletRequest) {
-        return new SuccessResponse<>(HttpStatus.CREATED.value(), "회원가입에 성공했습니다.",
-                accountCreateService.signUp(request, httpServletRequest.getRemoteAddr()));
+        Long userId = accountCreateService.signUp(request, getIp(httpServletRequest));
+        return new SuccessResponse<>(HttpStatus.CREATED.value(), "회원가입에 성공했습니다.", userId);
     }
 
     // TODO 인증 서버로 이전
@@ -48,9 +48,19 @@ public class AccountApiController {
             @ApiResponse(code = 400, message = "비밀번호 불일치")})
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "로그인")
-    public SuccessResponse<AccountSignInDto.Response> signIn(@RequestBody @Validated AccountSignInDto.Request request) {
+    public SuccessResponse<AccountSignInDto.Response> signIn(@RequestBody @Validated AccountSignInDto.Request request, HttpServletRequest httpServletRequest) {
         return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 로그인 되었습니다",
-                accountSignInService.signIn(request.getId(), request.getPw()));
+                accountSignInService.signIn(request.getId(), request.getPw(), getIp(httpServletRequest)));
+    }
+
+    @PostMapping(path = "/signin/manager")
+    @ApiResponses(value = {
+        @ApiResponse(code = 400, message = "비밀번호 불일치")})
+    @ResponseStatus(value = HttpStatus.OK)
+    @ApiOperation(value = "관리자 전용 로그인")
+    public SuccessResponse<AccountSignInDto.Response> signInAsManager(@RequestBody @Validated AccountSignInDto.Request request, HttpServletRequest httpServletRequest) {
+        return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 로그인 되었습니다",
+            accountSignInService.signInAsManager(request.getId(), request.getPw(), getIp(httpServletRequest)));
     }
 
     @GetMapping(path = "/account/email/{email}")
@@ -103,25 +113,31 @@ public class AccountApiController {
         return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 수정되었습니다.");
     }
 
-    @DeleteMapping("/account")
+    @DeleteMapping("/account/{id}")
     @PreAuthorize("hasAnyAuthority('ACCOUNT_ACCESS', 'ACCOUNT_MANAGE')")
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "회원 삭제")
-    public SuccessResponse deleteAccount(@RequestBody @Validated AccountDeleteDto.Request request) {
-        accountDeleteService.delete(request);
+    public SuccessResponse deleteAccount(@PathVariable(name = "id") String id) {
+        accountDeleteService.delete(id);
         return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 삭제되었습니다.");
     }
 
     @GetMapping("/account/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     @PreAuthorize("hasAnyAuthority('ACCOUNT_ACCESS', 'ACCOUNT_MANAGE')")
-    @ApiOperation(value = "회원 정보 조회")
-    public SuccessResponse<AccountReadDto.Response> deleteAccount(@PathVariable(name = "id") String id) {
-        accountReadService.read(id);
-        return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 조회되었습니다.");
+    @ApiOperation(value = "아이디로 회원 정보 조회")
+    public SuccessResponse<AccountReadDto.Response> readAccount(@PathVariable(name = "id") String id) {
+        return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", accountReadService.read(id));
     }
 
-    //TODO 페이징 리퀘스트, 리스폰스 샘플 코드, 추후 삭제 요망
+    @GetMapping("/account/my")
+    @ResponseStatus(value = HttpStatus.OK)
+    @PreAuthorize("hasAnyAuthority('ACCOUNT_ACCESS', 'ACCOUNT_MANAGE')")
+    @ApiOperation(value = "내 회원 정보 조회")
+    public SuccessResponse<AccountReadDto.Response> readMyAccount() {
+        return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", accountReadService.readMyAccount());
+    }
+
     @GetMapping(path = "/account")
     @PreAuthorize("hasAnyAuthority('ACCOUNT_MANAGE')")
     @ResponseStatus(value = HttpStatus.OK)
@@ -139,5 +155,9 @@ public class AccountApiController {
         return new SuccessResponse(HttpStatus.OK.value(), "조회 성공", accountReadService.search(searchRequest));
     }
 
+    private String getIp(HttpServletRequest httpServletRequest){
+        String ip = httpServletRequest.getHeader("x-forwarded-for");
+        return ip != null ? ip : httpServletRequest.getRemoteAddr();
+    }
 
 }

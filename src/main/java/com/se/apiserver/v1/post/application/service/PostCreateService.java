@@ -7,7 +7,6 @@ import com.se.apiserver.v1.board.domain.entity.Board;
 import com.se.apiserver.v1.board.application.error.BoardErrorCode;
 import com.se.apiserver.v1.board.infra.repository.BoardJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
-import com.se.apiserver.v1.multipartfile.application.service.MultipartFileUploadService;
 import com.se.apiserver.v1.post.domain.entity.*;
 import com.se.apiserver.v1.attach.application.error.AttachErrorCode;
 import com.se.apiserver.v1.post.application.error.PostErrorCode;
@@ -15,14 +14,14 @@ import com.se.apiserver.v1.post.application.dto.PostCreateDto;
 import com.se.apiserver.v1.attach.infra.repository.AttachJpaRepository;
 import com.se.apiserver.v1.post.infra.repository.PostJpaRepository;
 import com.se.apiserver.v1.tag.application.error.TagErrorCode;
+import com.se.apiserver.v1.tag.domain.entity.Tag;
 import com.se.apiserver.v1.tag.infra.repository.TagJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -40,18 +39,11 @@ public class PostCreateService {
     private final PasswordEncoder passwordEncoder;
     private final TagJpaRepository tagJpaRepository;
     private final AttachJpaRepository attachJpaRepository;
-    private final MultipartFileUploadService multipartFileUploadService;
 
     @Transactional
     public Long create(PostCreateDto.Request request) {
         Post post = createPost(request);
-
-//        String[] fileUrls = multipartFileUploadService.upload(files);
-//        List<Attach> attachList = IntStream.range(0, files.length)
-//                .mapToObj(idx -> {
-//                    return new Attach(fileUrls[idx], files[idx].getName());
-//                }).collect(Collectors.toList());
-//        post.updateAttaches(attachList);
+        post.validateReadable();
         postJpaRepository.save(post);
         return post.getPostId();
     }
@@ -60,12 +52,14 @@ public class PostCreateService {
         Board board = boardJpaRepository.findById(request.getBoardId())
                 .orElseThrow(() -> new BusinessException(BoardErrorCode.NO_SUCH_BOARD));
         Set<String> authorities = accountContextService.getContextAuthorities();
-        List<PostTagMapping> tags = getTags(request.getTagList());
+        List<Tag> tags = getTagsIfSignIn(request.getTagList());
 
+        List<Attach> attaches = getAttaches(request.getAttachmentList());
+        String ip = accountContextService.getCurrentClientIP();
         if(accountContextService.isSignIn()){
             Account contextAccount = accountContextService.getContextAccount();
             Post post = new Post(contextAccount, board, request.getPostContent(), request.getIsNotice(),
-                    request.getIsSecret(), authorities, tags);
+                    request.getIsSecret(), authorities, tags, attaches, ip);
             postJpaRepository.save(post);
             return post;
         }
@@ -73,7 +67,7 @@ public class PostCreateService {
         validateAnonymousInput(request);
         request.getAnonymous().setAnonymousPassword(passwordEncoder.encode(request.getAnonymous().getAnonymousPassword()));
         Post post = new Post(request.getAnonymous(), board, request.getPostContent(), request.getIsNotice()
-                ,request.getIsSecret(), authorities, tags);
+                ,request.getIsSecret(), authorities, tags, attaches, ip);
         return post;
     }
 
@@ -82,16 +76,23 @@ public class PostCreateService {
             throw new BusinessException(PostErrorCode.INVALID_INPUT);
     }
 
-    private List<PostTagMapping> getTags(List<PostCreateDto.TagDto> tagList) {
+    // only signed user can add tags
+    private List<Tag> getTagsIfSignIn(List<PostCreateDto.TagDto> tagList) {
+        if(tagList == null || tagList.size() == 0)
+            return new ArrayList<>();
+        if(!accountContextService.isSignIn())
+            throw new BusinessException(TagErrorCode.ANONYMOUS_CAN_NOT_TAG);
         return tagList.stream()
-                .map(t -> PostTagMapping.builder()
-                        .tag(tagJpaRepository.findById(t.getTagId())
-                                .orElseThrow(() -> new BusinessException(TagErrorCode.NO_SUCH_TAG)))
-                        .build())
+                .map(t ->
+                        tagJpaRepository.findById(t.getTagId())
+                                .orElseThrow(() -> new BusinessException(TagErrorCode.NO_SUCH_TAG))
+                )
                 .collect(Collectors.toList());
     }
 
     private List<Attach> getAttaches(List<PostCreateDto.AttachDto> attachmentList) {
+        if(attachmentList == null || attachmentList.size() == 0)
+            return new ArrayList<>();
         return attachmentList.stream()
                 .map(a -> attachJpaRepository.findById(a.getAttachId())
                         .orElseThrow(() -> new BusinessException(AttachErrorCode.NO_SUCH_ATTACH))

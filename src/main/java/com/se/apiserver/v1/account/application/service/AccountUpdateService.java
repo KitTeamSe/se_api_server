@@ -57,6 +57,8 @@ public class AccountUpdateService {
     }
 
     private void updateQnaIfValid(Account account, Long questionId, String answer) {
+        if(questionId == null && answer == null)
+            return;
         if(questionId == null || answer == null)
             throw new BusinessException(AccountErrorCode.QNA_INVALID_INPUT);
         Question question = questionJpaRepository.findById(questionId).orElseThrow(() -> new BusinessException(AccountErrorCode.NO_SUCH_QUESTION));

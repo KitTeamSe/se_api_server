@@ -1,5 +1,7 @@
 package com.se.apiserver.v1.tag.application.service;
 
+import com.se.apiserver.v1.account.application.service.AccountContextService;
+import com.se.apiserver.v1.common.domain.error.GlobalErrorCode;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.tag.domain.entity.Tag;
 import com.se.apiserver.v1.tag.application.error.TagErrorCode;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class TagReadService {
 
+    private final AccountContextService accountContextService;
     private final TagJpaRepository tagJpaRepository;
 
     public TagReadDto.Response readById(Long id) {
@@ -28,6 +31,9 @@ public class TagReadService {
     }
 
     public List<TagReadDto.Response> readMatchText(String text) {
+        if(!accountContextService.isSignIn())
+            throw new BusinessException(GlobalErrorCode.HANDLE_ACCESS_DENIED);
+
         List<Tag> tags = tagJpaRepository.findByTextContaining(text);
         return tags.stream().map(a -> TagReadDto.Response.fromEntity(a)).collect(Collectors.toList());
     }

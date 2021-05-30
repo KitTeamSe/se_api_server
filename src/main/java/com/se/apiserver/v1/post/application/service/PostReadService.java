@@ -1,12 +1,16 @@
 package com.se.apiserver.v1.post.application.service;
 
 import com.se.apiserver.v1.account.application.service.AccountContextService;
+import com.se.apiserver.v1.account.domain.entity.Account;
+import com.se.apiserver.v1.authority.domain.entity.Authority;
 import com.se.apiserver.v1.board.domain.entity.Board;
 import com.se.apiserver.v1.board.application.error.BoardErrorCode;
 import com.se.apiserver.v1.board.infra.repository.BoardJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
+import com.se.apiserver.v1.post.application.dto.PostAccessCheckDto;
 import com.se.apiserver.v1.post.domain.entity.Post;
 import com.se.apiserver.v1.post.application.error.PostErrorCode;
+import com.se.apiserver.v1.post.domain.entity.PostIsDeleted;
 import com.se.apiserver.v1.post.domain.entity.PostIsSecret;
 import com.se.apiserver.v1.post.application.dto.PostReadDto;
 import com.se.apiserver.v1.post.infra.repository.PostJpaRepository;
@@ -18,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindException;
 
 import java.util.List;
 import java.util.Set;
@@ -32,51 +37,84 @@ public class PostReadService {
     private final PasswordEncoder passwordEncoder;
     private final BoardJpaRepository boardJpaRepository;
     private final PostQueryRepository postQueryRepository;
+
+    @Transactional
     public PostReadDto.Response read(Long postId){
         Post post = postJpaRepository.findById(postId)
                 .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));
+        Board board = post.getBoard();
+        post.validateReadable();
+        Set<String> authorities = accountContextService.getContextAuthorities();
+
+        board.validateAccessAuthority(authorities);
+
+        post.increaseViews();
+        postJpaRepository.save(post);
+
         return PostReadDto.Response.fromEntity(post, isOwnerOrHasManageAuthority(post));
     }
 
+
+    @Transactional
     public PostReadDto.Response readAnonymousSecretPost(Long postId, String password){
         Post post = postJpaRepository.findById(postId)
                 .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));
-        if(!passwordEncoder.matches(password, post.getAnonymousPassword()))
-            throw new BusinessException(PostErrorCode.ANONYMOUS_PASSWORD_INCORRECT);
+        post.validateReadable();
+        validateAnonymousPostPassword(post, password);
+        post.increaseViews();
+        postJpaRepository.save(post);
         return PostReadDto.Response.fromEntity(post, true);
     }
 
-    public PageImpl<PostReadDto.ListResponse> readBoardPostList(Pageable pageable, Long boardId){
+    public Boolean checkAnonymousPostWriteAccess(PostAccessCheckDto.AnonymousPostAccessCheckDto anonymousPostAccessCheckDto){
+        Post post = postJpaRepository.findById(anonymousPostAccessCheckDto.getPostId())
+                .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));
+        post.validateReadable();
+        validateAnonymousPostPassword(post, anonymousPostAccessCheckDto.getPassword());
+        return true;
+    }
+
+    public PostReadDto.PostListResponse readBoardPostList(Pageable pageable, Long boardId){
         Board board = boardJpaRepository.findById(boardId)
                 .orElseThrow(() -> new BusinessException(BoardErrorCode.NO_SUCH_BOARD));
         Set<String> authorities = accountContextService.getContextAuthorities();
         board.validateAccessAuthority(authorities);
 
         Page<Post> allByBoard = postJpaRepository.findAllByBoard(board, pageable);
-        List<PostReadDto.ListResponse> list = allByBoard.stream()
-                .map(p -> PostReadDto.ListResponse.fromEntity(p))
+        List<PostReadDto.PostListItem> list = allByBoard.stream()
+                .map(p -> PostReadDto.PostListItem.fromEntity(p))
                 .collect(Collectors.toList());
-        return new PageImpl<>(list, allByBoard.getPageable(), allByBoard.getTotalElements());
+        return PostReadDto.PostListResponse.fromEntity(new PageImpl<>(list, allByBoard.getPageable(), allByBoard.getTotalElements()), board);
     }
+
+    public PostReadDto.PostListResponse search(PostReadDto.SearchRequest pageRequest){
+        Board board = boardJpaRepository.findById(pageRequest.getBoardId())
+                .orElseThrow(() -> new BusinessException(BoardErrorCode.NO_SUCH_BOARD));
+        Set<String> authorities = accountContextService.getContextAuthorities();
+        board.validateAccessAuthority(authorities);
+
+        Page<Post> postPage = postQueryRepository.search(pageRequest);
+        List<PostReadDto.PostListItem> res = postPage.get().map(post -> PostReadDto.PostListItem.fromEntity(post))
+                .collect(Collectors.toList());
+        return PostReadDto.PostListResponse.fromEntity(new PageImpl(res, postPage.getPageable(), postPage.getTotalElements()), board);
+    }
+
+    //
+
+    private void validateAnonymousPostPassword(Post post, String password) {
+        if(!passwordEncoder.matches(password, post.getAnonymousPassword()))
+            throw new BusinessException(PostErrorCode.ANONYMOUS_PASSWORD_INCORRECT);
+    }
+
 
     private boolean isOwnerOrHasManageAuthority(Post post) {
         Set<String> authorities = accountContextService.getContextAuthorities();
         if(post.getAccount() == null)
             return post.getIsSecret() == PostIsSecret.NORMAL;
-        if(authorities.contains(Post.MANAGE_AUTHORITY) || post.isOwner(accountContextService.getContextAccount()))
+        if(authorities.contains(Post.MANAGE_AUTHORITY) || post.isOwner(accountContextService.getCurrentAccountId()))
             return true;
         return false;
     }
 
-    public PageImpl search(PostReadDto.SearchRequest pageRequest){
-        Board board = boardJpaRepository.findById(pageRequest.getBoardId())
-            .orElseThrow(() -> new BusinessException(BoardErrorCode.NO_SUCH_BOARD));
-        Set<String> authorities = accountContextService.getContextAuthorities();
-        board.validateAccessAuthority(authorities);
 
-        Page<Post> postPage = postQueryRepository.search(pageRequest);
-        List<PostReadDto.ListResponse> res = postPage.get().map(post -> PostReadDto.ListResponse.fromEntity(post))
-            .collect(Collectors.toList());
-        return new PageImpl(res, postPage.getPageable(), postPage.getTotalElements());
-    }
 }
