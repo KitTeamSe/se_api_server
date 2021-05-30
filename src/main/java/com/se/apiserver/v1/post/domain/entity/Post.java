@@ -9,12 +9,14 @@ import com.se.apiserver.v1.common.domain.entity.BaseEntity;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.post.application.error.PostErrorCode;
 import com.se.apiserver.v1.reply.domain.entity.Reply;
+import com.se.apiserver.v1.tag.domain.entity.Tag;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -23,6 +25,8 @@ import java.util.Set;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post extends BaseEntity {
   public static final String MANAGE_AUTHORITY = "MENU_MANAGE";
+  public static final Integer MAX_TAG_CAPACITY = 10;
+  public static final Integer MAX_ATTACH_CAPACITY = 10;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -61,13 +65,14 @@ public class Post extends BaseEntity {
   private Integer numReply;
 
   @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, orphanRemoval = true)
-  private List<Reply> replies = new ArrayList<>();
+  private Set<Reply> replies = new HashSet<>();
 
   @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, orphanRemoval = true)
-  private List<Attach> attaches = new ArrayList<>();
+  private Set<Attach> attaches = new HashSet<>();
 
-  @OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, orphanRemoval = true)
-  private List<PostTagMapping> tags = new ArrayList<>();
+  @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+  @JoinTable(name = "post_tag")
+  private Set<Tag> tags = new HashSet<>();
 
   @Column(nullable = false, updatable = false)
   private String createdIp;
@@ -78,7 +83,7 @@ public class Post extends BaseEntity {
   // 첨부 파일, 태그 모두 존재 입력
   public Post(Board board, PostContent postContent, PostIsNotice isNotice,
               PostIsSecret isSecret, Set<String> authorities,
-              List<PostTagMapping> tags, List<Attach> attaches, String createdIp) {
+              List<Tag> tags, List<Attach> attaches, String createdIp) {
     validateBoardAccessAuthority(board, authorities);
     this.board = board;
     this.postContent = postContent;
@@ -94,14 +99,14 @@ public class Post extends BaseEntity {
 
   public Post(Account account, Board board,  PostContent postContent,
               PostIsNotice isNotice, PostIsSecret isSecret, Set<String> authorities
-          , List<PostTagMapping> tags, List<Attach> attaches, String createdIp) {
+          , List<Tag> tags, List<Attach> attaches, String createdIp) {
     this(board, postContent, isNotice, isSecret, authorities, tags, attaches, createdIp);
     this.account = account;
   }
 
   public Post(Anonymous anonymous, Board board, PostContent postContent,
               PostIsNotice isNotice, PostIsSecret isSecret, Set<String> authorities
-          , List<PostTagMapping> tags, List<Attach> attaches, String createdIp) {
+          , List<Tag> tags, List<Attach> attaches, String createdIp) {
     this(board, postContent, isNotice, isSecret, authorities, tags, attaches, createdIp);
     this.anonymous = anonymous;
   }
@@ -140,21 +145,22 @@ public class Post extends BaseEntity {
       return;
     attachList.stream()
             .forEach(a -> a.updatePost(this));
+    if(this.attaches.size() > MAX_ATTACH_CAPACITY)
+      throw new BusinessException(PostErrorCode.OVER_MAX_ATTACH_CAPACITY);
   }
 
   public void addAttache(Attach attach) {
     this.attaches.add(attach);
   }
 
-  public void addTags(List<PostTagMapping> postTagMappings) {
-    if(postTagMappings == null)
-      return;
-    postTagMappings.stream()
-            .forEach(t -> t.setPost(this));
+  public void addTags(List<Tag> tags) {
+    this.tags.addAll(tags);
+    if(this.tags.size() > MAX_TAG_CAPACITY)
+      throw new BusinessException(PostErrorCode.OVER_MAX_TAG_CAPACITY);
   }
 
-  public void addTag(PostTagMapping postTagMapping) {
-    this.tags.add(postTagMapping);
+  public void addTag(Tag Tag) {
+    this.tags.add(Tag);
   }
 
   public void updateContent(PostContent postContent) {
@@ -180,16 +186,13 @@ public class Post extends BaseEntity {
             });
   }
 
-  public void updateTags(List<PostTagMapping> postTagMappings) {
-    this.tags.forEach(t -> {
-      t.setPost(null);
-    });
+  public void updateTags(List<Tag> tags) {
     this.tags.clear();
-    addTags(postTagMappings);
+    addTags(tags);
   }
 
   public void update(Board board, PostContent postContent, PostIsNotice isNotice,
-                     PostIsSecret isSecret, List<Attach> attachList, List<PostTagMapping> tags, Set<String> authorities, String ip) {
+                     PostIsSecret isSecret, List<Attach> attachList, List<Tag> tags, Set<String> authorities, String ip) {
     updateBoard(board, authorities);
     updateContent(postContent);
     updateIsNotice(isNotice, authorities);

@@ -3,10 +3,13 @@ package com.se.apiserver.v1.post.application.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.se.apiserver.v1.attach.domain.entity.Attach;
+import com.se.apiserver.v1.board.domain.entity.Board;
 import com.se.apiserver.v1.common.infra.dto.PageRequest;
 import com.se.apiserver.v1.post.domain.entity.*;
 
+import com.se.apiserver.v1.tag.domain.entity.Tag;
 import io.swagger.annotations.ApiModelProperty;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,6 +19,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 public class PostReadDto {
 
@@ -43,7 +48,28 @@ public class PostReadDto {
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
-  static public class ListResponse{
+  static public class PostListResponse{
+    private Long boardId;
+    private String boardNameEng;
+    private String boardNameKor;
+    private PageImpl<PostListItem> postListItem;
+
+    public static PostListResponse fromEntity(PageImpl<PostListItem> postListItem, Board board){
+      return PostListResponse.builder()
+              .postListItem(postListItem)
+              .boardId(board.getBoardId())
+              .boardNameEng(board.getNameEng())
+              .boardNameKor(board.getNameKor())
+              .build();
+    }
+  }
+
+
+  @Data
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @Builder
+  static public class PostListItem{
     private Long postId;
 
     private Long boardId;
@@ -67,14 +93,14 @@ public class PostReadDto {
     @JsonInclude(Include.NON_NULL)
     private List<TagDto> tags;
 
-    public static ListResponse fromEntity(Post post){
+    public static PostListItem fromEntity(Post post){
       String nickname = post.getAccount() != null ? post.getAccount().getNickname() : post.getAnonymous().getAnonymousNickname();
       String previewText = "";
       if(post.getIsSecret() == PostIsSecret.NORMAL){
         previewText = post.getPostContent().getText().length() <= 30 ? post.getPostContent().getText() : post.getPostContent().getText().substring(0, 30);
       }
 
-      ListResponseBuilder builder = ListResponse.builder();
+      PostListItemBuilder builder = PostListItem.builder();
 
       builder.tags(post.getTags().stream()
           .map(t -> TagDto.fromEntity(t))
@@ -107,6 +133,10 @@ public class PostReadDto {
 
     private Long boardId;
 
+    private String boardNameEng;
+
+    private String boardNameKor;
+
     private Integer views;
 
     private PostIsSecret isSecret;
@@ -134,9 +164,12 @@ public class PostReadDto {
     private List<TagDto> tags;
 
     public static Response fromEntity(Post post, boolean isOwnerOrManager) {
+      Board board = post.getBoard();
       ResponseBuilder builder = Response.builder()
           .postId(post.getPostId())
           .boardId(post.getBoard().getBoardId())
+          .boardNameEng(board.getNameEng())
+          .boardNameKor(board.getNameKor())
           .views(post.getViews())
           .isSecret(post.getIsSecret())
           .isNotice(post.getIsNotice())
@@ -198,10 +231,10 @@ public class PostReadDto {
 
     private String tag;
 
-    static public TagDto fromEntity(PostTagMapping postTagMapping){
+    static public TagDto fromEntity(Tag tag){
       return TagDto.builder()
-          .tagId(postTagMapping.getTag().getTagId())
-          .tag(postTagMapping.getTag().getText())
+          .tagId(tag.getTagId())
+          .tag(tag.getText())
           .build();
     }
   }

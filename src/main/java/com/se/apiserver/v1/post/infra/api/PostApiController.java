@@ -2,14 +2,11 @@ package com.se.apiserver.v1.post.infra.api;
 
 import com.se.apiserver.v1.common.infra.dto.PageRequest;
 import com.se.apiserver.v1.common.infra.dto.SuccessResponse;
-import com.se.apiserver.v1.post.application.dto.PostDeleteDto;
+import com.se.apiserver.v1.post.application.dto.*;
 import com.se.apiserver.v1.post.application.service.PostCreateService;
 import com.se.apiserver.v1.post.application.service.PostDeleteService;
 import com.se.apiserver.v1.post.application.service.PostReadService;
 import com.se.apiserver.v1.post.application.service.PostUpdateService;
-import com.se.apiserver.v1.post.application.dto.PostCreateDto;
-import com.se.apiserver.v1.post.application.dto.PostReadDto;
-import com.se.apiserver.v1.post.application.dto.PostUpdateDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -82,7 +79,7 @@ public class PostApiController {
     @GetMapping("/post")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation("게시판에 따른 게시글 목록 조회")
-    public SuccessResponse<PageImpl<PostReadDto.ListResponse>> readSecret(PageRequest pageRequest, Long boardId){
+    public SuccessResponse<PostReadDto.PostListResponse> readSecret(PageRequest pageRequest, Long boardId){
         return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 조회되었습니다",
                 postReadService.readBoardPostList(pageRequest.of(),boardId));
     }
@@ -92,5 +89,12 @@ public class PostApiController {
     @ApiOperation(value = "게시글 검색")
     public SuccessResponse<Pageable> searchPost(@RequestBody @Validated PostReadDto.SearchRequest searchRequest) {
         return new SuccessResponse(HttpStatus.OK.value(), "조회 성공", postReadService.search(searchRequest));
+    }
+
+    @PostMapping("/post/anonymous")
+    @ResponseStatus(value = HttpStatus.OK)
+    @ApiOperation(value = "익명 게시글 접근 권한 확인")
+    public SuccessResponse<Pageable> checkAnonymousPostWriteAccess(@RequestBody @Validated PostAccessCheckDto.AnonymousPostAccessCheckDto anonymousPostAccessCheckDto) {
+        return new SuccessResponse(HttpStatus.OK.value(), "권한 승인", postReadService.checkAnonymousPostWriteAccess(anonymousPostAccessCheckDto));
     }
 }

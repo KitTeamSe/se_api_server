@@ -10,13 +10,14 @@ import com.se.apiserver.v1.board.infra.repository.BoardJpaRepository;
 import com.se.apiserver.v1.common.domain.entity.Anonymous;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.post.domain.entity.Post;
-import com.se.apiserver.v1.post.domain.entity.PostTagMapping;
 import com.se.apiserver.v1.post.application.error.PostErrorCode;
 import com.se.apiserver.v1.post.application.dto.PostCreateDto;
 import com.se.apiserver.v1.post.application.dto.PostUpdateDto;
 import com.se.apiserver.v1.attach.infra.repository.AttachJpaRepository;
+import com.se.apiserver.v1.post.domain.entity.PostIsDeleted;
 import com.se.apiserver.v1.post.infra.repository.PostJpaRepository;
 import com.se.apiserver.v1.tag.application.error.TagErrorCode;
+import com.se.apiserver.v1.tag.domain.entity.Tag;
 import com.se.apiserver.v1.tag.infra.repository.TagJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -44,12 +45,12 @@ public class PostUpdateService {
         Set<String> authorities = accountContextService.getContextAuthorities();
         Post post = postJpaRepository.findById(request.getPostId())
                 .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));
-
-        Board board = boardJpaRepository.findById(request.getBoardId())
-                .orElseThrow(() -> new BusinessException(BoardErrorCode.NO_SUCH_BOARD));
+        Board board = post.getBoard();
         List<Attach> attachList = getAttaches(request.getAttachmentList());
-        List<PostTagMapping> tags = getTagsIfSignIn(request.getTagList());
+        List<Tag> tags = getTagsIfSignIn(request.getTagList());
         String ip = accountContextService.getCurrentClientIP();
+
+        validateNotDeletedPost(post);
 
         if(accountContextService.isSignIn() && post.getAnonymous() == null){
             Account contextAccount = accountContextService.getContextAccount();
@@ -75,16 +76,14 @@ public class PostUpdateService {
     }
 
     // only signed user can add tags
-    private List<PostTagMapping> getTagsIfSignIn(List<PostCreateDto.TagDto> tagList) {
+    private List<Tag> getTagsIfSignIn(List<PostCreateDto.TagDto> tagList) {
         if(tagList == null || tagList.size() == 0)
             return new ArrayList<>();
         if(!accountContextService.isSignIn())
             throw new BusinessException(TagErrorCode.ANONYMOUS_CAN_NOT_TAG);
         return tagList.stream()
-                .map(t -> PostTagMapping.builder()
-                        .tag(tagJpaRepository.findById(t.getTagId())
+                .map(t ->tagJpaRepository.findById(t.getTagId())
                                 .orElseThrow(() -> new BusinessException(TagErrorCode.NO_SUCH_TAG)))
-                        .build())
                 .collect(Collectors.toList());
     }
 
@@ -96,5 +95,10 @@ public class PostUpdateService {
                         .orElseThrow(() -> new BusinessException(AttachErrorCode.NO_SUCH_ATTACH))
                 )
                 .collect(Collectors.toList());
+    }
+
+    private void validateNotDeletedPost(Post post) {
+        if(post.getPostIsDeleted() == PostIsDeleted.DELETED)
+            throw new BusinessException(PostErrorCode.DELETED_POST);
     }
 }

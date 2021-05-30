@@ -14,6 +14,7 @@ import com.se.apiserver.v1.post.application.dto.PostCreateDto;
 import com.se.apiserver.v1.attach.infra.repository.AttachJpaRepository;
 import com.se.apiserver.v1.post.infra.repository.PostJpaRepository;
 import com.se.apiserver.v1.tag.application.error.TagErrorCode;
+import com.se.apiserver.v1.tag.domain.entity.Tag;
 import com.se.apiserver.v1.tag.infra.repository.TagJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -50,7 +51,7 @@ public class PostCreateService {
         Board board = boardJpaRepository.findById(request.getBoardId())
                 .orElseThrow(() -> new BusinessException(BoardErrorCode.NO_SUCH_BOARD));
         Set<String> authorities = accountContextService.getContextAuthorities();
-        List<PostTagMapping> tags = getTagsIfSignIn(request.getTagList());
+        List<Tag> tags = getTagsIfSignIn(request.getTagList());
 
         List<Attach> attaches = getAttaches(request.getAttachmentList());
         String ip = accountContextService.getCurrentClientIP();
@@ -75,16 +76,16 @@ public class PostCreateService {
     }
 
     // only signed user can add tags
-    private List<PostTagMapping> getTagsIfSignIn(List<PostCreateDto.TagDto> tagList) {
+    private List<Tag> getTagsIfSignIn(List<PostCreateDto.TagDto> tagList) {
         if(tagList == null || tagList.size() == 0)
             return new ArrayList<>();
         if(!accountContextService.isSignIn())
             throw new BusinessException(TagErrorCode.ANONYMOUS_CAN_NOT_TAG);
         return tagList.stream()
-                .map(t -> PostTagMapping.builder()
-                        .tag(tagJpaRepository.findById(t.getTagId())
-                                .orElseThrow(() -> new BusinessException(TagErrorCode.NO_SUCH_TAG)))
-                        .build())
+                .map(t ->
+                        tagJpaRepository.findById(t.getTagId())
+                                .orElseThrow(() -> new BusinessException(TagErrorCode.NO_SUCH_TAG))
+                )
                 .collect(Collectors.toList());
     }
 

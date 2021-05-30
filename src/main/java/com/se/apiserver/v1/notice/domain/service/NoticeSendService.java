@@ -62,8 +62,7 @@ public class NoticeSendService {
         List<Long> accountList = new ArrayList<>();
 
         List<AccountReceiveTagMapping> accountTagList = accountReceiveTagMappingJpaRepository.findAccountReceiveTagMappingsByTag_TagIdIn(tagIdList);
-        for (AccountReceiveTagMapping a: accountTagList
-             ) {
+        for (AccountReceiveTagMapping a: accountTagList) {
             accountList.add(a.getAccount().getAccountId());
         }
         return accountList;

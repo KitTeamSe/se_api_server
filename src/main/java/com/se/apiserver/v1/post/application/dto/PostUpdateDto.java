@@ -26,11 +26,6 @@ public class PostUpdateDto {
     private Long postId;
 
     @NotNull
-    @Min(1)
-    @ApiModelProperty(notes = "게시판 아이디", example = "1")
-    private Long boardId;
-
-    @NotNull
     private PostContent postContent;
 
     @ApiModelProperty(notes = "익명 사용자 비밀번호, 회원으로 등록일 경우 생략")
