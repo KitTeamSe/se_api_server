@@ -23,9 +23,6 @@ public class DivisionReadDto {
     @ApiModelProperty(notes = "개설 교과 ID", example = "1")
     private Long openSubjectId;
 
-    @ApiModelProperty(notes = "개설 교과명", example = "자료구조")
-    private String openSubjectName;
-
     @ApiModelProperty(notes = "분반 번호", example = "1")
     private Integer divisionNumber;
 
@@ -37,7 +34,6 @@ public class DivisionReadDto {
       return Response.builder()
           .divisionId(division.getDivisionId())
           .openSubjectId(division.getOpenSubject().getOpenSubjectId())
-          .openSubjectName(division.getOpenSubject().getSubject().getName())
           .divisionNumber(division.getDivisionNumber())
           .deployedTeachingTime(division.getDeployedTeachingTime())
           .build();

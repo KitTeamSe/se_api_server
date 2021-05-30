@@ -3,7 +3,7 @@ package com.se.apiserver.v1.opensubject.infra.api;
 import com.se.apiserver.v1.common.infra.dto.PageRequest;
 import com.se.apiserver.v1.common.infra.dto.SuccessResponse;
 import com.se.apiserver.v1.opensubject.application.dto.OpenSubjectCreateDto;
-import com.se.apiserver.v1.opensubject.application.dto.OpenSubjectReadDto;
+import com.se.apiserver.v1.opensubject.application.dto.OpenSubjectReadDto.OpenSubjectListItem;
 import com.se.apiserver.v1.opensubject.application.dto.OpenSubjectReadDto.Response;
 import com.se.apiserver.v1.opensubject.application.dto.OpenSubjectUpdateDto;
 import com.se.apiserver.v1.opensubject.application.service.OpenSubjectCreateService;
@@ -51,7 +51,7 @@ public class OpenSubjectApiController {
   @GetMapping(path = "/open-subject/{id}")
   @ApiOperation("개설 교과 조회")
   @ResponseStatus(value = HttpStatus.OK)
-  public SuccessResponse<OpenSubjectReadDto.Response> read(@PathVariable(value = "id") Long id){
+  public SuccessResponse<Response> read(@PathVariable(value = "id") Long id){
     return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", openSubjectReadService.read(id));
   }
 
@@ -59,7 +59,7 @@ public class OpenSubjectApiController {
   @GetMapping(path = "/open-subject")
   @ApiOperation("시간표에 추가된 개설 교과 조회")
   @ResponseStatus(value = HttpStatus.OK)
-  public SuccessResponse<PageImpl<Response>> readAll(@Validated PageRequest pageRequest, Long timeTableId){
+  public SuccessResponse<PageImpl<OpenSubjectListItem>> readAll(@Validated PageRequest pageRequest, Long timeTableId){
     return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", openSubjectReadService.readAllByTimeTableId(pageRequest.of(), timeTableId));
   }
 
