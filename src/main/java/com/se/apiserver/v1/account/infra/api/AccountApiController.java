@@ -53,6 +53,16 @@ public class AccountApiController {
                 accountSignInService.signIn(request.getId(), request.getPw(), getIp(httpServletRequest)));
     }
 
+    @PostMapping(path = "/signin/manager")
+    @ApiResponses(value = {
+        @ApiResponse(code = 400, message = "비밀번호 불일치")})
+    @ResponseStatus(value = HttpStatus.OK)
+    @ApiOperation(value = "관리자 전용 로그인")
+    public SuccessResponse<AccountSignInDto.Response> signInAsManager(@RequestBody @Validated AccountSignInDto.Request request, HttpServletRequest httpServletRequest) {
+        return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 로그인 되었습니다",
+            accountSignInService.signInAsManager(request.getId(), request.getPw(), getIp(httpServletRequest)));
+    }
+
     @GetMapping(path = "/account/email/{email}")
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "이메일로 아이디 찾기")
@@ -115,12 +125,19 @@ public class AccountApiController {
     @GetMapping("/account/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     @PreAuthorize("hasAnyAuthority('ACCOUNT_ACCESS', 'ACCOUNT_MANAGE')")
-    @ApiOperation(value = "회원 정보 조회")
+    @ApiOperation(value = "아이디로 회원 정보 조회")
     public SuccessResponse<AccountReadDto.Response> readAccount(@PathVariable(name = "id") String id) {
         return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", accountReadService.read(id));
     }
 
-    //TODO 페이징 리퀘스트, 리스폰스 샘플 코드, 추후 삭제 요망
+    @GetMapping("/account/my")
+    @ResponseStatus(value = HttpStatus.OK)
+    @PreAuthorize("hasAnyAuthority('ACCOUNT_ACCESS', 'ACCOUNT_MANAGE')")
+    @ApiOperation(value = "내 회원 정보 조회")
+    public SuccessResponse<AccountReadDto.Response> readMyAccount() {
+        return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", accountReadService.readMyAccount());
+    }
+
     @GetMapping(path = "/account")
     @PreAuthorize("hasAnyAuthority('ACCOUNT_MANAGE')")
     @ResponseStatus(value = HttpStatus.OK)
