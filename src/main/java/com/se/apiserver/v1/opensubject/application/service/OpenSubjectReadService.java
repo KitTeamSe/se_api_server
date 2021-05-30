@@ -43,7 +43,7 @@ public class OpenSubjectReadService {
         .findAllByTimeTable(pageable, timeTable);
     List<Response> responseList = all
         .stream()
-        .map(os -> OpenSubjectReadDto.Response.fromEntity(os))
+        .map(Response::fromEntity)
         .collect(Collectors.toList());
     return new PageImpl(responseList, all.getPageable(), all.getTotalElements());
   }

@@ -42,7 +42,7 @@ public class DivisionReadService {
     return divisionJpaRepository
         .findAllByOpenSubject(openSubject)
         .stream()
-        .map(d -> DivisionReadDto.Response.fromEntity(d))
+        .map(Response::fromEntity)
         .collect(Collectors.toList());
   }
 }

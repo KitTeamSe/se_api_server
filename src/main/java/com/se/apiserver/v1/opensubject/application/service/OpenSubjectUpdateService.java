@@ -24,13 +24,8 @@ public class OpenSubjectUpdateService {
         .findById(request.getOpenSubjectId())
         .orElseThrow(() -> new BusinessException(OpenSubjectErrorCode.NO_SUCH_OPEN_SUBJECT));
 
-    if(request.getNumberOfDivision() != null){
-      openSubject.updateNumberOfDivision(request.getNumberOfDivision());
-    }
-
-    if(request.getTeachingTimePerWeek() != null){
+    if(request.getTeachingTimePerWeek() != null)
       openSubject.updateTeachingTimePerWeek(request.getTeachingTimePerWeek());
-    }
 
     if(request.getNote() != null){
       String note = request.getNote().isEmpty() ? null : request.getNote();

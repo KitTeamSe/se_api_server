@@ -22,9 +22,6 @@ public class OpenSubjectCreateDto {
     @ApiModelProperty(notes = "교과 번호", example = "1")
     private Long subjectId;
 
-    @ApiModelProperty(notes = "분반 수", example = "1")
-    private Integer numberOfDivision;
-
     @ApiModelProperty(notes = "주간 수업 시간", example = "1")
     private Integer teachingTimePerWeek;
 

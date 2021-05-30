@@ -14,6 +14,8 @@ public interface DivisionJpaRepository extends JpaRepository<Division, Long> {
 
   List<Division> findAllByOpenSubject(OpenSubject openSubject);
 
+  Optional<Division> findByOpenSubjectAndDivisionNumber(OpenSubject openSubject, Integer divisionNumber);
+
   Page<Division> findAllByOpenSubject(Pageable pageable, OpenSubject openSubject);
 
 }

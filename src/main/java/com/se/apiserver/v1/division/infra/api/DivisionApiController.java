@@ -77,6 +77,6 @@ public class DivisionApiController {
   @ApiOperation("분반 배치 확인")
   @ResponseStatus(value = HttpStatus.OK)
   public SuccessResponse<DivisionCheckDto.Response> check(@PathVariable(value = "id") Long id){
-    return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", divisionCheckService.check(id));
+    return new SuccessResponse<>(HttpStatus.OK.value(), "해당 분반의 배치를 확인했습니다.", divisionCheckService.check(id));
   }
 }

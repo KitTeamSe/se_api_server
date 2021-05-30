@@ -17,11 +17,8 @@ public class DivisionDeleteService {
 
   @Transactional
   public void delete(Long divisionId){
-    Division division = divisionJpaRepository
-        .findById(divisionId)
-        .orElseThrow(() ->
-            new BusinessException(DivisionErrorCode.NO_SUCH_DIVISION)
-        );
+    Division division = divisionJpaRepository.findById(divisionId)
+        .orElseThrow(() -> new BusinessException(DivisionErrorCode.NO_SUCH_DIVISION));
     divisionJpaRepository.delete(division);
   }
 }

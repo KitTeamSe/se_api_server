@@ -68,8 +68,8 @@ public class Division extends AccountGenerateEntity {
     this.deployedTeachingTime = deployedTeachingTime;
   }
 
-  public void deleteFromOpenSubject(){
-    if(this.openSubject.getDivisions().contains(this))
-      this.openSubject.getDivisions().remove(this);
-  }
+//  public void deleteFromOpenSubject(){
+//    if(this.openSubject.getDivisions().contains(this))
+//      this.openSubject.getDivisions().remove(this);
+//  }
 }

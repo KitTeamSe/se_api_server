@@ -22,17 +22,11 @@ public class DivisionCreateService {
 
   @Transactional
   public Long create(DivisionCreateDto.Request request){
-
     OpenSubject openSubject = openSubjectJpaRepository.findById(request.getOpenSubjectId())
         .orElseThrow(() -> new BusinessException(OpenSubjectErrorCode.NO_SUCH_OPEN_SUBJECT));
-    
-    int numberOfCreatedDivision = divisionJpaRepository
-        .findAllByOpenSubject(openSubject)
-        .size();
-    
-    // 개설 교과의 분반 수 보다 많이 분반을 만드려고 하는 경우
-    if(numberOfCreatedDivision >= openSubject.getDivisions().size())
-      throw new BusinessException(DivisionErrorCode.INVALID_DIVISION);
+
+    if(divisionJpaRepository.findByOpenSubjectAndDivisionNumber(openSubject, request.getDivisionNumber()).isPresent())
+      throw new BusinessException(DivisionErrorCode.DUPLICATED_DIVISION_NUMBER);
 
     Division division = new Division(openSubject, request.getDivisionNumber(), 0, false);
 

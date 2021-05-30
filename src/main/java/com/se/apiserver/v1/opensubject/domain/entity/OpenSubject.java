@@ -57,14 +57,7 @@ public class OpenSubject extends AccountGenerateEntity {
   @Size(max = 255)
   private String note;
 
-  // If numberOfDivision is 0, won't create divisions automatically
-  public OpenSubject(TimeTable timeTable, Subject subject, Integer numberOfDivision,
-      Integer teachingTimePerWeek, Boolean autoCreated) {
-
-    if(numberOfDivision == null)
-      numberOfDivision = 1;
-
-    validateNumberOfDivision(numberOfDivision);
+  public OpenSubject(TimeTable timeTable, Subject subject, Integer teachingTimePerWeek, Boolean autoCreated) {
     validateTeachingTimePerWeek(teachingTimePerWeek);
 
     this.timeTable = timeTable;
@@ -72,41 +65,16 @@ public class OpenSubject extends AccountGenerateEntity {
     this.teachingTimePerWeek = teachingTimePerWeek;
     this.autoCreated = autoCreated;
 
-    updateNumberOfDivision(numberOfDivision);
   }
 
-  public OpenSubject(TimeTable timeTable, Subject subject, Integer numberOfDivision,
-      Integer teachingTimePerWeek, Boolean autoCreated, @Size(max=255) String note) {
-    this(timeTable, subject, numberOfDivision, teachingTimePerWeek, autoCreated);
+  public OpenSubject(TimeTable timeTable, Subject subject, Integer teachingTimePerWeek, Boolean autoCreated, @Size(max=255) String note) {
+    this(timeTable, subject, teachingTimePerWeek, autoCreated);
     this.note = note;
-  }
-
-  public void validateNumberOfDivision(Integer numberOfDivision){
-    if(numberOfDivision < 0)
-      throw new BusinessException(OpenSubjectErrorCode.INVALID_NUMBER_OF_DIVISION);
   }
 
   public void validateTeachingTimePerWeek(Integer teachingTimePerWeek){
     if(teachingTimePerWeek <= 0)
       throw new BusinessException(OpenSubjectErrorCode.INVALID_TEACHING_TIME_PER_WEEK);
-  }
-
-  public void updateNumberOfDivision(Integer numberOfDivision){
-    validateNumberOfDivision(numberOfDivision);
-
-    int diff = Math.abs(divisions.size() - numberOfDivision);
-
-    if(numberOfDivision > divisions.size()){
-      IntStream.range(0, diff).forEach((i) ->{
-        this.divisions.add(new Division(this, 0, 0, true));
-      });
-    }
-    else{
-      divisions.sort((o1, o2) -> (int) (o2.getDivisionId() - o1.getDivisionId()));
-
-      IntStream.range(0, diff).forEach((i) ->
-        divisions.get(0).deleteFromOpenSubject());
-    }
   }
 
   public void updateTeachingTimePerWeek(Integer teachingTimePerWeek){

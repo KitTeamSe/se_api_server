@@ -1,9 +1,13 @@
 package com.se.apiserver.v1.opensubject.application.dto;
 
 import com.se.apiserver.v1.common.infra.dto.PageRequest;
+import com.se.apiserver.v1.division.application.dto.DivisionReadDto;
+import com.se.apiserver.v1.division.application.dto.DivisionReadDto.Response;
 import com.se.apiserver.v1.opensubject.domain.entity.OpenSubject;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -41,8 +45,8 @@ public class OpenSubjectReadDto {
     @ApiModelProperty(notes = "교과 번호", example = "1")
     private Long subjectId;
 
-    @ApiModelProperty(notes = "분반 수", example = "1")
-    private Integer numberOfDivision;
+    @ApiModelProperty(notes = "분반 목록")
+    private List<DivisionReadDto.Response> divisions;
 
     @ApiModelProperty(notes = "주간 수업 시간", example = "3")
     private Integer teachingTimePerWeek;
@@ -54,11 +58,15 @@ public class OpenSubjectReadDto {
     private String note;
 
     public static Response fromEntity(OpenSubject openSubject){
-      return Response.builder()
+      Response.ResponseBuilder builder = Response.builder();
+      builder.divisions(openSubject.getDivisions().stream()
+          .map(DivisionReadDto.Response::fromEntity)
+          .collect(Collectors.toList()));
+
+      return builder
           .openSubjectId(openSubject.getOpenSubjectId())
           .timeTableId(openSubject.getTimeTable().getTimeTableId())
           .subjectId(openSubject.getSubject().getSubjectId())
-          .numberOfDivision(openSubject.getDivisions().size())
           .teachingTimePerWeek(openSubject.getTeachingTimePerWeek())
           .autoCreated(openSubject.getAutoCreated())
           .note(openSubject.getNote())

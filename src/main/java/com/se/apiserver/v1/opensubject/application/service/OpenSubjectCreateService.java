@@ -33,11 +33,8 @@ public class OpenSubjectCreateService {
     Subject subject = subjectJpaRepository.findById(request.getSubjectId())
         .orElseThrow(() -> new BusinessException(SubjectErrorCode.NO_SUCH_SUBJECT));
 
-    if(openSubjectJpaRepository
-        .findByTimeTableAndSubject(timeTable, subject)
-        .isPresent()){
+    if(openSubjectJpaRepository.findByTimeTableAndSubject(timeTable, subject).isPresent())
       throw new BusinessException(OpenSubjectErrorCode.DUPLICATED_OPEN_SUBJECT);
-    }
 
     // 주간 강의 시간이 정해져있지 않으면 교과의 학점을 그대로 사용.
     if(request.getTeachingTimePerWeek() == null)
@@ -46,7 +43,6 @@ public class OpenSubjectCreateService {
     OpenSubject openSubject = new OpenSubject(
         timeTable,
         subject,
-        request.getNumberOfDivision(),
         request.getTeachingTimePerWeek(),
         false,
         request.getNote());

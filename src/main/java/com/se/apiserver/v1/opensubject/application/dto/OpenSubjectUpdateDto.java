@@ -19,9 +19,6 @@ public class OpenSubjectUpdateDto {
     @ApiModelProperty(notes = "개설 교과 번호", example = "1")
     private Long openSubjectId;
 
-    @ApiModelProperty(notes = "수정할 분반 수", example = "1")
-    private Integer numberOfDivision;
-
     @ApiModelProperty(notes = "수정할 주간 수업 시간", example = "1")
     private Integer teachingTimePerWeek;
 

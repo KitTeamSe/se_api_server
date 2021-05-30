@@ -206,7 +206,7 @@ public class LiberalArtsBatchParseService {
 
     // TODO: 주간 수업 시간 엑셀에서 파싱해서 계산해야함.
     int teachingTimePerWeek = subject.getCredit();                                                  // 주간 수업 시간 (일단 학점과 동일)
-    return new OpenSubject(timeTable, subject, 0, teachingTimePerWeek, true, note);
+    return new OpenSubject(timeTable, subject, teachingTimePerWeek, true, note);
   }
 
   private Division parseDivision(Row row, OpenSubject openSubject, String note){
