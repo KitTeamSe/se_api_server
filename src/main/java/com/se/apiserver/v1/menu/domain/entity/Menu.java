@@ -56,8 +56,12 @@ public class Menu extends AccountGenerateEntity {
   private List<Menu> child = new ArrayList<>();
 
   @OneToOne(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-  @JoinColumn(name = "authority_id")
-  private Authority authority;
+  @JoinColumn(name = "access_authority_id")
+  private Authority accessAuthority;
+
+  @OneToOne(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+  @JoinColumn(name = "manage_authority_id")
+  private Authority manageAuthority;
 
   public Menu(@Size(min = 2, max = 20) String nameEng, @Size(min = 2, max = 255) String url,
               @Size(min = 2, max = 20) String nameKor, Integer menuOrder,
@@ -70,7 +74,8 @@ public class Menu extends AccountGenerateEntity {
     this.menuType = menuType;
     if(parent != null)
       updateParent(parent);
-    updateAuthority(new Authority(nameEng, nameKor));
+    updateAccessAuthority(new Authority(nameEng + "_ACCESS", nameKor + "_접근"));
+    updateManageAuthority(new Authority(nameEng + "_MANAGE", nameKor + "_관리"));
   }
 
   public Menu(@Size(min = 2, max = 20) String nameEng, @Size(min = 2, max = 255) String url,
@@ -83,12 +88,14 @@ public class Menu extends AccountGenerateEntity {
 
   public void updateNameEng(String nameEng) {
     this.nameEng = nameEng;
-    this.authority.updateNameEng(nameEng);
+    this.accessAuthority.updateNameEng(nameEng + "_ACCESS");
+    this.manageAuthority.updateNameEng(nameEng + "_MANAGE");
   }
 
   public void updateNameKor(String nameKor) {
     this.nameKor = nameKor;
-    this.authority.updateNameKor(nameKor);
+    this.accessAuthority.updateNameKor(nameKor + "_접근");
+    this.manageAuthority.updateNameKor(nameKor + "_관리");
   }
 
   public void updateDescription(String description) {
@@ -131,17 +138,26 @@ public class Menu extends AccountGenerateEntity {
     this.menuType = menuType;
   }
 
-  public void updateAuthority(Authority authority){
-    this.authority = authority;
+  public void updateAccessAuthority(Authority authority){
+    this.accessAuthority = authority;
+  }
+
+  public void updateManageAuthority(Authority authority){
+    this.manageAuthority = authority;
   }
 
   public void validateAccessAuthority(Set<String> authorities) {
-    if(!authorities.contains(this.getAuthority().getAuthority()) && !authorities.contains(MANAGE_AUTHORITY))
-      throw new AccessDeniedException("권한이 없습니다");
+    if(!authorities.contains(this.getAccessAuthority().getAuthority()) && !authorities.contains(this.getManageAuthority().getAuthority()) && !authorities.contains(MANAGE_AUTHORITY))
+      throw new AccessDeniedException("접근 권한이 없습니다");
+  }
+
+  public void validateManageAuthority(Set<String> authorities) {
+    if(!authorities.contains(this.getManageAuthority().getAuthority()) && !authorities.contains(MANAGE_AUTHORITY))
+      throw new AccessDeniedException("관리 권한이 없습니다");
   }
 
   public boolean canAccess(Set<String> authorities){
-    if(!authorities.contains(this.getAuthority().getAuthority()) && !authorities.contains(MANAGE_AUTHORITY))
+    if(!authorities.contains(this.getAccessAuthority().getAuthority()) && !authorities.contains(this.getManageAuthority().getAuthority()) && !authorities.contains(MANAGE_AUTHORITY))
       return false;
     return true;
   }

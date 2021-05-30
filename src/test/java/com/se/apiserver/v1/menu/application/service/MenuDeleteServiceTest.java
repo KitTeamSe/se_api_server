@@ -34,7 +34,7 @@ class MenuDeleteServiceTest {
         Menu menu = createData("freeboard1", "자유게시판1", "자유게시판입니다", 2, MenuType.BOARD, "freeboard1");
 
         Long menuId = menu.getMenuId();
-        Long authorityId = menu.getAuthority().getAuthorityId();
+        Long authorityId = menu.getAccessAuthority().getAuthorityId();
         //when
         menuDeleteService.delete(menu.getMenuId());
         //then

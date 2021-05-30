@@ -41,8 +41,8 @@ class BoardUpdateServiceTest {
         Assertions.assertThat(updated.getNameEng()).isEqualTo("freeboard1");
         Assertions.assertThat(updated.getMenu().getNameKor()).isEqualTo("자유게시판1");
         Assertions.assertThat(updated.getMenu().getNameEng()).isEqualTo("freeboard1");
-        Assertions.assertThat(updated.getMenu().getAuthority().getNameEng()).isEqualTo("freeboard1");
-        Assertions.assertThat(updated.getMenu().getAuthority().getNameKor()).isEqualTo("자유게시판1");
+        Assertions.assertThat(updated.getMenu().getAccessAuthority().getNameEng()).isEqualTo("freeboard1");
+        Assertions.assertThat(updated.getMenu().getAccessAuthority().getNameKor()).isEqualTo("자유게시판1");
     }
 
     @Test
