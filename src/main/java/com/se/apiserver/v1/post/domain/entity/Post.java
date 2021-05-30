@@ -212,6 +212,12 @@ public class Post extends BaseEntity {
     return false;
   }
 
+  public boolean isOwner(Long accountId) {
+    if(this.account.getAccountId() == accountId)
+      return true;
+    return false;
+  }
+
   public String getAnonymousPassword() {
     if(this.anonymous == null)
       throw new BusinessException(PostErrorCode.NOT_ANONYMOUS_POST);

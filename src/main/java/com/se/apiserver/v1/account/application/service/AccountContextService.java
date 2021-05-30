@@ -67,7 +67,7 @@ public class AccountContextService implements UserDetailsService {
             .orElseThrow(() -> new BusinessException(AccountErrorCode.NO_SUCH_ACCOUNT));
   }
 
-  private Long getCurrentAccountId() {
+  public Long getCurrentAccountId() {
     return Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
   }
 

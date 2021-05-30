@@ -111,7 +111,7 @@ public class PostReadService {
         Set<String> authorities = accountContextService.getContextAuthorities();
         if(post.getAccount() == null)
             return post.getIsSecret() == PostIsSecret.NORMAL;
-        if(authorities.contains(Post.MANAGE_AUTHORITY) || post.isOwner(accountContextService.getContextAccount()))
+        if(authorities.contains(Post.MANAGE_AUTHORITY) || post.isOwner(accountContextService.getCurrentAccountId()))
             return true;
         return false;
     }
