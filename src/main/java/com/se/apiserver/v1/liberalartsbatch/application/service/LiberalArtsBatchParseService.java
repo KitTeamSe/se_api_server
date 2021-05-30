@@ -6,6 +6,7 @@ import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.deployment.application.dto.DeploymentCreateDto;
 import com.se.apiserver.v1.deployment.application.service.DeploymentCreateService;
 import com.se.apiserver.v1.division.domain.entity.Division;
+import com.se.apiserver.v1.division.infra.repository.DivisionJpaRepository;
 import com.se.apiserver.v1.lectureroom.domain.entity.LectureRoom;
 import com.se.apiserver.v1.lectureroom.infra.repository.LectureRoomQueryRepository;
 import com.se.apiserver.v1.lectureunabletime.domain.entity.DayOfWeek;
@@ -68,6 +69,7 @@ public class LiberalArtsBatchParseService {
   private final UsableLectureRoomJpaRepository usableLectureRoomJpaRepository;
   private final PeriodJpaRepository periodJpaRepository;
   private final DeploymentCreateService deploymentCreateService;
+  private final DivisionJpaRepository divisionJpaRepository;
 
   public void parse(TimeTable timeTable, Workbook workbook){
     // TODO: 엑셀 file 읽어서 DB에 반영
@@ -78,40 +80,43 @@ public class LiberalArtsBatchParseService {
     for(int i = START_ROW ; i < worksheet.getPhysicalNumberOfRows() ; i++){
       Row row = worksheet.getRow(i);
 
-      // 교과 정보 생성
-      Subject subject = parseSubject(row, timeTable.getSemester(), note);
+      try{
+        // 교과 정보 생성
+        Subject subject = parseSubject(row, timeTable.getSemester(), note);
 
-      // 시작-종료 교시 생성
-      PeriodRange periodRange = parsePeriodRange(row);
-      if(periodRange == null)
-        continue;
+        // 시작-종료 교시 생성
+        PeriodRange periodRange = parsePeriodRange(row);
 
-      // 개설 교과 생성
-      OpenSubject openSubject = parseOpenSubject(timeTable, subject, note);
+        // 개설 교과 생성
+        OpenSubject openSubject = parseOpenSubject(timeTable, subject, note);
 
-      // 분반 생성
-      Division division = parseDivision(row, openSubject, note);
-      if(division == null)
-        continue;
+        // 분반 생성
+        Division division = parseDivision(row, openSubject, note);
 
-      // 교원 생성
-      Teacher teacher = parseTeacher(row, note);
+        // 교원 생성
+        Teacher teacher = parseTeacher(row, note);
 
-      // 참여 교원 생성
-      ParticipatedTeacher participatedTeacher = parseParticipatedTeacher(timeTable, teacher, note);
+        // 참여 교원 생성
+        ParticipatedTeacher participatedTeacher = parseParticipatedTeacher(timeTable, teacher, note);
 
-      // 강의실 생성
-      LectureRoom lectureRoom = parseLectureRoom(row, note);
+        // 강의실 생성
+        LectureRoom lectureRoom = parseLectureRoom(row, note);
 
-      // 사용 가능 강의실 생성
-      UsableLectureRoom usableLectureRoom = parseUsableLectureRoom(timeTable, lectureRoom, note);
+        // 사용 가능 강의실 생성
+        UsableLectureRoom usableLectureRoom = parseUsableLectureRoom(timeTable, lectureRoom, note);
 
-      // 요일 추출
-      DayOfWeek dayOfWeek = parseDayOfWeek(row);
-      
-      // 배치 생성
-      DeploymentCreateDto.Resposne response = deploymentCreateService.saveDeployment(timeTable, division, 
-          usableLectureRoom, participatedTeacher, periodRange, dayOfWeek, true, note);
+        // 요일 추출
+        DayOfWeek dayOfWeek = parseDayOfWeek(row);
+
+        // 배치 생성
+        DeploymentCreateDto.Resposne response = deploymentCreateService.saveDeployment(timeTable, division,
+            usableLectureRoom, participatedTeacher, periodRange, dayOfWeek, true, note);
+
+        // response에 배치 시 발생한 에러들이 기록되므로, 로그에 남기거나 하면 좋을듯.
+      }
+      catch (Exception e){
+        e.printStackTrace();
+      }
     }
   }
 
@@ -151,14 +156,14 @@ public class LiberalArtsBatchParseService {
     }
     catch (Exception e){
       // Unknown period parsed! Log it!
-      return null;
+      throw new BusinessException(LiberalArtsBatchUploadErrorCode.INVALID_PERIOD_DATA);
     }
   }
 
   private LectureRoom parseLectureRoom(Row row, String note){
     String buildingRawStr = getCellValue(row, COL_LECTURE_ROOM, "XX000");
     if(buildingRawStr.isEmpty())
-      buildingRawStr = "XX000";
+      throw new BusinessException(LiberalArtsBatchUploadErrorCode.INVALID_LECTURE_ROOM_DATA);
 
     String building;
     String roomNumber;
@@ -174,8 +179,7 @@ public class LiberalArtsBatchParseService {
       roomNumber = buildingRawStr.substring(splitPoint);
     }
     catch (Exception e){
-      building = "XX";
-      roomNumber = "000";
+      throw new BusinessException(LiberalArtsBatchUploadErrorCode.INVALID_LECTURE_ROOM_DATA);
     }
 
     Optional<LectureRoom> optionalLectureRoom = lectureRoomQueryRepository.findByRoomNumberWithBuilding(building, roomNumber);
@@ -210,14 +214,17 @@ public class LiberalArtsBatchParseService {
   }
 
   private Division parseDivision(Row row, OpenSubject openSubject, String note){
-    int divisionNumber = getCellValue(row, COL_DIVISION, 0);
-    if(divisionNumber == 0)
-      return null;
+    int divisionNumber = getCellValue(row, COL_DIVISION, -1);
+    if(divisionNumber == -1)
+      throw new BusinessException(LiberalArtsBatchUploadErrorCode.INVALID_DIVISION_NUMBER_DATA);
 
-    if(openSubject.getDivisions().size() < divisionNumber){
-      return new Division(openSubject, 0, 0, true, note);
+    if(openSubject.getOpenSubjectId() != null){
+      Optional<Division> optionalDivision = divisionJpaRepository.findByOpenSubjectAndDivisionNumber(openSubject, divisionNumber);
+      if(optionalDivision.isPresent())
+        return optionalDivision.get();
     }
-    return openSubject.getDivisions().get(divisionNumber - 1);
+
+    return new Division(openSubject, divisionNumber, 0, true, note);
   }
 
   private Teacher parseTeacher(Row row, String note){
@@ -266,7 +273,7 @@ public class LiberalArtsBatchParseService {
           return value.isEmpty() || value.isBlank() ? defaultValue : (T) value;
         }
         catch (Exception e) {
-          int value = Integer.valueOf((int)row.getCell(cellNum).getNumericCellValue());
+          int value = (int) row.getCell(cellNum).getNumericCellValue();
           return (T) String.valueOf(value);
         }
       }
