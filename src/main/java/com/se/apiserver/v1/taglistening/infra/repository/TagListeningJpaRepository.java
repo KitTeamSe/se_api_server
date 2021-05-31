@@ -18,4 +18,11 @@ public interface TagListeningJpaRepository extends JpaRepository<TagListening, L
             "from TagListening tl " +
             "where tl.account.accountId = :accountId")
     List<TagListening> findAllByAccountId(Long accountId);
+
+    @Query("select tl " +
+            "from TagListening tl " +
+            "where tl.tag.tagId = :tagId")
+    List<TagListening> findAllByTagId(Long tagId);
+
+   // List<TagListening> findTagListeningsByTag_TagId(List<Long> tagIdList);
 }

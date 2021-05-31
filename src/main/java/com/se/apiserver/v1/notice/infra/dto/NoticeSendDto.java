@@ -33,4 +33,20 @@ public class NoticeSendDto {
         private String url;
 
     }
+
+    @Builder
+    @Getter
+    static public class SendEntity {
+        private List<Long> accountIdList;
+        private String title;
+        private String message;
+        private String url;
+
+        public SendEntity(List<Long> accountIdList, String title, String message, String url) {
+            this.accountIdList = accountIdList;
+            this.title = title;
+            this.message = message;
+            this.url = url;
+        }
+    }
 }
