@@ -32,7 +32,7 @@ public class NoticeSendService {
     private final NoticeCreateService noticeCreateService;
     private final NoticeRecordCreateService noticeRecordCreateService;
 
-    private final Integer SEND_TIMEOUT = 2;
+    private final Integer SEND_TIMEOUT = 1;
 
     @Value("${se-notification-server.send-url}")
     private String NOTIFICATION_SERVER_SEND_URL;
