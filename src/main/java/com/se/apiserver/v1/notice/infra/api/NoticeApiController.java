@@ -2,7 +2,7 @@ package com.se.apiserver.v1.notice.infra.api;
 
 import com.se.apiserver.v1.common.infra.dto.PageRequest;
 import com.se.apiserver.v1.common.infra.dto.SuccessResponse;
-import com.se.apiserver.v1.notice.domain.service.*;
+import com.se.apiserver.v1.notice.application.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,7 @@ public class NoticeApiController {
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "알림 아이디로 알림 조회")
     @PreAuthorize("hasAuthority('NOTICE_MANAGE')")
-    public SuccessResponse readNotice(@PathVariable(value = "id")Long id) {
+    public SuccessResponse readNotice(@PathVariable(value = "id") Long id) {
         return new SuccessResponse(HttpStatus.OK.value(), "알림 조회 성공", noticeReadService.readById(id));
     }
 

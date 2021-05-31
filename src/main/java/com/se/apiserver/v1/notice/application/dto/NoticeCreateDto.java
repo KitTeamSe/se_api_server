@@ -1,4 +1,4 @@
-package com.se.apiserver.v1.notice.infra.dto;
+package com.se.apiserver.v1.notice.application.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

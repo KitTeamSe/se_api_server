@@ -1,13 +1,11 @@
-package com.se.apiserver.v1.noticerecord.domain.service;
+package com.se.apiserver.v1.noticerecord.application.service;
 
-import com.se.apiserver.v1.account.application.service.AccountReadService;
 import com.se.apiserver.v1.account.infra.repository.AccountJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
-import com.se.apiserver.v1.notice.domain.service.NoticeReadService;
 import com.se.apiserver.v1.notice.infra.repository.NoticeJpaRepository;
 import com.se.apiserver.v1.noticerecord.domain.entity.NoticeRecord;
-import com.se.apiserver.v1.noticerecord.domain.error.NoticeRecordErrorCode;
-import com.se.apiserver.v1.noticerecord.infra.dto.NoticeRecordReadDto;
+import com.se.apiserver.v1.noticerecord.application.error.NoticeRecordErrorCode;
+import com.se.apiserver.v1.noticerecord.application.dto.NoticeRecordReadDto;
 import com.se.apiserver.v1.noticerecord.infra.repository.NoticeRecordJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

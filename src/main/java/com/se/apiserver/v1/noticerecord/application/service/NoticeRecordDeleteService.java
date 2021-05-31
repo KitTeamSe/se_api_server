@@ -1,8 +1,8 @@
-package com.se.apiserver.v1.noticerecord.domain.service;
+package com.se.apiserver.v1.noticerecord.application.service;
 
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.noticerecord.domain.entity.NoticeRecord;
-import com.se.apiserver.v1.noticerecord.domain.error.NoticeRecordErrorCode;
+import com.se.apiserver.v1.noticerecord.application.error.NoticeRecordErrorCode;
 import com.se.apiserver.v1.noticerecord.infra.repository.NoticeRecordJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

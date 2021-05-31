@@ -1,7 +1,7 @@
-package com.se.apiserver.v1.notice.domain.service;
+package com.se.apiserver.v1.notice.application.service;
 
 import com.se.apiserver.v1.notice.domain.entity.Notice;
-import com.se.apiserver.v1.notice.infra.dto.NoticeCreateDto;
+import com.se.apiserver.v1.notice.application.dto.NoticeCreateDto;
 import com.se.apiserver.v1.notice.infra.repository.NoticeJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

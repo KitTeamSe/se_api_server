@@ -1,6 +1,5 @@
 package com.se.apiserver.v1.noticerecord.infra.repository;
 
-import com.se.apiserver.v1.notice.domain.entity.Notice;
 import com.se.apiserver.v1.noticerecord.domain.entity.NoticeRecord;
 import org.springframework.data.jpa.repository.JpaRepository;
 

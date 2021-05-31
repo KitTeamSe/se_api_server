@@ -1,8 +1,7 @@
 package com.se.apiserver.v1.notice.application.service;
 
 import com.se.apiserver.v1.notice.domain.entity.Notice;
-import com.se.apiserver.v1.notice.domain.service.NoticeCreateService;
-import com.se.apiserver.v1.notice.infra.dto.NoticeCreateDto;
+import com.se.apiserver.v1.notice.application.dto.NoticeCreateDto;
 import com.se.apiserver.v1.notice.infra.repository.NoticeJpaRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

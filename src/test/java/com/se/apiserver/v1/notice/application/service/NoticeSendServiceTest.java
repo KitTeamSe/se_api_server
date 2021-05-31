@@ -7,7 +7,6 @@ import com.se.apiserver.v1.attach.domain.entity.Attach;
 import com.se.apiserver.v1.attach.infra.repository.AttachJpaRepository;
 import com.se.apiserver.v1.board.domain.entity.Board;
 import com.se.apiserver.v1.board.infra.repository.BoardJpaRepository;
-import com.se.apiserver.v1.notice.domain.service.NoticeSendService;
 import com.se.apiserver.v1.post.application.dto.PostCreateDto;
 import com.se.apiserver.v1.post.application.service.PostCreateService;
 import com.se.apiserver.v1.post.domain.entity.PostContent;
@@ -153,7 +152,7 @@ public class NoticeSendServiceTest {
         //then
         List<Long> tagIdList = new ArrayList<>();
         tagIdList.add(tag.getTagId());
-        Assertions.assertThat(noticeSendService.createAccountList(tagIdList).size()).isEqualTo(1);
-        Assertions.assertThat(noticeSendService.createAccountList(tagIdList).get(0)).isEqualTo(account1.getAccountId());
+        Assertions.assertThat(noticeSendService.getTagListeners(tagIdList).size()).isEqualTo(1);
+        Assertions.assertThat(noticeSendService.getTagListeners(tagIdList).get(0)).isEqualTo(account1.getAccountId());
     }
 }

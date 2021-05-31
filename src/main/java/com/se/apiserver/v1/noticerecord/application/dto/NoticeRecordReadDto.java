@@ -1,4 +1,4 @@
-package com.se.apiserver.v1.noticerecord.infra.dto;
+package com.se.apiserver.v1.noticerecord.application.dto;
 
 import com.se.apiserver.v1.noticerecord.domain.entity.NoticeRecord;
 import io.swagger.annotations.ApiModel;
