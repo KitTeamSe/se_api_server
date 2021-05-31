@@ -8,16 +8,12 @@ import com.se.apiserver.v1.post.application.service.PostDeleteService;
 import com.se.apiserver.v1.post.application.service.PostReadService;
 import com.se.apiserver.v1.post.application.service.PostUpdateService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @Api(tags = "게시글 관리")
@@ -93,8 +89,8 @@ public class PostApiController {
 
     @PostMapping("/post/anonymous")
     @ResponseStatus(value = HttpStatus.OK)
-    @ApiOperation(value = "익명 게시글 접근 권한 확인")
-    public SuccessResponse<Pageable> checkAnonymousPostWriteAccess(@RequestBody @Validated PostAccessCheckDto.AnonymousPostAccessCheckDto anonymousPostAccessCheckDto) {
+    @ApiOperation(value = "익명 게시글 수정(쓰기) 권한 확인")
+    public SuccessResponse<Boolean> checkAnonymousPostWriteAccess(@RequestBody @Validated PostAccessCheckDto.AnonymousPostAccessCheckDto anonymousPostAccessCheckDto) {
         return new SuccessResponse(HttpStatus.OK.value(), "권한 승인", postReadService.checkAnonymousPostWriteAccess(anonymousPostAccessCheckDto));
     }
 
@@ -102,7 +98,7 @@ public class PostApiController {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation("게시글 관리 권한 확인")
     public SuccessResponse isOwnerOrHasManageAuthority(@PathVariable(value = "id") Long id){
-        postReadService.isOwnerOrHasManageAuthority(id);
+        postReadService.validatePostManageAuthority(id);
         return new SuccessResponse(HttpStatus.OK.value(), "권한이 검증되었습니다.");
     }
 }
