@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class NoticeRecordDeleteService {
 
-    private  final NoticeRecordJpaRepository noticeRecordJpaRepository;
+    private final NoticeRecordJpaRepository noticeRecordJpaRepository;
 
     @Transactional
     public boolean delete(Long id) {

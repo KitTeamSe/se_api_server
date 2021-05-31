@@ -93,10 +93,10 @@ public class NoticeSendService {
             Long noticeId = noticeCreateService.save(noticeCRequest);
 
             //NoticeRecord 등록
-            for (Long accountId: accountIdList) {
-                NoticeRecordCreateDto.Request noticeRecordCRequest = new NoticeRecordCreateDto.Request(accountId, noticeId);
-                noticeRecordCreateService.create(noticeRecordCRequest);
-            }
+//            for (Long accountId: accountIdList) {
+//                NoticeRecordCreateDto.Request noticeRecordCRequest = new NoticeRecordCreateDto.Request(accountId, noticeId);
+//                noticeRecordCreateService.create(noticeRecordCRequest);
+//            }
         }
         catch (Exception e){
             // Need logging
