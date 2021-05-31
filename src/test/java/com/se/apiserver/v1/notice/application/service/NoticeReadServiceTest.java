@@ -2,10 +2,8 @@ package com.se.apiserver.v1.notice.application.service;
 
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.common.infra.dto.PageRequest;
-import com.se.apiserver.v1.notice.domain.error.NoticeErrorCode;
-import com.se.apiserver.v1.notice.domain.service.NoticeCreateService;
-import com.se.apiserver.v1.notice.domain.service.NoticeReadService;
-import com.se.apiserver.v1.notice.infra.dto.NoticeCreateDto;
+import com.se.apiserver.v1.notice.application.error.NoticeErrorCode;
+import com.se.apiserver.v1.notice.application.dto.NoticeCreateDto;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

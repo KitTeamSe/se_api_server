@@ -1,9 +1,10 @@
-package com.se.apiserver.v1.notice.domain.service;
+package com.se.apiserver.v1.notice.application.service;
 
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
+import com.se.apiserver.v1.notice.application.dto.NoticeReadDto.ReadResponse;
 import com.se.apiserver.v1.notice.domain.entity.Notice;
-import com.se.apiserver.v1.notice.domain.error.NoticeErrorCode;
-import com.se.apiserver.v1.notice.infra.dto.NoticeReadDto;
+import com.se.apiserver.v1.notice.application.error.NoticeErrorCode;
+import com.se.apiserver.v1.notice.application.dto.NoticeReadDto;
 import com.se.apiserver.v1.notice.infra.repository.NoticeJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,7 +26,7 @@ public class NoticeReadService {
     public PageImpl readAll(Pageable pageable) {
         Page<Notice> notices = noticeJpaRepository.findAll(pageable);
         List<NoticeReadDto.ReadResponse> responseList = notices.stream()
-                .map(n -> NoticeReadDto.ReadResponse.fromEntity(n))
+                .map(ReadResponse::fromEntity)
                 .collect(Collectors.toList());
         return new PageImpl(responseList, notices.getPageable(), notices.getTotalElements());
     }

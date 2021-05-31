@@ -2,9 +2,9 @@ package com.se.apiserver.v1.noticerecord.infra.api;
 
 import com.se.apiserver.v1.common.infra.dto.PageRequest;
 import com.se.apiserver.v1.common.infra.dto.SuccessResponse;
-import com.se.apiserver.v1.noticerecord.domain.service.NoticeRecordDeleteService;
-import com.se.apiserver.v1.noticerecord.domain.service.NoticeRecordReadService;
-import com.se.apiserver.v1.noticerecord.infra.dto.NoticeRecordReadDto;
+import com.se.apiserver.v1.noticerecord.application.service.NoticeRecordDeleteService;
+import com.se.apiserver.v1.noticerecord.application.service.NoticeRecordReadService;
+import com.se.apiserver.v1.noticerecord.application.dto.NoticeRecordReadDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;

@@ -7,8 +7,8 @@ import com.se.apiserver.v1.board.domain.entity.Board;
 import com.se.apiserver.v1.board.application.error.BoardErrorCode;
 import com.se.apiserver.v1.board.infra.repository.BoardJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
-import com.se.apiserver.v1.notice.domain.service.NoticeSendService;
-import com.se.apiserver.v1.notice.infra.dto.NoticeSendDto;
+import com.se.apiserver.v1.notice.application.service.NoticeSendService;
+import com.se.apiserver.v1.notice.application.dto.NoticeSendDto;
 import com.se.apiserver.v1.post.domain.entity.*;
 import com.se.apiserver.v1.attach.application.error.AttachErrorCode;
 import com.se.apiserver.v1.post.application.error.PostErrorCode;
@@ -24,12 +24,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -66,20 +63,15 @@ public class PostCreateService {
             postJpaRepository.save(post);
 
             //Notice 호출
-            callSend(request.getTagList(), post);
+            noticeSendService.sendPostNotice(tags, post);
 
             return post;
         }
 
         validateAnonymousInput(request);
         request.getAnonymous().setAnonymousPassword(passwordEncoder.encode(request.getAnonymous().getAnonymousPassword()));
-        Post post = new Post(request.getAnonymous(), board, request.getPostContent(), request.getIsNotice()
+        return new Post(request.getAnonymous(), board, request.getPostContent(), request.getIsNotice()
                 ,request.getIsSecret(), authorities, tags, attaches, ip);
-
-        //Notice 호출
-        callSend(request.getTagList(), post);
-
-        return post;
     }
 
     private void validateAnonymousInput(PostCreateDto.Request request) {
@@ -109,19 +101,5 @@ public class PostCreateService {
                         .orElseThrow(() -> new BusinessException(AttachErrorCode.NO_SUCH_ATTACH))
                 )
                 .collect(Collectors.toList());
-    }
-
-    private void callSend(List<PostCreateDto.TagDto> tagList , Post post) {
-        List<Long> tagIdList = new ArrayList<>();
-
-        for (PostCreateDto.TagDto tag: tagList
-        ) {
-            tagIdList.add(tag.getTagId());
-        }
-
-        noticeSendService.postSend(NoticeSendDto.Request.builder()
-                .tagIdList(tagIdList)
-                .postId(post.getPostId())
-                .build());
     }
 }

@@ -1,4 +1,4 @@
-package com.se.apiserver.v1.noticerecord.domain.error;
+package com.se.apiserver.v1.noticerecord.application.error;
 
 import com.se.apiserver.v1.common.domain.error.ErrorCode;
 import lombok.Getter;

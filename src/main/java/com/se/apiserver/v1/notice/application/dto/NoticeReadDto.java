@@ -1,18 +1,9 @@
-package com.se.apiserver.v1.notice.infra.dto;
+package com.se.apiserver.v1.notice.application.dto;
 
 import com.se.apiserver.v1.notice.domain.entity.Notice;
 import lombok.*;
 
 public class NoticeReadDto {
-
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Builder
-    static public class Request {
-        private Long noticeId;
-    }
-
     @Data
     @Builder
     static public class ReadResponse {
@@ -27,10 +18,7 @@ public class NoticeReadDto {
                     .title(notice.getTitle())
                     .message(notice.getMessage())
                     .url(notice.getUrl());
-
             return readResponseBuilder.build();
-
-
         }
     }
 }
