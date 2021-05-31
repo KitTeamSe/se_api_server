@@ -2,7 +2,6 @@ package com.se.apiserver.v1.notice.domain.service;
 
 import com.se.apiserver.v1.notice.infra.dto.NoticeCreateDto;
 import com.se.apiserver.v1.notice.infra.dto.NoticeSendDto;
-import com.se.apiserver.v1.notice.infra.dto.SendEntity;
 import com.se.apiserver.v1.noticerecord.domain.service.NoticeRecordCreateService;
 import com.se.apiserver.v1.noticerecord.infra.dto.NoticeRecordCreateDto;
 import com.se.apiserver.v1.post.infra.repository.PostJpaRepository;
@@ -60,8 +59,6 @@ public class NoticeSendService {
     public List<Long> createAccountList(List<Long> tagIdList) {
         List<Long> accountList = new ArrayList<>();
 
-        //List<TagListening> tagListeningList = tagListeningJpaRepository.findTagListeningsByTag_TagId(tagIdList);
-
         for (Long tagId: tagIdList
              ) {
             List<TagListening> tagListeningList = tagListeningJpaRepository.findAllByTagId(tagId);
@@ -77,12 +74,7 @@ public class NoticeSendService {
     @Transactional
     public void send(List<Long> accountList, String title, String message, String url) {
         //전송
-        SendEntity sendEntity = SendEntity.builder()
-                .accountIdList(accountList)
-                .title(title)
-                .message(message)
-                .url(url)
-                .build();
+        NoticeSendDto.SendEntity sendEntity = new NoticeSendDto.SendEntity(accountList, title, message, url);
 
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.postForObject(SEND_URL, sendEntity, Resource.class);

@@ -52,7 +52,6 @@ public class PostCreateService {
     }
 
     private Post createPost(PostCreateDto.Request request) {
-        List<Long> tagIdList = new ArrayList<>();
         Board board = boardJpaRepository.findById(request.getBoardId())
                 .orElseThrow(() -> new BusinessException(BoardErrorCode.NO_SUCH_BOARD));
         Set<String> authorities = accountContextService.getContextAuthorities();
@@ -67,16 +66,7 @@ public class PostCreateService {
             postJpaRepository.save(post);
 
             //Notice 호출
-            for (PostCreateDto.TagDto tag: request.getTagList()
-            ) {
-                tagIdList.add(tag.getTagId());
-            }
-
-            noticeSendService.postSend(NoticeSendDto.Request.builder()
-                    .tagIdList(tagIdList)
-                    .postId(post.getPostId())
-                    .build());
-
+            callSend(request.getTagList(), post);
 
             return post;
         }
@@ -87,15 +77,7 @@ public class PostCreateService {
                 ,request.getIsSecret(), authorities, tags, attaches, ip);
 
         //Notice 호출
-        for (PostCreateDto.TagDto tag: request.getTagList()
-        ) {
-            tagIdList.add(tag.getTagId());
-        }
-
-        noticeSendService.postSend(NoticeSendDto.Request.builder()
-                .tagIdList(tagIdList)
-                .postId(post.getPostId())
-                .build());
+        callSend(request.getTagList(), post);
 
         return post;
     }
@@ -127,5 +109,19 @@ public class PostCreateService {
                         .orElseThrow(() -> new BusinessException(AttachErrorCode.NO_SUCH_ATTACH))
                 )
                 .collect(Collectors.toList());
+    }
+
+    private void callSend(List<PostCreateDto.TagDto> tagList , Post post) {
+        List<Long> tagIdList = new ArrayList<>();
+
+        for (PostCreateDto.TagDto tag: tagList
+        ) {
+            tagIdList.add(tag.getTagId());
+        }
+
+        noticeSendService.postSend(NoticeSendDto.Request.builder()
+                .tagIdList(tagIdList)
+                .postId(post.getPostId())
+                .build());
     }
 }
