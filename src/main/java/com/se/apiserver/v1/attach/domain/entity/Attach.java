@@ -91,4 +91,8 @@ public class Attach extends BaseEntity {
     public String getSaveName(){
         return downloadUrl.substring(downloadUrl.lastIndexOf('/') + 1);
     }
+
+    public void setReply(Reply reply) {
+        this.reply = reply;
+    }
 }

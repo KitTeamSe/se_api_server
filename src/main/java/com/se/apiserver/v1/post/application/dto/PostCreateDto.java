@@ -42,7 +42,7 @@ public class PostCreateDto {
     @Singular("tagList")
     private List<TagDto> tagList;
 
-    @ApiModelProperty(notes = "태그들")
+    @ApiModelProperty(notes = "첨부파일들")
     @Singular("attachmentList")
     private List<AttachDto> attachmentList;
   }
