@@ -1,5 +1,6 @@
 package com.se.apiserver.v1.board.infra.api;
 
+import com.se.apiserver.v1.board.application.service.BoardAuthorityService;
 import com.se.apiserver.v1.board.application.service.BoardCreateService;
 import com.se.apiserver.v1.board.application.service.BoardDeleteService;
 import com.se.apiserver.v1.board.application.service.BoardReadService;
@@ -29,6 +30,7 @@ public class BoardApiController {
     private final BoardCreateService boardCreateService;
     private final BoardUpdateService boardUpdateService;
     private final BoardDeleteService boardDeleteService;
+    private final BoardAuthorityService boardAuthorityService;
 
     @GetMapping(value = "/board/{id}")
     @PreAuthorize("hasAuthority('MENU_MANAGE')")
@@ -69,5 +71,21 @@ public class BoardApiController {
     @ApiOperation(value = "게시판 등록")
     public SuccessResponse<Long> update(@RequestBody @Validated BoardCreateDto.Request request){
         return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 등록되었습니다", boardCreateService.create(request));
+    }
+
+    @GetMapping(value = "/board/validate/access/{id}")
+    @ResponseStatus(value = HttpStatus.OK)
+    @ApiOperation(value = "게시판 접근 권한 확인")
+    public SuccessResponse validateAccessAuthority(@ApiParam(value = "게시판 아이디", example = "1") @PathVariable(name = "id") Long id){
+        boardAuthorityService.validateAccessAuthority(id);
+        return new SuccessResponse(HttpStatus.OK.value(), "접근 권한이 검증되었습니다.");
+    }
+
+    @GetMapping(value = "/board/validate/manage/{id}")
+    @ResponseStatus(value = HttpStatus.OK)
+    @ApiOperation(value = "게시판 관리 권한 확인")
+    public SuccessResponse validateManageAuthority(@ApiParam(value = "게시판 아이디", example = "1") @PathVariable(name = "id") Long id){
+        boardAuthorityService.validateManageAuthority(id);
+        return new SuccessResponse(HttpStatus.OK.value(), "관리 권한이 검증되었습니다.");
     }
 }

@@ -48,7 +48,7 @@ public class AuthorityGroupApiController {
     @ResponseStatus(value = HttpStatus.CREATED)
     @ApiOperation(value = "권한 그룹 등록")
     @PreAuthorize("hasAuthority('AUTHORITY_MANAGE')")
-    public SuccessResponse<AuthorityGroupReadDto.Response> create(@RequestBody @Validated AuthorityGroupCreateDto.Request request){
+    public SuccessResponse<Long> create(@RequestBody @Validated AuthorityGroupCreateDto.Request request){
         return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 등록되었습니다", authorityGroupCreateService.create(request));
     }
 
@@ -56,7 +56,7 @@ public class AuthorityGroupApiController {
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "권한 그룹 수정")
     @PreAuthorize("hasAuthority('AUTHORITY_MANAGE')")
-    public SuccessResponse<AuthorityGroupReadDto.Response> create(@RequestBody @Validated AuthorityGroupUpdateDto.Request request){
+    public SuccessResponse<Long> create(@RequestBody @Validated AuthorityGroupUpdateDto.Request request){
         return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 수정되었습니다", authorityGroupUpdateService.update(request));
     }
 

@@ -142,6 +142,8 @@ public class Post extends BaseEntity {
 
   public void validateBoardAccessAuthority(Set<String> authorities){
     validateBoardAccessAuthority(this.board, authorities);
+  public void validateBoardManageAuthority(Board board, Set<String> authorities) {
+    board.validateManageAuthority(authorities);
   }
 
   public void addAttaches(List<Attach> attachList) {

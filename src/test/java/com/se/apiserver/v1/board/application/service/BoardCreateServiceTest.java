@@ -42,8 +42,8 @@ class BoardCreateServiceTest {
         Assertions.assertThat(board.getMenu().getNameEng()).isEqualTo("freeboard");
         Assertions.assertThat(board.getMenu().getNameKor()).isEqualTo("자유게시판");
         Assertions.assertThat(board.getMenu().getMenuOrder()).isEqualTo(1);
-        Assertions.assertThat(board.getMenu().getAuthority().getNameEng()).isEqualTo("freeboard");
-        Assertions.assertThat(board.getMenu().getAuthority().getNameKor()).isEqualTo("자유게시판");
+        Assertions.assertThat(board.getMenu().getAccessAuthority().getNameEng()).isEqualTo("freeboard");
+        Assertions.assertThat(board.getMenu().getAccessAuthority().getNameKor()).isEqualTo("자유게시판");
     }
 
     @Test

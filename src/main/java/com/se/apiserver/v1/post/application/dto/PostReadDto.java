@@ -2,9 +2,12 @@ package com.se.apiserver.v1.post.application.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.se.apiserver.v1.account.domain.entity.AccountType;
 import com.se.apiserver.v1.attach.domain.entity.Attach;
 import com.se.apiserver.v1.board.domain.entity.Board;
+import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.common.infra.dto.PageRequest;
+import com.se.apiserver.v1.post.application.error.PostErrorCode;
 import com.se.apiserver.v1.post.domain.entity.*;
 
 import com.se.apiserver.v1.tag.domain.entity.Tag;
@@ -20,7 +23,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 
 public class PostReadDto {
 
@@ -88,6 +90,8 @@ public class PostReadDto {
 
     private String nickname;
 
+    private AccountType accountType;
+
     private LocalDateTime createAt;
 
     @JsonInclude(Include.NON_NULL)
@@ -107,6 +111,8 @@ public class PostReadDto {
           .collect(Collectors.toList())
       );
 
+      AccountType accountType = post.getAccount() == null ? AccountType.ANONYMOUS : post.getAccount().getType();
+
       return builder
               .postId(post.getPostId())
               .boardId(post.getBoard().getBoardId())
@@ -117,6 +123,7 @@ public class PostReadDto {
               .title(post.getPostContent().getTitle())
               .previewText(previewText)
               .nickname(nickname)
+              .accountType(accountType)
               .createAt(post.getCreatedAt())
               .build();
     }
@@ -143,11 +150,9 @@ public class PostReadDto {
 
     private PostIsNotice isNotice;
 
-    @JsonInclude(Include.NON_NULL)
-    private String accountNickname;
+    private String nickname;
 
-    @JsonInclude(Include.NON_NULL)
-    private String anonymousNickname;
+    private AccountType accountType;
 
     @JsonInclude(Include.NON_NULL)
     private PostContent postContent;
@@ -175,21 +180,19 @@ public class PostReadDto {
           .isNotice(post.getIsNotice())
           .createdAt(post.getCreatedAt());
 
-      if (post.getAccount() != null) {
-        builder.accountNickname(post.getAccount().getNickname());
-      }
+      String nickname = post.getAccount() != null ? post.getAccount().getNickname() : post.getAnonymous().getAnonymousNickname();
+      builder.nickname(nickname);
 
-      if(post.getAnonymous() != null)
-        builder.anonymousNickname(post.getAnonymous().getAnonymousNickname());
+      AccountType accountType = post.getAccount() == null ? AccountType.ANONYMOUS : post.getAccount().getType();
+      builder.accountType(accountType);
 
       builder.tags(post.getTags().stream()
           .map(t -> TagDto.fromEntity(t))
           .collect(Collectors.toList())
       );
 
-      if (post.getIsSecret() == PostIsSecret.SECRET && !isOwnerOrManager) {
-        return builder.build();
-      }
+      if (post.getIsSecret() == PostIsSecret.SECRET && !isOwnerOrManager)
+        throw new BusinessException(PostErrorCode.CAN_NOT_ACCESS_POST);
 
       builder.attaches(post.getAttaches().stream()
           .map(a -> AttachDto.fromEntity(a))

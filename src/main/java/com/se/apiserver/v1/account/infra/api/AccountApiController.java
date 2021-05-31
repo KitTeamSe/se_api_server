@@ -1,11 +1,13 @@
 package com.se.apiserver.v1.account.infra.api;
 
+import com.se.apiserver.v1.account.application.dto.QuestionReadDto.Response;
 import com.se.apiserver.v1.common.infra.dto.PageRequest;
 import com.se.apiserver.v1.common.infra.dto.SuccessResponse;
 import com.se.apiserver.v1.account.application.service.*;
 import com.se.apiserver.v1.account.application.dto.*;
 import io.swagger.annotations.*;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -29,6 +31,7 @@ public class AccountApiController {
     private final AccountVerifyService accountVerifyService;
     private final AccountFindPasswordService accountFindPasswordService;
     private final AccountFindIdService accountFindIdService;
+    private final QuestionReadService questionReadService;
 
 
     // TODO 인증 서버로 이전, 유니크 중복 검사
@@ -153,6 +156,13 @@ public class AccountApiController {
     @ApiOperation(value = "회원 정보 검색")
     public SuccessResponse<Pageable> searchAccount(@RequestBody @Validated AccountReadDto.SearchRequest searchRequest) {
         return new SuccessResponse(HttpStatus.OK.value(), "조회 성공", accountReadService.search(searchRequest));
+    }
+
+    @GetMapping(path = "/account/question")
+    @ResponseStatus(value = HttpStatus.OK)
+    @ApiOperation(value = "회원가입 질문 목록 조회")
+    public SuccessResponse<List<Response>> readAllQuestion() {
+        return new SuccessResponse(HttpStatus.OK.value(), "조회 성공", questionReadService.readAll());
     }
 
     private String getIp(HttpServletRequest httpServletRequest){

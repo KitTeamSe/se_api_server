@@ -1,5 +1,7 @@
 package com.se.apiserver.v1.authority.application.service.authoritygroup;
 
+import com.se.apiserver.v1.authority.application.service.authoritygroupauthoritymapping.AuthorityGroupAuthorityMappingReadService;
+import com.se.apiserver.v1.authority.domain.entity.Authority;
 import com.se.apiserver.v1.authority.domain.entity.AuthorityGroup;
 import com.se.apiserver.v1.authority.application.error.AuthorityGroupErrorCode;
 import com.se.apiserver.v1.authority.application.dto.authoritygroup.AuthorityGroupReadDto;
@@ -22,17 +24,20 @@ import java.util.stream.Collectors;
 public class AuthorityGroupReadService {
 
     private final AuthorityGroupJpaRepository authorityGroupJpaRepository;
+    private final AuthorityGroupAuthorityMappingReadService authorityGroupAuthorityMappingReadService;
 
     public AuthorityGroupReadDto.Response read(Long id){
         AuthorityGroup authorityGroup = authorityGroupJpaRepository.findById(id).
                 orElseThrow(() -> new BusinessException(AuthorityGroupErrorCode.NO_SUCH_AUTHORITY_GROUP));
-        return AuthorityGroupReadDto.Response.fromEntity(authorityGroup);
+
+        List<Authority> authorities = authorityGroupAuthorityMappingReadService.readAllAuthorityByAuthorityGroup(authorityGroup);
+        return AuthorityGroupReadDto.Response.fromEntity(authorityGroup, authorities);
     }
 
     public PageImpl readAll(Pageable pageable){
         Page<AuthorityGroup> authorityGroups = authorityGroupJpaRepository.findAll(pageable);
-        List<AuthorityGroupReadDto.Response> responseList = authorityGroups.stream()
-                .map(a -> AuthorityGroupReadDto.Response.fromEntity(a))
+        List<AuthorityGroupReadDto.AuthorityGroupListItem> responseList = authorityGroups.stream()
+                .map(a -> AuthorityGroupReadDto.AuthorityGroupListItem.fromEntity(a))
                 .collect(Collectors.toList());
         return new PageImpl(responseList, authorityGroups.getPageable(), authorityGroups.getTotalElements());
     }

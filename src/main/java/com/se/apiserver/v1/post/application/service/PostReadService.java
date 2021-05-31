@@ -1,8 +1,6 @@
 package com.se.apiserver.v1.post.application.service;
 
 import com.se.apiserver.v1.account.application.service.AccountContextService;
-import com.se.apiserver.v1.account.domain.entity.Account;
-import com.se.apiserver.v1.authority.domain.entity.Authority;
 import com.se.apiserver.v1.board.domain.entity.Board;
 import com.se.apiserver.v1.board.application.error.BoardErrorCode;
 import com.se.apiserver.v1.board.infra.repository.BoardJpaRepository;
@@ -10,7 +8,6 @@ import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.post.application.dto.PostAccessCheckDto;
 import com.se.apiserver.v1.post.domain.entity.Post;
 import com.se.apiserver.v1.post.application.error.PostErrorCode;
-import com.se.apiserver.v1.post.domain.entity.PostIsDeleted;
 import com.se.apiserver.v1.post.domain.entity.PostIsSecret;
 import com.se.apiserver.v1.post.application.dto.PostReadDto;
 import com.se.apiserver.v1.post.infra.repository.PostJpaRepository;
@@ -22,7 +19,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindException;
 
 import java.util.List;
 import java.util.Set;
@@ -99,7 +95,12 @@ public class PostReadService {
         return PostReadDto.PostListResponse.fromEntity(new PageImpl(res, postPage.getPageable(), postPage.getTotalElements()), board);
     }
 
-    //
+    public void validatePostManageAuthority(Long postId){
+        Post post = postJpaRepository.findById(postId)
+            .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));
+        if(!isOwnerOrHasManageAuthority(post))
+            throw new BusinessException(PostErrorCode.CAN_NOT_ACCESS_POST);
+    }
 
     private void validateAnonymousPostPassword(Post post, String password) {
         if(!passwordEncoder.matches(password, post.getAnonymousPassword()))
