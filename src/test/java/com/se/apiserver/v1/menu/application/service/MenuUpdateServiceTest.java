@@ -71,7 +71,7 @@ class MenuUpdateServiceTest {
         Assertions.assertThat(updated.getNameEng()).isEqualTo("teacher");
         Assertions.assertThat(updated.getMenuOrder()).isEqualTo(3);
 
-        Authority authority2 = updated.getAuthority();
+        Authority authority2 = updated.getAccessAuthority();
         Assertions.assertThat(authority2.getNameKor()).isEqualTo("교수게시판");
         Assertions.assertThat(authority2.getNameEng()).isEqualTo("teacher");
     }
