@@ -5,6 +5,7 @@ import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.menu.domain.entity.Menu;
 import com.se.apiserver.v1.menu.application.error.MenuErrorCode;
 import com.se.apiserver.v1.menu.application.dto.MenuCreateDto;
+import com.se.apiserver.v1.menu.domain.entity.MenuType;
 import com.se.apiserver.v1.menu.infra.repository.MenuJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ public class MenuCreateService {
         validateDuplicateNameKor(request.getNameKor());
         validateDuplicateNameEng(request.getNameEng());
         validateDuplicateUrl(request.getUrl());
+        validateMenuType(request.getMenuType());
         boolean hasParent = (request.getParentId() != null);
         Menu menu = generateMenu(request, hasParent);
 
@@ -59,5 +61,10 @@ public class MenuCreateService {
             throw new BusinessException(MenuErrorCode.DUPLICATED_MENU_NAME_KOR);
         if (authorityJpaRepository.findByNameKor(nameKor).isPresent())
             throw new BusinessException(MenuErrorCode.CAN_NOT_USE_NAME_KOR);
+    }
+
+    private void validateMenuType(MenuType menuType){
+        if(menuType == MenuType.BOARD)
+            throw new BusinessException(MenuErrorCode.CAN_NOT_CREATE_BOARD_MENU_INDEPENDENTLY);
     }
 }
