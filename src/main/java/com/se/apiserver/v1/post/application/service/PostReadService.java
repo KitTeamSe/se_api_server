@@ -99,7 +99,12 @@ public class PostReadService {
         return PostReadDto.PostListResponse.fromEntity(new PageImpl(res, postPage.getPageable(), postPage.getTotalElements()), board);
     }
 
-    //
+    public void isOwnerOrHasManageAuthority(Long id){
+        Post post = postJpaRepository.findById(id)
+            .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));
+        if(!isOwnerOrHasManageAuthority(post))
+            throw new BusinessException(PostErrorCode.CAN_NOT_ACCESS_POST);
+    }
 
     private void validateAnonymousPostPassword(Post post, String password) {
         if(!passwordEncoder.matches(password, post.getAnonymousPassword()))

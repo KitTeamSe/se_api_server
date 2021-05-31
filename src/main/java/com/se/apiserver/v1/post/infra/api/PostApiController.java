@@ -97,4 +97,12 @@ public class PostApiController {
     public SuccessResponse<Pageable> checkAnonymousPostWriteAccess(@RequestBody @Validated PostAccessCheckDto.AnonymousPostAccessCheckDto anonymousPostAccessCheckDto) {
         return new SuccessResponse(HttpStatus.OK.value(), "권한 승인", postReadService.checkAnonymousPostWriteAccess(anonymousPostAccessCheckDto));
     }
+
+    @GetMapping("/post/manage/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation("게시글 관리 권한 확인")
+    public SuccessResponse isOwnerOrHasManageAuthority(@PathVariable(value = "id") Long id){
+        postReadService.isOwnerOrHasManageAuthority(id);
+        return new SuccessResponse(HttpStatus.OK.value(), "권한이 검증되었습니다.");
+    }
 }
