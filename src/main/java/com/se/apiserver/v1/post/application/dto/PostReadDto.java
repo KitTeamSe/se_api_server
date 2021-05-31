@@ -5,7 +5,9 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.se.apiserver.v1.account.domain.entity.AccountType;
 import com.se.apiserver.v1.attach.domain.entity.Attach;
 import com.se.apiserver.v1.board.domain.entity.Board;
+import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.common.infra.dto.PageRequest;
+import com.se.apiserver.v1.post.application.error.PostErrorCode;
 import com.se.apiserver.v1.post.domain.entity.*;
 
 import com.se.apiserver.v1.tag.domain.entity.Tag;
@@ -189,9 +191,8 @@ public class PostReadDto {
           .collect(Collectors.toList())
       );
 
-      if (post.getIsSecret() == PostIsSecret.SECRET && !isOwnerOrManager) {
-        return builder.build();
-      }
+      if (post.getIsSecret() == PostIsSecret.SECRET && !isOwnerOrManager)
+        throw new BusinessException(PostErrorCode.CAN_NOT_ACCESS_POST);
 
       builder.attaches(post.getAttaches().stream()
           .map(a -> AttachDto.fromEntity(a))
