@@ -7,6 +7,8 @@ import com.se.apiserver.v1.board.domain.entity.Board;
 import com.se.apiserver.v1.board.application.error.BoardErrorCode;
 import com.se.apiserver.v1.board.infra.repository.BoardJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
+import com.se.apiserver.v1.notice.domain.service.NoticeSendService;
+import com.se.apiserver.v1.notice.infra.dto.NoticeSendDto;
 import com.se.apiserver.v1.post.domain.entity.*;
 import com.se.apiserver.v1.attach.application.error.AttachErrorCode;
 import com.se.apiserver.v1.post.application.error.PostErrorCode;
@@ -14,12 +16,14 @@ import com.se.apiserver.v1.post.infra.dto.PostCreateDto;
 import com.se.apiserver.v1.attach.infra.repository.AttachJpaRepository;
 import com.se.apiserver.v1.post.infra.repository.PostJpaRepository;
 import com.se.apiserver.v1.tag.application.error.TagErrorCode;
+import com.se.apiserver.v1.tag.domain.entity.Tag;
 import com.se.apiserver.v1.tag.infra.repository.TagJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -34,6 +38,7 @@ public class PostCreateService {
     private final PasswordEncoder passwordEncoder;
     private final TagJpaRepository tagJpaRepository;
     private final AttachJpaRepository attachJpaRepository;
+    private final NoticeSendService noticeSendService;
 
     @Transactional
     public Long create(PostCreateDto.Request request) {
@@ -43,13 +48,25 @@ public class PostCreateService {
 
         List<Attach> attachList = getAttaches(request.getAttachmentList());
         List<PostTagMapping> tags = getTags(request.getTagList());
-
+        List<Long> tagIdList = new ArrayList<>();
 
         if(accountContextService.isSignIn()){
             Account contextAccount = accountContextService.getContextAccount();
             Post post = new Post(contextAccount, board, request.getPostContent(), request.getIsNotice(),
                     request.getIsSecret(), authorities, attachList, tags);
-            postJpaRepository.save(post);
+            Post save = postJpaRepository.save(post);
+
+            //Notice 호출
+            for (PostCreateDto.TagDto tag: request.getTagList()
+            ) {
+                tagIdList.add(tag.getTagId());
+            }
+
+            noticeSendService.postSend(NoticeSendDto.Request.builder()
+                    .tagIdList(tagIdList)
+                    .postId(save.getPostId())
+                    .build());
+
             return post.getPostId();
         }
 
@@ -61,6 +78,18 @@ public class PostCreateService {
         Post post = new Post(request.getAnonymous(), board, request.getPostContent(), request.getIsNotice()
                 ,request.getIsSecret(), authorities, attachList, tags);
         postJpaRepository.save(post);
+
+
+        //Notice 호출
+        for (PostCreateDto.TagDto tag: request.getTagList()
+             ) {
+            tagIdList.add(tag.getTagId());
+        }
+
+        noticeSendService.postSend(NoticeSendDto.Request.builder()
+                            .tagIdList(tagIdList)
+                            .postId(post.getPostId())
+                            .build());
 
         return post.getPostId();
     }

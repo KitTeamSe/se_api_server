@@ -7,6 +7,7 @@ import javax.validation.constraints.Size;
 import java.util.List;
 
 public class NoticeSendDto {
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
@@ -33,4 +34,5 @@ public class NoticeSendDto {
         private String url;
 
     }
+
 }
