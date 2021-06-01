@@ -29,7 +29,7 @@ public class Board extends AccountGenerateEntity {
     @Size(min = 2, max = 20)
     private String nameKor;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "menu_id")
     private Menu menu;
 

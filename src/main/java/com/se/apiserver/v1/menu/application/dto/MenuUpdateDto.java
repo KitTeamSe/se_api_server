@@ -21,8 +21,7 @@ public class MenuUpdateDto {
     @ApiModel("메뉴 수정 요청")
     static public class Request{
 
-        @Min(1)
-        @ApiModelProperty(notes = "상위 메뉴 pk, null 가능", example = "1")
+        @ApiModelProperty(notes = "메뉴 pk", example = "1")
         private Long menuId;
 
         @Size(min = 2, max = 20)
@@ -33,19 +32,17 @@ public class MenuUpdateDto {
         @ApiModelProperty(notes = "한글명, 실제 출력", example = "자유게시판")
         private String nameKor;
 
-        @Size(min = 2, max = 255)
+        @Size(max = 255)
         @ApiModelProperty(notes = "url", example = "freeboard")
         private String url;
 
-        @Min(1)
         @ApiModelProperty(notes = "메뉴 출력 순서", example = "1")
         private Integer menuOrder;
 
-        @Size(min = 2, max = 50)
+        @Size(max = 50)
         @ApiModelProperty(notes = "설명", example = "자유게시판 입니다.")
         private String description;
 
-        @Min(1)
         @ApiModelProperty(notes = "상위 메뉴 pk, null 가능", example = "2")
         private Long parentId;
 

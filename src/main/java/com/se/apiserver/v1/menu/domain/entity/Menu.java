@@ -1,6 +1,7 @@
 package com.se.apiserver.v1.menu.domain.entity;
 
 import com.se.apiserver.v1.authority.domain.entity.Authority;
+import com.se.apiserver.v1.board.domain.entity.Board;
 import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
 
 import java.util.ArrayList;
@@ -62,6 +63,9 @@ public class Menu extends AccountGenerateEntity {
   @OneToOne(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
   @JoinColumn(name = "manage_authority_id")
   private Authority manageAuthority;
+
+  @OneToOne(mappedBy = "menu", orphanRemoval = true)
+  private Board board;
 
   public Menu(@Size(min = 2, max = 20) String nameEng, @Size(min = 2, max = 255) String url,
               @Size(min = 2, max = 20) String nameKor, Integer menuOrder,
