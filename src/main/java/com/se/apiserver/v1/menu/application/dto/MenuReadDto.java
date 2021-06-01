@@ -68,9 +68,15 @@ public class MenuReadDto {
 
     private String description;
 
+    private Long boardId;
+
     public static MenuReadDto.ReadResponse fromEntity(Menu menu) {
-      return ReadResponse.builder()
-          .menuId(menu.getMenuId())
+      ReadResponse.ReadResponseBuilder builder = ReadResponse.builder();
+
+      if(menu.getBoard() != null)
+        builder.boardId(menu.getBoard().getBoardId());
+
+      return builder.menuId(menu.getMenuId())
           .nameEng(menu.getNameEng())
           .nameKor(menu.getNameKor())
           .menuOrder(menu.getMenuOrder())

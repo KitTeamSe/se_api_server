@@ -33,23 +33,21 @@ public class MenuCreateDto {
         @NotEmpty
         private String nameKor;
 
-        @Size(min = 2, max = 255)
+        @Size(max = 255)
         @ApiModelProperty(notes = "url", example = "freeboard")
         @NotEmpty
         private String url;
 
-        @Min(1)
         @ApiModelProperty(notes = "메뉴 출력 순서", example = "1")
         private Integer menuOrder;
 
-        @Size(min = 2, max = 255)
+        @Size(max = 255)
         @ApiModelProperty(notes = "설명", example = "자유게시판 입니다.")
         @NotEmpty
         private String description;
 
         private MenuType menuType;
 
-        @Min(1)
         @ApiModelProperty(notes = "상위 메뉴 pk, null 가능", example = "1")
         private Long parentId;
 
