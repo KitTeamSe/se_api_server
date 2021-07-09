@@ -1,5 +1,5 @@
 pipeline:
   build:
-    image: java:openjdk-8-alpine
+    image: java:openjdk-11-alpine
     commands:
       - ./gradlew clean build
