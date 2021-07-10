@@ -1,5 +1,5 @@
 pipeline:
   build:
-    image: lpicanco/java11-alpine
+    image: adoptopenjdk/openjdk11
     commands:
       - ./gradlew clean build
