@@ -1,5 +1,5 @@
 pipeline:
   build:
-    image: java:openjdk-11-alpine
+    image: adoptopenjdk/openjdk11
     commands:
-      - ./gradlew clean build
+      - ./gradlew clean test
