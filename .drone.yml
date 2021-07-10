@@ -2,4 +2,4 @@ pipeline:
   build:
     image: adoptopenjdk/openjdk11
     commands:
-      - ./gradlew clean build
+      - ./gradlew clean test
