@@ -1,5 +1,5 @@
 pipeline:
   build:
-    image: jtim/docker-docker-compose-jdk:20.10.5-compose-1.28.6-adoptopenjdk-11.0.10_9
+    image: java:openjdk-11-alpine
     commands:
-      - ./gradlew clean build
+      - ./gradlew clean test
