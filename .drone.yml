@@ -2,4 +2,4 @@ pipeline:
   build:
     image: java:openjdk-11-alpine
     commands:
-      - ./gradlew clean test
+      - ./gradlew clean build
