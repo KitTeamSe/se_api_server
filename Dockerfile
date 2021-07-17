@@ -14,12 +14,15 @@ EXPOSE 8074
 
 # The application's jar file
 ARG JAR_FILE=build/libs/apiserver-0.0.1-SNAPSHOT.jar
+ARG NEWRELIC_JAR_FILE=newrelic/newrelic.jar
+ARG NEWRELIC_YML=newrelic/newrelic.yml
 
 # Add the application's jar to the container
 ADD ${JAR_FILE} run-se-api-server.jar
+ADD ${NEWRELIC_JAR_FILE} newrelic.jar
+ADD ${NEWRELIC_YML} newrelic.yml
 
 # Add Timezone
 ENV TZ=Asia/Seoul
-
 # Run the jar file
-ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/run-se-api-server.jar"]
+ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-javaagent:newrelic.jar","-jar","/run-se-api-server.jar"]
