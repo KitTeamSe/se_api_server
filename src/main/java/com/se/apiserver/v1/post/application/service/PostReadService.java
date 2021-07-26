@@ -6,6 +6,7 @@ import com.se.apiserver.v1.board.application.error.BoardErrorCode;
 import com.se.apiserver.v1.board.infra.repository.BoardJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.post.application.dto.PostAccessCheckDto;
+import com.se.apiserver.v1.post.application.dto.PostReadDto.PostSearchRequest;
 import com.se.apiserver.v1.post.domain.entity.Post;
 import com.se.apiserver.v1.post.application.error.PostErrorCode;
 import com.se.apiserver.v1.post.domain.entity.PostIsSecret;
@@ -83,7 +84,7 @@ public class PostReadService {
         return PostReadDto.PostListResponse.fromEntity(new PageImpl<>(list, allByBoard.getPageable(), allByBoard.getTotalElements()), board);
     }
 
-    public PostReadDto.PostListResponse search(PostReadDto.SearchRequest pageRequest){
+    public PostReadDto.PostListResponse search(PostSearchRequest pageRequest){
         Board board = boardJpaRepository.findById(pageRequest.getBoardId())
                 .orElseThrow(() -> new BusinessException(BoardErrorCode.NO_SUCH_BOARD));
         Set<String> authorities = accountContextService.getContextAuthorities();

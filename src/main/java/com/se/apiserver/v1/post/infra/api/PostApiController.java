@@ -3,6 +3,7 @@ package com.se.apiserver.v1.post.infra.api;
 import com.se.apiserver.v1.common.infra.dto.PageRequest;
 import com.se.apiserver.v1.common.infra.dto.SuccessResponse;
 import com.se.apiserver.v1.post.application.dto.*;
+import com.se.apiserver.v1.post.application.dto.PostReadDto.PostSearchRequest;
 import com.se.apiserver.v1.post.application.service.PostCreateService;
 import com.se.apiserver.v1.post.application.service.PostDeleteService;
 import com.se.apiserver.v1.post.application.service.PostReadService;
@@ -83,8 +84,9 @@ public class PostApiController {
     @PostMapping("/post/search")
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "게시글 검색")
-    public SuccessResponse<Pageable> searchPost(@RequestBody @Validated PostReadDto.SearchRequest searchRequest) {
-        return new SuccessResponse(HttpStatus.OK.value(), "조회 성공", postReadService.search(searchRequest));
+    public SuccessResponse<Pageable> searchPost(@RequestBody @Validated PostSearchRequest postSearchRequest) {
+        return new SuccessResponse(HttpStatus.OK.value(), "조회 성공", postReadService.search(
+            postSearchRequest));
     }
 
     @PostMapping("/post/anonymous")

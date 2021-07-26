@@ -3,7 +3,7 @@ package com.se.apiserver.v1.post.infra.repository;
 import com.querydsl.jpa.JPQLQuery;
 import com.se.apiserver.v1.account.domain.entity.QAccount;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
-import com.se.apiserver.v1.post.application.dto.PostReadDto.SearchRequest;
+import com.se.apiserver.v1.post.application.dto.PostReadDto.PostSearchRequest;
 import com.se.apiserver.v1.post.application.error.PostSearchErrorCode;
 import com.se.apiserver.v1.post.domain.entity.Post;
 import com.se.apiserver.v1.post.domain.entity.PostIsSecret;
@@ -23,19 +23,19 @@ public class PostQueryRepositoryImpl extends QuerydslRepositorySupport implement
   }
 
   @Override
-  public Page<Post> search(SearchRequest searchRequest) {
-    if(searchRequest.getKeyword() == null || searchRequest.getKeyword().length() < 1)
+  public Page<Post> search(PostSearchRequest postSearchRequest) {
+    if(postSearchRequest.getKeyword() == null || postSearchRequest.getKeyword().length() < 1)
       throw new BusinessException(PostSearchErrorCode.INVALID_SEARCH_KEYWORD);
 
     QPost post = QPost.post;
     QAccount account = QAccount.account;
 
     JPQLQuery query = from(post);
-    query.where(post.board.boardId.eq(searchRequest.getBoardId()));
+    query.where(post.board.boardId.eq(postSearchRequest.getBoardId()));
 
-    String keyword = searchRequest.getKeyword();
+    String keyword = postSearchRequest.getKeyword();
 
-    switch (searchRequest.getPostSearchType()){
+    switch (postSearchRequest.getPostSearchType()){
       case TITLE_TEXT:
         query.where(
             post.postContent.title.contains(keyword).or(post.isSecret.eq(PostIsSecret.NORMAL).and(post.postContent.text.contains(keyword))));
@@ -65,7 +65,7 @@ public class PostQueryRepositoryImpl extends QuerydslRepositorySupport implement
     }
 
 
-    Pageable pageable = searchRequest.getPageRequest().of();
+    Pageable pageable = postSearchRequest.getPageRequest().of();
     List<Post> posts = getQuerydsl().applyPagination(pageable, query).fetch();
     long totalCount = query.fetchCount();
     return new PageImpl<>(posts, pageable, totalCount);

@@ -1,5 +1,6 @@
 package com.se.apiserver.v1.account.application.service;
 
+import com.se.apiserver.v1.account.application.dto.AccountReadDto.AccountSearchRequest;
 import com.se.apiserver.v1.account.domain.entity.Account;
 import com.se.apiserver.v1.account.domain.entity.AccountType;
 import com.se.apiserver.v1.account.domain.entity.InformationOpenAgree;
@@ -123,7 +124,7 @@ public class AccountReadServiceTest {
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("1",
             "1", Arrays.asList(new SimpleGrantedAuthority("ACCOUNT_ACCESS"))));
         //when
-        PageImpl search = accountReadService.search(AccountReadDto.SearchRequest.builder()
+        PageImpl search = accountReadService.search(AccountSearchRequest.builder()
                 .pageRequest(PageRequest.builder().page(1).size(10).direction(Sort.Direction.ASC).build())
                 .build());
         //then

@@ -1,5 +1,6 @@
 package com.se.apiserver.v1.account.infra.api;
 
+import com.se.apiserver.v1.account.application.dto.AccountReadDto.AccountSearchRequest;
 import com.se.apiserver.v1.account.application.dto.QuestionReadDto.Response;
 import com.se.apiserver.v1.common.infra.dto.PageRequest;
 import com.se.apiserver.v1.common.infra.dto.SuccessResponse;
@@ -154,8 +155,9 @@ public class AccountApiController {
     @ResponseStatus(value = HttpStatus.OK)
     @PreAuthorize("hasAnyAuthority('ACCOUNT_MANAGE')")
     @ApiOperation(value = "회원 정보 검색")
-    public SuccessResponse<Pageable> searchAccount(@RequestBody @Validated AccountReadDto.SearchRequest searchRequest) {
-        return new SuccessResponse(HttpStatus.OK.value(), "조회 성공", accountReadService.search(searchRequest));
+    public SuccessResponse<Pageable> searchAccount(@RequestBody @Validated AccountSearchRequest accountSearchRequest) {
+        return new SuccessResponse(HttpStatus.OK.value(), "조회 성공", accountReadService.search(
+            accountSearchRequest));
     }
 
     @GetMapping(path = "/account/question")
