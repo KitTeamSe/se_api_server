@@ -6,9 +6,11 @@ import com.se.apiserver.v1.account.domain.entity.Account;
 import com.se.apiserver.v1.account.domain.entity.AccountType;
 import com.se.apiserver.v1.account.domain.entity.InformationOpenAgree;
 
+import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.NotNull;
 
 import com.se.apiserver.v1.common.infra.dto.PageRequest;
+import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -69,12 +71,24 @@ public class AccountReadDto {
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
-  static public class SearchRequest{
+  static public class AccountSearchRequest {
+
+    @ApiModelProperty(notes = "검색할 이름", example = "검색할 문자열")
     private String name;
+
+    @ApiModelProperty(notes = "검색할 닉네임", example = "검색할 문자열")
     private String nickname;
+
+    @ApiModelProperty(notes = "검색할 이메일", example = "검색할 문자열")
     private String email;
+
+    @ApiModelProperty(notes = "검색할 학번", example = "검색할 문자열")
     private String studentId;
+
+    @ApiModelProperty(notes = "검색할 휴대폰 번호", example = "검색할 문자열")
     private String phoneNumber;
+
+    @ApiModelProperty(notes = "검색할 계정 유형")
     private AccountType type;
 
     @NotNull

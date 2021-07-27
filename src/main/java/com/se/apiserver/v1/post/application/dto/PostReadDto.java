@@ -30,7 +30,7 @@ public class PostReadDto {
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
-  static public class SearchRequest{
+  static public class PostSearchRequest {
 
     @ApiModelProperty(notes = "게시판 아이디", example = "1")
     private Long boardId;

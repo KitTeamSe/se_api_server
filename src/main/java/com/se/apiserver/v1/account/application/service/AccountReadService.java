@@ -2,11 +2,9 @@ package com.se.apiserver.v1.account.application.service;
 
 import com.se.apiserver.v1.account.domain.entity.Account;
 import com.se.apiserver.v1.account.application.error.AccountErrorCode;
-import com.se.apiserver.v1.account.application.dto.AccountReadDto;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.account.infra.repository.AccountJpaRepository;
 import com.se.apiserver.v1.account.infra.repository.AccountQueryRepository;
-import com.se.apiserver.v1.menu.application.dto.MenuReadDto.ReadResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 
@@ -55,7 +53,7 @@ public class AccountReadService {
 
 
 
-    public PageImpl search(AccountReadDto.SearchRequest pageRequest) {
+    public PageImpl search(AccountSearchRequest pageRequest) {
         Page<Account> accountPage = accountQueryRepository.search(pageRequest);
         List<Response> res = accountPage.get().map(account -> Response.fromEntity(account, isLegalAccess(account)))
                 .collect(Collectors.toList());
