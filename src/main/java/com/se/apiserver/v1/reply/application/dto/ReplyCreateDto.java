@@ -46,7 +46,7 @@ public class ReplyCreateDto {
         private ReplyIsSecret isSecret;
 
         @ApiModelProperty(notes = "첨부파일들")
-        @Singular("attachmentList")
+        @Singular("attaches")
         private List<AttachDto> attaches = new ArrayList<>();
     }
 
