@@ -12,6 +12,7 @@ public class PostAccessCheckDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class AnonymousPostAccessCheckDto{
+
         private Long postId;
         private String password;
     }
