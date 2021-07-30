@@ -23,15 +23,13 @@ public class FilterChainExceptionHandler extends OncePerRequestFilter {
     try {
       filterChain.doFilter(request, response);
     }
+    catch (BusinessException e){
+      resolveException(request, response, e);
+    }
     catch (Exception e){
-      if(e instanceof BusinessException){
-        resolveException(request, response, (BusinessException) e);
-      }
-      else{
-        logger.error(e);
-        e.printStackTrace();
-        resolveException(request, response, new BusinessException(GlobalErrorCode.UNKNOWN_NON_BUSINESS_ERROR));
-      }
+      logger.error(e);
+      e.printStackTrace();
+      resolveException(request, response, new BusinessException(GlobalErrorCode.UNKNOWN_NON_BUSINESS_ERROR));
     }
   }
 
