@@ -22,14 +22,27 @@ public class FilterChainExceptionHandler extends OncePerRequestFilter {
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain){
     try {
       filterChain.doFilter(request, response);
-    } catch (BusinessException e) {
-      resolver.resolveException(request, response, null, e);
     }
     catch (Exception e){
-      // 비지니스 익셉션이 아닌 경우
-      logger.error(e);
-      e.printStackTrace();
-      resolver.resolveException(request, response, null, new BusinessException(GlobalErrorCode.UNKNOWN_NON_BUSINESS_ERROR));
+      if(e instanceof BusinessException){
+        resolveException(request, response, (BusinessException) e);
+      }
+      else{
+        logger.error(e);
+        e.printStackTrace();
+        resolveException(request, response, new BusinessException(GlobalErrorCode.UNKNOWN_NON_BUSINESS_ERROR));
+      }
     }
+  }
+
+  private void resolveException(HttpServletRequest request, HttpServletResponse response, BusinessException e){
+    setHeaderForCors(response);
+    resolver.resolveException(request, response, null, e);
+  }
+
+  private void setHeaderForCors(HttpServletResponse response){
+    response.setHeader("Access-Control-Allow-Origin", "*");
+    response.setHeader("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT");
+    response.setHeader("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With,observe");
   }
 }
