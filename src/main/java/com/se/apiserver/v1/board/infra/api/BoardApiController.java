@@ -31,12 +31,12 @@ public class BoardApiController {
     private final BoardUpdateService boardUpdateService;
     private final BoardDeleteService boardDeleteService;
     private final BoardAuthorityService boardAuthorityService;
-
+    
     @GetMapping(value = "/board/{nameEng}")
     @PreAuthorize("hasAuthority('MENU_MANAGE')")
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "게시판 영어 이름 조회")
-    public SuccessResponse<BoardReadDto.ReadResponse> read(@ApiParam(value = "게시판 영어 이름",example = "freeboard") @PathVariable(name = "nameEng") String nameEng){
+    public SuccessResponse<BoardReadDto.ReadResponse> readByNameEng(@ApiParam(value = "게시판 영어 이름",example = "freeboard") @PathVariable(name = "nameEng") String nameEng){
         return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 조회되었습니다", boardReadService.readByNameEng(nameEng) );
     }
 
@@ -56,12 +56,12 @@ public class BoardApiController {
         return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 수정되었습니다", boardUpdateService.update(request));
     }
 
-    @DeleteMapping(value = "/board/{nameEng}")
+    @DeleteMapping(value = "/board/{id}")
     @PreAuthorize("hasAuthority('MENU_MANAGE')")
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "게시판 삭제")
-    public SuccessResponse update(@ApiParam(value = "게시판 영어 이름",example = "freeboard") @PathVariable(name = "nameEng") String nameEng){
-        boardDeleteService.delete(nameEng);
+    public SuccessResponse update(@ApiParam(value = "게시판 아이디", example = "1") @PathVariable(value = "id") Long id){
+        boardDeleteService.delete(id);
         return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 삭제되었습니다");
     }
 
@@ -73,19 +73,19 @@ public class BoardApiController {
         return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 등록되었습니다", boardCreateService.create(request));
     }
 
-    @GetMapping(value = "/board/validate/access/{nameEng}")
+    @GetMapping(value = "/board/validate/access/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "게시판 접근 권한 확인")
-    public SuccessResponse validateAccessAuthority(@ApiParam(value = "게시판 영어 이름",example = "freeboard") @PathVariable(name = "nameEng") String nameEng){
-        boardAuthorityService.validateAccessAuthority(nameEng);
+    public SuccessResponse validateAccessAuthority(@ApiParam(value = "게시판 아이디", example = "1") @PathVariable(name = "id") Long id){
+        boardAuthorityService.validateAccessAuthority(id);
         return new SuccessResponse(HttpStatus.OK.value(), "접근 권한이 검증되었습니다.");
     }
 
-    @GetMapping(value = "/board/validate/manage/{nameEng}")
+    @GetMapping(value = "/board/validate/manage/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "게시판 관리 권한 확인")
-    public SuccessResponse validateManageAuthority(@ApiParam(value = "게시판 영어 이름",example = "freeboard") @PathVariable(name = "nameEng") String nameEng){
-        boardAuthorityService.validateManageAuthority(nameEng);
+    public SuccessResponse validateManageAuthority(@ApiParam(value = "게시판 아이디", example = "1") @PathVariable(name = "id") Long id){
+        boardAuthorityService.validateManageAuthority(id);
         return new SuccessResponse(HttpStatus.OK.value(), "관리 권한이 검증되었습니다.");
     }
 }
