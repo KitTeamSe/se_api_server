@@ -47,6 +47,12 @@ public class AccountReadDto {
     @JsonInclude(Include.NON_NULL)
     private Long accountId;
 
+    @JsonInclude(Include.NON_NULL)
+    private Long questionId;
+
+    @JsonInclude(Include.NON_NULL)
+    private String answer;
+
     public static Response fromEntity(Account account, Boolean isLegalAccess) {
         Response.ResponseBuilder responseBuilder = Response.builder();
         responseBuilder
@@ -61,7 +67,9 @@ public class AccountReadDto {
               .studentId(account.getStudentId())
               .informationOpenAgree(account.getInformationOpenAgree())
               .lastSignInIp(account.getLastSignInIp())
-              .accountId(account.getAccountId());
+              .accountId(account.getAccountId())
+              .questionId(account.getQuestion().getQuestionId())
+              .answer(account.getAnswer());
         }
         return responseBuilder.build();
     }
