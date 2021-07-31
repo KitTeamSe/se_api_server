@@ -17,15 +17,15 @@ public class BoardAuthorityService {
   private final BoardJpaRepository boardJpaRepository;
   private final AccountContextService accountContextService;
 
-  public void validateAccessAuthority(Long boardId) {
-    Board board = boardJpaRepository.findById(boardId).orElseThrow(() -> new BusinessException(
+  public void validateAccessAuthority(String nameEng) {
+    Board board = boardJpaRepository.findByNameEng(nameEng).orElseThrow(() -> new BusinessException(
         BoardErrorCode.NO_SUCH_BOARD));
 
     board.validateAccessAuthority(accountContextService.getContextAuthorities());
   }
 
-  public void validateManageAuthority(Long boardId) {
-    Board board = boardJpaRepository.findById(boardId).orElseThrow(() -> new BusinessException(
+  public void validateManageAuthority(String nameEng) {
+    Board board = boardJpaRepository.findByNameEng(nameEng).orElseThrow(() -> new BusinessException(
         BoardErrorCode.NO_SUCH_BOARD));
 
     board.validateManageAuthority(accountContextService.getContextAuthorities());
