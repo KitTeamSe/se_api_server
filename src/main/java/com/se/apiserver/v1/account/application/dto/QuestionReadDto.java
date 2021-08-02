@@ -24,4 +24,26 @@ public class QuestionReadDto {
           .build();
     }
   }
+
+  @Data
+  @Builder
+  static public class ResponseWithAnswer{
+
+    @ApiModelProperty(notes = "질문 id", example = "1")
+    private Long questionId;
+
+    @ApiModelProperty(notes = "질문 내용", example = "당신의 고향 이름은?")
+    private String text;
+
+    @ApiModelProperty(notes = "질문 정답", example = "구미")
+    private String answer;
+
+    static public ResponseWithAnswer fromEntity(Question question, String answer){
+      return ResponseWithAnswer.builder()
+          .questionId(question.getQuestionId())
+          .text(question.getText())
+          .answer(answer)
+          .build();
+    }
+  }
 }
