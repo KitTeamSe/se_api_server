@@ -142,6 +142,14 @@ public class AccountApiController {
         return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", accountReadService.readMyAccount());
     }
 
+    @GetMapping("/account/my/question")
+    @ResponseStatus(value = HttpStatus.OK)
+    @PreAuthorize("hasAnyAuthority('ACCOUNT_ACCESS', 'ACCOUNT_MANAGE')")
+    @ApiOperation(value = "내 질문 및 응답 조회")
+    public SuccessResponse<QuestionReadDto.ResponseWithAnswer> readMyQuestion() {
+        return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", questionReadService.readMyQuestionAndAnswer());
+    }
+
     @GetMapping(path = "/account")
     @PreAuthorize("hasAnyAuthority('ACCOUNT_MANAGE')")
     @ResponseStatus(value = HttpStatus.OK)
