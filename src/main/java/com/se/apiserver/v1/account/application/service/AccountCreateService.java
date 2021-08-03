@@ -37,7 +37,7 @@ public class AccountCreateService {
         validateDuplicatedStudentId(request.getStudentId());
         validateDuplicatedEmail(request.getEmail());
 
-        Question question = questionJpaRepository.findById(request.getQuestionId()).orElseThrow(() -> new BusinessException(AccountErrorCode.NO_SUCH_ACCOUNT));
+        Question question = questionJpaRepository.findById(request.getQuestionId()).orElseThrow(() -> new BusinessException(AccountErrorCode.NO_SUCH_QUESTION));
         Account account = Account.builder()
                 .idString(request.getId())
                 .password(passwordEncoder.encode(request.getPassword()))
