@@ -34,7 +34,7 @@ public class TagReadService {
         if(!accountContextService.isSignIn())
             throw new BusinessException(GlobalErrorCode.HANDLE_ACCESS_DENIED);
 
-        List<Tag> tags = tagJpaRepository.findByTextContaining(text);
+        List<Tag> tags = tagJpaRepository.findByTextContainingIgnoreCase(text);
         return tags.stream().map(a -> TagReadDto.Response.fromEntity(a)).collect(Collectors.toList());
     }
 

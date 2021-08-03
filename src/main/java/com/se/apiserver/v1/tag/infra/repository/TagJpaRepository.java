@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface TagJpaRepository extends JpaRepository<Tag,Long> {
     Optional<Tag> findByText(String text);
-    List<Tag> findByTextContaining(String text);
+    List<Tag> findByTextContainingIgnoreCase(String text);
 }
