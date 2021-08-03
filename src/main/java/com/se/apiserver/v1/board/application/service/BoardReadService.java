@@ -24,6 +24,11 @@ public class BoardReadService {
         return BoardReadDto.ReadResponse.fromEntity(board);
     }
 
+    public BoardReadDto.ReadResponse readByNameEng(String nameEng) {
+        Board board = boardJpaRepository.findByNameEng(nameEng).orElseThrow(() -> new BusinessException(BoardErrorCode.NO_SUCH_BOARD));
+        return BoardReadDto.ReadResponse.fromEntity(board);
+    }
+
     public List<BoardReadDto.ReadResponse> readAll() {
         List<Board> all = boardJpaRepository.findAll();
         List<BoardReadDto.ReadResponse> responses = all.stream()

@@ -31,13 +31,13 @@ public class BoardApiController {
     private final BoardUpdateService boardUpdateService;
     private final BoardDeleteService boardDeleteService;
     private final BoardAuthorityService boardAuthorityService;
-
-    @GetMapping(value = "/board/{id}")
+    
+    @GetMapping(value = "/board/{nameEng}")
     @PreAuthorize("hasAuthority('MENU_MANAGE')")
     @ResponseStatus(value = HttpStatus.OK)
-    @ApiOperation(value = "게시판 조회")
-    public SuccessResponse<BoardReadDto.ReadResponse> read(@ApiParam(value = "게시판 아이디",example = "1") @PathVariable(name = "id") Long id){
-        return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 조회되었습니다", boardReadService.read(id));
+    @ApiOperation(value = "게시판 영어 이름 조회")
+    public SuccessResponse<BoardReadDto.ReadResponse> readByNameEng(@ApiParam(value = "게시판 영어 이름",example = "freeboard") @PathVariable(name = "nameEng") String nameEng){
+        return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 조회되었습니다", boardReadService.readByNameEng(nameEng) );
     }
 
     @GetMapping(value = "/board")
