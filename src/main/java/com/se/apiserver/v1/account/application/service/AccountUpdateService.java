@@ -39,11 +39,6 @@ public class AccountUpdateService {
         accountJpaRepository.save(account);
     }
 
-    private void validateDuplicatedStudentId(String studentId) {
-        if(accountJpaRepository.findByStudentId(studentId).isPresent())
-            throw new BusinessException(AccountErrorCode.DUPLICATED_STUDENT_ID);
-    }
-
     private void checkInvalidAccess(Account account, String manageToken) {
         if(!accountContextService.isOwner(account) && !accountContextService.hasAuthority(manageToken))
             throw new AccessDeniedException("비정상적인 접근");
