@@ -37,10 +37,6 @@ public class AccountUpdateDto {
         @ApiModelProperty(notes = "변경할 닉네임", example = "account")
         private String nickname;
 
-        @Size(min = 8, max = 20)
-        @ApiModelProperty(notes = "변경할 학번", example = "account")
-        private String studentId;
-
         @ApiModelProperty(notes = "변경할 계정 타입", example = "ASSISTANT")
         private AccountType type;
 
