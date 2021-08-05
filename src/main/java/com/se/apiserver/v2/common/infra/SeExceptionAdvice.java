@@ -1,4 +1,4 @@
-package com.se.apiserver.v1.common.infra.advice;
+package com.se.apiserver.v2.common.infra;
 
 /*
  *
@@ -21,9 +21,9 @@ package com.se.apiserver.v1.common.infra.advice;
  *  modified by dldhk97
  */
 
-import com.se.apiserver.v1.common.application.dto.ExceptionResponse;
-import com.se.apiserver.v1.common.domain.exception.PreconditionFailedException;
-import com.se.apiserver.v1.common.domain.exception.SeException;
+import com.se.apiserver.v2.common.application.dto.response.ExceptionResponse;
+import com.se.apiserver.v2.common.domain.exception.PreconditionFailedException;
+import com.se.apiserver.v2.common.domain.exception.SeException;
 import javax.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,4 +1,4 @@
-package com.se.apiserver.v1.common.application.dto;
+package com.se.apiserver.v2.common.application.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

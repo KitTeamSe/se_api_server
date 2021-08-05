@@ -1,4 +1,4 @@
-package com.se.apiserver.v1.common.application;
+package com.se.apiserver.v2.common.application;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import io.swagger.annotations.ApiModelProperty;

@@ -1,4 +1,4 @@
-package com.se.apiserver.v1.post.application.dto;
+package com.se.apiserver.v2.common.application.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -37,7 +37,7 @@ public class PostAnnouncementDto {
   private LocalDateTime createAt;
 
   @JsonInclude(Include.NON_NULL)
-  private List<PostReadDto.TagDto> tags;
+  private List<TagDto> tags;
 
   public static PostAnnouncementDto fromEntity(Post post) {
     System.out.println(post.getAccount().getNickname());
