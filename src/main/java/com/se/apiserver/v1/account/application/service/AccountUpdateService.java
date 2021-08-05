@@ -9,6 +9,7 @@ import com.se.apiserver.v1.account.application.dto.AccountUpdateDto;
 import com.se.apiserver.v1.account.infra.repository.AccountJpaRepository;
 import com.se.apiserver.v1.account.infra.repository.QuestionJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,20 +36,7 @@ public class AccountUpdateService {
         updatePasswordIfNotEmpty(account, request.getPassword());
         updateNicknameIfNotNull(account,request.getNickname());
         updateQnaIfValid(account, request.getQuestionId(), request.getAnswer());
-        updateStudentIdIfNotNull(account, request.getStudentId());
         accountJpaRepository.save(account);
-    }
-
-    private void updateStudentIdIfNotNull(Account account, String studentId) {
-        if(studentId != null){
-            validateDuplicatedStudentId(studentId);
-            account.updateStudentId(studentId);
-        }
-    }
-
-    private void validateDuplicatedStudentId(String studentId) {
-        if(accountJpaRepository.findByStudentId(studentId).isPresent())
-            throw new BusinessException(AccountErrorCode.DUPLICATED_STUDENT_ID);
     }
 
     private void checkInvalidAccess(Account account, String manageToken) {
@@ -67,14 +55,19 @@ public class AccountUpdateService {
 
     private void updateNicknameIfNotNull(Account account, String nickname) {
         if(nickname != null){
-            validateDuplicatedNickname(nickname);
+            validateDuplicatedNickname(account, nickname);
             account.updateNickname(nickname);
         }
     }
 
-    private void validateDuplicatedNickname(String nickname) {
-        if(accountJpaRepository.findByNickname(nickname).isPresent())
-            throw new BusinessException(AccountErrorCode.DUPLICATED_NICKNAME);
+    private void validateDuplicatedNickname(Account account, String nickname) {
+        Optional<Account> foundAccount = accountJpaRepository.findByNickname(nickname);
+        if(foundAccount.isPresent()){
+            if(!foundAccount.get().getAccountId().equals(account.getAccountId())){
+                throw new BusinessException(AccountErrorCode.DUPLICATED_NICKNAME);
+            }
+        }
+
     }
 
     private void updatePasswordIfNotEmpty(Account account, String password) {
