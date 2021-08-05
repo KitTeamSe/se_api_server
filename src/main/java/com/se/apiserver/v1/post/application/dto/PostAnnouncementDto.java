@@ -40,7 +40,6 @@ public class PostAnnouncementDto {
   private List<PostReadDto.TagDto> tags;
 
   public static PostAnnouncementDto fromEntity(Post post) {
-    System.out.println(post.getAccount().getNickname());
     String nickname = post.getAccount() != null ? post.getAccount().getNickname()
         : post.getAnonymous().getAnonymousNickname();
     String previewText = "";
