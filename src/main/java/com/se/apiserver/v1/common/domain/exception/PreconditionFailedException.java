@@ -1,4 +1,4 @@
-package com.se.apiserver.v2.common.domain.exception;
+package com.se.apiserver.v1.common.domain.exception;
 
 import org.springframework.http.HttpStatus;
 

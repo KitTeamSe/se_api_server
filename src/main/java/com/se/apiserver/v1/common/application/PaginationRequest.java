@@ -1,4 +1,4 @@
-package com.se.apiserver.v2.common.application;
+package com.se.apiserver.v1.common.application;
 
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.Min;

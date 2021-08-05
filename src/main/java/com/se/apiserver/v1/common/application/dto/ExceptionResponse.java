@@ -1,10 +1,11 @@
-package com.se.apiserver.v2.common.application.dto.response;
+package com.se.apiserver.v1.common.application.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 
 public class ExceptionResponse {
 

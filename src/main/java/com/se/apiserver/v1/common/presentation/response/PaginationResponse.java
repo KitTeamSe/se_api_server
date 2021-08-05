@@ -1,4 +1,4 @@
-package com.se.apiserver.v2.common.presentation.response;
+package com.se.apiserver.v1.common.presentation.response;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

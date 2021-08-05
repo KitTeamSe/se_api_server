@@ -1,6 +1,6 @@
-package com.se.apiserver.v2.common.application.dto.request;
+package com.se.apiserver.v1.post.application.dto.request;
 
-import com.se.apiserver.v2.common.application.PaginationRequest;
+import com.se.apiserver.v1.common.application.PaginationRequest;
 import org.springframework.data.domain.Sort.Direction;
 
 public class AnnouncementPaginationRequest<T> extends PaginationRequest<T> {
