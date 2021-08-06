@@ -84,7 +84,8 @@ public class AccountVerifyService {
   }
 
   public boolean verify(String token) {
-    AccountVerifyToken accountVerifyToken = accountVerifyTokenJpaRepository.findFirstByToken(token);
+    AccountVerifyToken accountVerifyToken = accountVerifyTokenJpaRepository.findFirstByToken(token)
+        .orElseThrow(() -> new BusinessException(AccountErrorCode.NO_SUCH_TOKEN));
     if(accountVerifyToken.getStatus() == AccountVerifyStatus.VERIFIED)
       throw new BusinessException(AccountErrorCode.ALREADY_VERIFIED);
 
