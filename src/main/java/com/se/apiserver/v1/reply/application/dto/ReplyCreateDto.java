@@ -1,22 +1,18 @@
 package com.se.apiserver.v1.reply.application.dto;
 
-import com.se.apiserver.v1.account.domain.entity.Account;
-import com.se.apiserver.v1.attach.domain.entity.Attach;
 import com.se.apiserver.v1.common.domain.entity.Anonymous;
-import com.se.apiserver.v1.post.domain.entity.Post;
-import com.se.apiserver.v1.reply.domain.entity.Reply;
-import com.se.apiserver.v1.reply.domain.entity.ReplyIsDelete;
 import com.se.apiserver.v1.reply.domain.entity.ReplyIsSecret;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.*;
-
-import javax.persistence.*;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Singular;
 
 public class ReplyCreateDto {
     @Data
@@ -45,10 +41,18 @@ public class ReplyCreateDto {
         @NotNull
         private ReplyIsSecret isSecret;
 
-        @ApiModelProperty(notes = "첨부파일들")
-        @Singular("attaches")
-        private List<AttachDto> attaches = new ArrayList<>();
+//        @ApiModelProperty(notes = "첨부파일들")
+//        @Singular("attaches")
+//        private List<AttachDto> attaches = new ArrayList<>();
     }
+
+//    @Data
+//    @NoArgsConstructor
+//    @AllArgsConstructor
+//    @Builder
+//    public static class AttachDto{
+//        private Long attachId;
+//    }
 
     @Data
     @NoArgsConstructor
@@ -56,6 +60,9 @@ public class ReplyCreateDto {
     @Builder
     public static class AttachDto{
         private Long attachId;
+        private String downloadUrl;
+        private String fileName;
+
     }
 }
 
