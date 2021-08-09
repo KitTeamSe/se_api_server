@@ -5,6 +5,7 @@ import com.se.apiserver.v1.attach.domain.entity.Attach;
 import com.se.apiserver.v1.attach.application.error.AttachErrorCode;
 import com.se.apiserver.v1.attach.application.dto.AttachReadDto;
 import com.se.apiserver.v1.attach.application.dto.AttachReadDto.Response;
+import com.se.apiserver.v1.attach.domain.entity.AttachCreateFuncType;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.multipartfile.application.dto.MultipartFileUploadDto;
 import com.se.apiserver.v1.multipartfile.application.service.MultipartFileUploadService;
@@ -25,10 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @Transactional(readOnly = true)
 public class AttachCreateService {
-
-  private static final int CREATE_FILES = 1;
-  private static final int SET_FILES_OWNER = 2;
-
   private final MultipartFileUploadService multipartFileUploadService;
   private final AttachJpaRepository attachJpaRepository;
   private final PostJpaRepository postJpaRepository;
@@ -47,7 +44,7 @@ public class AttachCreateService {
 
   @Transactional
   public AttachReadDto.Response create(Long postId, Long replyId, MultipartFile multipartFile) {
-    validateInvalidInput(postId, replyId, CREATE_FILES);
+    validateInvalidInput(postId, replyId, AttachCreateFuncType.CREATE_FILES);
     Attach attach = getAttach(postId, replyId, multipartFile);
     Attach save = attachJpaRepository.save(attach);
     return Response.fromEntity(save);
@@ -56,7 +53,7 @@ public class AttachCreateService {
   @Transactional
   public List<AttachReadDto.Response> createFiles(Long postId, Long replyId,
       MultipartFile[] multipartFiles) {
-    validateInvalidInput(postId, replyId, CREATE_FILES);
+    validateInvalidInput(postId, replyId, AttachCreateFuncType.CREATE_FILES);
 
     List<Attach> attachList = new ArrayList<>();
     for (MultipartFile file : multipartFiles) {
@@ -70,8 +67,8 @@ public class AttachCreateService {
         .collect(Collectors.toList());
   }
 
-  public void setFileOwner(Long postId, Long replyId, List<AttachReadDto.Request> requestList) {
-    validateInvalidInput(postId, replyId, SET_FILES_OWNER);
+  public void setFilesOwner(Long postId, Long replyId, List<AttachReadDto.Request> requestList) {
+    validateInvalidInput(postId, replyId, AttachCreateFuncType.SET_FILES_OWNER);
 
     List<Long> attachIdVals = requestList
         .stream()
@@ -96,7 +93,7 @@ public class AttachCreateService {
     attachJpaRepository.saveAll(attachList);
   }
 
-  private void validateInvalidInput(Long postId, Long replyId, int type) {
+  private void validateInvalidInput(Long postId, Long replyId, AttachCreateFuncType type) {
     switch(type) {
       case CREATE_FILES:
         if (postId != null && replyId != null) {

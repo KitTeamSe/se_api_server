@@ -28,12 +28,12 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional(readOnly = true)
 public class ReplyCreateService {
 
-  private ReplyJpaRepository replyJpaRepository;
-  private PostJpaRepository postJpaRepository;
-  private AccountContextService accountContextService;
-  private AttachCreateService attachCreateService;
-  private AttachJpaRepository attachJpaRepository;
-  private PasswordEncoder passwordEncoder;
+  private final ReplyJpaRepository replyJpaRepository;
+  private final PostJpaRepository postJpaRepository;
+  private final AccountContextService accountContextService;
+  private final AttachCreateService attachCreateService;
+  private final AttachJpaRepository attachJpaRepository;
+  private final PasswordEncoder passwordEncoder;
 
   public ReplyCreateService(
       ReplyJpaRepository replyJpaRepository,
@@ -105,7 +105,7 @@ public class ReplyCreateService {
           .map(attach -> new AttachReadDto.Request(attach.getAttachId()))
           .collect(Collectors.toList());
 
-      attachCreateService.setFileOwner(null, reply.getReplyId(), requestList);
+      attachCreateService.setFilesOwner(null, reply.getReplyId(), requestList);
     }
 
     return reply.getReplyId();
