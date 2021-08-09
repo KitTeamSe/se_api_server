@@ -23,14 +23,16 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Reply extends BaseEntity {
+
   public static String MANAGE_AUTHORITY = "REPLY_MANAGE";
-  public static String DELETED_REPLY_TEXT = "사용자에의해 삭제된 댓글입니다.";
+  public static String DELETED_REPLY_TEXT = "사용자에 의해 삭제된 댓글입니다.";
+  public static String SECRET_REPLY_TEXT = "비밀 댓글입니다.";
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long replyId;
 
-  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
   @JoinColumn(name = "post_id", nullable = false)
   private Post post;
 
@@ -38,7 +40,7 @@ public class Reply extends BaseEntity {
   @Size(min = 4, max = 500)
   private String text;
 
-  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
   @JoinColumn(name = "account_id", referencedColumnName = "accountId")
   private Account account;
 
@@ -53,7 +55,7 @@ public class Reply extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private ReplyIsSecret isSecret;
 
-  @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
   @JoinColumn(name = "parent_id")
   private Reply parent;
 
@@ -73,7 +75,8 @@ public class Reply extends BaseEntity {
     attaches.add(attach);
   }
 
-  private Reply(Post post, String text, ReplyIsSecret isSecret, List<Attach> attaches, Reply parent, String ip) {
+  private Reply(Post post, String text, ReplyIsSecret isSecret, List<Attach> attaches, Reply parent,
+      String ip) {
     setPost(post);
     this.text = text;
     this.isDelete = ReplyIsDelete.NORMAL;
@@ -83,13 +86,15 @@ public class Reply extends BaseEntity {
     this.createdIp = ip;
   }
 
-  public Reply(Post post, String text, ReplyIsSecret isSecret, List<Attach> attaches,Reply parent, String ip, Anonymous anonymous) {
+  public Reply(Post post, String text, ReplyIsSecret isSecret, List<Attach> attaches, Reply parent,
+      String ip, Anonymous anonymous) {
     this(post, text, isSecret, attaches, parent, ip);
     validateAnonymousInput(anonymous);
     this.anonymous = anonymous;
   }
 
-  public Reply(Post post, String text, ReplyIsSecret isSecret, List<Attach> attaches,Reply parent, String ip, Account account) {
+  public Reply(Post post, String text, ReplyIsSecret isSecret, List<Attach> attaches, Reply parent,
+      String ip, Account account) {
     this(post, text, isSecret, attaches, parent, ip);
     this.account = account;
   }
@@ -99,37 +104,43 @@ public class Reply extends BaseEntity {
     post.addReply(this);
   }
 
-  public void updateAttaches(List<Attach> attaches){
-    if(attaches == null)
+  public void updateAttaches(List<Attach> attaches) {
+    if (attaches == null) {
       return;
+    }
     this.attaches = new HashSet<>(attaches);
   }
 
   private void validateAnonymousInput(Anonymous anonymous) {
-    if(anonymous.getAnonymousPassword() == null || anonymous.getAnonymousNickname() == null)
+    if (anonymous.getAnonymousPassword() == null || anonymous.getAnonymousNickname() == null) {
       throw new BusinessException(ReplyErrorCode.INVALID_ANONYMOUS_INPUT);
-    if(anonymous.getAnonymousPassword().isEmpty() || anonymous.getAnonymousNickname().isEmpty())
+    }
+    if (anonymous.getAnonymousPassword().isEmpty() || anonymous.getAnonymousNickname().isEmpty()) {
       throw new BusinessException(ReplyErrorCode.INVALID_ANONYMOUS_INPUT);
+    }
   }
 
 
   public void updateParent(Reply parent) {
-    if(parent == null)
+    if (parent == null) {
       return;
+    }
     validateOccurCycle(parent);
     this.parent = parent;
     parent.getChild().add(this);
   }
 
   private void validateOccurCycle(Reply toBeParent) {
-    if(dfs(this, toBeParent))
+    if (dfs(this, toBeParent)) {
       throw new BusinessException(MenuErrorCode.OCCUR_CYCLE);
+    }
   }
 
   private boolean dfs(Reply now, Reply notTobeChild) {
-    if(now == notTobeChild)
+    if (now == notTobeChild) {
       return true;
-    for(Reply child : now.getChild()){
+    }
+    for (Reply child : now.getChild()) {
       return dfs(child, notTobeChild);
     }
     return false;
@@ -148,11 +159,13 @@ public class Reply extends BaseEntity {
   }
 
   public void validateReadable(Set<String> authorities) {
-    if(authorities.contains(MANAGE_AUTHORITY))
+    if (authorities.contains(MANAGE_AUTHORITY)) {
       return;
+    }
 
-    if(this.isDelete == ReplyIsDelete.DELETED)
+    if (this.isDelete == ReplyIsDelete.DELETED) {
       throw new BusinessException(ReplyErrorCode.ALREADY_DELETED);
+    }
     post.validateReadable();
     post.validateBoardAccessAuthority(authorities);
   }
@@ -163,5 +176,13 @@ public class Reply extends BaseEntity {
 
   public static boolean hasManageAuthority(Set<String> authorities) {
     return authorities.contains(MANAGE_AUTHORITY);
+  }
+
+  public boolean hasAccessAuthority(Account account) {
+    if (account != null) {
+      return this.post.getAccount().getAccountId().equals(account.getAccountId())
+          || this.account.getAccountId().equals(account.getAccountId());
+    }
+    return false;
   }
 }
