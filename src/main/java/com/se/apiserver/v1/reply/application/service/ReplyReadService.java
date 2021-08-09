@@ -1,7 +1,6 @@
 package com.se.apiserver.v1.reply.application.service;
 
 import com.se.apiserver.v1.account.application.service.AccountContextService;
-import com.se.apiserver.v1.account.domain.entity.Account;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.post.application.error.PostErrorCode;
 import com.se.apiserver.v1.post.domain.entity.Post;
@@ -10,12 +9,11 @@ import com.se.apiserver.v1.reply.application.dto.ReplyReadDto;
 import com.se.apiserver.v1.reply.application.error.ReplyErrorCode;
 import com.se.apiserver.v1.reply.domain.entity.Reply;
 import com.se.apiserver.v1.reply.infra.repository.ReplyJpaRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
@@ -41,15 +39,16 @@ public class ReplyReadService {
         .orElseThrow(() -> new BusinessException(ReplyErrorCode.NO_SUCH_REPLY));
     Set<String> authorities = accountContextService.getContextAuthorities();
 
-    Account contextAccount = null;
     if (accountContextService.isSignIn()) {
-      contextAccount = accountContextService.getContextAccount();
+      Long currentAccountId = accountContextService.getCurrentAccountId();
+      return ReplyReadDto.Response.fromEntity(reply
+          , Reply.hasManageAuthority(authorities)
+          , reply.hasAccessAuthority(currentAccountId));
     }
 
-    return ReplyReadDto.Response
-        .fromEntity(reply
-            , Reply.hasManageAuthority(authorities)
-            , reply.hasAccessAuthority(contextAccount));
+    return ReplyReadDto.Response.fromEntity(reply
+        , Reply.hasManageAuthority(authorities)
+        , false);
   }
 
   public List<ReplyReadDto.Response> readAllBelongPost(Long postId) {
@@ -69,20 +68,24 @@ public class ReplyReadService {
         })
         .filter(reply -> reply != null)
         .collect(Collectors.toList());
+
     Boolean hasManageAuthority = Reply.hasManageAuthority(authorities);
-
-    Account contextAccount = null;
     if (accountContextService.isSignIn()) {
-      contextAccount = accountContextService.getContextAccount();
-    }
-    Account account = contextAccount;
+      Long currentAccountId = accountContextService.getCurrentAccountId();
 
-    List<ReplyReadDto.Response> responseList = rootReplies.stream()
+      return rootReplies.stream()
+          .map(rootReply -> ReplyReadDto.Response
+              .fromEntity(rootReply
+                  , hasManageAuthority
+                  , rootReply.hasAccessAuthority(currentAccountId)))
+          .collect(Collectors.toList());
+    }
+
+    return rootReplies.stream()
         .map(rootReply -> ReplyReadDto.Response
             .fromEntity(rootReply
                 , hasManageAuthority
-                , rootReply.hasAccessAuthority(account)))
+                , false))
         .collect(Collectors.toList());
-    return responseList;
   }
 }

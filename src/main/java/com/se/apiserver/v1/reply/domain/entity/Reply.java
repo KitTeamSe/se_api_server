@@ -178,11 +178,7 @@ public class Reply extends BaseEntity {
     return authorities.contains(MANAGE_AUTHORITY);
   }
 
-  public boolean hasAccessAuthority(Account account) {
-    if (account != null) {
-      return this.post.getAccount().getAccountId().equals(account.getAccountId())
-          || this.account.getAccountId().equals(account.getAccountId());
-    }
-    return false;
+  public boolean hasAccessAuthority(Long accountId) {
+    return accountId.equals(this.post.getAccount().getAccountId()) || accountId.equals(this.account.getAccountId());
   }
 }
