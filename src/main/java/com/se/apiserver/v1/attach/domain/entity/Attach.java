@@ -95,4 +95,8 @@ public class Attach extends BaseEntity {
     public void setReply(Reply reply) {
         this.reply = reply;
     }
+
+    public void setPost(Post post) {
+        this.post = post;
+    }
 }

@@ -6,9 +6,19 @@ import com.se.apiserver.v1.attach.domain.entity.Attach;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 public class AttachReadDto {
+
+  @Getter
+  static public class Request {
+    public Request(Long attachId) {
+      this.attachId = attachId;
+    }
+
+    private Long attachId;
+  }
 
   @Data
   @NoArgsConstructor

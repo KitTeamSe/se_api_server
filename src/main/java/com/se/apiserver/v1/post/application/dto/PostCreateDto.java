@@ -1,6 +1,5 @@
 package com.se.apiserver.v1.post.application.dto;
 
-import com.se.apiserver.v1.attach.domain.entity.Attach;
 import com.se.apiserver.v1.common.domain.entity.Anonymous;
 import com.se.apiserver.v1.post.domain.entity.*;
 import io.swagger.annotations.ApiModel;
@@ -13,12 +12,14 @@ import lombok.*;
 import java.util.List;
 
 public class PostCreateDto {
+
   @Data
   @Builder
   @NoArgsConstructor
   @AllArgsConstructor
   @ApiModel(value = "PostCreateRequestDto")
-  static public class Request{
+  static public class Request {
+
     @NotNull
     @Min(1)
     @ApiModelProperty(notes = "게시판 아이디", example = "1")
@@ -41,10 +42,6 @@ public class PostCreateDto {
     @ApiModelProperty(notes = "태그들")
     @Singular("tagList")
     private List<TagDto> tagList;
-
-    @ApiModelProperty(notes = "첨부파일들")
-    @Singular("attachmentList")
-    private List<AttachDto> attachmentList;
   }
 
   @ApiModel("첨부 파일")
@@ -52,8 +49,11 @@ public class PostCreateDto {
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
-  static public class AttachDto{
+  static public class AttachDto {
+
     private Long attachId;
+    private String downloadUrl;
+    private String fileName;
   }
 
   @ApiModel("게시글 태그 등록")
@@ -61,9 +61,9 @@ public class PostCreateDto {
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
-  static public class TagDto{
+  static public class TagDto {
+
     @ApiModelProperty(notes = "태그 아이디", example = "1")
     private Long tagId;
   }
-
 }
