@@ -10,6 +10,7 @@ import com.se.apiserver.v1.reply.application.error.ReplyErrorCode;
 import com.se.apiserver.v1.reply.domain.entity.Reply;
 import com.se.apiserver.v1.reply.infra.repository.ReplyJpaRepository;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
@@ -39,16 +40,10 @@ public class ReplyReadService {
         .orElseThrow(() -> new BusinessException(ReplyErrorCode.NO_SUCH_REPLY));
     Set<String> authorities = accountContextService.getContextAuthorities();
 
-    if (accountContextService.isSignIn()) {
-      Long currentAccountId = accountContextService.getCurrentAccountId();
-      return ReplyReadDto.Response.fromEntity(reply
-          , Reply.hasManageAuthority(authorities)
-          , reply.hasAccessAuthority(currentAccountId));
-    }
-
     return ReplyReadDto.Response.fromEntity(reply
         , Reply.hasManageAuthority(authorities)
-        , false);
+        , accountContextService.isSignIn()
+            && reply.hasAccessAuthority(accountContextService.getCurrentAccountId()));
   }
 
   public List<ReplyReadDto.Response> readAllBelongPost(Long postId) {
@@ -66,26 +61,18 @@ public class ReplyReadService {
           }
           return reply;
         })
-        .filter(reply -> reply != null)
+        .filter(Objects::nonNull)
         .collect(Collectors.toList());
 
+    boolean isSignIn = accountContextService.isSignIn();
+    Long currentAccountId = accountContextService.getCurrentAccountId();
     Boolean hasManageAuthority = Reply.hasManageAuthority(authorities);
-    if (accountContextService.isSignIn()) {
-      Long currentAccountId = accountContextService.getCurrentAccountId();
-
-      return rootReplies.stream()
-          .map(rootReply -> ReplyReadDto.Response
-              .fromEntity(rootReply
-                  , hasManageAuthority
-                  , rootReply.hasAccessAuthority(currentAccountId)))
-          .collect(Collectors.toList());
-    }
 
     return rootReplies.stream()
         .map(rootReply -> ReplyReadDto.Response
             .fromEntity(rootReply
                 , hasManageAuthority
-                , false))
+                , isSignIn && rootReply.hasAccessAuthority(currentAccountId)))
         .collect(Collectors.toList());
   }
 }
