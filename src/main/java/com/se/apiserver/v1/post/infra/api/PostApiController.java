@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @Api(tags = "게시글 관리")
@@ -36,9 +37,11 @@ public class PostApiController {
   @PostMapping(value = "/post")
   @ResponseStatus(HttpStatus.CREATED)
   @ApiOperation(value = "게시글 생성")
-  public SuccessResponse<Long> create(@RequestBody @Validated PostCreateDto.Request request) {
+  public SuccessResponse<Long> create
+      (@RequestPart(value = "key") @Validated PostCreateDto.Request request,
+          @RequestPart(value = "files", required = false) MultipartFile[] files) {
     return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 등록되었습니다",
-        postCreateService.create(request));
+        postCreateService.create(request, files));
   }
 
   @PutMapping("/post")
