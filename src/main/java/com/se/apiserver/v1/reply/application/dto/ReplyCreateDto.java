@@ -4,66 +4,53 @@ import com.se.apiserver.v1.common.domain.entity.Anonymous;
 import com.se.apiserver.v1.reply.domain.entity.ReplyIsSecret;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.ArrayList;
-import java.util.List;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Singular;
 
 public class ReplyCreateDto {
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    @ApiModel(value = "댓글 생성 요청")
-    public static class Request{
-        @NotNull
-        @Min(1)
-        @ApiModelProperty(notes = "게시글 아이디", example = "1")
-        private Long postId;
 
-        @NotNull
-        @ApiModelProperty(notes = "댓글 내용", example = "string")
-        private String text;
+  @Data
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @Builder
+  @ApiModel(value = "댓글 생성 요청")
+  public static class Request {
 
-        @ApiModelProperty(notes = "익명 사용자 정보, 회원으로 등록일 경우 생략")
-        private Anonymous anonymous;
+    @NotNull
+    @Min(1)
+    @ApiModelProperty(notes = "게시글 아이디", example = "1")
+    private Long postId;
 
-        @Min(1)
-        @ApiModelProperty(notes = "부모 댓글의 번호")
-        private Long parentId;
+    @NotNull
+    @ApiModelProperty(notes = "댓글 내용", example = "string")
+    private String text;
 
-        @ApiModelProperty(notes = "비밀 여부")
-        @NotNull
-        private ReplyIsSecret isSecret;
+    @ApiModelProperty(notes = "익명 사용자 정보, 회원으로 등록일 경우 생략")
+    private Anonymous anonymous;
 
-//        @ApiModelProperty(notes = "첨부파일들")
-//        @Singular("attaches")
-//        private List<AttachDto> attaches = new ArrayList<>();
-    }
+    @Min(1)
+    @ApiModelProperty(notes = "부모 댓글의 번호")
+    private Long parentId;
 
-//    @Data
-//    @NoArgsConstructor
-//    @AllArgsConstructor
-//    @Builder
-//    public static class AttachDto{
-//        private Long attachId;
-//    }
+    @ApiModelProperty(notes = "비밀 여부")
+    @NotNull
+    private ReplyIsSecret isSecret;
+
 
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class AttachDto{
-        private Long attachId;
-        private String downloadUrl;
-        private String fileName;
+    public static class AttachDto {
 
+      private Long attachId;
+      private String downloadUrl;
+      private String fileName;
     }
+  }
 }
-
 
