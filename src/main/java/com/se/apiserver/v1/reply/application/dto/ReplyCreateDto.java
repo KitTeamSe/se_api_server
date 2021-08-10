@@ -39,18 +39,17 @@ public class ReplyCreateDto {
     @ApiModelProperty(notes = "비밀 여부")
     @NotNull
     private ReplyIsSecret isSecret;
+  }
 
+  @Data
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @Builder
+  public static class AttachDto {
 
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    public static class AttachDto {
-
-      private Long attachId;
-      private String downloadUrl;
-      private String fileName;
-    }
+    private Long attachId;
+    private String downloadUrl;
+    private String fileName;
   }
 }
 
