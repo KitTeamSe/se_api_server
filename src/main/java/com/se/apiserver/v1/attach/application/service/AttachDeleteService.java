@@ -6,6 +6,8 @@ import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.attach.infra.repository.AttachJpaRepository;
 import com.se.apiserver.v1.multipartfile.application.error.FileServerErrorCodeProxy;
 import com.se.apiserver.v1.multipartfile.application.service.MultipartFileDeleteService;
+import java.util.List;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,4 +42,18 @@ public class AttachDeleteService {
     return true;
   }
 
+  @Transactional
+  public boolean deleteAll(List<Long> idList) {
+    List<Attach> attachList = attachJpaRepository.findAllByAttachId(idList);
+    String[] saveNames = new String[attachList.size()];
+
+    for (Attach attach: attachList) {
+      saveNames[attachList.indexOf(attach)] = attach.getSaveName();
+      attach.remove();
+    }
+
+    attachJpaRepository.deleteAll(attachList);
+//    multipartFileDeleteService.delete(saveNames);
+    return true;
+  }
 }
