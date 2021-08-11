@@ -76,17 +76,8 @@ public class ReplyUpdateService {
 
     attachDeleteService.deleteAll(request.getAttachIdList());
 
-    List<ReplyCreateDto.AttachDto> attachDtoList = null;
-
-    if (files != null) {
-      attachDtoList = attachCreateService.createFiles(null, request.getReplyId(), files)
-          .stream()
-          .map(dto -> ReplyCreateDto.AttachDto.builder()
-              .attachId(dto.getAttachId())
-              .downloadUrl(dto.getDownloadUrl())
-              .fileName(dto.getFileName()).build())
-          .collect(Collectors.toList());
-    }
+    List<ReplyCreateDto.AttachDto> attachDtoList
+        = createAttachDtoListToUpdate(request.getReplyId(), files);
 
     updateAttaches(reply, attachDtoList);
     replyJpaRepository.save(reply);
@@ -133,5 +124,19 @@ public class ReplyUpdateService {
     if (!passwordEncoder.matches(password, reply.getAnonymous().getAnonymousPassword())) {
       throw new BusinessException(ReplyErrorCode.INVALID_PASSWORD);
     }
+  }
+
+  private List<ReplyCreateDto.AttachDto> createAttachDtoListToUpdate(Long replyId, MultipartFile[] files) {
+    if (files == null) {
+      return null;
+    }
+
+    return attachCreateService.createFiles(null, replyId, files)
+        .stream()
+        .map(dto -> ReplyCreateDto.AttachDto.builder()
+            .attachId(dto.getAttachId())
+            .downloadUrl(dto.getDownloadUrl())
+            .fileName(dto.getFileName()).build())
+        .collect(Collectors.toList());
   }
 }
