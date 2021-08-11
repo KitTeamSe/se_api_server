@@ -52,13 +52,9 @@ public class AttachCreateService {
 
   @Transactional
   public List<AttachReadDto.Response> createFiles(Long postId, Long replyId,
-      MultipartFile[] multipartFiles) {
+      MultipartFile[] files) {
     validateInvalidInput(postId, replyId, AttachCreateFuncType.CREATE_FILES);
-
-    List<Attach> attachList = new ArrayList<>();
-    for (MultipartFile file : multipartFiles) {
-      attachList.add(getAttach(postId, replyId, file));
-    }
+    List<Attach> attachList = getAttaches(postId, replyId, files);
 
     return attachJpaRepository.saveAll(attachList)
         .stream()
@@ -125,6 +121,39 @@ public class AttachCreateService {
 
     return new Attach("tempURL", fileOriginalName);
 //    return new Attach(upload(multipartFile).getFileDownloadUrl(), fileOriginalName);
+  }
+
+  private List<Attach> getAttaches(Long postId, Long replyId, MultipartFile[] files) {
+    List<Attach> attaches = new ArrayList<>();
+
+    if (postId != null) {
+      Post post = postJpaRepository.findById(postId)
+          .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));
+
+      for (MultipartFile file : files) {
+        String fileOriginalName = file.getOriginalFilename();
+        attaches.add(new Attach("tempURL", fileOriginalName, post));
+      }
+      return attaches;
+    }
+
+    if (replyId != null) {
+      Reply reply = replyJpaRepository.findById(replyId)
+          .orElseThrow(() -> new BusinessException(ReplyErrorCode.NO_SUCH_REPLY));
+
+      for (MultipartFile file : files) {
+        String fileOriginalName = file.getOriginalFilename();
+        attaches.add(new Attach("tempURL", fileOriginalName, reply));
+      }
+      return attaches;
+    }
+
+    for (MultipartFile file : files) {
+      String fileOriginalName = file.getOriginalFilename();
+      attaches.add(new Attach("tempURL", fileOriginalName));
+    }
+
+    return attaches;
   }
 
   private MultipartFileUploadDto.Response upload(MultipartFile multipartFile) {
