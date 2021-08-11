@@ -163,6 +163,14 @@ public class Reply extends BaseEntity {
     this.lastModifiedIp = lastModifiedIp;
   }
 
+  public boolean isOwner(Long accountId) {
+    if (this.account.getAccountId().equals(accountId)) {
+      return true;
+    }
+
+    return false;
+  }
+
   public static boolean hasManageAuthority(Set<String> authorities) {
     return authorities.contains(MANAGE_AUTHORITY);
   }

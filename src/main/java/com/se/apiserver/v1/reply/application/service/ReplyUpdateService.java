@@ -115,7 +115,7 @@ public class ReplyUpdateService {
   }
 
   private void validateIsWriter(Reply reply) throws AccessDeniedException {
-    if (!reply.getAccount().getAccountId().equals(accountContextService.getCurrentAccountId())) {
+    if (!reply.isOwner(accountContextService.getCurrentAccountId())) {
       throw new AccessDeniedException("작성자 본인만 삭제 가능합니다");
     }
   }
