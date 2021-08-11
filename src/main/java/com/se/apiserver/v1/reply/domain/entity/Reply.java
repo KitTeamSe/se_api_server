@@ -102,7 +102,9 @@ public class Reply extends BaseEntity {
   public void updateAttaches(List<Attach> attaches){
     if(attaches == null)
       return;
-    this.attaches = new HashSet<>(attaches);
+
+    this.attaches.clear();
+    this.attaches.addAll(attaches);
   }
 
   private void validateAnonymousInput(Anonymous anonymous) {

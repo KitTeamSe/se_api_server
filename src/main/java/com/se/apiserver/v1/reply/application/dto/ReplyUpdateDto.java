@@ -41,6 +41,6 @@ public class ReplyUpdateDto {
 
         @ApiModelProperty(notes = "첨부파일들")
         @Singular("attaches")
-        private List<ReplyCreateDto.AttachDto> attaches = new ArrayList<>();
+        private List<Long> attachIdList = new ArrayList<>();
     }
 }

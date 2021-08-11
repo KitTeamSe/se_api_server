@@ -42,9 +42,10 @@ public class ReplyApiController {
   @PutMapping("/reply")
   @ResponseStatus(HttpStatus.OK)
   @ApiOperation("댓글 수정")
-  public SuccessResponse<Long> update(@RequestBody @Validated ReplyUpdateDto.Request request) {
+  public SuccessResponse<Long> update(@RequestPart(value = "key") @Validated ReplyUpdateDto.Request request,
+      @RequestPart(value = "files", required = false) MultipartFile[] files) {
     return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 수정되었습니다",
-        replyUpdateService.update(request));
+        replyUpdateService.update(request, files));
   }
 
   @DeleteMapping("/reply/{id}")
