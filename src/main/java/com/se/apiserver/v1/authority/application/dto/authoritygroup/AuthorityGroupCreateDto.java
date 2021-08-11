@@ -21,7 +21,7 @@ public class AuthorityGroupCreateDto {
         @Size(min = 2, max = 30)
         private String name;
 
-        @ApiModelProperty(notes = "권한 그룹명", example = "사용자 그룹")
+        @ApiModelProperty(notes = "권한 그룹 설명", example = "사용자 그룹")
         @Size(min = 2, max = 100)
         private String description;
     }
