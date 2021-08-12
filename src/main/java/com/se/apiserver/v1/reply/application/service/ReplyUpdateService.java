@@ -1,7 +1,6 @@
 package com.se.apiserver.v1.reply.application.service;
 
 import com.se.apiserver.v1.account.application.service.AccountContextService;
-import com.se.apiserver.v1.attach.application.error.AttachErrorCode;
 import com.se.apiserver.v1.attach.application.service.AttachCreateService;
 import com.se.apiserver.v1.attach.application.service.AttachDeleteService;
 import com.se.apiserver.v1.attach.domain.entity.Attach;
@@ -10,7 +9,6 @@ import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.post.application.error.PostErrorCode;
 import com.se.apiserver.v1.post.domain.entity.Post;
 import com.se.apiserver.v1.post.infra.repository.PostJpaRepository;
-import com.se.apiserver.v1.reply.application.dto.ReplyCreateDto;
 import com.se.apiserver.v1.reply.application.dto.ReplyUpdateDto;
 import com.se.apiserver.v1.reply.application.error.ReplyErrorCode;
 import com.se.apiserver.v1.reply.domain.entity.Reply;
@@ -22,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -76,11 +73,8 @@ public class ReplyUpdateService {
 
     attachDeleteService.deleteAll(request.getAttachIdList());
 
-    List<ReplyCreateDto.AttachDto> attachDtoList
-        = createAttachDtoListToUpdate(request.getReplyId(), files);
-
-    updateAttaches(reply, attachDtoList);
     replyJpaRepository.save(reply);
+    updateAttaches(reply, files);
 
     return reply.getReplyId();
   }
@@ -89,15 +83,11 @@ public class ReplyUpdateService {
     reply.updateLastModifiedIp(currentClientIP);
   }
 
-  private void updateAttaches(Reply reply, List<ReplyCreateDto.AttachDto> attaches) {
-    if (attaches == null || attaches.isEmpty()) {
-      return;
+  private void updateAttaches(Reply reply, MultipartFile[] files) {
+    if (files != null) {
+      List<Long> attachIdList = attachCreateService.createAttaches(null, reply.getReplyId(), files);
+      reply.updateAttaches(attachJpaRepository.findAllByAttachId(attachIdList));
     }
-    List<Attach> attachList = attaches.stream()
-        .map(attachDto -> attachJpaRepository.findById(attachDto.getAttachId())
-            .orElseThrow(() -> new BusinessException(AttachErrorCode.NO_SUCH_ATTACH)))
-        .collect(Collectors.toList());
-    reply.updateAttaches(attachList);
   }
 
   private void updateReplyIsSecretIfNotNull(Reply reply, ReplyIsSecret isSecret) {
@@ -124,19 +114,5 @@ public class ReplyUpdateService {
     if (!passwordEncoder.matches(password, reply.getAnonymous().getAnonymousPassword())) {
       throw new BusinessException(ReplyErrorCode.INVALID_PASSWORD);
     }
-  }
-
-  private List<ReplyCreateDto.AttachDto> createAttachDtoListToUpdate(Long replyId, MultipartFile[] files) {
-    if (files == null) {
-      return null;
-    }
-
-    return attachCreateService.createFiles(null, replyId, files)
-        .stream()
-        .map(dto -> ReplyCreateDto.AttachDto.builder()
-            .attachId(dto.getAttachId())
-            .downloadUrl(dto.getDownloadUrl())
-            .fileName(dto.getFileName()).build())
-        .collect(Collectors.toList());
   }
 }
