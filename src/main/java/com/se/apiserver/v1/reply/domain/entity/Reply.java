@@ -6,6 +6,7 @@ import com.se.apiserver.v1.common.domain.entity.Anonymous;
 import com.se.apiserver.v1.attach.domain.entity.Attach;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.menu.application.error.MenuErrorCode;
+import com.se.apiserver.v1.post.application.error.PostErrorCode;
 import com.se.apiserver.v1.post.domain.entity.Post;
 
 import com.se.apiserver.v1.reply.application.error.ReplyErrorCode;
@@ -178,7 +179,19 @@ public class Reply extends BaseEntity {
     return authorities.contains(MANAGE_AUTHORITY);
   }
 
+  public String getAnonymousPassword() {
+    if(this.anonymous == null)
+      throw new BusinessException(ReplyErrorCode.NOT_ANONYMOUS_REPLY);
+    return anonymous.getAnonymousPassword();
+  }
+
   public boolean hasAccessAuthority(Long accountId) {
-    return accountId.equals(this.post.getAccount().getAccountId()) || accountId.equals(this.account.getAccountId());
+    if (post.getAccount() == null) {
+      if (this.account == null) {
+        return false;
+      }
+      return accountId.equals(this.account.getAccountId());
+    }
+    return accountId.equals(this.post.getAccount().getAccountId());
   }
 }
