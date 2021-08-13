@@ -11,15 +11,6 @@ import lombok.NoArgsConstructor;
 
 public class AttachReadDto {
 
-  @Getter
-  static public class Request {
-    public Request(Long attachId) {
-      this.attachId = attachId;
-    }
-
-    private Long attachId;
-  }
-
   @Data
   @NoArgsConstructor
   @AllArgsConstructor

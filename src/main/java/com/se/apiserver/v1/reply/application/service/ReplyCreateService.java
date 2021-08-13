@@ -2,23 +2,19 @@ package com.se.apiserver.v1.reply.application.service;
 
 import com.se.apiserver.v1.account.application.service.AccountContextService;
 import com.se.apiserver.v1.account.domain.entity.Account;
-import com.se.apiserver.v1.attach.application.dto.AttachReadDto;
-import com.se.apiserver.v1.attach.application.error.AttachErrorCode;
 import com.se.apiserver.v1.attach.application.service.AttachCreateService;
-import com.se.apiserver.v1.attach.domain.entity.Attach;
 import com.se.apiserver.v1.attach.infra.repository.AttachJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.post.application.error.PostErrorCode;
 import com.se.apiserver.v1.post.domain.entity.Post;
 import com.se.apiserver.v1.post.infra.repository.PostJpaRepository;
 import com.se.apiserver.v1.reply.application.dto.ReplyCreateDto;
-import com.se.apiserver.v1.reply.application.dto.ReplyCreateDto.AttachDto;
 import com.se.apiserver.v1.reply.application.error.ReplyErrorCode;
 import com.se.apiserver.v1.reply.domain.entity.Reply;
 import com.se.apiserver.v1.reply.infra.repository.ReplyJpaRepository;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,27 +48,6 @@ public class ReplyCreateService {
 
   @Transactional
   public Long create(ReplyCreateDto.Request request, MultipartFile[] files) {
-    List<Attach> attachList = null;
-
-    if (files != null) {
-      List<AttachDto> attachDtoList
-          = attachCreateService.createFiles(null, null, files)
-          .stream()
-          .map(
-              dto -> AttachDto.builder()
-                  .attachId(dto.getAttachId())
-                  .downloadUrl(dto.getDownloadUrl())
-                  .fileName(dto.getFileName())
-                  .build())
-          .collect(Collectors.toList());
-      attachList
-          = attachDtoList
-          .stream()
-          .map(dto -> attachJpaRepository.findById(dto.getAttachId())
-              .orElseThrow(() -> new BusinessException(AttachErrorCode.NO_SUCH_ATTACH)))
-          .collect(Collectors.toList());
-    }
-
     Post post = postJpaRepository.findById(request.getPostId())
         .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));
 
@@ -87,28 +62,26 @@ public class ReplyCreateService {
 
     if (accountContextService.isSignIn()) {
       Account account = accountContextService.getContextAccount();
-      reply = new Reply(post, request.getText(), request.getIsSecret(), attachList, parent,
+      reply = new Reply(post, request.getText(), request.getIsSecret(), new ArrayList<>(), parent,
           ip, account);
     } else {
       request.getAnonymous().setAnonymousPassword(
           passwordEncoder.encode(request.getAnonymous().getAnonymousPassword()));
-      reply = new Reply(post, request.getText(), request.getIsSecret(), attachList, parent, ip,
+      reply = new Reply(post, request.getText(), request.getIsSecret(), new ArrayList<>(), parent, ip,
           request.getAnonymous());
     }
 
     replyJpaRepository.save(reply);
-
-    if (attachList != null) {
-      List<AttachReadDto.Request> requestList
-          = attachList
-          .stream()
-          .map(attach -> new AttachReadDto.Request(attach.getAttachId()))
-          .collect(Collectors.toList());
-
-      attachCreateService.setFilesOwner(null, reply.getReplyId(), requestList);
-    }
+    createAttaches(reply, files);
 
     return reply.getReplyId();
+  }
+
+  private void createAttaches(Reply reply, MultipartFile[] files) {
+    if (files != null) {
+      List<Long> attachIdList = attachCreateService.createAttaches(null, reply.getReplyId(), files);
+      reply.updateAttaches(attachJpaRepository.findAllByAttachId(attachIdList));
+    }
   }
 
   private Reply getParent(Long parentId) {

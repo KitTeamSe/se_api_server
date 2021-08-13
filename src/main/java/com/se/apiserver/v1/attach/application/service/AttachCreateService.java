@@ -1,11 +1,9 @@
 package com.se.apiserver.v1.attach.application.service;
 
-import com.se.apiserver.v1.attach.application.dto.AttachReadDto.Request;
 import com.se.apiserver.v1.attach.domain.entity.Attach;
 import com.se.apiserver.v1.attach.application.error.AttachErrorCode;
 import com.se.apiserver.v1.attach.application.dto.AttachReadDto;
 import com.se.apiserver.v1.attach.application.dto.AttachReadDto.Response;
-import com.se.apiserver.v1.attach.domain.entity.AttachCreateFuncType;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.multipartfile.application.dto.MultipartFileUploadDto;
 import com.se.apiserver.v1.multipartfile.application.service.MultipartFileUploadService;
@@ -26,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @Transactional(readOnly = true)
 public class AttachCreateService {
+
   private final MultipartFileUploadService multipartFileUploadService;
   private final AttachJpaRepository attachJpaRepository;
   private final PostJpaRepository postJpaRepository;
@@ -44,87 +43,78 @@ public class AttachCreateService {
 
   @Transactional
   public AttachReadDto.Response create(Long postId, Long replyId, MultipartFile multipartFile) {
-    validateInvalidInput(postId, replyId, AttachCreateFuncType.CREATE_FILES);
-    Attach attach = getAttach(postId, replyId, multipartFile);
+    validateInvalidInput(postId, replyId);
+    Post post = null;
+    Reply reply = null;
+
+    if (postId != null) {
+      post = postJpaRepository.findById(postId)
+          .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));
+    } else if (replyId != null) {
+      reply = replyJpaRepository.findById(replyId)
+          .orElseThrow(() -> new BusinessException(ReplyErrorCode.NO_SUCH_REPLY));
+    }
+
+    Attach attach = getAttach(post, reply, multipartFile);
     Attach save = attachJpaRepository.save(attach);
     return Response.fromEntity(save);
   }
 
   @Transactional
-  public List<AttachReadDto.Response> createFiles(Long postId, Long replyId,
-      MultipartFile[] multipartFiles) {
-    validateInvalidInput(postId, replyId, AttachCreateFuncType.CREATE_FILES);
+  public List<Long> createAttaches(Long postId, Long replyId,
+      MultipartFile[] files) {
+    validateInvalidInput(postId, replyId);
 
-    List<Attach> attachList = new ArrayList<>();
-    for (MultipartFile file : multipartFiles) {
-      attachList.add(getAttach(postId, replyId, file));
+    Post post = null;
+    Reply reply = null;
+
+    if (postId != null) {
+      post = postJpaRepository.findById(postId)
+          .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));
+    } else if (replyId != null) {
+      reply = replyJpaRepository.findById(replyId)
+          .orElseThrow(() -> new BusinessException(ReplyErrorCode.NO_SUCH_REPLY));
     }
+
+    List<Attach> attachList = getAttaches(post, reply, files);
 
     return attachJpaRepository.saveAll(attachList)
         .stream()
-        .map(attach -> new Response(attach.getAttachId(), postId, replyId,
-            attach.getDownloadUrl(), attach.getFileName()))
+        .map(Attach::getAttachId)
         .collect(Collectors.toList());
   }
 
-  public void setFilesOwner(Long postId, Long replyId, List<AttachReadDto.Request> requestList) {
-    validateInvalidInput(postId, replyId, AttachCreateFuncType.SET_FILES_OWNER);
-
-    List<Long> attachIdVals = requestList
-        .stream()
-        .map(Request::getAttachId)
-        .collect(Collectors.toList());
-    List<Attach> attachList = attachJpaRepository.findAllByAttachId(attachIdVals);
-
-    if (postId != null) {
-      Post post = postJpaRepository.findById(postId)
-          .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));
-      for (Attach attach : attachList) {
-        attach.setPost(post);
-      }
-    } else {
-      Reply reply = replyJpaRepository.findById(replyId)
-          .orElseThrow(() -> new BusinessException(ReplyErrorCode.NO_SUCH_REPLY));
-      for (Attach attach : attachList) {
-        attach.setReply(reply);
-      }
-    }
-
-    attachJpaRepository.saveAll(attachList);
-  }
-
-  private void validateInvalidInput(Long postId, Long replyId, AttachCreateFuncType type) {
-    switch(type) {
-      case CREATE_FILES:
-        if (postId != null && replyId != null) {
-          throw new BusinessException(AttachErrorCode.INVALID_INPUT);
-        }
-        break;
-      case SET_FILES_OWNER:
-        if ((postId != null && replyId != null) || (postId == null && replyId == null)) {
-          throw new BusinessException(AttachErrorCode.INVALID_INPUT);
-        }
-        break;
+  private void validateInvalidInput(Long postId, Long replyId) {
+    if (postId != null && replyId != null) {
+      throw new BusinessException(AttachErrorCode.INVALID_INPUT);
     }
   }
 
-  private Attach getAttach(Long postId, Long replyId, MultipartFile multipartFile) {
+  private Attach getAttach(Post post, Reply reply, MultipartFile multipartFile) {
     String fileOriginalName = multipartFile.getOriginalFilename();
-    if (postId != null) {
-      Post post = postJpaRepository.findById(postId)
-          .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));
-      return new Attach(upload(multipartFile).getFileDownloadUrl(), fileOriginalName, post);
+    if (post != null) {
+      return new Attach(upload(multipartFile).getFileDownloadUrl(),
+          multipartFile.getOriginalFilename(), post);
+//      return new Attach(upload(multipartFile).getFileDownloadUrl(), multipartFile.getOriginalFilename(), post);
     }
 
-    if (replyId != null) {
-      Reply reply = replyJpaRepository.findById(replyId)
-          .orElseThrow(() -> new BusinessException(ReplyErrorCode.NO_SUCH_REPLY));
-      return new Attach("tempURL", fileOriginalName, reply);
+    if (reply != null) {
+      return new Attach("tempURL", multipartFile.getOriginalFilename(), reply);
 //      return new Attach(upload(multipartFile).getFileDownloadUrl(), fileOriginalName, reply);
     }
 
     return new Attach("tempURL", fileOriginalName);
 //    return new Attach(upload(multipartFile).getFileDownloadUrl(), fileOriginalName);
+  }
+
+  private List<Attach> getAttaches(Post post, Reply reply, MultipartFile[] files) {
+    List<Attach> attaches = new ArrayList<>();
+
+    for (MultipartFile file : files) {
+      attaches.add(getAttach(post, reply, file));
+    }
+
+    return attaches;
   }
 
   private MultipartFileUploadDto.Response upload(MultipartFile multipartFile) {
