@@ -3,16 +3,12 @@ package com.se.apiserver.v1.post.application.service;
 import com.se.apiserver.v1.account.application.service.AccountContextService;
 import com.se.apiserver.v1.account.domain.entity.Account;
 import com.se.apiserver.v1.attach.application.service.AttachCreateService;
-import com.se.apiserver.v1.attach.domain.entity.Attach;
 import com.se.apiserver.v1.board.domain.entity.Board;
 import com.se.apiserver.v1.board.application.error.BoardErrorCode;
 import com.se.apiserver.v1.board.infra.repository.BoardJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.notice.application.service.NoticeSendService;
-import com.se.apiserver.v1.notice.application.dto.NoticeSendDto;
-import com.se.apiserver.v1.post.application.dto.PostCreateDto.AttachDto;
 import com.se.apiserver.v1.post.domain.entity.*;
-import com.se.apiserver.v1.attach.application.error.AttachErrorCode;
 import com.se.apiserver.v1.post.application.error.PostErrorCode;
 import com.se.apiserver.v1.post.application.dto.PostCreateDto;
 import com.se.apiserver.v1.attach.infra.repository.AttachJpaRepository;
@@ -47,27 +43,6 @@ public class PostCreateService {
 
   @Transactional
   public Long create(PostCreateDto.Request request, MultipartFile[] files) {
-    List<Attach> attachList = null;
-
-    if (files != null) {
-      List<AttachDto> attachDtoList
-          = attachCreateService.createFiles(null, null, files)
-          .stream()
-          .map(
-              dto -> AttachDto.builder()
-                  .attachId(dto.getAttachId())
-                  .downloadUrl(dto.getDownloadUrl())
-                  .fileName(dto.getFileName())
-                  .build())
-          .collect(Collectors.toList());
-
-      attachList = attachDtoList
-          .stream()
-          .map(dto -> attachJpaRepository.findById(dto.getAttachId())
-              .orElseThrow(() -> new BusinessException(AttachErrorCode.NO_SUCH_ATTACH)))
-          .collect(Collectors.toList());
-    }
-
     Board board = boardJpaRepository.findById(request.getBoardId())
         .orElseThrow(() -> new BusinessException(BoardErrorCode.NO_SUCH_BOARD));
 
@@ -78,8 +53,10 @@ public class PostCreateService {
     if (accountContextService.isSignIn()) {
       Account contextAccount = accountContextService.getContextAccount();
       Post post = new Post(contextAccount, board, request.getPostContent(), request.getIsNotice(),
-          request.getIsSecret(), authorities, tags, attachList, ip);
+          request.getIsSecret(), authorities, tags, new ArrayList<>(), ip);
       postJpaRepository.save(post);
+
+      createAttaches(post, files);
 
       //Notice 호출
       noticeSendService.sendPostNotice(tags, post);
@@ -92,10 +69,19 @@ public class PostCreateService {
         passwordEncoder.encode(request.getAnonymous().getAnonymousPassword()));
     Post post = new Post(request.getAnonymous(), board, request.getPostContent(),
         request.getIsNotice()
-        , request.getIsSecret(), authorities, tags, attachList, ip);
+        , request.getIsSecret(), authorities, tags, new ArrayList<>(), ip);
 
     postJpaRepository.save(post);
+    createAttaches(post, files);
+
     return post.getPostId();
+  }
+
+  private void createAttaches(Post post, MultipartFile[] files) {
+    if (files != null) {
+      List<Long> attachIdList = attachCreateService.createAttaches(post.getPostId(), null, files);
+      post.updateAttaches(attachJpaRepository.findAllByAttachId(attachIdList));
+    }
   }
 
   private void validateAnonymousInput(PostCreateDto.Request request) {
