@@ -105,6 +105,14 @@ public class Reply extends BaseEntity {
     post.addReply(this);
   }
 
+  public boolean isOwner(Long accountId) {
+    if (this.account.getAccountId().equals(accountId)) {
+      return true;
+    }
+
+    return false;
+  }
+
   public void updateAttaches(List<Attach> attaches) {
     if (attaches == null) {
       return;
