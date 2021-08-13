@@ -8,9 +8,11 @@ import com.se.apiserver.v1.reply.domain.entity.Reply;
 import com.se.apiserver.v1.reply.domain.entity.ReplyIsDelete;
 import com.se.apiserver.v1.reply.domain.entity.ReplyIsSecret;
 import io.swagger.annotations.ApiModel;
+import java.util.ArrayList;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
@@ -22,7 +24,7 @@ public class ReplyReadDto {
     @AllArgsConstructor
     @Builder
     @ApiModel(value = "댓글 읽기 요청")
-    public static class Response{
+    public static class Response implements Comparable<Response>{
         private Long replyId;
         private Long postId;
         private String text;
@@ -63,12 +65,19 @@ public class ReplyReadDto {
                     .collect(Collectors.toList());
             responseBuilder.attacheList(attaches);
 
-            List<Response> childs = reply.getChild().stream()
-                    .map(child -> {
-                        return fromEntity(child, hasManageAuthority, hasAccessAuthority);
-                    })
-                    .collect(Collectors.toList());
             return responseBuilder.build();
+        }
+
+        public void addChild(Response response) {
+            if (child == null) {
+                child = new ArrayList<>();
+            }
+            child.add(response);
+        }
+
+        @Override
+        public int compareTo(Response response) {
+            return this.replyId.compareTo(response.getReplyId());
         }
 
         @Data
@@ -80,5 +89,13 @@ public class ReplyReadDto {
 
     }
 
-
+    @Builder
+    @Getter
+    public static class ResponseListWithPage {
+        List<Response> responseList;
+        int totalData;
+        int totalPage;
+        int currentPage;
+        int perPage;
+    }
 }

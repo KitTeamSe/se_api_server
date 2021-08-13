@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface ReplyJpaRepository extends JpaRepository<Reply, Long> {
 
-    @Query("select p.replies from Post p where p = :post")
+    @Query("select r from Reply r where r.post = :post and r.parent is null order by r.replyId")
     public List<Reply> findAllBelongPost(Post post);
 }
