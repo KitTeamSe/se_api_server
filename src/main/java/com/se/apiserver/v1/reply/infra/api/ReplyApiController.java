@@ -1,16 +1,19 @@
 package com.se.apiserver.v1.reply.infra.api;
 
 import com.se.apiserver.v1.common.infra.dto.SuccessResponse;
+import com.se.apiserver.v1.common.presentation.response.PaginationResponse;
 import com.se.apiserver.v1.reply.application.dto.ReplyCreateDto;
 import com.se.apiserver.v1.reply.application.dto.ReplyDeleteDto;
 import com.se.apiserver.v1.reply.application.dto.ReplyReadDto;
 import com.se.apiserver.v1.reply.application.dto.ReplyUpdateDto;
+import com.se.apiserver.v1.reply.application.dto.request.ReplyPaginationRequest;
 import com.se.apiserver.v1.reply.application.service.ReplyCreateService;
 import com.se.apiserver.v1.reply.application.service.ReplyDeleteService;
 import com.se.apiserver.v1.reply.application.service.ReplyReadService;
 import com.se.apiserver.v1.reply.application.service.ReplyUpdateService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import javax.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -42,7 +45,8 @@ public class ReplyApiController {
   @PutMapping("/reply")
   @ResponseStatus(HttpStatus.OK)
   @ApiOperation("댓글 수정")
-  public SuccessResponse<Long> update(@RequestPart(value = "key") @Validated ReplyUpdateDto.Request request,
+  public SuccessResponse<Long> update(
+      @RequestPart(value = "key") @Validated ReplyUpdateDto.Request request,
       @RequestPart(value = "files", required = false) MultipartFile[] files) {
     return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 수정되었습니다",
         replyUpdateService.update(request, files));
@@ -74,12 +78,24 @@ public class ReplyApiController {
         replyReadService.read(replyId));
   }
 
+  @GetMapping("/reply/secret")
+  @ResponseStatus(HttpStatus.OK)
+  @ApiOperation("비밀 댓글 조회")
+  public SuccessResponse<ReplyReadDto.Response> readSecret(Long replyId, String password) {
+    return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 조회되었습니다",
+        replyReadService.readAnonymousSecretReply(replyId, password));
+  }
+
   @GetMapping("/reply/post/{post_id}")
   @ResponseStatus(HttpStatus.OK)
   @ApiOperation("댓글 리스트 조회")
-  public SuccessResponse<List<ReplyReadDto.Response>> readAllBelongPost(
-      @PathVariable(value = "post_id") Long postId) {
-    return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 조회되었습니다",
-        replyReadService.readAllBelongPost(postId));
+  public PaginationResponse<List<ReplyReadDto.Response>> readAllBelongPost(
+      @PathVariable(value = "post_id") Long postId,
+      ReplyPaginationRequest<Null> replyPaginationRequest) {
+    ReplyReadDto.ResponseListWithPage response = replyReadService
+        .readAllBelongPost(postId, replyPaginationRequest.of());
+    return new PaginationResponse<>(HttpStatus.OK, "성공적으로 조회되었습니다"
+        , response.getResponseList(), response.getTotalData(),
+        response.getTotalPage(), response.getCurrentPage(), response.getPerPage());
   }
 }
