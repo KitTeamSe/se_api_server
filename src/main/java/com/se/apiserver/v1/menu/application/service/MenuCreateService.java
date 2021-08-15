@@ -59,9 +59,9 @@ public class MenuCreateService {
     }
 
     private void validateDuplicateNameKor(String nameKor) {
-        if (menuJpaRepository.findByNameKor(nameKor).isPresent())   // '메뉴'내에 이미 존재
+        if (menuJpaRepository.findByNameKor(nameKor).isPresent())
             throw new BusinessException(MenuErrorCode.DUPLICATED_MENU_NAME_KOR);
-        if (authorityJpaRepository.findByNameKor(nameKor).isPresent())  //'권한' 내에 이미 존재
+        if (authorityJpaRepository.findByNameKor(nameKor).isPresent())
             throw new BusinessException(MenuErrorCode.CAN_NOT_USE_NAME_KOR);
     }
 
