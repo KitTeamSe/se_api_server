@@ -60,6 +60,7 @@ public class Reply extends BaseEntity {
   @JoinColumn(name = "parent_id")
   private Reply parent;
 
+  @OrderBy("replyId")
   @OneToMany(mappedBy = "parent", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, orphanRemoval = true)
   private Set<Reply> child = new HashSet<>();
 

@@ -1,9 +1,5 @@
 package com.se.apiserver.v1.reply.application.dto;
 
-import com.se.apiserver.v1.account.domain.entity.Account;
-import com.se.apiserver.v1.attach.application.dto.AttachReadDto;
-import com.se.apiserver.v1.attach.domain.entity.Attach;
-import com.se.apiserver.v1.post.domain.entity.Post;
 import com.se.apiserver.v1.reply.domain.entity.Reply;
 import com.se.apiserver.v1.reply.domain.entity.ReplyIsDelete;
 import com.se.apiserver.v1.reply.domain.entity.ReplyIsSecret;
@@ -24,7 +20,7 @@ public class ReplyReadDto {
     @AllArgsConstructor
     @Builder
     @ApiModel(value = "댓글 읽기 요청")
-    public static class Response implements Comparable<Response>{
+    public static class Response{
         private Long replyId;
         private Long postId;
         private String text;
@@ -59,9 +55,7 @@ public class ReplyReadDto {
             }
 
             List<AttachDto> attaches = reply.getAttaches().stream()
-                    .map(attach -> {
-                        return new AttachDto(attach.getAttachId());
-                    })
+                    .map(attach -> new AttachDto(attach.getAttachId()))
                     .collect(Collectors.toList());
             responseBuilder.attacheList(attaches);
 
@@ -73,11 +67,6 @@ public class ReplyReadDto {
                 child = new ArrayList<>();
             }
             child.add(response);
-        }
-
-        @Override
-        public int compareTo(Response response) {
-            return this.replyId.compareTo(response.getReplyId());
         }
 
         @Data
