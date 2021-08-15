@@ -14,55 +14,110 @@ import com.se.apiserver.v1.post.infra.repository.PostJpaRepository;
 import com.se.apiserver.v1.reply.domain.entity.Reply;
 import com.se.apiserver.v1.reply.application.error.ReplyErrorCode;
 import com.se.apiserver.v1.reply.infra.repository.ReplyJpaRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class AttachCreateService {
 
-  @Autowired
   private final MultipartFileUploadService multipartFileUploadService;
-
   private final AttachJpaRepository attachJpaRepository;
   private final PostJpaRepository postJpaRepository;
   private final ReplyJpaRepository replyJpaRepository;
 
+  public AttachCreateService(
+      MultipartFileUploadService multipartFileUploadService,
+      AttachJpaRepository attachJpaRepository,
+      PostJpaRepository postJpaRepository,
+      ReplyJpaRepository replyJpaRepository) {
+    this.multipartFileUploadService = multipartFileUploadService;
+    this.attachJpaRepository = attachJpaRepository;
+    this.postJpaRepository = postJpaRepository;
+    this.replyJpaRepository = replyJpaRepository;
+  }
+
   @Transactional
-  public AttachReadDto.Response create(Long postId, Long replyId, MultipartFile multipartFile){
+  public AttachReadDto.Response create(Long postId, Long replyId, MultipartFile multipartFile) {
     validateInvalidInput(postId, replyId);
-    Attach attach = getAttach(postId, replyId, multipartFile);
+    Post post = null;
+    Reply reply = null;
+
+    if (postId != null) {
+      post = postJpaRepository.findById(postId)
+          .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));
+    } else if (replyId != null) {
+      reply = replyJpaRepository.findById(replyId)
+          .orElseThrow(() -> new BusinessException(ReplyErrorCode.NO_SUCH_REPLY));
+    }
+
+    Attach attach = getAttach(post, reply, multipartFile);
     Attach save = attachJpaRepository.save(attach);
     return Response.fromEntity(save);
   }
 
+  @Transactional
+  public List<Long> createAttaches(Long postId, Long replyId,
+      MultipartFile[] files) {
+    validateInvalidInput(postId, replyId);
+
+    Post post = null;
+    Reply reply = null;
+
+    if (postId != null) {
+      post = postJpaRepository.findById(postId)
+          .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));
+    } else if (replyId != null) {
+      reply = replyJpaRepository.findById(replyId)
+          .orElseThrow(() -> new BusinessException(ReplyErrorCode.NO_SUCH_REPLY));
+    }
+
+    List<Attach> attachList = getAttaches(post, reply, files);
+
+    return attachJpaRepository.saveAll(attachList)
+        .stream()
+        .map(Attach::getAttachId)
+        .collect(Collectors.toList());
+  }
+
   private void validateInvalidInput(Long postId, Long replyId) {
-    if(postId != null && replyId != null)
+    if (postId != null && replyId != null) {
       throw new BusinessException(AttachErrorCode.INVALID_INPUT);
+    }
   }
 
-  private Attach getAttach(Long postId, Long replyId, MultipartFile multipartFile) {
+  private Attach getAttach(Post post, Reply reply, MultipartFile multipartFile) {
     String fileOriginalName = multipartFile.getOriginalFilename();
-    if(postId != null) {
-      Post post = postJpaRepository.findById(postId)
-              .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));
-      return new Attach(upload(multipartFile).getFileDownloadUrl(), fileOriginalName, post);
+    if (post != null) {
+      return new Attach(upload(multipartFile).getFileDownloadUrl(),
+          multipartFile.getOriginalFilename(), post);
+//      return new Attach(upload(multipartFile).getFileDownloadUrl(), multipartFile.getOriginalFilename(), post);
     }
 
-    if(replyId != null) {
-      Reply reply = replyJpaRepository.findById(replyId)
-              .orElseThrow(() -> new BusinessException(ReplyErrorCode.NO_SUCH_REPLY));
-      return new Attach(upload(multipartFile).getFileDownloadUrl(), fileOriginalName, reply);
+    if (reply != null) {
+      return new Attach("tempURL", multipartFile.getOriginalFilename(), reply);
+//      return new Attach(upload(multipartFile).getFileDownloadUrl(), fileOriginalName, reply);
     }
 
-    return new Attach(upload(multipartFile).getFileDownloadUrl(), fileOriginalName);
+    return new Attach("tempURL", fileOriginalName);
+//    return new Attach(upload(multipartFile).getFileDownloadUrl(), fileOriginalName);
   }
 
-  private MultipartFileUploadDto.Response upload(MultipartFile multipartFile){
+  private List<Attach> getAttaches(Post post, Reply reply, MultipartFile[] files) {
+    List<Attach> attaches = new ArrayList<>();
+
+    for (MultipartFile file : files) {
+      attaches.add(getAttach(post, reply, file));
+    }
+
+    return attaches;
+  }
+
+  private MultipartFileUploadDto.Response upload(MultipartFile multipartFile) {
     return multipartFileUploadService.upload(multipartFile);
   }
 }

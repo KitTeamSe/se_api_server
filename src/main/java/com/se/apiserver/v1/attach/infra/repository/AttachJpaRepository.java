@@ -12,4 +12,7 @@ public interface AttachJpaRepository extends JpaRepository<Attach, Long> {
 
   @Query("select a from Attach a where a.reply.replyId = :replyId")
   List<Attach> findAllByReplyId(Long replyId);
+
+  @Query("select a from Attach a where a.attachId in (:attachIdList)")
+  List<Attach> findAllByAttachId(List<Long> attachIdList);
 }
