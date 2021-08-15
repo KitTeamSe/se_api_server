@@ -72,7 +72,7 @@ class MenuCreateServiceTest {
   public void 부모_있는_메뉴_생성_성공() throws Exception{
     // given
     Long parentId = 1L;
-    Menu parent = new Menu("nameEng", "url", "nameKor", 1, "부모설명", MenuType.FOLDER);
+    Menu parent = new Menu("nameEng", "url", "한글이름", 1, "부모설명", MenuType.FOLDER);
     MenuCreateDto.Request request = createRequestEntityWithParentId(parentId);
     when(menuJpaRepository.findById(request.getParentId())).thenReturn(Optional.ofNullable(parent));
 
