@@ -91,7 +91,7 @@ public class ReplyApiController {
   @ApiOperation("댓글 리스트 조회")
   public PaginationResponse<List<ReplyReadDto.Response>> readAllBelongPost(
       @PathVariable(value = "post_id") Long postId,
-      ReplyPaginationRequest<Null> replyPaginationRequest) {
+      @ModelAttribute ReplyPaginationRequest replyPaginationRequest) {
     ReplyReadDto.ResponseListWithPage response = replyReadService
         .readAllBelongPost(postId, replyPaginationRequest.of());
     return new PaginationResponse<>(HttpStatus.OK, "성공적으로 조회되었습니다"

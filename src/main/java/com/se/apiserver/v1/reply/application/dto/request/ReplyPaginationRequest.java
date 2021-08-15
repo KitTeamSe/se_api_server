@@ -1,16 +1,31 @@
 package com.se.apiserver.v1.reply.application.dto.request;
 
-import com.se.apiserver.v1.common.application.PaginationRequest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort.Direction;
+import lombok.Getter;
+import org.springframework.data.domain.PageRequest;
 
-public class ReplyPaginationRequest<T> extends PaginationRequest<T>{
+@Getter
+public class ReplyPaginationRequest{
+  private int page;
+  private int size;
+
   public ReplyPaginationRequest() {
 
   }
 
-  public ReplyPaginationRequest(int page, int size, Direction direction,
-      String orderBy) {
-    super(null, page, size, null, null);
+  public ReplyPaginationRequest(int page, int size) {
+    this.page = page;
+    this.size= size;
+  }
+
+  public void setPage(int page) {
+    this.page = page;
+  }
+
+  public void setSize(int size) {
+    this.size = size;
+  }
+
+  public PageRequest of() {
+    return PageRequest.of(page, size);
   }
 }

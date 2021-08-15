@@ -77,19 +77,25 @@ public class ReplyReadService {
 
     List<Reply> replies = replyJpaRepository.findAllBelongPost(post);
 
-    boolean isSignIn = accountContextService.isSignIn();
-    Long currentAccountId = accountContextService.getCurrentAccountId();
-    Boolean hasManageAuthority = Reply.hasManageAuthority(authorities);
-
-    List<Response> responseList = new ArrayList<>();
     int startPos = pageable.getPageSize() * pageable.getPageNumber() + 1;
     int endPos = startPos + pageable.getPageSize();
+    List<Response> responseList = getReplyResponseList(replies, startPos, endPos);
+
+    return createResponsesWithPageInfo(responseList,  getNumberOfReplies(replies), pageable.getPageSize(),
+        pageable.getPageNumber(), endPos);
+  }
+
+  private List<Response> getReplyResponseList(List<Reply> replies, int startPos, int endPos) {
+    List<Response> responseList = new ArrayList<>();
     int count = 0;
+    boolean isSignIn = accountContextService.isSignIn();
+    Long currentAccountId = accountContextService.getCurrentAccountId();
+    Boolean hasManageAuthority = Reply.hasManageAuthority(accountContextService.getContextAuthorities());
 
     for (Reply parent : replies) {
       count++;
       if (count >= endPos) {
-        continue;
+        break;
       }
 
       Response response;
@@ -104,7 +110,7 @@ public class ReplyReadService {
       for (Reply child : parent.getChild()) {
         count++;
         if (count >= endPos) {
-          continue;
+          break;
         }
         if (count >= startPos) {
           response.addChild(Response.fromEntity(child, hasManageAuthority,
@@ -114,15 +120,20 @@ public class ReplyReadService {
 
       // 1페이지 제외 첫 번째 댓글이 앞 댓글에 이어지는 대댓글에 대비
       if (response.getPostId() != null || response.getChild() != null) {
-        if (response.getChild() != null) {
-          Collections.sort(response.getChild());
-        }
         responseList.add(response);
       }
     }
 
-    return createResponsesWithPageInfo(responseList, count, pageable.getPageSize(),
-        pageable.getPageNumber(), endPos);
+    return responseList;
+  }
+
+  private int getNumberOfReplies(List<Reply> replies){
+    int count = 0;
+    for (Reply reply: replies) {
+      count += reply.getChild().size() + 1;
+    }
+
+    return count;
   }
 
   private ResponseListWithPage createResponsesWithPageInfo(List<Response> responseList,
