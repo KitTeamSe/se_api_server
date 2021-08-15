@@ -23,7 +23,9 @@ public class MenuCreateService {
     public Long create(MenuCreateDto.Request request) {
         validateDuplicateNameKor(request.getNameKor());
         validateDuplicateNameEng(request.getNameEng());
-        validateDuplicateUrl(request.getUrl());
+        if (request.getUrl() != null) {
+            validateDuplicateUrl(request.getUrl());
+        }
         validateMenuType(request.getMenuType());
         boolean hasParent = (request.getParentId() != null);
         Menu menu = generateMenu(request, hasParent);
@@ -57,9 +59,9 @@ public class MenuCreateService {
     }
 
     private void validateDuplicateNameKor(String nameKor) {
-        if (menuJpaRepository.findByNameKor(nameKor).isPresent())
+        if (menuJpaRepository.findByNameKor(nameKor).isPresent())   // '메뉴'내에 이미 존재
             throw new BusinessException(MenuErrorCode.DUPLICATED_MENU_NAME_KOR);
-        if (authorityJpaRepository.findByNameKor(nameKor).isPresent())
+        if (authorityJpaRepository.findByNameKor(nameKor).isPresent())  //'권한' 내에 이미 존재
             throw new BusinessException(MenuErrorCode.CAN_NOT_USE_NAME_KOR);
     }
 

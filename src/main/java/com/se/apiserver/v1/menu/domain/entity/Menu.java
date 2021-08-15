@@ -30,7 +30,7 @@ public class Menu extends AccountGenerateEntity {
   @Size(min = 2, max = 20)
   private String nameEng;
 
-  @Column(length = 255, nullable = false, unique = true)
+  @Column(unique = true)
   @Size(min = 2, max = 255)
   private String url;
 
