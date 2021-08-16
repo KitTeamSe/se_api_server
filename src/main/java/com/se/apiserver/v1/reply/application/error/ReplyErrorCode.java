@@ -8,7 +8,9 @@ public enum ReplyErrorCode implements ErrorCode {
     NO_SUCH_REPLY(400, "RE01", "존재하지 않는 댓글"),
     INVALID_ANONYMOUS_INPUT(400, "RE02", "익명 사용자 정보 입력 오류"),
     INVALID_PASSWORD(400, "RE03", "익명 사용자 패스워드 틀림"),
-    ALREADY_DELETED(400,"RE04", "삭제된 댓글");
+    ALREADY_DELETED(400,"RE04", "삭제된 댓글"),
+    NOT_ANONYMOUS_REPLY(400, "RE05", "익명으로 작성된 댓글이 아닙니다");
+
     private int status;
     private final String code;
     private final String message;
