@@ -80,7 +80,7 @@ public class ReplyCreateService {
   private void createAttaches(Reply reply, MultipartFile[] files) {
     if (files != null) {
       List<Long> attachIdList = attachCreateService.createAttaches(null, reply.getReplyId(), files);
-      reply.updateAttaches(attachJpaRepository.findAllByAttachId(attachIdList));
+      reply.updateAttaches(attachJpaRepository.findAllByReplyId(reply.getReplyId()));
     }
   }
 
