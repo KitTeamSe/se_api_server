@@ -5,6 +5,7 @@ import com.se.apiserver.v1.post.domain.entity.PostIsNotice;
 import com.se.apiserver.v1.post.domain.entity.PostIsSecret;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.util.ArrayList;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
@@ -38,10 +39,6 @@ public class PostUpdateDto {
     @NotNull
     @ApiModelProperty(notes = "비밀글로 설정할 것인지(관리자용)", example = "NORMAL")
     private PostIsSecret isSecret;
-
-    @ApiModelProperty(notes = "첨부 파일들")
-    @Singular("attachmentList")
-    private List<PostCreateDto.AttachDto> attachmentList;
 
     @ApiModelProperty(notes = "태그들")
     @Singular("tagList")
