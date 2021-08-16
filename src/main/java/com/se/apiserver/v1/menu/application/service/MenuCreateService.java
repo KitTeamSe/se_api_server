@@ -7,23 +7,30 @@ import com.se.apiserver.v1.menu.application.error.MenuErrorCode;
 import com.se.apiserver.v1.menu.application.dto.MenuCreateDto;
 import com.se.apiserver.v1.menu.domain.entity.MenuType;
 import com.se.apiserver.v1.menu.infra.repository.MenuJpaRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class MenuCreateService {
 
     private final MenuJpaRepository menuJpaRepository;
     private final AuthorityJpaRepository authorityJpaRepository;
 
+    public MenuCreateService(
+        MenuJpaRepository menuJpaRepository,
+        AuthorityJpaRepository authorityJpaRepository) {
+        this.menuJpaRepository = menuJpaRepository;
+        this.authorityJpaRepository = authorityJpaRepository;
+    }
+
     @Transactional
     public Long create(MenuCreateDto.Request request) {
         validateDuplicateNameKor(request.getNameKor());
         validateDuplicateNameEng(request.getNameEng());
-        validateDuplicateUrl(request.getUrl());
+        if (request.getUrl() != null) {
+            validateDuplicateUrl(request.getUrl());
+        }
         validateMenuType(request.getMenuType());
         boolean hasParent = (request.getParentId() != null);
         Menu menu = generateMenu(request, hasParent);
