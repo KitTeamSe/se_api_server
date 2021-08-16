@@ -1,4 +1,4 @@
-package com.se.apiserver.v1.post.service;
+package com.se.apiserver.v1.post.application.service;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
