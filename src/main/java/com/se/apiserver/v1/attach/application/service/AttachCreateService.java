@@ -93,8 +93,7 @@ public class AttachCreateService {
   private Attach getAttach(Post post, Reply reply, MultipartFile multipartFile) {
     String fileOriginalName = multipartFile.getOriginalFilename();
     if (post != null) {
-      return new Attach(upload(multipartFile).getFileDownloadUrl(),
-          multipartFile.getOriginalFilename(), post);
+      return new Attach("tempURL", multipartFile.getOriginalFilename(), post);
 //      return new Attach(upload(multipartFile).getFileDownloadUrl(), multipartFile.getOriginalFilename(), post);
     }
 
