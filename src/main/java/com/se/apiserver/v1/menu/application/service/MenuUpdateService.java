@@ -6,23 +6,30 @@ import com.se.apiserver.v1.menu.domain.entity.Menu;
 import com.se.apiserver.v1.menu.application.error.MenuErrorCode;
 import com.se.apiserver.v1.menu.application.dto.MenuUpdateDto;
 import com.se.apiserver.v1.menu.infra.repository.MenuJpaRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class MenuUpdateService {
 
     private final MenuJpaRepository menuJpaRepository;
     private final AuthorityJpaRepository authorityJpaRepository;
+
+    public MenuUpdateService(
+        MenuJpaRepository menuJpaRepository,
+        AuthorityJpaRepository authorityJpaRepository) {
+        this.menuJpaRepository = menuJpaRepository;
+        this.authorityJpaRepository = authorityJpaRepository;
+    }
+
     @Transactional
     public Long update(MenuUpdateDto.Request request) {
-        Menu menu = menuJpaRepository.findById(request.getMenuId()).orElseThrow(() -> new BusinessException(MenuErrorCode.NO_SUCH_MENU));
+        Menu menu = menuJpaRepository.findById(request.getMenuId())
+            .orElseThrow(() -> new BusinessException(MenuErrorCode.NO_SUCH_MENU));
 
-        updateNameEngIfExist(menu, request.getNameEng());
         updateNameKorIfExist(menu, request.getNameKor());
+        updateNameEngIfExist(menu, request.getNameEng());
         updateUrlIfExist(menu, request.getUrl());
         updateParentIfExist(menu, request.getParentId());
         updateDescriptionIfExist(menu, request.getDescription());
@@ -46,7 +53,8 @@ public class MenuUpdateService {
     private void updateParentIfExist(Menu menu, Long parentId) {
         if (parentId == null)
             return;
-        Menu parent = menuJpaRepository.findById(parentId).orElseThrow(() -> new BusinessException(MenuErrorCode.NO_SUCH_MENU));
+        Menu parent = menuJpaRepository.findById(parentId)
+            .orElseThrow(() -> new BusinessException(MenuErrorCode.NO_SUCH_MENU));
         menu.updateParent(parent);
     }
 
