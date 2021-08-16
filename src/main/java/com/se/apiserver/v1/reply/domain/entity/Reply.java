@@ -60,6 +60,7 @@ public class Reply extends BaseEntity {
   @JoinColumn(name = "parent_id")
   private Reply parent;
 
+  @OrderBy("replyId")
   @OneToMany(mappedBy = "parent", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, orphanRemoval = true)
   private Set<Reply> child = new HashSet<>();
 
@@ -189,7 +190,7 @@ public class Reply extends BaseEntity {
 
   public String getAnonymousPassword() {
     if(this.anonymous == null)
-      throw new BusinessException(ReplyErrorCode.INVALID_PASSWORD);
+      throw new BusinessException(ReplyErrorCode.NOT_ANONYMOUS_REPLY);
     return anonymous.getAnonymousPassword();
   }
 

@@ -1,16 +1,14 @@
 package com.se.apiserver.v1.reply.application.dto;
 
-import com.se.apiserver.v1.account.domain.entity.Account;
-import com.se.apiserver.v1.attach.application.dto.AttachReadDto;
-import com.se.apiserver.v1.attach.domain.entity.Attach;
-import com.se.apiserver.v1.post.domain.entity.Post;
 import com.se.apiserver.v1.reply.domain.entity.Reply;
 import com.se.apiserver.v1.reply.domain.entity.ReplyIsDelete;
 import com.se.apiserver.v1.reply.domain.entity.ReplyIsSecret;
 import io.swagger.annotations.ApiModel;
+import java.util.ArrayList;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
@@ -57,18 +55,18 @@ public class ReplyReadDto {
             }
 
             List<AttachDto> attaches = reply.getAttaches().stream()
-                    .map(attach -> {
-                        return new AttachDto(attach.getAttachId());
-                    })
+                    .map(attach -> new AttachDto(attach.getAttachId()))
                     .collect(Collectors.toList());
             responseBuilder.attacheList(attaches);
 
-            List<Response> childs = reply.getChild().stream()
-                    .map(child -> {
-                        return fromEntity(child, hasManageAuthority, hasAccessAuthority);
-                    })
-                    .collect(Collectors.toList());
             return responseBuilder.build();
+        }
+
+        public void addChild(Response response) {
+            if (child == null) {
+                child = new ArrayList<>();
+            }
+            child.add(response);
         }
 
         @Data
@@ -80,5 +78,13 @@ public class ReplyReadDto {
 
     }
 
-
+    @Builder
+    @Getter
+    public static class ResponseListWithPage {
+        List<Response> responseList;
+        int totalData;
+        int totalPage;
+        int currentPage;
+        int perPage;
+    }
 }
