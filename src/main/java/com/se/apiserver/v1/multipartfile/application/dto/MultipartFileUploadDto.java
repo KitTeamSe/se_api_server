@@ -1,27 +1,20 @@
 package com.se.apiserver.v1.multipartfile.application.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-public class MultipartFileUploadDto {
-  @Data
-  @NoArgsConstructor
-  @AllArgsConstructor
-  @Builder
-  static public class Response{
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class MultiPartFileUploadDto {
 
-    private Long fileId;
+  private String downloadUrl;
 
-    private String fileDownloadUrl;
+  public MultiPartFileUploadDto(String downloadUrl) {
+    this.downloadUrl = downloadUrl;
+  }
 
-    private String originalName;
-
-    private String saveName;
-
-    private String fileType;
-
-    private Long size;
+  public void changeToInternalUrl(String internalUrl){
+    this.downloadUrl = internalUrl;
   }
 }
