@@ -16,7 +16,8 @@ public class MenuDeleteService {
 
     @Transactional
     public boolean delete(Long id) {
-        Menu menu = menuJpaRepository.findById(id).orElseThrow(() -> new BusinessException(MenuErrorCode.NO_SUCH_MENU));
+        Menu menu = menuJpaRepository.findById(id)
+            .orElseThrow(() -> new BusinessException(MenuErrorCode.NO_SUCH_MENU));
         validateIsRemovable(menu);
         menuJpaRepository.delete(menu);
         return true;
