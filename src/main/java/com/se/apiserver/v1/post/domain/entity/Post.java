@@ -130,8 +130,8 @@ public class Post extends BaseEntity {
     return authorities.contains(MANAGE_AUTHORITY);
   }
 
-  public void validateAccountAccess(Account contextAccount, Set<String> authorities) {
-    if(!account.equals(contextAccount) && !hasManageAuthority(authorities))
+  public void validateAccountAccess(Long contextAccountId, Set<String> authorities) {
+    if(!account.getAccountId().equals(contextAccountId) && !hasManageAuthority(authorities))
       throw new BusinessException(AccountErrorCode.CAN_NOT_ACCESS_ACCOUNT);
   }
 
@@ -233,7 +233,7 @@ public class Post extends BaseEntity {
   }
 
   public void delete(Account contextAccount, Set<String> authorities) {
-    validateAccountAccess(contextAccount, authorities);
+    validateAccountAccess(contextAccount.getAccountId(), authorities);
     delete();
   }
 
