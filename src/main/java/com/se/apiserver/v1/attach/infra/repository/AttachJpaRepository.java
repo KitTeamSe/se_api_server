@@ -21,12 +21,12 @@ public interface AttachJpaRepository extends JpaRepository<Attach, Long> {
   List<Attach> findAllByAttachId(List<Long> attachIdList);
 
   @Transactional
-  @Modifying
+  @Modifying(clearAutomatically = true)
   @Query("delete from Attach a where a.post.postId = :postId")
   void deleteAttachesByPostId(Long postId);
 
   @Transactional
-  @Modifying
+  @Modifying(clearAutomatically = true)
   @Query("delete from Attach a where a.reply.replyId = :replyId")
   void deleteAttachesByReplyId(Long replyId);
 }
