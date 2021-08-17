@@ -15,11 +15,11 @@ public class MenuDeleteService {
     private final MenuJpaRepository menuJpaRepository;
 
     @Transactional
-    public boolean delete(Long id) {
-        Menu menu = menuJpaRepository.findById(id).orElseThrow(() -> new BusinessException(MenuErrorCode.NO_SUCH_MENU));
+    public void delete(Long id) {
+        Menu menu = menuJpaRepository.findById(id)
+            .orElseThrow(() -> new BusinessException(MenuErrorCode.NO_SUCH_MENU));
         validateIsRemovable(menu);
         menuJpaRepository.delete(menu);
-        return true;
     }
 
     private void validateIsRemovable(Menu menu) {
