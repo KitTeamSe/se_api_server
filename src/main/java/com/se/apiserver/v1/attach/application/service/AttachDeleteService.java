@@ -50,21 +50,6 @@ public class AttachDeleteService {
   }
 
   @Transactional
-  public boolean deleteAll(List<Long> idList) {
-    List<Attach> attachList = attachJpaRepository.findAllByAttachId(idList);
-    String[] saveNames = new String[attachList.size()];
-
-    for (Attach attach : attachList) {
-      saveNames[attachList.indexOf(attach)] = attach.getSaveName();
-      attach.remove();
-    }
-
-    attachJpaRepository.deleteAll(attachList);
-//    multipartFileDeleteService.delete(saveNames);
-    return true;
-  }
-
-  @Transactional
   public boolean deleteAllByOwnerId(Long postId, Long replyId) {
     validateInvalidInput(postId, replyId);
 

@@ -1,19 +1,18 @@
 package com.se.apiserver.v1.reply.application.service;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.BDDMockito.given;
+
 import com.se.apiserver.v1.account.application.service.AccountContextService;
 import com.se.apiserver.v1.account.domain.entity.Account;
 import com.se.apiserver.v1.account.domain.entity.AccountType;
 import com.se.apiserver.v1.account.domain.entity.InformationOpenAgree;
 import com.se.apiserver.v1.account.domain.entity.Question;
 import com.se.apiserver.v1.attach.application.dto.AttachReadDto;
-import com.se.apiserver.v1.attach.application.error.AttachErrorCode;
 import com.se.apiserver.v1.attach.application.service.AttachCreateService;
 import com.se.apiserver.v1.attach.application.service.AttachDeleteService;
 import com.se.apiserver.v1.attach.domain.entity.Attach;
@@ -27,8 +26,6 @@ import com.se.apiserver.v1.post.domain.entity.PostContent;
 import com.se.apiserver.v1.post.domain.entity.PostIsNotice;
 import com.se.apiserver.v1.post.domain.entity.PostIsSecret;
 import com.se.apiserver.v1.post.infra.repository.PostJpaRepository;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
 import com.se.apiserver.v1.reply.application.dto.ReplyUpdateDto;
 import com.se.apiserver.v1.reply.application.error.ReplyErrorCode;
 import com.se.apiserver.v1.reply.domain.entity.Reply;
@@ -83,7 +80,6 @@ public class ReplyUpdateServiceTest {
         .postId(postId)
         .text("댓글댓글댓글댓글댓글")
         .isSecret(ReplyIsSecret.NORMAL)
-        .attachIdList(attachIdList)
         .build();
     Post post = getPost();
     Anonymous anonymous = getAnonymous();
@@ -100,11 +96,12 @@ public class ReplyUpdateServiceTest {
     given(replyJpaRepository.findById(replyId)).willReturn(java.util.Optional.of(reply));
     given(postJpaRepository.findById(postId)).willReturn(java.util.Optional.of(post));
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
-    given(passwordEncoder.matches(request.getPassword(), reply.getAnonymous().getAnonymousPassword())).willReturn(true);
-    given(attachDeleteService.deleteAll(request.getAttachIdList())).willReturn(true);
-    given(attachCreateService.createAttaches(null, replyId, files))
+    given(
+        passwordEncoder.matches(request.getPassword(), reply.getAnonymous().getAnonymousPassword()))
+        .willReturn(true);
+    given(attachDeleteService.deleteAllByOwnerId(null, reply.getReplyId())).willReturn(true);
+    given(attachCreateService.createAttaches(null, reply.getReplyId(), files))
         .willReturn(attachIdList);
-    given(attachJpaRepository.findById(anyLong())).willReturn(Optional.of(new Attach("URL", "file.jpg", reply)));
     given(replyJpaRepository.save(reply)).willReturn(any(Reply.class));
 
     // when, then
@@ -124,7 +121,6 @@ public class ReplyUpdateServiceTest {
         .postId(postId)
         .text("댓글댓글댓글댓글댓글")
         .isSecret(ReplyIsSecret.NORMAL)
-        .attachIdList(attachIdList)
         .build();
     Post post = getPost();
     Account account = getAccount();
@@ -142,7 +138,7 @@ public class ReplyUpdateServiceTest {
     given(postJpaRepository.findById(postId)).willReturn(java.util.Optional.of(post));
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
     given(accountContextService.getCurrentAccountId()).willReturn(account.getAccountId());
-    given(attachDeleteService.deleteAll(request.getAttachIdList())).willReturn(true);
+    given(attachDeleteService.deleteAllByOwnerId(null, reply.getReplyId())).willReturn(true);
     given(replyJpaRepository.save(reply)).willReturn(reply);
     given(attachCreateService.createAttaches(null, reply.getReplyId(), files))
         .willReturn(attachIdList);
@@ -157,7 +153,6 @@ public class ReplyUpdateServiceTest {
     Long postId = 1L;
     Long replyId = 1L;
 
-    List<Long> attachIdList = new ArrayList<>(Arrays.asList(1L, 2L, 3L));
     ReplyUpdateDto.Request request = ReplyUpdateDto.Request
         .builder()
         .replyId(replyId)
@@ -165,7 +160,6 @@ public class ReplyUpdateServiceTest {
         .postId(postId)
         .text("댓글댓글댓글댓글댓글")
         .isSecret(ReplyIsSecret.NORMAL)
-        .attachIdList(attachIdList)
         .build();
     Post post = getPost();
     Account account = getAccount();
@@ -206,7 +200,6 @@ public class ReplyUpdateServiceTest {
     // given
     Long replyId = 1L;
     Long postId = 1L;
-    List<Long> attachIdList = new ArrayList<>(Arrays.asList(1L, 2L, 3L));
     ReplyUpdateDto.Request request = ReplyUpdateDto.Request
         .builder()
         .replyId(replyId)
@@ -214,7 +207,6 @@ public class ReplyUpdateServiceTest {
         .postId(postId)
         .text("댓글댓글댓글댓글댓글")
         .isSecret(ReplyIsSecret.NORMAL)
-        .attachIdList(attachIdList)
         .build();
     Post post = getPost();
     MultipartFile[] files = new MultipartFile[1];
@@ -227,7 +219,8 @@ public class ReplyUpdateServiceTest {
         , getAnonymous());
     Long nonExistentReplyId = 2L;
 
-    given(replyJpaRepository.findById(replyId)).willThrow(new BusinessException(ReplyErrorCode.NO_SUCH_REPLY));
+    given(replyJpaRepository.findById(replyId))
+        .willThrow(new BusinessException(ReplyErrorCode.NO_SUCH_REPLY));
 
     // when
     BusinessException businessException = assertThrows(BusinessException.class,
@@ -243,7 +236,6 @@ public class ReplyUpdateServiceTest {
     // given
     Long replyId = 1L;
     Long nonExistentPostId = 2L;
-    List<Long> attachIdList = new ArrayList<>(Arrays.asList(1L, 2L, 3L));
     ReplyUpdateDto.Request request = ReplyUpdateDto.Request
         .builder()
         .replyId(replyId)
@@ -251,7 +243,7 @@ public class ReplyUpdateServiceTest {
         .postId(nonExistentPostId)
         .text("댓글댓글댓글댓글댓글")
         .isSecret(ReplyIsSecret.NORMAL)
-        .attachIdList(attachIdList)
+
         .build();
     Post post = getPost();
     MultipartFile[] files = new MultipartFile[1];
@@ -264,7 +256,8 @@ public class ReplyUpdateServiceTest {
         , getAnonymous());
 
     given(replyJpaRepository.findById(replyId)).willReturn(Optional.of(reply));
-    given(postJpaRepository.findById(nonExistentPostId)).willThrow(new BusinessException(PostErrorCode.NO_SUCH_POST));
+    given(postJpaRepository.findById(nonExistentPostId))
+        .willThrow(new BusinessException(PostErrorCode.NO_SUCH_POST));
 
     // when
     BusinessException businessException = assertThrows(BusinessException.class,
@@ -281,7 +274,6 @@ public class ReplyUpdateServiceTest {
     // given
     Long postId = 1L;
     Long replyId = 1L;
-    List<Long> attachIdList = new ArrayList<>(Arrays.asList(1L, 2L, 3L));
     ReplyUpdateDto.Request request = ReplyUpdateDto.Request
         .builder()
         .replyId(replyId)
@@ -289,7 +281,7 @@ public class ReplyUpdateServiceTest {
         .postId(postId)
         .text("댓글댓글댓글댓글댓글")
         .isSecret(ReplyIsSecret.NORMAL)
-        .attachIdList(attachIdList)
+
         .build();
     Post post = getPost();
     Anonymous anonymous = getAnonymous();
@@ -314,11 +306,13 @@ public class ReplyUpdateServiceTest {
     given(replyJpaRepository.findById(replyId)).willReturn(java.util.Optional.of(reply));
     given(postJpaRepository.findById(postId)).willReturn(java.util.Optional.of(post));
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
-    given(passwordEncoder.matches(request.getPassword(), reply.getAnonymous().getAnonymousPassword()))
+    given(
+        passwordEncoder.matches(request.getPassword(), reply.getAnonymous().getAnonymousPassword()))
         .willThrow(new BusinessException(ReplyErrorCode.INVALID_PASSWORD));
 
     // when
-    BusinessException businessException = assertThrows(BusinessException.class,  () -> replyUpdateService.update(request, files));
+    BusinessException businessException = assertThrows(BusinessException.class,
+        () -> replyUpdateService.update(request, files));
 
     // then
     assertThat(businessException.getErrorCode(), is(ReplyErrorCode.INVALID_PASSWORD));
