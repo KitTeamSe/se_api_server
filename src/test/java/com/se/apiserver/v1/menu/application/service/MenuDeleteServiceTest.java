@@ -1,6 +1,7 @@
 package com.se.apiserver.v1.menu.application.service;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -29,7 +30,7 @@ class MenuDeleteServiceTest {
     // given
     Menu menu = mock(Menu.class);
     when(menu.isRemovable()).thenReturn(true);
-    when(menuJpaRepository.findById(1L)).thenReturn(Optional.ofNullable(menu));
+    when(menuJpaRepository.findById(anyLong())).thenReturn(Optional.ofNullable(menu));
 
     // when
     // then
@@ -49,7 +50,7 @@ class MenuDeleteServiceTest {
   public void 자식메뉴_존재_삭제실패 () throws Exception{
     // given
     Menu menu = mock(Menu.class);
-    when(menuJpaRepository.findById(1L)).thenReturn(Optional.ofNullable(menu));
+    when(menuJpaRepository.findById(anyLong())).thenReturn(Optional.ofNullable(menu));
 
     // when
     BusinessException exception = assertThrows(BusinessException.class, () -> menuDeleteService.delete(1L));

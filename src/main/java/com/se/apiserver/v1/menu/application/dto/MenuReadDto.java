@@ -5,9 +5,11 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.se.apiserver.v1.menu.domain.entity.Menu;
 import com.se.apiserver.v1.menu.domain.entity.MenuType;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
@@ -16,11 +18,9 @@ import java.util.Set;
 
 public class MenuReadDto {
 
-
-  @Data
-  @NoArgsConstructor
-  @AllArgsConstructor
+  @Getter
   @Builder
+  @NoArgsConstructor(access = AccessLevel.PROTECTED)
   static public class ReadAllResponse {
 
     @JsonUnwrapped
@@ -30,7 +30,6 @@ public class MenuReadDto {
     private List<ReadAllResponse> child;
 
     @JsonValue
-
     public static MenuReadDto.ReadAllResponse fromEntity(Menu menu, Set<String> authorities) {
       MenuReadDto.ReadAllResponse.ReadAllResponseBuilder responseBuilder = ReadAllResponse.builder()
           .readResponse(ReadResponse.fromEntity(menu));
@@ -44,6 +43,14 @@ public class MenuReadDto {
       responseBuilder.child(tmp);
       return responseBuilder.build();
     }
+
+    public ReadAllResponse(
+        ReadResponse readResponse,
+        List<ReadAllResponse> child) {
+      this.readResponse = readResponse;
+      this.child = child;
+    }
+
   }
 
   @Data
