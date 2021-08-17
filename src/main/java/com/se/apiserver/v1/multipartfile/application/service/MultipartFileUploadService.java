@@ -3,7 +3,7 @@ package com.se.apiserver.v1.multipartfile.application.service;
 
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.common.presentation.response.Response;
-import com.se.apiserver.v1.multipartfile.application.dto.MultiPartFileUploadDto;
+import com.se.apiserver.v1.multipartfile.application.dto.MultipartFileUploadDto;
 import com.se.apiserver.v1.multipartfile.application.error.MultipartFileUploadErrorCode;
 
 import java.util.List;
@@ -35,7 +35,7 @@ public class MultipartFileUploadService extends MultipartFileService {
     this.restTemplate = restTemplate;
   }
 
-  public List<MultiPartFileUploadDto> upload(MultipartFile... files) {
+  public List<MultipartFileUploadDto> upload(MultipartFile... files) {
     // 파일 크기 검증
     for(MultipartFile file: files) {
       validateFileSize(file.getSize());
@@ -57,15 +57,15 @@ public class MultipartFileUploadService extends MultipartFileService {
     HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(parameters, headers);
     // Post 요청
     try{
-      List<MultiPartFileUploadDto> responseData = Objects.requireNonNull(restTemplate.exchange(
+      List<MultipartFileUploadDto> responseData = Objects.requireNonNull(restTemplate.exchange(
           builder.toUriString(),
           HttpMethod.POST,
           request,
-          new ParameterizedTypeReference<Response<List<MultiPartFileUploadDto>>>() {
+          new ParameterizedTypeReference<Response<List<MultipartFileUploadDto>>>() {
           }
       ).getBody()).getData();
 
-      for(MultiPartFileUploadDto data: responseData)
+      for(MultipartFileUploadDto data: responseData)
         data.changeToInternalUrl(
             createInternalUrl(data.getDownloadUrl())
       );

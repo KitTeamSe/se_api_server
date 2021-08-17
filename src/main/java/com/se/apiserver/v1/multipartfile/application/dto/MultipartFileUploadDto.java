@@ -6,11 +6,11 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MultiPartFileUploadDto {
+public class MultipartFileUploadDto {
 
   private String downloadUrl;
 
-  public MultiPartFileUploadDto(String downloadUrl) {
+  public MultipartFileUploadDto(String downloadUrl) {
     this.downloadUrl = downloadUrl;
   }
 

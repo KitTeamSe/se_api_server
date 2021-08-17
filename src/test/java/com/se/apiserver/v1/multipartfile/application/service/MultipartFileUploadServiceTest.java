@@ -7,7 +7,7 @@ import static org.mockito.Mockito.when;
 
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.common.presentation.response.Response;
-import com.se.apiserver.v1.multipartfile.application.dto.MultiPartFileUploadDto;
+import com.se.apiserver.v1.multipartfile.application.dto.MultipartFileUploadDto;
 import com.se.apiserver.v1.multipartfile.application.error.MultipartFileDeleteErrorCode;
 import com.se.apiserver.v1.multipartfile.application.error.MultipartFileUploadErrorCode;
 import java.util.Collections;
@@ -67,15 +67,15 @@ class MultipartFileUploadServiceTest {
   public void 파일_업로드_성공() throws Exception{
     //given
     MockMultipartFile file = createMockMultipartFile("test", 1L);
-    List<MultiPartFileUploadDto> datas = Collections.singletonList(new MultiPartFileUploadDto("https://localhost:3000/savedName"));
-    Response<List<MultiPartFileUploadDto>> response = new Response<>(HttpStatus.OK, "success", datas);
-    ResponseEntity<Response<List<MultiPartFileUploadDto>>> responseEntity = new ResponseEntity<>(response, response.getStatus());
+    List<MultipartFileUploadDto> datas = Collections.singletonList(new MultipartFileUploadDto("https://localhost:3000/savedName"));
+    Response<List<MultipartFileUploadDto>> response = new Response<>(HttpStatus.OK, "success", datas);
+    ResponseEntity<Response<List<MultipartFileUploadDto>>> responseEntity = new ResponseEntity<>(response, response.getStatus());
 
     when(restTemplate.exchange(
         anyString(),
         any(HttpMethod.class),
         Matchers.<HttpEntity<MultiValueMap<String, Object>>>any(),
-        Matchers.<ParameterizedTypeReference<Response<List<MultiPartFileUploadDto>>>>any()
+        Matchers.<ParameterizedTypeReference<Response<List<MultipartFileUploadDto>>>>any()
     )).thenReturn(responseEntity);
 
     MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest("GET", "/test");
@@ -83,7 +83,7 @@ class MultipartFileUploadServiceTest {
     RequestContextHolder.setRequestAttributes(servletRequestAttributes);
 
     //when
-    List<MultiPartFileUploadDto> result = multipartFileUploadService.upload(file);
+    List<MultipartFileUploadDto> result = multipartFileUploadService.upload(file);
     //then
     assertEquals(datas.get(0).getDownloadUrl(), result.get(0).getDownloadUrl());
   }
@@ -117,7 +117,7 @@ class MultipartFileUploadServiceTest {
         anyString(),
         any(HttpMethod.class),
         Matchers.<HttpEntity<MultiValueMap<String, Object>>>any(),
-        Matchers.<ParameterizedTypeReference<Response<List<MultiPartFileUploadDto>>>>any()
+        Matchers.<ParameterizedTypeReference<Response<List<MultipartFileUploadDto>>>>any()
     )).thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
 
     //when
@@ -135,7 +135,7 @@ class MultipartFileUploadServiceTest {
         anyString(),
         any(HttpMethod.class),
         Matchers.<HttpEntity<MultiValueMap<String, Object>>>any(),
-        Matchers.<ParameterizedTypeReference<Response<List<MultiPartFileUploadDto>>>>any()
+        Matchers.<ParameterizedTypeReference<Response<List<MultipartFileUploadDto>>>>any()
     )).thenThrow(new ResourceAccessException("test"));
 
     //when
@@ -153,7 +153,7 @@ class MultipartFileUploadServiceTest {
         anyString(),
         any(HttpMethod.class),
         Matchers.<HttpEntity<MultiValueMap<String, Object>>>any(),
-        Matchers.<ParameterizedTypeReference<Response<List<MultiPartFileUploadDto>>>>any()
+        Matchers.<ParameterizedTypeReference<Response<List<MultipartFileUploadDto>>>>any()
     )).thenThrow(new NullPointerException("test"));
 
     //when
