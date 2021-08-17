@@ -24,7 +24,7 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post extends BaseEntity {
-  public static final String MANAGE_AUTHORITY = "MENU_MANAGE";
+  public static final String MANAGE_AUTHORITY = "POST_MANAGE";
   public static final Integer MAX_TAG_CAPACITY = 10;
   public static final Integer MAX_ATTACH_CAPACITY = 10;
 
