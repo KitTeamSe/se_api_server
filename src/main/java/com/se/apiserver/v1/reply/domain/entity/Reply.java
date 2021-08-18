@@ -118,7 +118,8 @@ public class Reply extends BaseEntity {
     if (attaches == null) {
       return;
     }
-    this.attaches = new HashSet<>(attaches);
+    this.attaches.clear();
+    this.attaches.addAll(attaches);
   }
 
   private void validateAnonymousInput(Anonymous anonymous) {

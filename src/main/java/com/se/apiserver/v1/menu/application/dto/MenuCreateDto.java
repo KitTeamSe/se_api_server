@@ -5,22 +5,21 @@ import com.se.apiserver.v1.menu.domain.entity.Menu;
 import com.se.apiserver.v1.menu.domain.entity.MenuType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
 
 public class MenuCreateDto {
 
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
     @ApiModel("메뉴 등록 요청")
+    @Getter
+    @Builder
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     static public class Request{
 
         @Size(min = 2, max = 20)
@@ -51,6 +50,16 @@ public class MenuCreateDto {
         @ApiModelProperty(notes = "상위 메뉴 pk, null 가능", example = "1")
         private Long parentId;
 
+        public Request(String nameEng, String nameKor, String url, Integer menuOrder,
+            String description, MenuType menuType, Long parentId) {
+            this.nameEng = nameEng;
+            this.nameKor = nameKor;
+            this.url = url;
+            this.menuOrder = menuOrder;
+            this.description = description;
+            this.menuType = menuType;
+            this.parentId = parentId;
+        }
     }
 
     @Data

@@ -71,7 +71,7 @@ public class ReplyUpdateService {
     updateReplyIsSecretIfNotNull(reply, request.getIsSecret());
     updateLastModifiedIp(reply, accountContextService.getCurrentClientIP());
 
-    attachDeleteService.deleteAll(request.getAttachIdList());
+    attachDeleteService.deleteAllByOwnerId(null, reply.getReplyId());
 
     replyJpaRepository.save(reply);
     updateAttaches(reply, files);
@@ -85,8 +85,8 @@ public class ReplyUpdateService {
 
   private void updateAttaches(Reply reply, MultipartFile[] files) {
     if (files != null) {
-      List<Long> attachIdList = attachCreateService.createAttaches(null, reply.getReplyId(), files);
-      reply.updateAttaches(attachJpaRepository.findAllByAttachId(attachIdList));
+      attachCreateService.createAttaches(null, reply.getReplyId(), files);
+      reply.updateAttaches(attachJpaRepository.findAllByReplyId(reply.getReplyId()));
     }
   }
 
