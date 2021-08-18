@@ -17,8 +17,8 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 public class PageRequest {
 
-  @ApiModelProperty(example = "1", notes = "페이지, 1 이상만 가능")
-  @Min(value = 1)
+  @ApiModelProperty(example = "0", notes = "페이지, 0 이상만 가능")
+  @Min(value = 0)
   private int page;
   @ApiModelProperty(example = "50", notes = "페이지의 사이즈, 10 이상 50 이하만 가능")
   @Min(value = 10)
@@ -28,7 +28,7 @@ public class PageRequest {
   private Sort.Direction direction;
 
   public void setPage(int page) {
-    this.page = page <= 0 ? 1 : page;
+    this.page = Math.max(page, 0);
   }
 
   public void setSize(int size) {
@@ -42,6 +42,6 @@ public class PageRequest {
   }
 
   public org.springframework.data.domain.PageRequest of() {
-    return org.springframework.data.domain.PageRequest.of(page - 1, size, direction, "createdAt");
+    return org.springframework.data.domain.PageRequest.of(page, size, direction, "createdAt");
   }
 }
