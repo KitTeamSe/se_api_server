@@ -38,9 +38,5 @@ public class ReplyUpdateDto {
         @ApiModelProperty(notes = "비밀 여부")
         @NotNull
         private ReplyIsSecret isSecret;
-
-        @ApiModelProperty(notes = "첨부파일들")
-        @Singular("attaches")
-        private List<Long> attachIdList = new ArrayList<>();
     }
 }

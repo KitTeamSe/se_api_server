@@ -19,11 +19,6 @@ public class BoardReadService {
 
     private final BoardJpaRepository boardJpaRepository;
 
-    public BoardReadDto.ReadResponse read(Long id) {
-        Board board = boardJpaRepository.findById(id).orElseThrow(() -> new BusinessException(BoardErrorCode.NO_SUCH_BOARD));
-        return BoardReadDto.ReadResponse.fromEntity(board);
-    }
-
     public BoardReadDto.ReadResponse readByNameEng(String nameEng) {
         Board board = boardJpaRepository.findByNameEng(nameEng).orElseThrow(() -> new BusinessException(BoardErrorCode.NO_SUCH_BOARD));
         return BoardReadDto.ReadResponse.fromEntity(board);
