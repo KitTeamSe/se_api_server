@@ -93,7 +93,8 @@ public class AttachCreateService {
   private Attach getAttach(Post post, Reply reply, MultipartFile multipartFile) {
     String fileOriginalName = multipartFile.getOriginalFilename();
     if (post != null) {
-      return new Attach("tempURL", multipartFile.getOriginalFilename(), post);
+      return new Attach(upload(multipartFile).getDownloadUrl(),
+          multipartFile.getOriginalFilename(), post);
 //      return new Attach(upload(multipartFile).getFileDownloadUrl(), multipartFile.getOriginalFilename(), post);
     }
 
@@ -116,7 +117,7 @@ public class AttachCreateService {
     return attaches;
   }
 
-  private MultipartFileUploadDto.Response upload(MultipartFile multipartFile) {
-    return multipartFileUploadService.upload(multipartFile);
+  private MultipartFileUploadDto upload(MultipartFile multipartFile) {
+    return multipartFileUploadService.upload(multipartFile).get(0);
   }
 }
