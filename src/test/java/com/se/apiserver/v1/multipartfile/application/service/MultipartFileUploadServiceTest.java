@@ -67,7 +67,7 @@ class MultipartFileUploadServiceTest {
   public void 파일_업로드_성공() throws Exception{
     //given
     MockMultipartFile file = createMockMultipartFile("test", 1L);
-    List<MultipartFileUploadDto> datas = Collections.singletonList(new MultipartFileUploadDto("https://localhost:3000/savedName"));
+    List<MultipartFileUploadDto> datas = Collections.singletonList(new MultipartFileUploadDto("https://localhost:3000/savedName", "test"));
     Response<List<MultipartFileUploadDto>> response = new Response<>(HttpStatus.OK, "success", datas);
     ResponseEntity<Response<List<MultipartFileUploadDto>>> responseEntity = new ResponseEntity<>(response, response.getStatus());
 

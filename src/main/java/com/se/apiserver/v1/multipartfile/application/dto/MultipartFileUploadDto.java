@@ -10,8 +10,11 @@ public class MultipartFileUploadDto {
 
   private String downloadUrl;
 
-  public MultipartFileUploadDto(String downloadUrl) {
+  private String originalName;
+
+  public MultipartFileUploadDto(String downloadUrl, String originalName) {
     this.downloadUrl = downloadUrl;
+    this.originalName = originalName;
   }
 
   public void changeToInternalUrl(String internalUrl){
