@@ -15,10 +15,9 @@ public class AuthorityGroupAccountMappingDeleteService {
     private final AuthorityGroupAccountMappingJpaRepository authorityGroupAccountMappingJpaRepository;
 
     @Transactional
-    public boolean delete(Long id){
+    public void delete(Long id){
         AuthorityGroupAccountMapping authorityGroupAccountMapping = authorityGroupAccountMappingJpaRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(AuthorityGroupAccountMappingErrorCode.NO_SUCH_MAPPING));
         authorityGroupAccountMappingJpaRepository.delete(authorityGroupAccountMapping);
-        return true;
     }
 }
