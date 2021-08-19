@@ -21,58 +21,93 @@ package com.se.apiserver.v1.common.infra.advice;
  *  modified by dldhk97
  */
 
-import com.se.apiserver.v1.common.application.dto.ExceptionResponse;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.se.apiserver.v1.common.infra.logging.SeLogger;
+import com.se.apiserver.v1.common.infra.logging.standard.SeStandardLogger;
+import com.se.apiserver.v1.common.presentation.response.ExceptionResponse;
 import com.se.apiserver.v1.common.domain.exception.PreconditionFailedException;
 import com.se.apiserver.v1.common.domain.exception.SeException;
 import javax.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.validation.BindException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.util.NestedServletException;
 
-//TODO : 에러 컨벤션 확보 필요
 @RestControllerAdvice
 public class SeExceptionAdvice {
 
-  @ExceptionHandler(Exception.class)
-  public ResponseEntity<ExceptionResponse> handleSeException(final SeException e){
+  private final SeLogger logger;
+
+  public SeExceptionAdvice() {
+    this.logger = new SeStandardLogger();
+  }
+
+  @ExceptionHandler(SeException.class)
+  public ResponseEntity<ExceptionResponse> handleSeException(final SeException e) {
     this.countExceptionAndLog(e);
     HttpStatus status = e.getHttpStatus();
-    if(status == null)
+    if (status == null)
       status = HttpStatus.INTERNAL_SERVER_ERROR;
     return new ResponseEntity<>(ExceptionResponse.of(e), status);
   }
 
-  @ExceptionHandler(SeException.class)
-  public ResponseEntity<ExceptionResponse> handleGenieCheckedException(final SeException e) {
-    this.countExceptionAndLog(e);
-    if (e.getHttpStatus() == null)
-      return new ResponseEntity<>(ExceptionResponse.of(e), HttpStatus.INTERNAL_SERVER_ERROR);
-    return new ResponseEntity<>(ExceptionResponse.of(e), e.getHttpStatus());
-  }
-
+  // When precondition failed
   @ExceptionHandler(ConstraintViolationException.class)
-  public ResponseEntity<PreconditionFailedException> handleConstraintViolation(final ConstraintViolationException e) {
+  public ResponseEntity<ExceptionResponse> handleConstraintViolationException(final ConstraintViolationException e) {
     this.countExceptionAndLog(e);
-    return new ResponseEntity<>(
-        new PreconditionFailedException(e.getMessage(), e),
-        HttpStatus.PRECONDITION_FAILED
-    );
+    return new ResponseEntity<>(ExceptionResponse.of(e), HttpStatus.PRECONDITION_FAILED);
   }
 
-  @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<PreconditionFailedException> handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
+  // When input is invalid value
+  @ExceptionHandler({BindException.class, MethodArgumentNotValidException.class})
+  public ResponseEntity<ExceptionResponse> handleBindException(final BindException e) {
     this.countExceptionAndLog(e);
-    return new ResponseEntity<>(
-        new PreconditionFailedException(e.getMessage(), e),
-        HttpStatus.PRECONDITION_FAILED
-    );
+    return new ResponseEntity<>(ExceptionResponse.of(e), HttpStatus.BAD_REQUEST);
+  }
+
+  // When method is not allowed
+  @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+  protected ResponseEntity<ExceptionResponse> handleHttpRequestMethodNotSupportedException(final HttpRequestMethodNotSupportedException e) {
+    this.countExceptionAndLog(e);
+    return new ResponseEntity<>(ExceptionResponse.of(e), HttpStatus.METHOD_NOT_ALLOWED);
+  }
+
+  // When unauthorized
+  @ExceptionHandler(AccessDeniedException.class)
+  public ResponseEntity<ExceptionResponse> handleAccessDeniedException(final AccessDeniedException e) {
+    this.countExceptionAndLog(e);
+    return new ResponseEntity<>(ExceptionResponse.of(e), HttpStatus.UNAUTHORIZED);
+  }
+
+  // When json parse exception
+  @ExceptionHandler(JsonParseException.class)
+  protected ResponseEntity<ExceptionResponse> handleJsonParseException(final JsonParseException e) {
+    this.countExceptionAndLog(e);
+    return new ResponseEntity<>(ExceptionResponse.of(e, "Json 파싱에 실패했습니다."), HttpStatus.BAD_REQUEST);
+  }
+
+  // When invalid enum input exception
+  @ExceptionHandler(InvalidFormatException.class)
+  protected ResponseEntity<ExceptionResponse> handleInvalidFormatException(final InvalidFormatException e) {
+    this.countExceptionAndLog(e);
+    return new ResponseEntity<>(ExceptionResponse.of(e, "유효하지 않은 enum 입니다."), HttpStatus.BAD_REQUEST);
+  }
+
+  // When NestedServletException caused.
+  @ExceptionHandler(NestedServletException.class)
+  protected ResponseEntity<ExceptionResponse> handleInvalidFormatException(final NestedServletException e) {
+    this.countExceptionAndLog(e);
+    return new ResponseEntity<>(ExceptionResponse.of(e, e.getMessage()), HttpStatus.BAD_REQUEST);
   }
 
   private void countExceptionAndLog(final Exception e) {
-    // TODO: Stack trace 등의 정보는 로그 스택에 저장
-//    log.error("{}: {}", e.getClass().getSimpleName(), e.getLocalizedMessage());
-//    log.debug("{}: {}", e.getClass().getCanonicalName(), e.getMessage(), e);
+    logger.error(e.getClass().getSimpleName(), e.getMessage());
+    logger.debug(e.getClass().getSimpleName(), e.getMessage(), e);
   }
 }
