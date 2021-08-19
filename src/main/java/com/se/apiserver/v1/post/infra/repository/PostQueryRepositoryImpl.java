@@ -55,10 +55,10 @@ public class PostQueryRepositoryImpl extends QuerydslRepositorySupport implement
         break;
       case USERID:
         query.leftJoin(post.account, account);
-        query.where(post.anonymous.anonymousNickname.contains(keyword).or(post.account.idString.contains(keyword)));
+        query.where(post.account.idString.contains(keyword));
         break;
       case TAG:
-        query.where(post.tags.any().tag.text.contains(keyword));
+        query.where(post.tags.any().text.contains(keyword));
         break;
       default:
         throw new BusinessException(PostSearchErrorCode.NO_SUCH_SEARCH_TYPE);

@@ -70,11 +70,10 @@ public class PostUpdateService {
     List<Attach> attachList = attachJpaRepository.findAllByPostId(post.getPostId());
 
     if (accountContextService.isSignIn() && post.getAnonymous() == null) {
-      Account contextAccount = accountContextService.getContextAccount();
-      post.validateAccountAccess(contextAccount, authorities);
+      Long contextAccountid = accountContextService.getCurrentAccountId();
+      post.validateAccountAccess(contextAccountid, authorities);
       post.update(board, request.getPostContent(), request.getIsNotice(), request.getIsSecret(),
           attachList, tags, authorities, ip);
-      postJpaRepository.save(post);
       return post.getPostId();
     }
 

@@ -16,6 +16,9 @@ public abstract class MultipartFileService {
   @Value("${se-file-server.max-file-size}")
   protected long MAX_FILE_SIZE;
 
+  @Value("${service-name}")
+  protected String SERVICE_NAME;
+
   protected BusinessException getBusinessExceptionFromFileServerException(HttpStatusCodeException e){
     try{
       String errorCodeJson = e.getResponseBodyAsString();

@@ -16,12 +16,11 @@ public class AuthorityGroupDeleteService {
     private final AuthorityGroupJpaRepository authorityGroupJpaRepository;
 
     @Transactional
-    public boolean delete(Long id) {
+    public void delete(Long id) {
         AuthorityGroup authorityGroup = authorityGroupJpaRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(AuthorityGroupErrorCode.NO_SUCH_AUTHORITY_GROUP));
         authorityGroup.remove();
         authorityGroupJpaRepository.delete(authorityGroup);
-        return true;
     }
 
 }
