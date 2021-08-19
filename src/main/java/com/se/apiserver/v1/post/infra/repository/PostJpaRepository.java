@@ -13,5 +13,8 @@ public interface PostJpaRepository extends JpaRepository<Post,Long> {
     @Query("select p from Post p where p.board = :board and p.postIsDeleted = com.se.apiserver.v1.post.domain.entity.PostIsDeleted.NORMAL")
     Page<Post> findAllByBoard(Board board, Pageable pageable);
 
+    @Query("select p from Post p where p.board = :board")
+    List<Post> findAllByBoard(Board board);
+
     Page<Post> findAllByBoardAndIsNoticeEquals(Board board, PostIsNotice postIsNotice, Pageable pageable);
 }
