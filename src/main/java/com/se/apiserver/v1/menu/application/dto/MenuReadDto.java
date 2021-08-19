@@ -29,6 +29,13 @@ public class MenuReadDto {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<ReadAllResponse> child;
 
+    public ReadAllResponse(
+        ReadResponse readResponse,
+        List<ReadAllResponse> child) {
+      this.readResponse = readResponse;
+      this.child = child;
+    }
+
     @JsonValue
     public static MenuReadDto.ReadAllResponse fromEntity(Menu menu, Set<String> authorities) {
       MenuReadDto.ReadAllResponse.ReadAllResponseBuilder responseBuilder = ReadAllResponse.builder()
@@ -44,19 +51,11 @@ public class MenuReadDto {
       return responseBuilder.build();
     }
 
-    public ReadAllResponse(
-        ReadResponse readResponse,
-        List<ReadAllResponse> child) {
-      this.readResponse = readResponse;
-      this.child = child;
-    }
-
   }
 
-  @Data
-  @NoArgsConstructor
-  @AllArgsConstructor
+  @Getter
   @Builder
+  @NoArgsConstructor(access = AccessLevel.PROTECTED)
   static public class ReadResponse {
 
     private Long menuId;
@@ -76,6 +75,19 @@ public class MenuReadDto {
     private String description;
 
     private Long boardId;
+
+    public ReadResponse(Long menuId, String nameEng, String nameKor, Integer menuOrder,
+        MenuType menuType, Long parentId, String url, String description, Long boardId) {
+      this.menuId = menuId;
+      this.nameEng = nameEng;
+      this.nameKor = nameKor;
+      this.menuOrder = menuOrder;
+      this.menuType = menuType;
+      this.parentId = parentId;
+      this.url = url;
+      this.description = description;
+      this.boardId = boardId;
+    }
 
     public static MenuReadDto.ReadResponse fromEntity(Menu menu) {
       ReadResponse.ReadResponseBuilder builder = ReadResponse.builder();

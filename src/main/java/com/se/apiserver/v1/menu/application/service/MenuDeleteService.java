@@ -4,15 +4,18 @@ import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.menu.domain.entity.Menu;
 import com.se.apiserver.v1.menu.application.error.MenuErrorCode;
 import com.se.apiserver.v1.menu.infra.repository.MenuJpaRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class MenuDeleteService {
     private final MenuJpaRepository menuJpaRepository;
+
+    public MenuDeleteService(
+        MenuJpaRepository menuJpaRepository) {
+        this.menuJpaRepository = menuJpaRepository;
+    }
 
     @Transactional
     public void delete(Long id) {

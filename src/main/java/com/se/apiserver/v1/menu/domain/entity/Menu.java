@@ -136,12 +136,6 @@ public class Menu extends AccountGenerateEntity {
     this.url = url;
   }
 
-  public void updateMenuType(MenuType menuType) {
-    if(this.menuType == MenuType.FOLDER && menuType != MenuType.FOLDER && child.size() > 0)
-      throw new BusinessException(MenuErrorCode.CHILD_REMOVE_FIRST);
-    this.menuType = menuType;
-  }
-
   public void updateAccessAuthority(Authority authority){
     this.accessAuthority = authority;
   }
@@ -151,7 +145,9 @@ public class Menu extends AccountGenerateEntity {
   }
 
   public void validateAccessAuthority(Set<String> authorities) {
-    if(!authorities.contains(this.getAccessAuthority().getAuthority()) && !authorities.contains(this.getManageAuthority().getAuthority()) && !authorities.contains(MANAGE_AUTHORITY))
+    if(!authorities.contains(this.getAccessAuthority().getAuthority())
+        && !authorities.contains(this.getManageAuthority().getAuthority())
+        && !authorities.contains(MANAGE_AUTHORITY))
       throw new AccessDeniedException("접근 권한이 없습니다");
   }
 
