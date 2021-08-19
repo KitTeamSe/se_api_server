@@ -135,6 +135,11 @@ public class Post extends BaseEntity {
       throw new BusinessException(AccountErrorCode.CAN_NOT_ACCESS_ACCOUNT);
   }
 
+  public void validateAccountAccess(Set<String> authorities) {
+    if(!hasManageAuthority(authorities))
+      throw new BusinessException(AccountErrorCode.CAN_NOT_ACCESS_ACCOUNT);
+  }
+
 
   public void validateBoardAccessAuthority(Board board, Set<String> authorities) {
     board.validateAccessAuthority(authorities);
@@ -235,6 +240,12 @@ public class Post extends BaseEntity {
   public void delete(Account contextAccount, Set<String> authorities) {
     validateAccountAccess(contextAccount.getAccountId(), authorities);
     delete();
+  }
+
+  public void delete(Set<String> authorities, Board deletedBoard) {
+    validateAccountAccess(authorities);
+    delete();
+    this.board = deletedBoard;
   }
 
   public void delete() {
