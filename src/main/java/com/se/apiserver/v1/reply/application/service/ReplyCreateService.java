@@ -56,6 +56,7 @@ public class ReplyCreateService {
     post.getBoard().validateAccessAuthority(authorities);
 
     Reply parent = getParent(request.getParentId());
+    checkParentReplyHasParent(parent);
     String ip = accountContextService.getCurrentClientIP();
 
     Reply reply;
@@ -79,7 +80,7 @@ public class ReplyCreateService {
 
   private void createAttaches(Reply reply, MultipartFile[] files) {
     if (files != null) {
-      List<Long> attachIdList = attachCreateService.createAttaches(null, reply.getReplyId(), files);
+      attachCreateService.createAttaches(null, reply.getReplyId(), files);
       reply.updateAttaches(attachJpaRepository.findAllByReplyId(reply.getReplyId()));
     }
   }
@@ -92,5 +93,11 @@ public class ReplyCreateService {
     Reply parent = replyJpaRepository.findById(parentId)
         .orElseThrow(() -> new BusinessException(ReplyErrorCode.NO_SUCH_REPLY));
     return parent;
+  }
+
+  private void checkParentReplyHasParent(Reply parent) {
+    if (parent != null && parent.getParent() != null) {
+      throw new BusinessException(ReplyErrorCode.INVALID_REPLY);
+    }
   }
 }

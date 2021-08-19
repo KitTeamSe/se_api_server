@@ -99,7 +99,6 @@ public class ReplyCreateServiceTest {
         , "127.0.0.1"
         , account);
 
-
     Set<String> authorities = new HashSet<>(Arrays.asList("FREEBOARD_ACCESS"));
 
     given(attachCreateService.createAttaches(null, null, files)).willReturn(attachIdList);
@@ -142,7 +141,8 @@ public class ReplyCreateServiceTest {
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
     given(accountContextService.isSignIn()).willReturn(false);
     given(replyJpaRepository.save(Mockito.any(Reply.class))).willReturn(reply);
-    given(passwordEncoder.encode(request.getAnonymous().getAnonymousPassword())).willReturn("iDonTKnOw!@#");
+    given(passwordEncoder.encode(request.getAnonymous().getAnonymousPassword()))
+        .willReturn("iDonTKnOw!@#");
 
     // when, then
     assertDoesNotThrow(() -> replyCreateService.create(request, files));
@@ -159,9 +159,11 @@ public class ReplyCreateServiceTest {
     method.setAccessible(true);
 
     // when
-    InvocationTargetException invocationTargetException = assertThrows(InvocationTargetException.class,
+    InvocationTargetException invocationTargetException = assertThrows(
+        InvocationTargetException.class,
         () -> method.invoke(replyCreateService, nonExistentReplyId));
-    BusinessException businessException = (BusinessException) invocationTargetException.getTargetException();
+    BusinessException businessException = (BusinessException) invocationTargetException
+        .getTargetException();
 
     // then
     assertThat(businessException.getErrorCode(), is(ReplyErrorCode.NO_SUCH_REPLY));
@@ -236,6 +238,48 @@ public class ReplyCreateServiceTest {
     // then
     assertThat(businessException.getMessage(), is("삭제된 게시글입니다"));
     assertThat(businessException.getErrorCode(), is(PostErrorCode.DELETED_POST));
+  }
+
+  @Test
+  void 대댓글_작성_실패() {
+    // given
+    Long postId = 1L;
+    ReplyCreateDto.Request request = ReplyCreateDto.Request.builder()
+        .postId(postId)
+        .text("20180764 이름")
+        .isSecret(ReplyIsSecret.NORMAL)
+        .parentId(1L)
+        .build();
+    Post post = getPost();
+    Account account = getAccount();
+    Set<String> authorities = new HashSet<>(Arrays.asList("FREEBOARD_ACCESS"));
+
+    Reply parent = new Reply(post
+        , "Parent Reply"
+        , ReplyIsSecret.NORMAL
+        , null
+        , null
+        , "127.0.0.1"
+        , account);
+    Reply child = new Reply(post
+        , "Child Reply"
+        , ReplyIsSecret.NORMAL
+        , null
+        , parent
+        , "127.0.0.1"
+        , account);
+
+    given(postJpaRepository.findById(postId)).willReturn(Optional.of(post));
+    given(accountContextService.getContextAuthorities()).willReturn(authorities);
+    given(replyJpaRepository.findById(1L)).willReturn(Optional.of(child));
+
+    // when
+    BusinessException businessException = assertThrows(BusinessException.class,
+        () -> replyCreateService.create(request, files));
+
+    // then
+    assertThat(businessException.getErrorCode(), is(ReplyErrorCode.INVALID_REPLY));
+    assertThat(businessException.getMessage(), is("댓글의 댓글은 작성할 수 없습니다"));
   }
 
   private Anonymous getAnonymous() {
