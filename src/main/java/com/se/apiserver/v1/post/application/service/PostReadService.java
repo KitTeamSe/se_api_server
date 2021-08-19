@@ -8,6 +8,7 @@ import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.common.domain.exception.NotFoundException;
 import com.se.apiserver.v1.post.application.dto.PostAccessCheckDto;
 import com.se.apiserver.v1.post.application.dto.PostAnnouncementDto;
+import com.se.apiserver.v1.post.application.dto.PostReadDto.PostListItem;
 import com.se.apiserver.v1.post.application.dto.PostReadDto.PostSearchRequest;
 import com.se.apiserver.v1.post.domain.entity.Post;
 import com.se.apiserver.v1.post.application.error.PostErrorCode;
@@ -116,7 +117,7 @@ public class PostReadService {
 
     Page<Post> postPage = postQueryRepository.search(pageRequest);
     List<PostReadDto.PostListItem> res = postPage.get()
-        .map(post -> PostReadDto.PostListItem.fromEntity(post))
+        .map(PostListItem::fromEntity)
         .collect(Collectors.toList());
     return PostReadDto.PostListResponse
         .fromEntity(new PageImpl(res, postPage.getPageable(), postPage.getTotalElements()), board);
