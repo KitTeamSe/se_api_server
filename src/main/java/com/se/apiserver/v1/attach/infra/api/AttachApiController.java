@@ -35,9 +35,9 @@ public class AttachApiController {
   @PostMapping("/attach")
   @ResponseStatus(HttpStatus.CREATED)
   @ApiOperation("첨부파일 생성")
-  public SuccessResponse<AttachReadDto.Response> create(@RequestParam(value = "postId", required = false) Long postId,
+  public SuccessResponse<List<AttachReadDto.Response>> create(@RequestParam(value = "postId", required = false) Long postId,
       @RequestParam(value = "replyId", required = false) Long replyId,
-      @RequestParam(value = "multipartFile") MultipartFile multipartFile){
+      @RequestParam(value = "multipartFile") MultipartFile[] multipartFile){
     return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 등록되었습니다",
         attachCreateService.create(postId, replyId, multipartFile));
   }
