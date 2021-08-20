@@ -79,13 +79,10 @@ class BoardDeleteServiceTest {
     //Given
     BoardDeleteDto.Request request = createBoardDeleteRequest();
     Board board = new Board("freeboard","자유게시판");
-    Board deletedBoard = new Board("deletedBoard","삭제된 게시판");
 
     Long fakeBoardId = 1L;
     ReflectionTestUtils.setField(board,"boardId", fakeBoardId);
 
-    Long fakeDeletedBoardId = 2L;
-    ReflectionTestUtils.setField(deletedBoard,"boardId", fakeDeletedBoardId);
 
     Account account = createAccount();
     Set<String> authorities = Set.of("MENU_MANAGE");
@@ -97,7 +94,6 @@ class BoardDeleteServiceTest {
     ReflectionTestUtils.setField(post,"postId", fakePostId);
 
     when(boardJpaRepository.findById(fakeBoardId)).thenReturn(Optional.ofNullable(board));
-    when(boardJpaRepository.findByNameEng("deletedBoard")).thenReturn(Optional.ofNullable(deletedBoard));
     when(postJpaRepository.findAllByBoard(board)).thenReturn(postList);
     when(postJpaRepository.findById(fakePostId)).thenReturn(Optional.of(post));
     when(accountContextService.getContextAuthorities()).thenReturn(authorities);
@@ -107,7 +103,7 @@ class BoardDeleteServiceTest {
 
     Optional<Post> findPost = postJpaRepository.findById(fakePostId);
     assertThat(result).isEqualTo(true);
-    assertThat(findPost.get().getBoard().getNameEng()).isEqualTo(deletedBoard.getNameEng());
+    assertThat(findPost.get().getBoard()).isEqualTo(null);
     assertThat(findPost.get().getPostIsDeleted()).isEqualTo(PostIsDeleted.DELETED);
   }
 
@@ -133,13 +129,8 @@ class BoardDeleteServiceTest {
     //Given
     BoardDeleteDto.Request request = createBoardDeleteRequest();
     Board board = new Board("freeboard","자유게시판");
-    Board deletedBoard = new Board("deletedBoard","삭제된 게시판");
-
     Long fakeBoardId = 1L;
     ReflectionTestUtils.setField(board,"boardId", fakeBoardId);
-
-    Long fakeDeletedBoardId = 2L;
-    ReflectionTestUtils.setField(deletedBoard,"boardId", fakeDeletedBoardId);
 
     Set<String> authorities = Set.of("");
 
@@ -153,7 +144,6 @@ class BoardDeleteServiceTest {
 
     when(accountContextService.getContextAuthorities()).thenReturn(authorities);
     when(boardJpaRepository.findById(fakeBoardId)).thenReturn(Optional.ofNullable(board));
-    when(boardJpaRepository.findByNameEng("deletedBoard")).thenReturn(Optional.ofNullable(deletedBoard));
     when(postJpaRepository.findAllByBoard(board)).thenReturn(postList);
 
     //When

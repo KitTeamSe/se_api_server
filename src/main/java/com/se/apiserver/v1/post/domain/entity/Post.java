@@ -33,7 +33,7 @@ public class Post extends BaseEntity {
   private Long postId;
 
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-  @JoinColumn(name = "board_id", referencedColumnName = "boardId", nullable = false)
+  @JoinColumn(name = "board_id", referencedColumnName = "boardId")
   private Board board;
 
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
@@ -242,10 +242,10 @@ public class Post extends BaseEntity {
     delete();
   }
 
-  public void delete(Set<String> authorities, Board deletedBoard) {
+  public void delete(Set<String> authorities) {
     validateAccountAccess(authorities);
     delete();
-    this.board = deletedBoard;
+    this.board = null;
   }
 
   public void delete() {
