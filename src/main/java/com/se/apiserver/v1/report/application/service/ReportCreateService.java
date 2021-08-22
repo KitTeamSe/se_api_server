@@ -72,6 +72,7 @@ public class ReportCreateService {
 
     }
 
-    return reportJpaRepository.save(report).getReportId();
+    reportJpaRepository.save(report);
+    return report.getReportId();
   }
 }

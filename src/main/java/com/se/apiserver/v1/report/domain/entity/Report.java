@@ -28,6 +28,10 @@ public abstract class Report extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private ReportStatus reportStatus;
 
+  @Column
+  @Enumerated(EnumType.STRING)
+  private ReportResult reportResult;
+
   @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
   @JoinColumn(name = "reporter_id", referencedColumnName = "accountId", nullable = false)
   private Account reporter;
@@ -43,16 +47,18 @@ public abstract class Report extends BaseEntity {
     return ReportType.valueOf(this.getClass().getAnnotation(DiscriminatorValue.class).value());
   }
 
-  public Report(@Size(min = 2, max = 255) String description,
-      ReportStatus reportStatus, Account reporter, Account processor) {
+  public Report(String description,
+      ReportStatus reportStatus, ReportResult reportResult,
+      Account reporter, Account processor) {
     this.description = description;
     this.reportStatus = reportStatus;
+    this.reportResult = reportResult;
     this.reporter = reporter;
     this.processor = processor;
   }
 
-  protected Report(@Size(min = 2, max = 255) String description, Account reporter) {
-    this(description, ReportStatus.SUBMITTED, reporter, null);
+  protected Report(@Size(min = 5, max = 255) String description, Account reporter) {
+    this(description, ReportStatus.SUBMITTED, null, reporter, null);
   }
 
   public void updateDescription(String description){
@@ -62,6 +68,8 @@ public abstract class Report extends BaseEntity {
   public void updateReportStatus(ReportStatus reportStatus){
     this.reportStatus = reportStatus;
   }
+
+  public void updateReportResult(ReportResult reportResult) {this.reportResult = reportResult;}
 
   public void updateProcessor(Account processor){
     this.processor = processor;
