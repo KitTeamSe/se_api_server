@@ -21,7 +21,7 @@ public abstract class Report extends BaseEntity {
   private Long reportId;
 
   @Column(length = 255, nullable = false)
-  @Size(min = 2, max = 255)
+  @Size(min = 5, max = 255)
   private String description;
 
   @Column(nullable = false)
