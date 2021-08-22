@@ -2,11 +2,13 @@ package com.se.apiserver.v1.post.application.service;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.mockito.BDDMockito.willDoNothing;
 
 import com.se.apiserver.v1.account.application.service.AccountContextService;
 import com.se.apiserver.v1.account.domain.entity.Account;
@@ -15,6 +17,7 @@ import com.se.apiserver.v1.account.domain.entity.InformationOpenAgree;
 import com.se.apiserver.v1.account.domain.entity.Question;
 import com.se.apiserver.v1.attach.application.service.AttachCreateService;
 import com.se.apiserver.v1.attach.application.service.AttachDeleteService;
+import com.se.apiserver.v1.attach.application.service.AttachUpdateService;
 import com.se.apiserver.v1.attach.domain.entity.Attach;
 import com.se.apiserver.v1.attach.infra.repository.AttachJpaRepository;
 import com.se.apiserver.v1.board.domain.entity.Board;
@@ -33,6 +36,7 @@ import com.se.apiserver.v1.post.infra.repository.PostJpaRepository;
 import com.se.apiserver.v1.tag.application.error.TagErrorCode;
 import com.se.apiserver.v1.tag.domain.entity.Tag;
 import com.se.apiserver.v1.tag.infra.repository.TagJpaRepository;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -44,10 +48,24 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.multipart.MultipartFile;
 
 @ExtendWith(MockitoExtension.class)
 public class PostUpdateServiceTest {
+
+  private String data = "data";
+  private MultipartFile[] files = {
+      new MockMultipartFile("file"
+          , "file.png"
+          , "text/plain"
+          , data.getBytes(StandardCharsets.UTF_8)),
+      new MockMultipartFile("file"
+          , "file.png"
+          , "text/plain"
+          , data.getBytes(StandardCharsets.UTF_8)),
+  };
 
   @Mock
   private PostJpaRepository postJpaRepository;
@@ -60,9 +78,7 @@ public class PostUpdateServiceTest {
   @Mock
   private AttachJpaRepository attachJpaRepository;
   @Mock
-  private AttachDeleteService attachDeleteService;
-  @Mock
-  private AttachCreateService attachCreateService;
+  private AttachUpdateService attachUpdateService;
   @InjectMocks
   private PostUpdateService postUpdateService;
 
@@ -80,6 +96,7 @@ public class PostUpdateServiceTest {
         , new ArrayList<>()
         , new ArrayList<>()
         , ip);
+    Post savedPost = post;
     PostUpdateDto.Request request = PostUpdateDto.Request
         .builder()
         .postId(1L)
@@ -93,12 +110,14 @@ public class PostUpdateServiceTest {
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
     given(postJpaRepository.findById(request.getPostId())).willReturn(java.util.Optional.of(post));
     given(accountContextService.getCurrentClientIP()).willReturn(ip);
+    willDoNothing().given(attachUpdateService).update(post.getPostId(), null, files);
     given(tagJpaRepository.findById(anyLong())).willReturn(java.util.Optional.of(new Tag("태그")));
     given(accountContextService.isSignIn()).willReturn(true);
     given(accountContextService.getCurrentAccountId()).willReturn(getAccount().getAccountId());
+    given(postJpaRepository.save(post)).willReturn(savedPost);
 
     // when, then
-    assertDoesNotThrow(() -> postUpdateService.update(request, null));
+    assertDoesNotThrow(() -> postUpdateService.update(request, files));
   }
 
   @Test
@@ -116,6 +135,7 @@ public class PostUpdateServiceTest {
         , new ArrayList<>()
         , new ArrayList<>()
         , ip);
+    Post savedPost = post;
     PostUpdateDto.Request request = PostUpdateDto.Request
         .builder()
         .postId(1L)
@@ -129,9 +149,11 @@ public class PostUpdateServiceTest {
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
     given(postJpaRepository.findById(request.getPostId())).willReturn(java.util.Optional.of(post));
     given(accountContextService.getCurrentClientIP()).willReturn(ip);
+    willDoNothing().given(attachUpdateService).update(post.getPostId(), null, files);
     given(passwordEncoder.matches(getAnonymous().getAnonymousPassword(), password))
         .willReturn(true);
     given(accountContextService.isSignIn()).willReturn(false);
+    given(postJpaRepository.save(post)).willReturn(savedPost);
 
     // when, then
     assertDoesNotThrow(() -> postUpdateService.update(request, null));
@@ -168,7 +190,7 @@ public class PostUpdateServiceTest {
 
     // when
     BusinessException businessException
-        = assertThrows(BusinessException.class, () -> postUpdateService.update(request, null));
+        = assertThrows(BusinessException.class, () -> postUpdateService.update(request, files));
 
     // then
     assertThat(businessException.getErrorCode(), is(TagErrorCode.ANONYMOUS_CAN_NOT_TAG));
