@@ -5,14 +5,11 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.Size;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 public class ReportCreateDto {
-
 
   @ApiModel("신고 생성 요청")
   @Getter
@@ -35,6 +32,6 @@ public class ReportCreateDto {
       this.targetId = targetId;
       this.description = description;
     }
-
   }
+
 }
