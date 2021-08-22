@@ -3,7 +3,6 @@ package com.se.apiserver.v1.reply.application.service;
 import com.se.apiserver.v1.account.application.service.AccountContextService;
 import com.se.apiserver.v1.attach.application.service.AttachCreateService;
 import com.se.apiserver.v1.attach.application.service.AttachDeleteService;
-import com.se.apiserver.v1.attach.domain.entity.Attach;
 import com.se.apiserver.v1.attach.infra.repository.AttachJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.post.application.error.PostErrorCode;
@@ -19,7 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -85,7 +83,7 @@ public class ReplyUpdateService {
 
   private void updateAttaches(Reply reply, MultipartFile[] files) {
     if (files != null) {
-      attachCreateService.createAttaches(null, reply.getReplyId(), files);
+      attachCreateService.create(null, reply.getReplyId(), files);
       reply.updateAttaches(attachJpaRepository.findAllByReplyId(reply.getReplyId()));
     }
   }

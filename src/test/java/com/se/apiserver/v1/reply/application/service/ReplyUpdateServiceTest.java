@@ -72,7 +72,7 @@ public class ReplyUpdateServiceTest {
     // given
     Long postId = 1L;
     Long replyId = 1L;
-    List<Long> attachIdList = Arrays.asList(1L);
+    List<AttachReadDto.Response> dtoResponseList = new ArrayList<>();
     ReplyUpdateDto.Request request = ReplyUpdateDto.Request
         .builder()
         .replyId(replyId)
@@ -100,8 +100,8 @@ public class ReplyUpdateServiceTest {
         passwordEncoder.matches(request.getPassword(), reply.getAnonymous().getAnonymousPassword()))
         .willReturn(true);
     given(attachDeleteService.deleteAllByOwnerId(null, reply.getReplyId())).willReturn(true);
-    given(attachCreateService.createAttaches(null, reply.getReplyId(), files))
-        .willReturn(attachIdList);
+    given(attachCreateService.create(null, reply.getReplyId(), files))
+        .willReturn(dtoResponseList);
     given(replyJpaRepository.save(reply)).willReturn(any(Reply.class));
 
     // when, then
@@ -114,6 +114,7 @@ public class ReplyUpdateServiceTest {
     Long postId = 1L;
     Long replyId = 1L;
     List<Long> attachIdList = new ArrayList<>(Arrays.asList(1L, 2L, 3L));
+    List<AttachReadDto.Response> dtoResponseList = new ArrayList<>();
     ReplyUpdateDto.Request request = ReplyUpdateDto.Request
         .builder()
         .replyId(replyId)
@@ -140,8 +141,8 @@ public class ReplyUpdateServiceTest {
     given(accountContextService.getCurrentAccountId()).willReturn(account.getAccountId());
     given(attachDeleteService.deleteAllByOwnerId(null, reply.getReplyId())).willReturn(true);
     given(replyJpaRepository.save(reply)).willReturn(reply);
-    given(attachCreateService.createAttaches(null, reply.getReplyId(), files))
-        .willReturn(attachIdList);
+    given(attachCreateService.create(null, reply.getReplyId(), files))
+        .willReturn(dtoResponseList);
 
     // when, then
     assertDoesNotThrow(() -> replyUpdateService.update(request, files));

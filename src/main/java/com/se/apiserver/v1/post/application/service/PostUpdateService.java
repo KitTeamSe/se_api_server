@@ -1,7 +1,6 @@
 package com.se.apiserver.v1.post.application.service;
 
 import com.se.apiserver.v1.account.application.service.AccountContextService;
-import com.se.apiserver.v1.account.domain.entity.Account;
 import com.se.apiserver.v1.attach.application.service.AttachCreateService;
 import com.se.apiserver.v1.attach.application.service.AttachDeleteService;
 import com.se.apiserver.v1.attach.domain.entity.Attach;
@@ -110,7 +109,7 @@ public class PostUpdateService {
   private void updateAttaches(Post post, MultipartFile[] files) {
     if (files != null) {
       attachDeleteService.deleteAllByOwnerId(post.getPostId(), null);
-      attachCreateService.createAttaches(post.getPostId(), null, files);
+      attachCreateService.create(post.getPostId(), null, files);
     }
   }
 }
