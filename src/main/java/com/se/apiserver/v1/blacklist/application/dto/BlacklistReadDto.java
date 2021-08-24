@@ -3,12 +3,13 @@ package com.se.apiserver.v1.blacklist.application.dto;
 import com.se.apiserver.v1.blacklist.domain.entity.Blacklist;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 public class BlacklistReadDto {
-    @NoArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @Builder
     @Getter
     @ApiModel("블랙리스트 조회 응답")
