@@ -17,7 +17,7 @@ public class Blacklist extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long blacklistId;
 
-  @Column(length = 20, nullable = false)
+  @Column(length = 20, nullable = false, unique = true)
   @Size(min = 4, max = 20)
   private String ip;
 
