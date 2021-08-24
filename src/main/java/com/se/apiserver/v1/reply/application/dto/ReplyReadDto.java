@@ -32,6 +32,8 @@ public class ReplyReadDto {
     private List<AttachDto> attacheList;
     private List<Response> child;
     private LocalDateTime createAt;
+    private ReplyIsSecret isSecret;
+    private ReplyIsDelete isDelete;
 
     public static Response fromEntity(Reply reply, Boolean hasManageAuthority,
         Boolean hasAccessAuthority) {
@@ -39,7 +41,10 @@ public class ReplyReadDto {
 
       responseBuilder
           .replyId(reply.getReplyId())
-          .postId(reply.getPost().getPostId());
+          .postId(reply.getPost().getPostId())
+          .isSecret(reply.getIsSecret())
+          .isDelete(reply.getIsDelete());
+
       if (reply.getIsDelete() == ReplyIsDelete.DELETED && !hasManageAuthority) {
         responseBuilder.text(Reply.DELETED_REPLY_TEXT);
       } else {
@@ -81,7 +86,6 @@ public class ReplyReadDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class AttachDto {
-
       private Long attachId;
     }
 
