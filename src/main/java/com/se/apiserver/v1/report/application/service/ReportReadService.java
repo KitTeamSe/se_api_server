@@ -28,8 +28,7 @@ public class ReportReadService {
 
   @Transactional
   public ReportReadDto.Response read(Long id){
-    Report report = reportJpaRepository
-        .findById(id)
+    Report report = reportJpaRepository.findById(id)
         .orElseThrow(() -> new BusinessException(ReportErrorCode.NO_SUCH_REPORT));
 
     if (report.getReportStatus() == ReportStatus.SUBMITTED) {
@@ -41,11 +40,11 @@ public class ReportReadService {
   }
 
   public PageImpl readAll(Pageable pageable){
-    Page<Report> all = reportJpaRepository.findAll(pageable);
-    List<Response> responseList = all
-        .stream()
+    Page<Report> reportPage = reportJpaRepository.findAll(pageable);
+    List<Response> responseList = reportPage.stream()
         .map(response -> ReportReadDto.Response.fromEntity(response))
         .collect(Collectors.toList());
-    return new PageImpl(responseList, all.getPageable(), all.getTotalElements());
+    return new PageImpl(responseList, reportPage.getPageable(), reportPage.getTotalElements());
   }
+
 }
