@@ -17,9 +17,6 @@ public class BlacklistDetailService {
     private final BlacklistJpaRepository blacklistJpaRepository;
 
     public boolean isBaned(String ip){
-        Set<String> blacklist = new HashSet<>(blacklistJpaRepository.findAll()
-        .stream().map(b -> b.getIp()).collect(Collectors.toList()));
-        return blacklist.contains(ip);
+        return blacklistJpaRepository.findByIp(ip).isPresent();
     }
-
 }
