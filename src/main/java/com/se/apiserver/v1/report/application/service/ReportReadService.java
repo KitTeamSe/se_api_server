@@ -47,4 +47,6 @@ public class ReportReadService {
     return new PageImpl(responseList, reportPage.getPageable(), reportPage.getTotalElements());
   }
 
+  //public
+
 }
