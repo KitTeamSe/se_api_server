@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="60 seconds">
 
-  <!--로그 파일 저장 위치-->
+  <!-- 로그 파일 저장 위치-->
   <property name="LOGS_PATH" value="./logs"/>
 
-  <!--출력 정보 설정-->
+  <!-- 출력 정보 설정-->
   <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
     <layout class="ch.qos.logback.classic.PatternLayout">
       <Pattern>%d{HH:mm} %-5level %logger{36} - %msg%n</Pattern>
@@ -28,15 +28,15 @@
     </rollingPolicy>
   </appender>
 
-  <!--출력 프로필 설정-->
-  <!--로컬 환경인 경우, 콘솔에만 출력-->
+  <!-- 출력 프로필 설정 -->
+  <!-- 로컬 환경 -->
   <springProfile name="local">
     <root level="INFO">
       <appender-ref ref="CONSOLE" />
     </root>
   </springProfile>
 
-  <!--배포 환경인 경우, 콘솔 + 파일 출력 -->
+  <!-- 배포 환경 -->
   <springProfile name="prod">
     <root level="INFO">
       <appender-ref ref="CONSOLE" />
@@ -44,19 +44,38 @@
     </root>
   </springProfile>
 
-  <!--로컬 DEBUG 환경 : Stacktrace -->
+  <!-- 로컬 환경 : Stacktrace -->
+  <springProfile name="local-stacktrace">
+    <root level="INFO">
+      <appender-ref ref="CONSOLE" />
+    </root>
+    <logger name="com.se.apiserver.v1.common.infra.logging" level="debug"></logger>
+  </springProfile>
+
+  <!-- 배포 환경 : Stacktrace -->
+  <springProfile name="prod-stacktrace">
+    <root level="INFO">
+      <appender-ref ref="CONSOLE" />
+      <appender-ref ref="FILE" />
+    </root>
+    <logger name="com.se.apiserver.v1.common.infra.logging" level="debug"></logger>
+  </springProfile>
+
+  <!-- DEBUG 로컬 환경 -->
   <springProfile name="local-debug">
     <root level="DEBUG">
       <appender-ref ref="CONSOLE" />
     </root>
+    <logger name="org.hibernate.type" level="trace"></logger>
   </springProfile>
 
-  <!--배포 DEBUG 환경 : Stacktrace -->
+  <!-- DEBUG 배포 환경 -->
   <springProfile name="prod-debug">
     <root level="DEBUG">
       <appender-ref ref="CONSOLE" />
       <appender-ref ref="FILE" />
     </root>
+    <logger name="org.hibernate.type" level="trace"></logger>
   </springProfile>
 
 
