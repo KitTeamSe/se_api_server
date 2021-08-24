@@ -3,6 +3,7 @@ package com.se.apiserver.v1.menu.application.service;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -35,15 +36,12 @@ class MenuReadServiceTest {
   private MenuReadService menuReadService;
 
   @Test
-  public void 메뉴_조회_단일_성공() throws Exception{
+  public void 메뉴_단일_조회_성공() throws Exception{
     // given
-    Long menuId = 1L;
     Menu menu = new Menu("nameEng", "url", "한글이름", 1, "설명", MenuType.FOLDER);
-    when(menuJpaRepository.findById(menuId)).thenReturn(Optional.ofNullable(menu));
-
+    when(menuJpaRepository.findById(anyLong())).thenReturn(Optional.ofNullable(menu));
     // when
-    MenuReadDto.ReadResponse response = menuReadService.read(menuId);
-
+    MenuReadDto.ReadResponse response = menuReadService.read(1L);
     // then
     assertAll(
         () -> assertEquals(menu.getMenuId(), response.getMenuId()),
@@ -54,7 +52,7 @@ class MenuReadServiceTest {
   }
 
   @Test
-  public void 메뉴_조회_All_성공() throws Exception{
+  public void 메뉴_전체_조회_성공() throws Exception{
     Set<String> authorities = mock(Set.class);
     List<Menu> menus = new ArrayList<>();
     Menu menu = new Menu("nameEng", "url", "한글이름", 1, "설명", MenuType.FOLDER);
@@ -74,12 +72,12 @@ class MenuReadServiceTest {
     );
   }
 
+
   @Test
   public void 존재하지_않는_메뉴_실패() throws Exception{
     // given
     // when
     BusinessException exception = assertThrows(BusinessException.class, () -> menuReadService.read(0L));
-
     // then
     assertEquals(MenuErrorCode.NO_SUCH_MENU, exception.getErrorCode());
   }

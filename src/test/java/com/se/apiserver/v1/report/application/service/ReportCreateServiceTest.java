@@ -3,6 +3,7 @@ package com.se.apiserver.v1.report.application.service;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -62,7 +63,7 @@ class ReportCreateServiceTest {
     Account reporter = mock(Account.class);
     when(accountContextService.getContextAccount()).thenReturn(reporter);
     Reply reply = mock(Reply.class);
-    when(replyJpaRepository.findById(request.getTargetId())).thenReturn(Optional.ofNullable(reply));
+    when(replyJpaRepository.findById(anyLong())).thenReturn(Optional.ofNullable(reply));
     // when
     // then
     assertDoesNotThrow(() -> reportCreateService.create(request));
@@ -124,7 +125,7 @@ class ReportCreateServiceTest {
     Account account = mock(Account.class);
     Post post = mock(Post.class);
     when(accountContextService.getContextAccount()).thenReturn(account);
-    when(postJpaRepository.findById(request.getTargetId())).thenReturn(Optional.ofNullable(post));
+    when(postJpaRepository.findById(anyLong())).thenReturn(Optional.ofNullable(post));
     when(post.isOwner(account)).thenReturn(true);
     // when
     BusinessException exception = assertThrows(BusinessException.class, ()-> reportCreateService.create(request));
@@ -141,8 +142,8 @@ class ReportCreateServiceTest {
     Account account = mock(Account.class);
     Reply reply = mock(Reply.class);
     when(accountContextService.getContextAccount()).thenReturn(account);
-    when(replyJpaRepository.findById(request.getTargetId())).thenReturn(Optional.ofNullable(reply));
-    when(reply.isOwner(account.getAccountId())).thenReturn(true);
+    when(replyJpaRepository.findById(anyLong())).thenReturn(Optional.ofNullable(reply));
+    when(reply.isOwner(anyLong())).thenReturn(true);
     // when
     BusinessException exception = assertThrows(BusinessException.class, ()-> reportCreateService.create(request));
     // then
