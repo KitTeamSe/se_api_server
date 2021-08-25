@@ -1,8 +1,8 @@
 package com.se.apiserver.v1.reply.application.service;
 
 import com.se.apiserver.v1.account.application.service.AccountContextService;
-import com.se.apiserver.v1.attach.application.service.AttachCreateService;
-import com.se.apiserver.v1.attach.application.service.AttachDeleteService;
+import com.se.apiserver.v1.attach.application.service.AttachUpdateService;
+import com.se.apiserver.v1.attach.domain.entity.Attach;
 import com.se.apiserver.v1.attach.infra.repository.AttachJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.post.application.error.PostErrorCode;
@@ -13,11 +13,11 @@ import com.se.apiserver.v1.reply.application.error.ReplyErrorCode;
 import com.se.apiserver.v1.reply.domain.entity.Reply;
 import com.se.apiserver.v1.reply.domain.entity.ReplyIsSecret;
 import com.se.apiserver.v1.reply.infra.repository.ReplyJpaRepository;
+import java.util.List;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -29,8 +29,7 @@ public class ReplyUpdateService {
   private AccountContextService accountContextService;
   private PasswordEncoder passwordEncoder;
   private AttachJpaRepository attachJpaRepository;
-  private AttachCreateService attachCreateService;
-  private AttachDeleteService attachDeleteService;
+  private AttachUpdateService attachUpdateService;
 
   public ReplyUpdateService(
       ReplyJpaRepository replyJpaRepository,
@@ -38,15 +37,13 @@ public class ReplyUpdateService {
       AccountContextService accountContextService,
       PasswordEncoder passwordEncoder,
       AttachJpaRepository attachJpaRepository,
-      AttachCreateService attachCreateService,
-      AttachDeleteService attachDeleteService) {
+      AttachUpdateService attachUpdateService) {
     this.replyJpaRepository = replyJpaRepository;
     this.postJpaRepository = postJpaRepository;
     this.accountContextService = accountContextService;
     this.passwordEncoder = passwordEncoder;
     this.attachJpaRepository = attachJpaRepository;
-    this.attachCreateService = attachCreateService;
-    this.attachDeleteService = attachDeleteService;
+    this.attachUpdateService = attachUpdateService;
   }
 
   @Transactional
@@ -59,6 +56,9 @@ public class ReplyUpdateService {
     post.validateReadable();
     post.getBoard().validateAccessAuthority(accountContextService.getContextAuthorities());
 
+    attachUpdateService.update(null, reply.getReplyId(), files);
+    List<Attach> attaches = attachJpaRepository.findAllByReplyId(reply.getReplyId());
+
     if (reply.getAnonymous() != null) {
       validatePasswordMatch(reply, request.getPassword());
     } else {
@@ -69,23 +69,14 @@ public class ReplyUpdateService {
     updateReplyIsSecretIfNotNull(reply, request.getIsSecret());
     updateLastModifiedIp(reply, accountContextService.getCurrentClientIP());
 
-    attachDeleteService.deleteAllByOwnerId(null, reply.getReplyId());
-
-    replyJpaRepository.save(reply);
-    updateAttaches(reply, files);
+    reply = replyJpaRepository.save(reply);
+    reply.updateAttaches(attaches);
 
     return reply.getReplyId();
   }
 
   private void updateLastModifiedIp(Reply reply, String currentClientIP) {
     reply.updateLastModifiedIp(currentClientIP);
-  }
-
-  private void updateAttaches(Reply reply, MultipartFile[] files) {
-    if (files != null) {
-      attachCreateService.create(null, reply.getReplyId(), files);
-      reply.updateAttaches(attachJpaRepository.findAllByReplyId(reply.getReplyId()));
-    }
   }
 
   private void updateReplyIsSecretIfNotNull(Reply reply, ReplyIsSecret isSecret) {
