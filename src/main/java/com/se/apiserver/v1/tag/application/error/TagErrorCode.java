@@ -8,7 +8,8 @@ public enum TagErrorCode implements ErrorCode {
     NO_SUCH_TAG(400,"TG01","존재하지 않는 태그"),
     DUPLICATED_TAG(401,"TG02","태그명 중복"),
     ANONYMOUS_CAN_NOT_TAG(400, "TG03", "익명 사용자는 태그를 달 수 없습니다"),
-    TO_SHORT_LENGTH(400, "TG04", "검색어는 최소 두 글자 이상입니다.");
+    TO_SHORT_LENGTH(400, "TG04", "검색어는 최소 두 글자 이상입니다."),
+    TO_MANY_TAGS(400, "TG05", "태그 등록은 10개까지 가능합니다");
 
     private int status;
     private final String code;
