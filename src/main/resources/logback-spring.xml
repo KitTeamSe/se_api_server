@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds">
+
+  <!-- 로그 파일 저장 위치-->
+  <property name="LOGS_PATH" value="./logs"/>
+
+  <!-- 출력 정보 설정-->
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <Pattern>%d{HH:mm} %-5level %logger{36} - %msg%n</Pattern>
+    </layout>
+  </appender>
+
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${LOGS_PATH}/logback.log</file>
+    <encoder>
+      <charset>UTF-8</charset>
+      <pattern>[%d{yyyy-MM-dd HH:mm:ss}:%-3relative][%thread] %-5level %logger{35} - %msg%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${LOGS_PATH}/logback.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+      <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+        <!-- or whenever the file size reaches 100MB -->
+        <maxFileSize>10MB</maxFileSize>
+        <!-- kb, mb, gb -->
+      </timeBasedFileNamingAndTriggeringPolicy>
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+  </appender>
+
+  <!-- 출력 프로필 설정 -->
+  <!-- 로컬 환경 -->
+  <springProfile name="local">
+    <root level="INFO">
+      <appender-ref ref="CONSOLE" />
+    </root>
+  </springProfile>
+
+  <!-- 배포 환경 -->
+  <springProfile name="prod">
+    <root level="INFO">
+      <appender-ref ref="CONSOLE" />
+      <appender-ref ref="FILE" />
+    </root>
+  </springProfile>
+
+  <!-- 로컬 환경 : Stacktrace -->
+  <springProfile name="local-stacktrace">
+    <root level="INFO">
+      <appender-ref ref="CONSOLE" />
+    </root>
+    <logger name="com.se.apiserver.v1.common.infra.logging" level="debug"></logger>
+  </springProfile>
+
+  <!-- 배포 환경 : Stacktrace -->
+  <springProfile name="prod-stacktrace">
+    <root level="INFO">
+      <appender-ref ref="CONSOLE" />
+      <appender-ref ref="FILE" />
+    </root>
+    <logger name="com.se.apiserver.v1.common.infra.logging" level="debug"></logger>
+  </springProfile>
+
+  <!-- DEBUG 로컬 환경 -->
+  <springProfile name="local-debug">
+    <root level="DEBUG">
+      <appender-ref ref="CONSOLE" />
+    </root>
+    <logger name="org.hibernate.type" level="trace"></logger>
+  </springProfile>
+
+  <!-- DEBUG 배포 환경 -->
+  <springProfile name="prod-debug">
+    <root level="DEBUG">
+      <appender-ref ref="CONSOLE" />
+      <appender-ref ref="FILE" />
+    </root>
+    <logger name="org.hibernate.type" level="trace"></logger>
+  </springProfile>
+
+
+</configuration>
