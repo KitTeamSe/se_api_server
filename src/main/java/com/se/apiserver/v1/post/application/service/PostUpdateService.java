@@ -29,6 +29,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional(readOnly = true)
 public class PostUpdateService {
 
+  private final int MAX_NUMBER_OF_TAGS = 10;
+
   private final PostJpaRepository postJpaRepository;
   private final AccountContextService accountContextService;
   private final PasswordEncoder passwordEncoder;
@@ -58,6 +60,8 @@ public class PostUpdateService {
         .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));
     Board board = post.getBoard();
     List<Tag> tags = getTagsIfSignIn(request.getTagList());
+    checkNumberOfTags(tags);
+
     String ip = accountContextService.getCurrentClientIP();
     post.validateReadable();
 
@@ -107,5 +111,11 @@ public class PostUpdateService {
         .map(t -> tagJpaRepository.findById(t.getTagId())
             .orElseThrow(() -> new BusinessException(TagErrorCode.NO_SUCH_TAG)))
         .collect(Collectors.toList());
+  }
+
+  private void checkNumberOfTags(List<Tag> tags) {
+    if (tags.size() > MAX_NUMBER_OF_TAGS) {
+      throw new BusinessException(TagErrorCode.TO_MANY_TAGS);
+    }
   }
 }

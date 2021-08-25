@@ -32,6 +32,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional(readOnly = true)
 public class PostCreateService {
 
+  private final int MAX_NUMBER_OF_TAGS = 10;
+
   private final PostJpaRepository postJpaRepository;
   private final AccountContextService accountContextService;
   private final AttachCreateService attachCreateService;
@@ -48,6 +50,9 @@ public class PostCreateService {
 
     Set<String> authorities = accountContextService.getContextAuthorities();
     List<Tag> tags = getTagsIfSignIn(request.getTagList());
+
+    checkNumberOfTags(tags);
+
     String ip = accountContextService.getCurrentClientIP();
 
     if (accountContextService.isSignIn()) {
@@ -104,5 +109,11 @@ public class PostCreateService {
                 .orElseThrow(() -> new BusinessException(TagErrorCode.NO_SUCH_TAG))
         )
         .collect(Collectors.toList());
+  }
+
+  private void checkNumberOfTags(List<Tag> tags) {
+    if (tags.size() > MAX_NUMBER_OF_TAGS) {
+      throw new BusinessException(TagErrorCode.TO_MANY_TAGS);
+    }
   }
 }
