@@ -1,11 +1,10 @@
-package com.se.apiserver.v1.common.application.dto;
+package com.se.apiserver.v1.common.presentation.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 
 public class ExceptionResponse {
 
@@ -29,6 +28,12 @@ public class ExceptionResponse {
 
   public static ExceptionResponse of(Exception e) {
     return new ExceptionResponse(e);
+  }
+
+  public static ExceptionResponse of(Exception e, String message) {
+    ExceptionResponse exceptionResponse = new ExceptionResponse(e);
+    exceptionResponse.message = message;
+    return exceptionResponse;
   }
 
   private List<FieldError> initErrors(List<FieldError> errors) {
