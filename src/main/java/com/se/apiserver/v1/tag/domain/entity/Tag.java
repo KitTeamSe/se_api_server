@@ -18,12 +18,11 @@ public class Tag extends AccountGenerateEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long tagId;
 
-  @Column(unique = true, nullable = false)
-      //(columnDefinition = "VARCHAR(30) UNIQUE NOT NULL, FULLTEXT KEY textFulltext (text)")
+  @Column(columnDefinition = "VARCHAR(30) UNIQUE NOT NULL, FULLTEXT KEY textFulltext (text) WITH PARSER ngram")
   @Size(min = 1, max = 30)
   private String text;
 
-  public Tag(@Size(min = 1, max = 30) String text) {
+  public Tag(@Size(min = 1, max = 20) String text) {
     this.text = text;
   }
 
