@@ -99,7 +99,7 @@ public class PostCreateServiceTest {
     given(tagJpaRepository.findById(tagDtoList.get(0).getTagId()))
         .willReturn(java.util.Optional.ofNullable(tags.get(0)));
     given(postJpaRepository.save(Mockito.any(Post.class))).willReturn(post);
-    given(attachCreateService.createAttaches(post.getPostId(), null, files))
+    given(attachCreateService.create(post.getPostId(), null, files))
         .willReturn(new ArrayList<>());
     given(attachJpaRepository.findAllByPostId(post.getPostId())).willReturn(attaches);
 
@@ -136,7 +136,7 @@ public class PostCreateServiceTest {
     given(passwordEncoder.encode(request.getAnonymous().getAnonymousPassword()))
         .willReturn("password");
     given(postJpaRepository.save(Mockito.any(Post.class))).willReturn(post);
-    given(attachCreateService.createAttaches(post.getPostId(), null, files))
+    given(attachCreateService.create(post.getPostId(), null, files))
         .willReturn(new ArrayList<>());
     given(attachJpaRepository.findAllByPostId(post.getPostId())).willReturn(attaches);
 

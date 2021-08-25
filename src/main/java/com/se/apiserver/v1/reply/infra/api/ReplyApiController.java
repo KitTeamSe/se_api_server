@@ -62,7 +62,7 @@ public class ReplyApiController {
 
   @DeleteMapping("/reply/anonymous")
   @ResponseStatus(HttpStatus.OK)
-  @ApiOperation("댓글 삭제")
+  @ApiOperation("익명 댓글 삭제")
   public SuccessResponse delete(
       @RequestBody @Validated ReplyDeleteDto.AnonymousReplyDeleteRequest anonymousReplyDeleteRequest) {
     replyDeleteService.deleteAnonymousReply(anonymousReplyDeleteRequest);
@@ -80,7 +80,7 @@ public class ReplyApiController {
 
   @GetMapping("/reply/secret")
   @ResponseStatus(HttpStatus.OK)
-  @ApiOperation("비밀 댓글 조회")
+  @ApiOperation("익명 비밀 댓글 조회")
   public SuccessResponse<ReplyReadDto.Response> readSecret(Long replyId, String password) {
     return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 조회되었습니다",
         replyReadService.readAnonymousSecretReply(replyId, password));

@@ -17,6 +17,7 @@ insert into authority (authority_id, name_eng, name_kor) values (16,'REPORT_MANA
 insert into authority (authority_id, name_eng, name_kor) values (17,'AUTHORITY_MANAGE','권한_관리');
 insert into authority (authority_id, name_eng, name_kor) values (18,'SCHEDULE_MANAGE','시간표_관리');
 insert into authority (authority_id, name_eng, name_kor) values (19,'NOTICE_MANAGE','알림_관리');
+insert into authority (authority_id, name_eng, name_kor) values (20,'REPLY_MANAGE','댓글_관리');
 
 
 insert into authority_group (authority_group_id, description, name, type) values (1,'비로그인 사용자','ANONYMOUS', 'ANONYMOUS');
@@ -78,6 +79,7 @@ insert into authority_group_authority_mapping (authority_group_authority_mapping
 insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (26,17,3);
 insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (27,18,3);
 insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (28,19,3);
+insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (29,20,3);
 
 insert into period (period_id, period_order, name, start_time, end_time) values (1, 1, '1', '09:00:00', '09:50:00');
 insert into period (period_id, period_order, name, start_time, end_time) values (2, 2, '2', '10:00:00', '10:50:00');
@@ -94,13 +96,14 @@ insert into period (period_id, period_order, name, start_time, end_time) values 
 insert into period (period_id, period_order, name, start_time, end_time) values (13, 13, 'D', '20:45:00', '21:30:00');
 insert into period (period_id, period_order, name, start_time, end_time) values (14, 14, 'E', '21:40:00', '22:25:00');
 
-insert into authority (authority_id, name_eng, name_kor) values (20, 'freeboard_ACCESS', '자유게시판_접근');
-insert into authority (authority_id, name_eng, name_kor) values (21, 'freeboard_MANAGE', '자유게시판_관리');
-insert into menu (menu_id, description, menu_order, menu_type, name_eng, name_kor, url, access_authority_id, manage_authority_id) values (1, '자유게시판', 1, 'BOARD', 'freeboard', '자유게시판', 'freeboard', 20, 21);
+insert into authority (authority_id, name_eng, name_kor) values (21, 'freeboard_ACCESS', '자유게시판_접근');
+insert into authority (authority_id, name_eng, name_kor) values (22, 'freeboard_MANAGE', '자유게시판_관리');
+insert into menu (menu_id, description, menu_order, menu_type, name_eng, name_kor, url, access_authority_id, manage_authority_id) values (1, '자유게시판', 1, 'BOARD', 'freeboard', '자유게시판', 'freeboard', 21, 22);
 insert into board (board_id, name_eng, name_kor, menu_id) values (1, 'freeboard', '자유게시판', 1);
-insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (29,20,1);
-insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (30,20,2);
-insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (31,20,3);
+insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (30,21,1);
+insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (31,21,2);
+insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (32,21,3);
+insert into authority_group_authority_mapping (authority_group_authority_mapping_id, authority_id, authority_group_id) values (33,22,3);
 
 insert into tag (tag_id, text) values (1, '1학년');
 insert into tag (tag_id, text) values (2, '2학년');

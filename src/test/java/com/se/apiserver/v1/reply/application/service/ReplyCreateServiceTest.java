@@ -14,7 +14,6 @@ import com.se.apiserver.v1.account.domain.entity.AccountType;
 import com.se.apiserver.v1.account.domain.entity.InformationOpenAgree;
 import com.se.apiserver.v1.account.domain.entity.Question;
 import com.se.apiserver.v1.attach.application.dto.AttachReadDto;
-import com.se.apiserver.v1.attach.application.error.AttachErrorCode;
 import com.se.apiserver.v1.attach.application.service.AttachCreateService;
 import com.se.apiserver.v1.attach.domain.entity.Attach;
 import com.se.apiserver.v1.attach.infra.repository.AttachJpaRepository;
@@ -83,7 +82,7 @@ public class ReplyCreateServiceTest {
   void 회원_댓글_등록_성공() {
     // given
     Long postId = 1L;
-    List<Long> attachIdList = Arrays.asList(1L);
+    List<AttachReadDto.Response> dtoResponseList = new ArrayList<>();
     ReplyCreateDto.Request request = ReplyCreateDto.Request.builder()
         .postId(postId)
         .text("20180764 이름")
@@ -101,7 +100,8 @@ public class ReplyCreateServiceTest {
 
     Set<String> authorities = new HashSet<>(Arrays.asList("FREEBOARD_ACCESS"));
 
-    given(attachCreateService.createAttaches(null, null, files)).willReturn(attachIdList);
+    // 수정 요망
+    given(attachCreateService.create(null, null, files)).willReturn(dtoResponseList);
     given(postJpaRepository.findById(postId)).willReturn(java.util.Optional.of(post));
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
     given(accountContextService.isSignIn()).willReturn(true);
@@ -116,8 +116,7 @@ public class ReplyCreateServiceTest {
   void 익명_사용자_댓글_등록_성공() {
     // given
     Long postId = 1L;
-    List<Long> attachIdList = Arrays.asList(1L);
-    List<AttachDto> attachs = Arrays.asList(new AttachDto(1L, null, null));
+    List<AttachReadDto.Response> dtoResponseList = new ArrayList<>();
     Anonymous anonymous = getAnonymous();
     ReplyCreateDto.Request request = ReplyCreateDto.Request.builder()
         .postId(postId)
@@ -136,7 +135,7 @@ public class ReplyCreateServiceTest {
         , anonymous);
     Set<String> authorities = new HashSet<>(Arrays.asList("FREEBOARD_ACCESS"));
 
-    given(attachCreateService.createAttaches(null, null, files)).willReturn(attachIdList);
+    given(attachCreateService.create(null, null, files)).willReturn(dtoResponseList);
     given(postJpaRepository.findById(postId)).willReturn(java.util.Optional.of(post));
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
     given(accountContextService.isSignIn()).willReturn(false);

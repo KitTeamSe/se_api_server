@@ -79,7 +79,7 @@ public class PostCreateService {
 
   private void createAttaches(Post post, MultipartFile[] files) {
     if (files != null) {
-      attachCreateService.createAttaches(post.getPostId(), null, files);
+      attachCreateService.create(post.getPostId(), null, files);
       post.updateAttaches(attachJpaRepository.findAllByPostId(post.getPostId()));
     }
   }

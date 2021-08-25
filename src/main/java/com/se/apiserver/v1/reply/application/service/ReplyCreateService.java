@@ -13,7 +13,6 @@ import com.se.apiserver.v1.reply.application.error.ReplyErrorCode;
 import com.se.apiserver.v1.reply.domain.entity.Reply;
 import com.se.apiserver.v1.reply.infra.repository.ReplyJpaRepository;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -80,7 +79,7 @@ public class ReplyCreateService {
 
   private void createAttaches(Reply reply, MultipartFile[] files) {
     if (files != null) {
-      attachCreateService.createAttaches(null, reply.getReplyId(), files);
+      attachCreateService.create(null, reply.getReplyId(), files);
       reply.updateAttaches(attachJpaRepository.findAllByReplyId(reply.getReplyId()));
     }
   }
