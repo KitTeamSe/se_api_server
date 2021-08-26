@@ -18,7 +18,7 @@ public class TagCreateDto {
     @ApiModel("태그 등록 요청")
     static public class Request{
         @ApiModelProperty(notes = "태그", value = "학사")
-        @Size(min = 2, max = 30)
+        @Size(min = 2, max = 20)
         @NotEmpty
         private String text;
     }

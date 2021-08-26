@@ -2,6 +2,7 @@ package com.se.apiserver.v1.tag.domain.entity;
 
 import com.se.apiserver.v1.common.domain.entity.AccountGenerateEntity;
 
+import java.util.Set;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,8 @@ import javax.validation.constraints.Size;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Tag extends AccountGenerateEntity {
+
+  public static final String TAG_AUTHORITY = "TAG_MANAGE";
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,5 +31,9 @@ public class Tag extends AccountGenerateEntity {
 
   public void updateText(String text) {
     this.text = text;
+  }
+
+  public final boolean hasManageAuthority(Set<String> authorities) {
+    return authorities.contains(TAG_AUTHORITY);
   }
 }
