@@ -4,32 +4,24 @@ import com.se.apiserver.v1.attach.domain.entity.Attach;
 import com.se.apiserver.v1.attach.application.error.AttachErrorCode;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.attach.infra.repository.AttachJpaRepository;
-import com.se.apiserver.v1.multipartfile.application.error.FileServerErrorCodeProxy;
 import com.se.apiserver.v1.multipartfile.application.service.MultipartFileDeleteService;
-import com.se.apiserver.v1.post.application.error.PostErrorCode;
-import com.se.apiserver.v1.post.domain.entity.Post;
-import com.se.apiserver.v1.post.domain.repository.PostRepository;
-import com.se.apiserver.v1.post.infra.repository.PostJpaRepository;
-import com.se.apiserver.v1.reply.application.error.ReplyErrorCode;
-import com.se.apiserver.v1.reply.domain.entity.Reply;
-import com.se.apiserver.v1.reply.infra.repository.ReplyJpaRepository;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class AttachDeleteService {
 
-  @Autowired
   private final MultipartFileDeleteService multipartFileDeleteService;
-
   private final AttachJpaRepository attachJpaRepository;
+
+  public AttachDeleteService(
+      MultipartFileDeleteService multipartFileDeleteService,
+      AttachJpaRepository attachJpaRepository) {
+    this.multipartFileDeleteService = multipartFileDeleteService;
+    this.attachJpaRepository = attachJpaRepository;
+  }
 
   @Transactional
   public boolean delete(Long id) {

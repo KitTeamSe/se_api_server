@@ -1,8 +1,7 @@
 package com.se.apiserver.v1.post.application.service;
 
 import com.se.apiserver.v1.account.application.service.AccountContextService;
-import com.se.apiserver.v1.attach.application.service.AttachCreateService;
-import com.se.apiserver.v1.attach.application.service.AttachDeleteService;
+import com.se.apiserver.v1.attach.application.service.AttachUpdateService;
 import com.se.apiserver.v1.attach.domain.entity.Attach;
 import com.se.apiserver.v1.board.domain.entity.Board;
 import com.se.apiserver.v1.common.domain.entity.Anonymous;
@@ -35,8 +34,7 @@ public class PostUpdateService {
   private final PasswordEncoder passwordEncoder;
   private final TagJpaRepository tagJpaRepository;
   private final AttachJpaRepository attachJpaRepository;
-  private final AttachDeleteService attachDeleteService;
-  private final AttachCreateService attachCreateService;
+  private final AttachUpdateService attachUpdateService;
 
   public PostUpdateService(
       PostJpaRepository postJpaRepository,
@@ -44,15 +42,13 @@ public class PostUpdateService {
       PasswordEncoder passwordEncoder,
       TagJpaRepository tagJpaRepository,
       AttachJpaRepository attachJpaRepository,
-      AttachDeleteService attachDeleteService,
-      AttachCreateService attachCreateService) {
+      AttachUpdateService attachUpdateService) {
     this.postJpaRepository = postJpaRepository;
     this.accountContextService = accountContextService;
     this.passwordEncoder = passwordEncoder;
     this.tagJpaRepository = tagJpaRepository;
     this.attachJpaRepository = attachJpaRepository;
-    this.attachDeleteService = attachDeleteService;
-    this.attachCreateService = attachCreateService;
+    this.attachUpdateService = attachUpdateService;
   }
 
   @Transactional
@@ -65,14 +61,18 @@ public class PostUpdateService {
     String ip = accountContextService.getCurrentClientIP();
     post.validateReadable();
 
-    updateAttaches(post, files);
+    attachUpdateService.update(post.getPostId(), null, files);
     List<Attach> attachList = attachJpaRepository.findAllByPostId(post.getPostId());
 
     if (accountContextService.isSignIn() && post.getAnonymous() == null) {
       Long contextAccountid = accountContextService.getCurrentAccountId();
       post.validateAccountAccess(contextAccountid, authorities);
-      post.update(board, request.getPostContent(), request.getIsNotice(), request.getIsSecret(),
-          attachList, tags, authorities, ip);
+      post.update(board, request.getPostContent(), request.getIsNotice(), request.getIsSecret(), authorities, ip);
+
+      post = postJpaRepository.save(post);
+      post.updateTags(tags);
+      post.updateAttaches(attachList);
+
       return post.getPostId();
     }
 
@@ -81,8 +81,11 @@ public class PostUpdateService {
     }
 
     validateAnonymousAccess(post.getAnonymous(), request.getAnonymousPassword());
-    post.update(board, request.getPostContent(), request.getIsNotice(), request.getIsSecret(),
-        attachList, tags, authorities, ip);
+    post.update(board, request.getPostContent(), request.getIsNotice(), request.getIsSecret(), authorities, ip);
+
+    Post updatedPost = postJpaRepository.save(post);
+    updatedPost.updateTags(tags);
+    updatedPost.updateAttaches(attachList);
 
     return post.getPostId();
   }
@@ -104,12 +107,5 @@ public class PostUpdateService {
         .map(t -> tagJpaRepository.findById(t.getTagId())
             .orElseThrow(() -> new BusinessException(TagErrorCode.NO_SUCH_TAG)))
         .collect(Collectors.toList());
-  }
-
-  private void updateAttaches(Post post, MultipartFile[] files) {
-    if (files != null) {
-      attachDeleteService.deleteAllByOwnerId(post.getPostId(), null);
-      attachCreateService.create(post.getPostId(), null, files);
-    }
   }
 }

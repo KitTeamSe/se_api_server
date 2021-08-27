@@ -205,13 +205,11 @@ public class Post extends BaseEntity {
   }
 
   public void update(Board board, PostContent postContent, PostIsNotice isNotice,
-                     PostIsSecret isSecret, List<Attach> attachList, List<Tag> tags, Set<String> authorities, String ip) {
+                     PostIsSecret isSecret, Set<String> authorities, String ip) {
     updateBoard(board, authorities);
     updateContent(postContent);
     updateIsNotice(isNotice, authorities);
     updateIsSecret(isSecret);
-    updateAttaches(attachList);
-    updateTags(tags);
     updateLastModifiedIp(ip);
   }
 

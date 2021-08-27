@@ -34,15 +34,23 @@ public class TagReadService {
         if(!accountContextService.isSignIn())
             throw new BusinessException(GlobalErrorCode.HANDLE_ACCESS_DENIED);
 
-        List<Tag> tags = tagJpaRepository.findByTextContainingIgnoreCase(text);
+        checkTextLength(text);
+
+        List<Tag> tags = tagJpaRepository.findAllByText(text);
         return tags.stream().map(a -> TagReadDto.Response.fromEntity(a)).collect(Collectors.toList());
     }
 
-    public PageImpl readAll(Pageable pageable) {
+    public Page<Tag> readAll(Pageable pageable) {
         Page<Tag> tags = tagJpaRepository.findAll(pageable);
         List<TagReadDto.Response> responseList = tags.stream()
                 .map(t -> TagReadDto.Response.fromEntity(t))
                 .collect(Collectors.toList());
         return new PageImpl(responseList, tags.getPageable(), tags.getTotalElements());
+    }
+
+    public void checkTextLength(String text) {
+        if (text.length() < 2) {
+            throw new BusinessException(TagErrorCode.TO_SHORT_LENGTH);
+        }
     }
 }
