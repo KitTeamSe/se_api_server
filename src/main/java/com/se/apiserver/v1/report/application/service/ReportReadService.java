@@ -41,12 +41,7 @@ public class ReportReadService {
   public ReportReadDto.Response read(Long id){
     Report report = reportJpaRepository.findById(id)
         .orElseThrow(() -> new BusinessException(ReportErrorCode.NO_SUCH_REPORT));
-
-    if (report.getReportStatus() == ReportStatus.SUBMITTED) {
-      report.updateReportStatus(ReportStatus.REVIEWING);
-      reportJpaRepository.save(report);
-    }
-
+    updateStatusWhenFirstRead(report);
     return ReportReadDto.Response.fromEntity(report);
   }
 
@@ -70,4 +65,10 @@ public class ReportReadService {
     return new PageImpl(responseList, reportPage.getPageable(), reportPage.getTotalElements());
   }
 
+  public void updateStatusWhenFirstRead (Report report) {
+    if (report.getReportStatus() == ReportStatus.SUBMITTED) {
+      report.updateReportStatus(ReportStatus.REVIEWING);
+      reportJpaRepository.save(report);
+    }
+  }
 }
