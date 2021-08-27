@@ -20,8 +20,8 @@ public class ReportDeleteService {
 
   @Transactional
   public void delete(Long reportId){
-    Report report = reportJpaRepository
-        .findById(reportId).orElseThrow(() -> new BusinessException(ReportErrorCode.NO_SUCH_REPORT));
+    Report report = reportJpaRepository.findById(reportId)
+        .orElseThrow(() -> new BusinessException(ReportErrorCode.NO_SUCH_REPORT));
     reportJpaRepository.delete(report);
   }
 
