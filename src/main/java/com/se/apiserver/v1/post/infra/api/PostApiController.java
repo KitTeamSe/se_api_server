@@ -63,7 +63,7 @@ public class PostApiController {
   }
 
 
-  @DeleteMapping("/post/anonymous/{id}")
+  @PostMapping("/post/anonymous/{id}")
   @ResponseStatus(HttpStatus.OK)
   @ApiOperation("익명 게시글 삭제")
   public SuccessResponse delete(

@@ -60,7 +60,7 @@ public class ReplyApiController {
     return new SuccessResponse(HttpStatus.OK.value(), "성공적으로 삭제되었습니다");
   }
 
-  @DeleteMapping("/reply/anonymous")
+  @PostMapping("/reply/anonymous")
   @ResponseStatus(HttpStatus.OK)
   @ApiOperation("익명 댓글 삭제")
   public SuccessResponse delete(
