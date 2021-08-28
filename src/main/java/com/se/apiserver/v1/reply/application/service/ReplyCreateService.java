@@ -11,6 +11,7 @@ import com.se.apiserver.v1.post.infra.repository.PostJpaRepository;
 import com.se.apiserver.v1.reply.application.dto.ReplyCreateDto;
 import com.se.apiserver.v1.reply.application.error.ReplyErrorCode;
 import com.se.apiserver.v1.reply.domain.entity.Reply;
+import com.se.apiserver.v1.reply.domain.entity.ReplyIsDelete;
 import com.se.apiserver.v1.reply.infra.repository.ReplyJpaRepository;
 import java.util.ArrayList;
 import java.util.Set;
@@ -56,6 +57,7 @@ public class ReplyCreateService {
 
     Reply parent = getParent(request.getParentId());
     checkParentReplyHasParent(parent);
+    checkIsParentDeleted(parent);
     String ip = accountContextService.getCurrentClientIP();
 
     Reply reply;
@@ -97,6 +99,12 @@ public class ReplyCreateService {
   private void checkParentReplyHasParent(Reply parent) {
     if (parent != null && parent.getParent() != null) {
       throw new BusinessException(ReplyErrorCode.INVALID_REPLY);
+    }
+  }
+
+  private void checkIsParentDeleted(Reply parent){
+    if(parent != null && parent.getIsDelete() == ReplyIsDelete.DELETED){
+      throw new BusinessException(ReplyErrorCode.CANNOT_REPLY_DELETED_PARENT);
     }
   }
 }
