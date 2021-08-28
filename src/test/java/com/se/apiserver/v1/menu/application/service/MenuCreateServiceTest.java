@@ -3,6 +3,8 @@ package com.se.apiserver.v1.menu.application.service;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -74,7 +76,7 @@ class MenuCreateServiceTest {
     Long parentId = 1L;
     Menu parent = new Menu("nameEng", "url", "한글이름", 1, "부모설명", MenuType.FOLDER);
     MenuCreateDto.Request request = createRequestEntityWithParentId(parentId);
-    when(menuJpaRepository.findById(request.getParentId())).thenReturn(Optional.ofNullable(parent));
+    when(menuJpaRepository.findById(anyLong())).thenReturn(Optional.ofNullable(parent));
 
     // when
     // then
@@ -86,7 +88,7 @@ class MenuCreateServiceTest {
     // given
     Menu menu = mock(Menu.class);
     MenuCreateDto.Request request = createRequestEntityWithParentId(null);
-    when(menuJpaRepository.findByNameKor(request.getNameKor())).thenReturn(Optional.ofNullable(menu));
+    when(menuJpaRepository.findByNameKor(anyString())).thenReturn(Optional.ofNullable(menu));
 
     // when
     BusinessException exception = assertThrows(BusinessException.class, () -> menuCreateService.create(request));
@@ -100,7 +102,7 @@ class MenuCreateServiceTest {
     // given
     Authority authority = mock(Authority.class);
     MenuCreateDto.Request request = createRequestEntityWithParentId(null);
-    when(authorityJpaRepository.findByNameKor(request.getNameKor())).thenReturn(Optional.ofNullable(authority));
+    when(authorityJpaRepository.findByNameKor(anyString())).thenReturn(Optional.ofNullable(authority));
 
     // when
     BusinessException exception = assertThrows(BusinessException.class, () -> menuCreateService.create(request));
@@ -114,7 +116,7 @@ class MenuCreateServiceTest {
     // given
     Menu menu = mock(Menu.class);
     MenuCreateDto.Request request = createRequestEntityWithParentId(null);
-    when(menuJpaRepository.findByNameEng(request.getNameEng())).thenReturn(Optional.ofNullable(menu));
+    when(menuJpaRepository.findByNameEng(anyString())).thenReturn(Optional.ofNullable(menu));
 
     // when
     BusinessException exception = assertThrows(BusinessException.class, () -> menuCreateService.create(request));
@@ -128,7 +130,7 @@ class MenuCreateServiceTest {
     // given
     Authority authority = mock(Authority.class);
     MenuCreateDto.Request request = createRequestEntityWithParentId(null);
-    when(authorityJpaRepository.findByNameEng(request.getNameEng())).thenReturn(Optional.ofNullable(authority));
+    when(authorityJpaRepository.findByNameEng(anyString())).thenReturn(Optional.ofNullable(authority));
 
     // when
     BusinessException exception = assertThrows(BusinessException.class, () -> menuCreateService.create(request));
@@ -142,7 +144,7 @@ class MenuCreateServiceTest {
     // given
     Menu menu = mock(Menu.class);
     MenuCreateDto.Request request = createRequestEntityWithParentId(null);
-    when(menuJpaRepository.findByUrl(request.getUrl())).thenReturn(Optional.ofNullable(menu));
+    when(menuJpaRepository.findByUrl(anyString())).thenReturn(Optional.ofNullable(menu));
 
     // when
     BusinessException exception = assertThrows(BusinessException.class, () -> menuCreateService.create(request));
