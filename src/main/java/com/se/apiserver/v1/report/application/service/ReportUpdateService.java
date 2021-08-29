@@ -31,10 +31,9 @@ public class ReportUpdateService {
 
     Report report = reportJpaRepository.findById(request.getReportId())
         .orElseThrow(() -> new BusinessException(ReportErrorCode.NO_SUCH_REPORT));
+    Account processor = accountContextService.getContextAccount();
 
     updateReportResult(report, request.getReportResult());
-
-    Account processor = accountContextService.getContextAccount();
     updateProcessor(report, processor);
 
     reportJpaRepository.save(report);
