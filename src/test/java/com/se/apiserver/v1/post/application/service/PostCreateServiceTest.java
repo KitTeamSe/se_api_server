@@ -2,6 +2,7 @@ package com.se.apiserver.v1.post.application.service;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -98,7 +100,7 @@ public class PostCreateServiceTest {
     given(accountContextService.getContextAccount()).willReturn(account);
     given(tagJpaRepository.findById(tagDtoList.get(0).getTagId()))
         .willReturn(java.util.Optional.ofNullable(tags.get(0)));
-    given(postJpaRepository.save(Mockito.any(Post.class))).willReturn(post);
+    given(postJpaRepository.save(any(Post.class))).willReturn(post);
     given(attachCreateService.create(post.getPostId(), null, files))
         .willReturn(new ArrayList<>());
     given(attachJpaRepository.findAllByPostId(post.getPostId())).willReturn(attaches);
@@ -135,7 +137,7 @@ public class PostCreateServiceTest {
     given(accountContextService.isSignIn()).willReturn(false);
     given(passwordEncoder.encode(request.getAnonymous().getAnonymousPassword()))
         .willReturn("password");
-    given(postJpaRepository.save(Mockito.any(Post.class))).willReturn(post);
+    given(postJpaRepository.save(any(Post.class))).willReturn(post);
     given(attachCreateService.create(post.getPostId(), null, files))
         .willReturn(new ArrayList<>());
     given(attachJpaRepository.findAllByPostId(post.getPostId())).willReturn(attaches);
@@ -218,6 +220,40 @@ public class PostCreateServiceTest {
 
     // then
     assertThat(accessDeniedException.getMessage(), is("접근 권한이 없습니다"));
+  }
+
+  @Test
+  void 최대치_이상의_태그_등록() {
+    // given
+    Long boardId = 1L;
+    List<TagDto> tagDtoList = new ArrayList<>();
+    MultipartFile[] files = new MultipartFile[1];
+    Board board = getBoard();
+
+    for (int i = 0; i < 15; i++) {
+      tagDtoList.add(new TagDto((long) i));
+    }
+    Set<String> authorities = Set.of("FREEBOARD_ACCESS");
+
+    PostCreateDto.Request request = PostCreateDto.Request
+        .builder().boardId(boardId)
+        .postContent(getPostContent())
+        .isSecret(PostIsSecret.NORMAL)
+        .isNotice(PostIsNotice.NORMAL)
+        .tagList(tagDtoList)
+        .build();
+
+    given(boardJpaRepository.findById(boardId)).willReturn(java.util.Optional.of(board));
+    given(accountContextService.getContextAuthorities()).willReturn(authorities);
+    given(accountContextService.isSignIn()).willReturn(true);
+    given(tagJpaRepository.findById(any(Long.class)))
+        .willReturn(Optional.of(new Tag("태그")));
+    // when
+    BusinessException businessException = assertThrows(BusinessException.class, () -> postCreateService.create(request, files));
+
+    // then
+    assertThat(businessException.getErrorCode(), is(TagErrorCode.TO_MANY_TAGS));
+    assertThat(businessException.getMessage(), is("태그 등록은 10개까지 가능합니다"));
   }
 
   private Anonymous getAnonymous() {
