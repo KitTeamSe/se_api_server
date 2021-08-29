@@ -72,7 +72,7 @@ public class ReportApiController {
   @PreAuthorize("hasAnyAuthority('ACCESS_MANAGE')")
   @PutMapping(path = "/report")
   @ResponseStatus(value = HttpStatus.OK)
-  @ApiOperation(value = "신고 수정")
+  @ApiOperation(value = "신고 처리")
   public SuccessResponse<Long> update(@RequestBody @Validated ReportUpdateDto.Request request){
     return new SuccessResponse<>(HttpStatus.OK.value(), "신고 수정에 성공했습니다.", reportUpdateService.update(request));
   }
