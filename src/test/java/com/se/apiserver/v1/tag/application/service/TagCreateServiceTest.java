@@ -28,9 +28,6 @@ public class TagCreateServiceTest {
   @Mock
   private TagJpaRepository tagJpaRepository;
 
-  @Mock
-  private AccountContextService accountContextService;
-
   @InjectMocks
   private TagCreateService tagCreateService;
 
@@ -39,8 +36,6 @@ public class TagCreateServiceTest {
     // given
     TagCreateDto.Request request = new Request("태그");
     Tag tag = new Tag("태그");
-    Set<String> authorities = Set.of("TAG_MANAGE");
-    given(accountContextService.getContextAuthorities()).willReturn(authorities);
     given(tagJpaRepository.findByText(tag.getText())).willReturn(Optional.ofNullable(null));
     given(tagJpaRepository.save(any(Tag.class))).willReturn(tag);
 
@@ -49,27 +44,10 @@ public class TagCreateServiceTest {
   }
 
   @Test
-  void 태그_생성_권한_없음() {
-    // given
-    TagCreateDto.Request request = new Request("태그");
-    Set<String> authorities = new HashSet<>();
-    given(accountContextService.getContextAuthorities()).willReturn(authorities);
-
-    // when
-    PermissionDeniedException permissionDeniedException
-        = assertThrows(PermissionDeniedException.class, () -> tagCreateService.create(request));
-
-    // then
-    assertThat(permissionDeniedException.getMessage(), is("태그 생성 권한이 없습니다"));
-  }
-
-  @Test
   void 중복된_태그명으로_인한_태그_등록_실패() {
     // given
     TagCreateDto.Request request = new Request("태그");
     Tag tag = new Tag("태그");
-    Set<String> authorities = Set.of("TAG_MANAGE");
-    given(accountContextService.getContextAuthorities()).willReturn(authorities);
     given(tagJpaRepository.findByText(tag.getText())).willReturn(Optional.of(tag));
 
     // when
