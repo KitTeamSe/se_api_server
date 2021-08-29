@@ -42,12 +42,10 @@ public class ReportUpdateService {
 
 
   private void updateReportResult(Report report, ReportResult reportResult) {
-    if (reportResult != null) {
       if (report.getReportStatus() != ReportStatus.COMPLETED) {
         report.updateReportStatus(ReportStatus.COMPLETED);
       }
       report.updateReportResult(reportResult);
-    }
   }
 
   private void updateProcessor(Report report, Account processor){

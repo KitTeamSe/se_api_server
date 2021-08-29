@@ -3,6 +3,7 @@ package com.se.apiserver.v1.report.application.dto;
 import com.se.apiserver.v1.report.domain.entity.ReportResult;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,9 +18,11 @@ public class ReportUpdateDto {
   static public class Request{
 
     @ApiModelProperty(notes = "신고 id", example = "1")
+    @NotNull
     private Long reportId;
 
     @ApiModelProperty(notes = "변경할 결과", example = "TARGET_DELETE")
+    @NotNull
     private ReportResult reportResult;
 
     public Request(Long reportId, ReportResult reportResult) {
