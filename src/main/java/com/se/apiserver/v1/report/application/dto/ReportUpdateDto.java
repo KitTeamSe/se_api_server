@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 
 public class ReportUpdateDto {
 
-  @ApiModel("신고 수정 요청")
+  @ApiModel("신고 처리 요청")
   @Getter
   @Builder
   @NoArgsConstructor(access = AccessLevel.PROTECTED)
