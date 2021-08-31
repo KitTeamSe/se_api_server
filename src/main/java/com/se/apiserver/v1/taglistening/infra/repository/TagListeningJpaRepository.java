@@ -1,5 +1,6 @@
 package com.se.apiserver.v1.taglistening.infra.repository;
 
+import com.se.apiserver.v1.tag.domain.entity.Tag;
 import com.se.apiserver.v1.taglistening.domain.entity.TagListening;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -23,6 +24,8 @@ public interface TagListeningJpaRepository extends JpaRepository<TagListening, L
             "from TagListening tl " +
             "where tl.tag.tagId = :tagId")
     List<TagListening> findAllByTagId(Long tagId);
+
+    void deleteAllByTag(Tag tag);
 
    // List<TagListening> findTagListeningsByTag_TagId(List<Long> tagIdList);
 }
