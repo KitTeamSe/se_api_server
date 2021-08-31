@@ -71,7 +71,9 @@ public class Post extends BaseEntity {
   private Set<Attach> attaches = new HashSet<>();
 
   @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
-  @JoinTable(name = "post_tag")
+  @JoinTable(name = "post_tag"
+      , joinColumns = @JoinColumn(name = "post_id")
+      , inverseJoinColumns = @JoinColumn(name = "tag_id"))
   private Set<Tag> tags = new HashSet<>();
 
   @Column(nullable = false, updatable = false)
