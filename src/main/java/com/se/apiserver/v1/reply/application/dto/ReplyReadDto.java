@@ -26,6 +26,7 @@ public class ReplyReadDto {
 
     private Long replyId;
     private Long postId;
+    private Long parentId;
     private String text;
     private String accountId;
     private String anonymousNickname;
@@ -45,25 +46,16 @@ public class ReplyReadDto {
           .isSecret(reply.getIsSecret())
           .isDelete(reply.getIsDelete());
 
-      if (reply.getIsDelete() == ReplyIsDelete.DELETED && !hasManageAuthority) {
-        responseBuilder.text(Reply.DELETED_REPLY_TEXT);
-      } else {
-        responseBuilder.text(reply.getText());
-      }
-
-      if (reply.getIsSecret() == ReplyIsSecret.SECRET
-          && reply.getIsDelete() != ReplyIsDelete.DELETED) {
-        if (hasManageAuthority || hasAccessAuthority) {
-          responseBuilder.text(reply.getText());
-        } else {
-          responseBuilder.text(Reply.SECRET_REPLY_TEXT);
-        }
-      }
+      responseBuilder.text(getReplyText(reply, hasManageAuthority, hasAccessAuthority));
 
       if (reply.getAccount() != null) {
         responseBuilder.accountId(reply.getAccount().getIdString());
       } else {
         responseBuilder.anonymousNickname(reply.getAnonymous().getAnonymousNickname());
+      }
+
+      if (reply.getParent() != null){
+        responseBuilder.parentId(reply.getParent().getReplyId());
       }
 
       List<AttachDto> attaches = reply.getAttaches().stream()
@@ -80,6 +72,19 @@ public class ReplyReadDto {
         child = new ArrayList<>();
       }
       child.add(response);
+    }
+
+    private static String getReplyText(Reply reply, Boolean hasManageAuthority, Boolean hasAccessAuthority){
+      if (reply.getIsDelete() == ReplyIsDelete.DELETED && !hasManageAuthority) {
+        return Reply.DELETED_REPLY_TEXT;
+      }
+
+      if (reply.getIsSecret() == ReplyIsSecret.SECRET && reply.getIsDelete() != ReplyIsDelete.DELETED) {
+        if (!hasManageAuthority && !hasAccessAuthority) {
+          return Reply.SECRET_REPLY_TEXT;
+        }
+      }
+      return reply.getText();
     }
 
     @Data
