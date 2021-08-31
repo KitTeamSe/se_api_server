@@ -69,7 +69,9 @@ public abstract class Report extends BaseEntity {
     this.reportStatus = reportStatus;
   }
 
-  public void updateReportResult(ReportResult reportResult) {this.reportResult = reportResult;}
+  public void updateReportResult(ReportResult reportResult) {
+    this.reportResult = reportResult;
+  }
 
   public void updateProcessor(Account processor){
     this.processor = processor;

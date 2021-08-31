@@ -93,7 +93,7 @@ public class Post extends BaseEntity {
     this.isSecret = isSecret;
     this.postIsDeleted = PostIsDeleted.NORMAL;
     this.views = 0;
-    this.numReply = 0;
+    this.numReply = replies.size();
     this.createdIp = createdIp;
     addAttaches(attaches);
     addTags(tags);
@@ -266,5 +266,6 @@ public class Post extends BaseEntity {
 
   public void addReply(Reply reply) {
     this.replies.add(reply);
+    numReply = replies.size();
   }
 }
