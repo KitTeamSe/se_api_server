@@ -88,6 +88,8 @@ public class PostReadDto {
 
     private String previewText;
 
+    private String accountIdString;
+
     private String nickname;
 
     private AccountType accountType;
@@ -98,13 +100,23 @@ public class PostReadDto {
     private List<TagDto> tags;
 
     public static PostListItem fromEntity(Post post){
-      String nickname = post.getAccount() != null ? post.getAccount().getNickname() : post.getAnonymous().getAnonymousNickname();
       String previewText = "";
       if(post.getIsSecret() == PostIsSecret.NORMAL){
         previewText = post.getPostContent().getText().length() <= 30 ? post.getPostContent().getText() : post.getPostContent().getText().substring(0, 30);
       }
 
       PostListItemBuilder builder = PostListItem.builder();
+
+      if (post.getAccount() != null) {
+        String nickname = post.getAccount().getNickname();
+        String accountIdString = post.getAccount().getIdString();
+        builder.nickname(nickname);
+        builder.accountIdString(accountIdString);
+
+      } else {
+        String nickname = post.getAnonymous().getAnonymousNickname();
+        builder.nickname(nickname);
+      }
 
       builder.tags(post.getTags().stream()
           .map(t -> TagDto.fromEntity(t))
@@ -150,6 +162,8 @@ public class PostReadDto {
 
     private PostIsNotice isNotice;
 
+    private String accountIdString;
+
     private String nickname;
 
     private AccountType accountType;
@@ -158,9 +172,6 @@ public class PostReadDto {
     private PostContent postContent;
 
     private LocalDateTime createdAt;
-
-//    @JsonInclude(Include.NON_NULL)
-//    private List<Reply> replies = new ArrayList<>();
 
     @JsonInclude(Include.NON_NULL)
     private List<AttachDto> attaches;
@@ -180,8 +191,16 @@ public class PostReadDto {
           .isNotice(post.getIsNotice())
           .createdAt(post.getCreatedAt());
 
-      String nickname = post.getAccount() != null ? post.getAccount().getNickname() : post.getAnonymous().getAnonymousNickname();
-      builder.nickname(nickname);
+      if (post.getAccount() != null) {
+        String nickname = post.getAccount().getNickname();
+        String accountIdString = post.getAccount().getIdString();
+        builder.nickname(nickname);
+        builder.accountIdString(accountIdString);
+
+      } else {
+        String nickname = post.getAnonymous().getAnonymousNickname();
+        builder.nickname(nickname);
+      }
 
       AccountType accountType = post.getAccount() == null ? AccountType.ANONYMOUS : post.getAccount().getType();
       builder.accountType(accountType);
