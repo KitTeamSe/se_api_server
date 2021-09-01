@@ -19,7 +19,7 @@ public class Tag extends AccountGenerateEntity {
   private Long tagId;
 
   @Column(columnDefinition = "VARCHAR(30) UNIQUE NOT NULL, FULLTEXT KEY textFulltext (text) WITH PARSER ngram")
-  @Size(min = 1, max = 30)
+  @Size(min = 1, max = 20)
   private String text;
 
   public Tag(@Size(min = 1, max = 20) String text) {
