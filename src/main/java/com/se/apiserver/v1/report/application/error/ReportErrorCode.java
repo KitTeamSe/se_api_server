@@ -9,7 +9,7 @@ public enum ReportErrorCode implements ErrorCode {
   INVALID_INPUT(400, "REC02", "입력 값이 올바르지 않음"),
   NO_SUCH_REPORT_TYPE(400, "REC03", "존재하지 않는 신고 유형"),
   ANONYMOUS_CANT_REPORT(400, "REC04", "익명 사용자는 신고할 수 없음"),
-  CANNOT_REPORT_MYSELF(400, "RE05", "자기 자신을 신고할 수 없음");
+  CANNOT_REPORT_MYSELF(400, "REC05", "자기 자신을 신고할 수 없음");
 
   private final int status;
   private final String code;

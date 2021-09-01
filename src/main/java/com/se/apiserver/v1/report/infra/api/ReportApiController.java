@@ -4,6 +4,7 @@ import com.se.apiserver.v1.common.infra.dto.PageRequest;
 import com.se.apiserver.v1.common.infra.dto.SuccessResponse;
 import com.se.apiserver.v1.report.application.dto.ReportCreateDto;
 import com.se.apiserver.v1.report.application.dto.ReportReadDto;
+import com.se.apiserver.v1.report.application.dto.ReportReadDto.ReportSearchRequest;
 import com.se.apiserver.v1.report.application.dto.ReportReadDto.Response;
 import com.se.apiserver.v1.report.application.dto.ReportUpdateDto;
 import com.se.apiserver.v1.report.application.service.ReportCreateService;
@@ -54,19 +55,26 @@ public class ReportApiController {
   }
 
   @PreAuthorize("hasAnyAuthority('ACCESS_MANAGE')")
-  @GetMapping(path = "/report")
+  @PostMapping(path = "/report/search")
   @ApiOperation("신고 전체 조회")
   @ResponseStatus(value = HttpStatus.OK)
-  public SuccessResponse<PageImpl<Response>> readAll(@Validated PageRequest pageRequest){
-    return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", reportReadService.readAll(pageRequest.of()));
+  public SuccessResponse<PageImpl<Response>> readAll(@RequestBody @Validated ReportSearchRequest request){
+    return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 조회되었습니다.", reportReadService.readAll(request));
+  }
+
+  @GetMapping(path = "/report/my")
+  @ApiOperation("My 신고 조회")
+  @ResponseStatus(value = HttpStatus.OK)
+  public SuccessResponse<PageImpl<Response>> readOwn(@Validated PageRequest pageRequest) {
+    return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 내가 작성한 신고가 조회되었습니다.", reportReadService.readOwn(pageRequest.of()));
   }
 
   @PreAuthorize("hasAnyAuthority('ACCESS_MANAGE')")
   @PutMapping(path = "/report")
   @ResponseStatus(value = HttpStatus.OK)
-  @ApiOperation(value = "신고 수정")
+  @ApiOperation(value = "신고 처리")
   public SuccessResponse<Long> update(@RequestBody @Validated ReportUpdateDto.Request request){
-    return new SuccessResponse<>(HttpStatus.OK.value(), "신고 수정에 성공했습니다.", reportUpdateService.update(request));
+    return new SuccessResponse<>(HttpStatus.OK.value(), "신고 처리에 성공했습니다.", reportUpdateService.update(request));
   }
 
   @PreAuthorize("hasAnyAuthority('ACCESS_MANAGE')")
@@ -77,4 +85,5 @@ public class ReportApiController {
     reportDeleteService.delete(id);
     return new SuccessResponse<>(HttpStatus.OK.value(), "신고 삭제에 성공했습니다.");
   }
+
 }

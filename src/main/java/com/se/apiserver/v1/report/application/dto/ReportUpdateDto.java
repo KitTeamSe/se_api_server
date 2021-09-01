@@ -1,30 +1,34 @@
 package com.se.apiserver.v1.report.application.dto;
 
-import com.se.apiserver.v1.account.domain.entity.Account;
-import com.se.apiserver.v1.report.domain.entity.ReportStatus;
+import com.se.apiserver.v1.report.domain.entity.ReportResult;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
+import javax.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 public class ReportUpdateDto {
 
-  @Data
-  @NoArgsConstructor
-  @AllArgsConstructor
+  @ApiModel("신고 처리 요청")
+  @Getter
   @Builder
-  @ApiModel("신고 수정 요청")
+  @NoArgsConstructor(access = AccessLevel.PROTECTED)
   static public class Request{
 
     @ApiModelProperty(notes = "신고 id", example = "1")
+    @NotNull
     private Long reportId;
 
-    @ApiModelProperty(notes = "변경할 설명", example = "변경된 설명")
-    private String description;
+    @ApiModelProperty(notes = "변경할 결과", example = "TARGET_DELETE")
+    @NotNull
+    private ReportResult reportResult;
 
-    @ApiModelProperty(notes = "변경할 상태", example = "PROCESSED")
-    private ReportStatus reportStatus;
+    public Request(Long reportId, ReportResult reportResult) {
+      this.reportId = reportId;
+      this.reportResult = reportResult;
+    }
+
   }
 }
