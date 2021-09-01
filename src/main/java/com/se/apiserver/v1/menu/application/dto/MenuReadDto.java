@@ -5,16 +5,14 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.se.apiserver.v1.menu.domain.entity.Menu;
 import com.se.apiserver.v1.menu.domain.entity.MenuType;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 public class MenuReadDto {
 
@@ -76,8 +74,12 @@ public class MenuReadDto {
 
     private Long boardId;
 
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
     public ReadResponse(Long menuId, String nameEng, String nameKor, Integer menuOrder,
-        MenuType menuType, Long parentId, String url, String description, Long boardId) {
+        MenuType menuType, Long parentId, String url, String description, Long boardId,
+        LocalDateTime createdAt, LocalDateTime updatedAt) {
       this.menuId = menuId;
       this.nameEng = nameEng;
       this.nameKor = nameKor;
@@ -87,6 +89,8 @@ public class MenuReadDto {
       this.url = url;
       this.description = description;
       this.boardId = boardId;
+      this.createdAt = createdAt;
+      this.updatedAt = updatedAt;
     }
 
     public static MenuReadDto.ReadResponse fromEntity(Menu menu) {
@@ -103,6 +107,9 @@ public class MenuReadDto {
           .menuType(menu.getMenuType())
           .url(menu.getUrl())
           .parentId(getParent(menu))
+
+          .createdAt(menu.getCreatedAt())
+          .updatedAt(menu.getUpdatedAt())
           .build();
     }
 

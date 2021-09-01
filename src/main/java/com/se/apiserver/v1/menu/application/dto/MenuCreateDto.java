@@ -6,6 +6,7 @@ import com.se.apiserver.v1.menu.domain.entity.MenuType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -23,7 +24,7 @@ public class MenuCreateDto {
     static public class Request{
 
         @Size(min = 2, max = 20)
-        @ApiModelProperty(notes = "영어명, 링크로 사용될거임", example = "freeboard")
+        @ApiModelProperty(notes = "영어명, 링크로 사용될 것", example = "freeboard")
         @NotEmpty
         private String nameEng;
 
@@ -32,17 +33,15 @@ public class MenuCreateDto {
         @NotEmpty
         private String nameKor;
 
-        @Size(max = 255)
+        @Size(min = 2, max = 255)
         @ApiModelProperty(notes = "url", example = "freeboard")
-        @NotEmpty
         private String url;
 
         @ApiModelProperty(notes = "메뉴 출력 순서", example = "1")
         private Integer menuOrder;
 
-        @Size(max = 255)
+        @Size(min = 2, max = 255)
         @ApiModelProperty(notes = "설명", example = "자유게시판 입니다.")
-        @NotEmpty
         private String description;
 
         private MenuType menuType;
@@ -62,10 +61,10 @@ public class MenuCreateDto {
         }
     }
 
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
+    @ApiModel("메뉴 등록 응답")
+    @Getter
     @Builder
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     static public class Response{
 
         private Long menuId;
@@ -84,6 +83,18 @@ public class MenuCreateDto {
 
         @JsonInclude(JsonInclude.Include.NON_NULL)
         private Long parentId;
+
+        public Response(Long menuId, String nameEng, String nameKor, String url,
+            Integer menuOrder, String description, MenuType menuType, Long parentId) {
+            this.menuId = menuId;
+            this.nameEng = nameEng;
+            this.nameKor = nameKor;
+            this.url = url;
+            this.menuOrder = menuOrder;
+            this.description = description;
+            this.menuType = menuType;
+            this.parentId = parentId;
+        }
 
         public static Response fromEntity(Menu menu) {
             ResponseBuilder responseBuilder = Response.builder();

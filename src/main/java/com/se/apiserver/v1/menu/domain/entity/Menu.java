@@ -41,7 +41,7 @@ public class Menu extends AccountGenerateEntity {
   @Column(nullable = false)
   private Integer menuOrder;
 
-  @Column(length = 255, nullable = false)
+  @Column
   @Size(min = 2, max = 255)
   private String description;
 
@@ -66,6 +66,7 @@ public class Menu extends AccountGenerateEntity {
 
   @OneToOne(mappedBy = "menu", orphanRemoval = true)
   private Board board;
+
 
   public Menu(@Size(min = 2, max = 20) String nameEng, @Size(min = 2, max = 255) String url,
               @Size(min = 2, max = 20) String nameKor, Integer menuOrder,

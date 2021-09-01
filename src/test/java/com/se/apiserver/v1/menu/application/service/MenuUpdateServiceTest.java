@@ -3,6 +3,8 @@ package com.se.apiserver.v1.menu.application.service;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -10,6 +12,7 @@ import com.se.apiserver.v1.authority.domain.entity.Authority;
 import com.se.apiserver.v1.authority.infra.repository.AuthorityJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.menu.application.dto.MenuUpdateDto;
+import com.se.apiserver.v1.menu.application.dto.MenuUpdateDto.Request;
 import com.se.apiserver.v1.menu.application.error.MenuErrorCode;
 import com.se.apiserver.v1.menu.domain.entity.Menu;
 import com.se.apiserver.v1.menu.domain.entity.MenuType;
@@ -52,10 +55,9 @@ class MenuUpdateServiceTest {
   public void 변경_없는_수정_성공 () throws Exception{
     // given
     Menu menu = createMenuEntity();
-    MenuUpdateDto.Request request = MenuUpdateDto.Request.builder().menuId(2L).build();
+    MenuUpdateDto.Request request = Request.builder().menuId(2L).build();
 
-    when(menuJpaRepository.findById(request.getMenuId())).thenReturn(Optional.ofNullable(menu));
-
+    when(menuJpaRepository.findById(anyLong())).thenReturn(Optional.ofNullable(menu));
     // when
     // then
     assertDoesNotThrow(() -> menuUpdateService.update(request));
@@ -70,7 +72,7 @@ class MenuUpdateServiceTest {
     Menu menu = createMenuEntity();
     MenuUpdateDto.Request request = createRequestEntityWithParentId(parentId);
 
-    when(menuJpaRepository.findById(request.getMenuId())).thenReturn(Optional.ofNullable(menu));
+    when(menuJpaRepository.findById(anyLong())).thenReturn(Optional.ofNullable(menu));
 
     // when
     // then
@@ -81,14 +83,12 @@ class MenuUpdateServiceTest {
   public void 부모_있는_메뉴_수정_성공() throws Exception{
     // given
     Long parentId = 1L;
-
+    MenuUpdateDto.Request request = createRequestEntityWithParentId(parentId);
     Menu menu = createMenuEntity();
     Menu parent = createMenuEntity();
-    MenuUpdateDto.Request request = createRequestEntityWithParentId(parentId);
 
     when(menuJpaRepository.findById(request.getMenuId())).thenReturn(Optional.ofNullable(menu));
     when(menuJpaRepository.findById(parentId)).thenReturn(Optional.ofNullable(parent));
-
     // when
     // then
     assertDoesNotThrow(() -> menuUpdateService.update(request));
@@ -97,12 +97,9 @@ class MenuUpdateServiceTest {
   @Test
   public void 존재하지_않는_메뉴_아이디_실패() throws Exception{
     // given
-    Long nonExistsMenuId = 0L;
-
+    MenuUpdateDto.Request request = MenuUpdateDto.Request.builder().menuId(0L).build();
     // when
-    BusinessException exception = assertThrows(BusinessException.class, () -> menuUpdateService.update(MenuUpdateDto.Request.builder()
-        .menuId(nonExistsMenuId).build()));
-
+    BusinessException exception = assertThrows(BusinessException.class, () -> menuUpdateService.update(request));
     // then
     assertEquals(MenuErrorCode.NO_SUCH_MENU, exception.getErrorCode());
   }
@@ -113,8 +110,8 @@ class MenuUpdateServiceTest {
     Menu menu = createMenuEntity();
     MenuUpdateDto.Request request = createRequestEntityWithParentId(null);
 
-    when(menuJpaRepository.findById(request.getMenuId())).thenReturn(Optional.ofNullable(menu));
-    when(menuJpaRepository.findByNameKor(request.getNameKor())).thenReturn(Optional.ofNullable(menu));
+    when(menuJpaRepository.findById(anyLong())).thenReturn(Optional.ofNullable(menu));
+    when(menuJpaRepository.findByNameKor(anyString())).thenReturn(Optional.ofNullable(menu));
 
     // when
     BusinessException exception = assertThrows(BusinessException.class, () -> menuUpdateService.update(request));
@@ -130,8 +127,8 @@ class MenuUpdateServiceTest {
     Authority authority = mock(Authority.class);
     MenuUpdateDto.Request request = createRequestEntityWithParentId(null);
 
-    when(menuJpaRepository.findById(request.getMenuId())).thenReturn(Optional.ofNullable(menu));
-    when(authorityJpaRepository.findByNameKor(request.getNameKor())).thenReturn(Optional.ofNullable(authority));
+    when(menuJpaRepository.findById(anyLong())).thenReturn(Optional.ofNullable(menu));
+    when(authorityJpaRepository.findByNameKor(anyString())).thenReturn(Optional.ofNullable(authority));
 
     // when
     BusinessException exception = assertThrows(BusinessException.class, () -> menuUpdateService.update(request));
@@ -146,8 +143,8 @@ class MenuUpdateServiceTest {
     Menu menu = createMenuEntity();
     MenuUpdateDto.Request request = createRequestEntityWithParentId(null);
 
-    when(menuJpaRepository.findById(request.getMenuId())).thenReturn(Optional.ofNullable(menu));
-    when(menuJpaRepository.findByNameEng(request.getNameEng())).thenReturn(Optional.ofNullable(menu));
+    when(menuJpaRepository.findById(anyLong())).thenReturn(Optional.ofNullable(menu));
+    when(menuJpaRepository.findByNameEng(anyString())).thenReturn(Optional.ofNullable(menu));
 
     // when
     BusinessException exception = assertThrows(BusinessException.class, () -> menuUpdateService.update(request));
@@ -163,8 +160,8 @@ class MenuUpdateServiceTest {
     Authority authority = mock(Authority.class);
     MenuUpdateDto.Request request = createRequestEntityWithParentId(null);
 
-    when(menuJpaRepository.findById(request.getMenuId())).thenReturn(Optional.ofNullable(menu));
-    when(authorityJpaRepository.findByNameEng(request.getNameEng())).thenReturn(Optional.ofNullable(authority));
+    when(menuJpaRepository.findById(anyLong())).thenReturn(Optional.ofNullable(menu));
+    when(authorityJpaRepository.findByNameEng(anyString())).thenReturn(Optional.ofNullable(authority));
 
     // when
     BusinessException exception = assertThrows(BusinessException.class, () -> menuUpdateService.update(request));
@@ -179,8 +176,8 @@ class MenuUpdateServiceTest {
     Menu menu = createMenuEntity();
     MenuUpdateDto.Request request = createRequestEntityWithParentId(null);
 
-    when(menuJpaRepository.findById(request.getMenuId())).thenReturn(Optional.ofNullable(menu));
-    when(menuJpaRepository.findByUrl(request.getUrl())).thenReturn(Optional.ofNullable(menu));
+    when(menuJpaRepository.findById(anyLong())).thenReturn(Optional.ofNullable(menu));
+    when(menuJpaRepository.findByUrl(anyString())).thenReturn(Optional.ofNullable(menu));
 
     // when
     BusinessException exception = assertThrows(BusinessException.class, () -> menuUpdateService.update(request));
