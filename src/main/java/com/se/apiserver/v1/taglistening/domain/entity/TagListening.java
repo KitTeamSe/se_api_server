@@ -14,6 +14,9 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TagListening extends AccountGenerateEntity {
+
+    public static final Integer MAX_TAG_LISTENING_CAPACITY = 20;
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long tagListeningId;
 

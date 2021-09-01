@@ -92,9 +92,8 @@ public class AccountContextService implements UserDetailsService {
 
     if(id.equals(ANONYMOUS_ID))
       return false;
-    if(!id.equals(String.valueOf(account.getAccountId())))
-      return false;
-    return true;
+
+    return id.equals(String.valueOf(account.getAccountId()));
   }
 
   public boolean isOwner(Long accountId) {
