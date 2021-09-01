@@ -134,7 +134,6 @@ public class PostReadDto {
               .isSecret(post.getIsSecret())
               .title(post.getPostContent().getTitle())
               .previewText(previewText)
-              .nickname(nickname)
               .accountType(accountType)
               .createAt(post.getCreatedAt())
               .build();
