@@ -13,96 +13,116 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class MenuUpdateService {
 
-    private final MenuJpaRepository menuJpaRepository;
-    private final AuthorityJpaRepository authorityJpaRepository;
+  private final MenuJpaRepository menuJpaRepository;
+  private final AuthorityJpaRepository authorityJpaRepository;
 
-    public MenuUpdateService(
-        MenuJpaRepository menuJpaRepository,
-        AuthorityJpaRepository authorityJpaRepository) {
-        this.menuJpaRepository = menuJpaRepository;
-        this.authorityJpaRepository = authorityJpaRepository;
+  public MenuUpdateService(
+      MenuJpaRepository menuJpaRepository,
+      AuthorityJpaRepository authorityJpaRepository) {
+    this.menuJpaRepository = menuJpaRepository;
+    this.authorityJpaRepository = authorityJpaRepository;
+  }
+
+  @Transactional
+  public Long update(MenuUpdateDto.Request request) {
+    Menu menu = menuJpaRepository.findById(request.getMenuId())
+        .orElseThrow(() -> new BusinessException(MenuErrorCode.NO_SUCH_MENU));
+
+    updateNameKorIfExist(menu, request.getNameKor());
+    updateNameEngIfExist(menu, request.getNameEng());
+    updateUrlIfExist(menu, request.getUrl());
+    updateParentIfExist(menu, request.getParentId());
+    updateDescriptionIfExist(menu, request.getDescription());
+    updateMenuOrderIfExist(menu, request.getMenuOrder());
+
+    menuJpaRepository.save(menu);
+    return menu.getMenuId();
+  }
+
+  private void updateMenuOrderIfExist(Menu menu, Integer menuOrder) {
+    if (menuOrder == null) {
+      return;
     }
-
-    @Transactional
-    public Long update(MenuUpdateDto.Request request) {
-        Menu menu = menuJpaRepository.findById(request.getMenuId())
-            .orElseThrow(() -> new BusinessException(MenuErrorCode.NO_SUCH_MENU));
-
-        updateNameKorIfExist(menu, request.getNameKor());
-        updateNameEngIfExist(menu, request.getNameEng());
-        updateUrlIfExist(menu, request.getUrl());
-        updateParentIfExist(menu, request.getParentId());
-        updateDescriptionIfExist(menu, request.getDescription());
-        updateMenuOrderIfExist(menu, request.getMenuOrder());
-        menuJpaRepository.save(menu);
-        return menu.getMenuId();
+    if (menuOrder == menu.getMenuOrder()) {
+      return;
     }
+    menu.updateMenuOrder(menuOrder);
+  }
 
-    private void updateMenuOrderIfExist(Menu menu, Integer menuOrder) {
-        if (menuOrder == null)
-            return;
-        menu.updateMenuOrder(menuOrder);
+  private void updateDescriptionIfExist(Menu menu, String description) {
+    if (description == null) {
+      return;
     }
-
-    private void updateDescriptionIfExist(Menu menu, String description) {
-        if (description == null)
-            return;
-        menu.updateDescription(description);
+    if (description.equals(menu.getDescription())) {
+      return;
     }
+    menu.updateDescription(description);
+  }
 
-    private void updateParentIfExist(Menu menu, Long parentId) {
-        if (parentId == null)
-            return;
-        Menu parent = menuJpaRepository.findById(parentId)
-            .orElseThrow(() -> new BusinessException(MenuErrorCode.NO_SUCH_MENU));
-        menu.updateParent(parent);
+  private void updateParentIfExist(Menu menu, Long parentId) {
+    if (parentId == null) {
+      return;
     }
+    Menu parent = menuJpaRepository.findById(parentId)
+        .orElseThrow(() -> new BusinessException(MenuErrorCode.NO_SUCH_MENU));
+    menu.updateParent(parent);
+  }
 
-    private void updateUrlIfExist(Menu menu, String url) {
-        if (url == null)
-            return;
-        if (menu.getUrl().equals(url))
-            return;
-        validateDuplicateUrl(url);
-        menu.updateUrl(url);
+  private void updateUrlIfExist(Menu menu, String url) {
+    if (url == null) {
+      return;
     }
-
-    private void updateNameKorIfExist(Menu menu, String nameKor) {
-        if (nameKor == null)
-            return;
-        if (menu.getNameKor().equals(nameKor))
-            return;
-        validateDuplicateNameKor(nameKor);
-        menu.updateNameKor(nameKor);
+    if (menu.getUrl().equals(url)) {
+      return;
     }
+    validateDuplicateUrl(url);
+    menu.updateUrl(url);
+  }
 
-    private void updateNameEngIfExist(Menu menu, String nameEng) {
-        if (nameEng == null)
-            return;
-        if (menu.getNameEng().equals(nameEng))
-            return;
-        validateDuplicateNameEng(nameEng);
-        menu.updateNameEng(nameEng);
+  private void updateNameKorIfExist(Menu menu, String nameKor) {
+    if (nameKor == null) {
+      return;
     }
-
-    private void validateDuplicateUrl(String url) {
-        if (menuJpaRepository.findByUrl(url).isPresent())
-            throw new BusinessException(MenuErrorCode.DUPLICATED_URL);
+    if (menu.getNameKor().equals(nameKor)) {
+      return;
     }
+    validateDuplicateNameKor(nameKor);
+    menu.updateNameKor(nameKor);
+  }
 
-    private void validateDuplicateNameEng(String nameEng) {
-        if (menuJpaRepository.findByNameEng(nameEng).isPresent())
-            throw new BusinessException(MenuErrorCode.DUPLICATED_MENU_NAME_ENG);
-        if (authorityJpaRepository.findByNameEng(nameEng).isPresent())
-            throw new BusinessException(MenuErrorCode.CAN_NOT_USE_NAME_ENG);
+  private void updateNameEngIfExist(Menu menu, String nameEng) {
+    if (nameEng == null) {
+      return;
     }
-
-    private void validateDuplicateNameKor(String nameKor) {
-        if (menuJpaRepository.findByNameKor(nameKor).isPresent())
-            throw new BusinessException(MenuErrorCode.DUPLICATED_MENU_NAME_KOR);
-        if (authorityJpaRepository.findByNameKor(nameKor).isPresent())
-            throw new BusinessException(MenuErrorCode.CAN_NOT_USE_NAME_KOR);
+    if (menu.getNameEng().equals(nameEng)) {
+      return;
     }
+    validateDuplicateNameEng(nameEng);
+    menu.updateNameEng(nameEng);
+  }
 
+  private void validateDuplicateUrl(String url) {
+    if (menuJpaRepository.findByUrl(url).isPresent()) {
+      throw new BusinessException(MenuErrorCode.DUPLICATED_URL);
+    }
+  }
+
+  private void validateDuplicateNameEng(String nameEng) {
+    if (menuJpaRepository.findByNameEng(nameEng).isPresent()) {
+      throw new BusinessException(MenuErrorCode.DUPLICATED_MENU_NAME_ENG);
+    }
+    if (authorityJpaRepository.findByNameEng(nameEng).isPresent()) {
+      throw new BusinessException(MenuErrorCode.CAN_NOT_USE_NAME_ENG);
+    }
+  }
+
+  private void validateDuplicateNameKor(String nameKor) {
+    if (menuJpaRepository.findByNameKor(nameKor).isPresent()) {
+      throw new BusinessException(MenuErrorCode.DUPLICATED_MENU_NAME_KOR);
+    }
+      if (authorityJpaRepository.findByNameKor(nameKor).isPresent()) {
+          throw new BusinessException(MenuErrorCode.CAN_NOT_USE_NAME_KOR);
+      }
+  }
 
 }

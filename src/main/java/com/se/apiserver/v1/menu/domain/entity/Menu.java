@@ -41,8 +41,8 @@ public class Menu extends AccountGenerateEntity {
   @Column(nullable = false)
   private Integer menuOrder;
 
-  @Column(length = 255, nullable = false)
-  @Size(min = 2, max = 255)
+  @Column
+  @Size(max = 255)
   private String description;
 
   @Column(length = 20, nullable = false)
@@ -67,9 +67,10 @@ public class Menu extends AccountGenerateEntity {
   @OneToOne(mappedBy = "menu", orphanRemoval = true)
   private Board board;
 
+
   public Menu(@Size(min = 2, max = 20) String nameEng, @Size(min = 2, max = 255) String url,
               @Size(min = 2, max = 20) String nameKor, Integer menuOrder,
-              @Size(min = 2, max = 255) String description, MenuType menuType) {
+              @Size(max = 255) String description, MenuType menuType) {
     this.nameEng = nameEng;
     this.url = url;
     this.nameKor = nameKor;
