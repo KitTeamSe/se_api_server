@@ -42,7 +42,7 @@ public class Menu extends AccountGenerateEntity {
   private Integer menuOrder;
 
   @Column
-  @Size(min = 2, max = 255)
+  @Size(max = 255)
   private String description;
 
   @Column(length = 20, nullable = false)
@@ -70,7 +70,7 @@ public class Menu extends AccountGenerateEntity {
 
   public Menu(@Size(min = 2, max = 20) String nameEng, @Size(min = 2, max = 255) String url,
               @Size(min = 2, max = 20) String nameKor, Integer menuOrder,
-              @Size(min = 2, max = 255) String description, MenuType menuType) {
+              @Size(max = 255) String description, MenuType menuType) {
     this.nameEng = nameEng;
     this.url = url;
     this.nameKor = nameKor;

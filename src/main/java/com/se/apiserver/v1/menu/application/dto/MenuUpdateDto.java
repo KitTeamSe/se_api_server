@@ -36,7 +36,7 @@ public class MenuUpdateDto {
         @ApiModelProperty(notes = "메뉴 출력 순서", example = "1")
         private Integer menuOrder;
 
-        @Size(min = 2, max = 50)
+        @Size(max = 50)
         @ApiModelProperty(notes = "설명(비고), 값을 없애고 싶을때는 null이 아닌 공백2자 이상 입력.", example = "자유게시판 입니다.")
         private String description;
 
