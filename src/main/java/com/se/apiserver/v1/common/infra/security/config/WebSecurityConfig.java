@@ -1,7 +1,6 @@
 package com.se.apiserver.v1.common.infra.security.config;
 
 import com.se.apiserver.v1.common.infra.security.filter.FilterChainExceptionHandler;
-import com.se.apiserver.v1.common.infra.security.filter.IpBlacklistFilters;
 import com.se.apiserver.v1.common.infra.security.filter.JwtAuthenticationFilters;
 import com.se.apiserver.v1.common.infra.security.provider.JwtTokenResolver;
 import com.se.apiserver.v1.blacklist.application.service.BlacklistDetailService;
@@ -50,9 +49,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilters(jwtTokenResolver), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new IpBlacklistFilters(blacklistDetailService), JwtAuthenticationFilters.class)
-                .addFilterBefore(filterChainExceptionHandler, IpBlacklistFilters.class);
-
+                .addFilterBefore(filterChainExceptionHandler, JwtAuthenticationFilters.class);
     }
 
     @Override
