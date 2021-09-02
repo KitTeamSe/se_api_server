@@ -18,7 +18,7 @@ public class WebConfig implements WebMvcConfigurer {
 
   @Bean
   public MappedInterceptor blacklistInterceptor() {
-    String[] includePatterns = {"/api/v1/post/*", "/api/v1/reply/*"};
+    String[] includePatterns = {"/api/v1/post/**", "/api/v1/reply/**"};
     return new MappedInterceptor(includePatterns, new BlacklistInterceptor(blacklistDetailService));
   }
 }
