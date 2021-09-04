@@ -37,21 +37,18 @@ public class PostApiController {
   @PostMapping(value = "/post")
   @ResponseStatus(HttpStatus.CREATED)
   @ApiOperation(value = "게시글 생성")
-  public SuccessResponse<Long> create
-      (@RequestPart(value = "key") @Validated PostCreateDto.Request request,
-          @RequestPart(value = "files", required = false) MultipartFile[] files) {
+  public SuccessResponse<Long> create(@RequestBody @Validated PostCreateDto.Request request) {
     return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 등록되었습니다",
-        postCreateService.create(request, files));
+        postCreateService.create(request));
   }
 
   @PutMapping("/post")
   @ResponseStatus(HttpStatus.OK)
   @ApiOperation("게시글 수정")
   public SuccessResponse<Long> update(
-      @RequestPart(value = "key") @Validated PostUpdateDto.Request request,
-      @RequestPart(value = "files", required = false) MultipartFile[] files) {
+      @RequestBody @Validated PostUpdateDto.Request request) {
     return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 수정되었습니다",
-        postUpdateService.update(request, files));
+        postUpdateService.update(request));
   }
 
   @DeleteMapping("/post/{id}")
