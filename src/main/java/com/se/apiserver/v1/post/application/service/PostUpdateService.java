@@ -1,72 +1,63 @@
 package com.se.apiserver.v1.post.application.service;
 
 import com.se.apiserver.v1.account.application.service.AccountContextService;
-import com.se.apiserver.v1.attach.application.service.AttachUpdateService;
+import com.se.apiserver.v1.attach.application.error.AttachErrorCode;
 import com.se.apiserver.v1.attach.domain.entity.Attach;
+import com.se.apiserver.v1.attach.infra.repository.AttachJpaRepository;
 import com.se.apiserver.v1.board.domain.entity.Board;
 import com.se.apiserver.v1.common.domain.entity.Anonymous;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
-import com.se.apiserver.v1.post.domain.entity.Post;
-import com.se.apiserver.v1.post.application.error.PostErrorCode;
 import com.se.apiserver.v1.post.application.dto.PostCreateDto;
 import com.se.apiserver.v1.post.application.dto.PostUpdateDto;
-import com.se.apiserver.v1.attach.infra.repository.AttachJpaRepository;
+import com.se.apiserver.v1.post.application.error.PostErrorCode;
+import com.se.apiserver.v1.post.domain.entity.Post;
 import com.se.apiserver.v1.post.infra.repository.PostJpaRepository;
 import com.se.apiserver.v1.tag.application.error.TagErrorCode;
 import com.se.apiserver.v1.tag.domain.entity.Tag;
 import com.se.apiserver.v1.tag.infra.repository.TagJpaRepository;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
 public class PostUpdateService {
-
-  private final int MAX_NUMBER_OF_TAGS = 10;
 
   private final PostJpaRepository postJpaRepository;
   private final AccountContextService accountContextService;
   private final PasswordEncoder passwordEncoder;
   private final TagJpaRepository tagJpaRepository;
   private final AttachJpaRepository attachJpaRepository;
-  private final AttachUpdateService attachUpdateService;
 
   public PostUpdateService(
       PostJpaRepository postJpaRepository,
       AccountContextService accountContextService,
       PasswordEncoder passwordEncoder,
       TagJpaRepository tagJpaRepository,
-      AttachJpaRepository attachJpaRepository,
-      AttachUpdateService attachUpdateService) {
+      AttachJpaRepository attachJpaRepository) {
     this.postJpaRepository = postJpaRepository;
     this.accountContextService = accountContextService;
     this.passwordEncoder = passwordEncoder;
     this.tagJpaRepository = tagJpaRepository;
     this.attachJpaRepository = attachJpaRepository;
-    this.attachUpdateService = attachUpdateService;
   }
 
   @Transactional
-  public Long update(PostUpdateDto.Request request, MultipartFile[] files) {
+  public Long update(PostUpdateDto.Request request) {
     Set<String> authorities = accountContextService.getContextAuthorities();
     Post post = postJpaRepository.findById(request.getPostId())
         .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));
-    Board board = post.getBoard();
-    List<Tag> tags = getTagsIfSignIn(request.getTagList());
-    checkNumberOfTags(tags);
-
-    String ip = accountContextService.getCurrentClientIP();
     post.validateReadable();
 
-    attachUpdateService.update(post.getPostId(), null, files);
-    List<Attach> attachList = attachJpaRepository.findAllByPostId(post.getPostId());
+    Board board = post.getBoard();
+    List<Tag> tags = getTagsIfSignIn(request.getTagList());
+
+    List<Attach> attaches = getAttaches(request.getAttachmentList());
+    String ip = accountContextService.getCurrentClientIP();
 
     if (accountContextService.isSignIn() && post.getAnonymous() == null) {
       Long contextAccountid = accountContextService.getCurrentAccountId();
@@ -75,7 +66,7 @@ public class PostUpdateService {
 
       post = postJpaRepository.save(post);
       post.updateTags(tags);
-      post.updateAttaches(attachList);
+      post.updateAttaches(attaches);
 
       return post.getPostId();
     }
@@ -89,7 +80,7 @@ public class PostUpdateService {
 
     Post updatedPost = postJpaRepository.save(post);
     updatedPost.updateTags(tags);
-    updatedPost.updateAttaches(attachList);
+    updatedPost.updateAttaches(attaches);
 
     return post.getPostId();
   }
@@ -113,9 +104,13 @@ public class PostUpdateService {
         .collect(Collectors.toList());
   }
 
-  private void checkNumberOfTags(List<Tag> tags) {
-    if (tags.size() > MAX_NUMBER_OF_TAGS) {
-      throw new BusinessException(TagErrorCode.TO_MANY_TAGS);
-    }
+  private List<Attach> getAttaches(List<PostUpdateDto.AttachDto> attachmentList) {
+    if(attachmentList == null || attachmentList.size() == 0)
+      return new ArrayList<>();
+    return attachmentList.stream()
+        .map(a -> attachJpaRepository.findById(a.getAttachId())
+            .orElseThrow(() -> new BusinessException(AttachErrorCode.NO_SUCH_ATTACH))
+        )
+        .collect(Collectors.toList());
   }
 }
