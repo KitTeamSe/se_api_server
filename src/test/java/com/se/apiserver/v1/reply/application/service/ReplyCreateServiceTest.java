@@ -70,9 +70,6 @@ public class ReplyCreateServiceTest {
   @Mock
   private PasswordEncoder passwordEncoder;
 
-  @Mock
-  private AttachCreateService attachCreateService;
-
   @InjectMocks
   private ReplyCreateService replyCreateService;
 
@@ -101,7 +98,6 @@ public class ReplyCreateServiceTest {
     Set<String> authorities = new HashSet<>(Arrays.asList("FREEBOARD_ACCESS"));
 
     // 수정 요망
-    given(attachCreateService.create(null, null, files)).willReturn(dtoResponseList);
     given(postJpaRepository.findById(postId)).willReturn(java.util.Optional.of(post));
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
     given(accountContextService.isSignIn()).willReturn(true);
@@ -109,7 +105,7 @@ public class ReplyCreateServiceTest {
     given(replyJpaRepository.save(Mockito.any(Reply.class))).willReturn(reply);
 
     // when, then
-    assertDoesNotThrow(() -> replyCreateService.create(request, files));
+    assertDoesNotThrow(() -> replyCreateService.create(request));
   }
 
   @Test
@@ -135,7 +131,6 @@ public class ReplyCreateServiceTest {
         , anonymous);
     Set<String> authorities = new HashSet<>(Arrays.asList("FREEBOARD_ACCESS"));
 
-    given(attachCreateService.create(null, null, files)).willReturn(dtoResponseList);
     given(postJpaRepository.findById(postId)).willReturn(java.util.Optional.of(post));
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
     given(accountContextService.isSignIn()).willReturn(false);
@@ -144,7 +139,7 @@ public class ReplyCreateServiceTest {
         .willReturn("iDonTKnOw!@#");
 
     // when, then
-    assertDoesNotThrow(() -> replyCreateService.create(request, files));
+    assertDoesNotThrow(() -> replyCreateService.create(request));
   }
 
   @Test
@@ -185,7 +180,7 @@ public class ReplyCreateServiceTest {
     // when
     BusinessException businessException = assertThrows(BusinessException.class,
         () -> replyCreateService
-            .create(request, files));
+            .create(request));
 
     // then
     assertThat(businessException.getErrorCode(), is(PostErrorCode.NO_SUCH_POST));
@@ -207,7 +202,7 @@ public class ReplyCreateServiceTest {
 
     // when
     AccessDeniedException accessDeniedException = assertThrows(AccessDeniedException.class,
-        () -> replyCreateService.create(request, files));
+        () -> replyCreateService.create(request));
 
     // then
     assertThat(accessDeniedException.getMessage(), is("접근 권한이 없습니다"));
@@ -228,11 +223,10 @@ public class ReplyCreateServiceTest {
     Set<String> authorities = new HashSet<>(Arrays.asList("FREEBOARD_ACCESS"));
 
     given(postJpaRepository.findById(postId)).willReturn(java.util.Optional.of(post));
-    given(accountContextService.getContextAuthorities()).willReturn(authorities);
 
     // when
     BusinessException businessException = assertThrows(BusinessException.class,
-        () -> replyCreateService.create(request, files));
+        () -> replyCreateService.create(request));
 
     // then
     assertThat(businessException.getMessage(), is("삭제된 게시글입니다"));
@@ -274,11 +268,11 @@ public class ReplyCreateServiceTest {
 
     // when
     BusinessException businessException = assertThrows(BusinessException.class,
-        () -> replyCreateService.create(request, files));
+        () -> replyCreateService.create(request));
 
     // then
     assertThat(businessException.getErrorCode(), is(ReplyErrorCode.INVALID_REPLY));
-    assertThat(businessException.getMessage(), is("댓글의 댓글은 작성할 수 없습니다"));
+    assertThat(businessException.getMessage(), is("대댓글의 댓글은 작성할 수 없습니다"));
   }
 
   private Anonymous getAnonymous() {
