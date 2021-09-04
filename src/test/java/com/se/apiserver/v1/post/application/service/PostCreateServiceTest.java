@@ -1,18 +1,17 @@
 package com.se.apiserver.v1.post.application.service;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
 
 import com.se.apiserver.v1.account.application.service.AccountContextService;
 import com.se.apiserver.v1.account.domain.entity.Account;
 import com.se.apiserver.v1.account.domain.entity.AccountType;
 import com.se.apiserver.v1.account.domain.entity.InformationOpenAgree;
 import com.se.apiserver.v1.account.domain.entity.Question;
-import com.se.apiserver.v1.attach.application.service.AttachCreateService;
 import com.se.apiserver.v1.attach.domain.entity.Attach;
 import com.se.apiserver.v1.attach.infra.repository.AttachJpaRepository;
 import com.se.apiserver.v1.board.application.error.BoardErrorCode;
@@ -42,7 +41,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -55,8 +53,6 @@ public class PostCreateServiceTest {
   private PostJpaRepository postJpaRepository;
   @Mock
   private AccountContextService accountContextService;
-  @Mock
-  private AttachCreateService attachCreateService;
   @Mock
   private BoardJpaRepository boardJpaRepository;
   @Mock
@@ -82,7 +78,6 @@ public class PostCreateServiceTest {
     List<TagDto> tagDtoList = Arrays.asList(new TagDto(1L));
     Attach attach = new Attach("URL", "FILENAME");
     List<Attach> attaches = Arrays.asList(attach);
-    MultipartFile[] files = new MultipartFile[1];
     Post post = new Post(account, board, getPostContent(), PostIsNotice.NORMAL, PostIsSecret.NORMAL,
         authorities, tags, attaches, "127.0.0.1");
     PostCreateDto.Request request = PostCreateDto.Request
@@ -101,12 +96,9 @@ public class PostCreateServiceTest {
     given(tagJpaRepository.findById(tagDtoList.get(0).getTagId()))
         .willReturn(java.util.Optional.ofNullable(tags.get(0)));
     given(postJpaRepository.save(any(Post.class))).willReturn(post);
-    given(attachCreateService.create(post.getPostId(), null, files))
-        .willReturn(new ArrayList<>());
-    given(attachJpaRepository.findAllByPostId(post.getPostId())).willReturn(attaches);
 
     // when, then
-    assertDoesNotThrow(() -> postCreateService.create(request, files));
+    assertDoesNotThrow(() -> postCreateService.create(request));
   }
 
   @Test
@@ -119,7 +111,6 @@ public class PostCreateServiceTest {
     Board board = getBoard();
     Attach attach = new Attach("URL", "FILENAME");
     List<Attach> attaches = Arrays.asList(attach);
-    MultipartFile[] files = new MultipartFile[1];
     Post post = new Post(anonymous, board, getPostContent(), PostIsNotice.NORMAL,
         PostIsSecret.NORMAL,
         authorities, new ArrayList<>(), attaches, "127.0.0.1");
@@ -138,12 +129,9 @@ public class PostCreateServiceTest {
     given(passwordEncoder.encode(request.getAnonymous().getAnonymousPassword()))
         .willReturn("password");
     given(postJpaRepository.save(any(Post.class))).willReturn(post);
-    given(attachCreateService.create(post.getPostId(), null, files))
-        .willReturn(new ArrayList<>());
-    given(attachJpaRepository.findAllByPostId(post.getPostId())).willReturn(attaches);
 
     // when, then
-    assertDoesNotThrow(() -> postCreateService.create(request, files));
+    assertDoesNotThrow(() -> postCreateService.create(request));
   }
 
   @Test
@@ -163,7 +151,7 @@ public class PostCreateServiceTest {
         .willThrow(new BusinessException(BoardErrorCode.NO_SUCH_BOARD));
     // when
     BusinessException businessException = assertThrows(BusinessException.class,
-        () -> postCreateService.create(request, files));
+        () -> postCreateService.create(request));
 
     // then
     assertThat(businessException.getErrorCode(), is(BoardErrorCode.NO_SUCH_BOARD));
@@ -190,7 +178,7 @@ public class PostCreateServiceTest {
 
     // when
     BusinessException businessException = assertThrows(BusinessException.class,
-        () -> postCreateService.create(request, files));
+        () -> postCreateService.create(request));
 
     // then
     assertThat(businessException.getErrorCode(), is(TagErrorCode.ANONYMOUS_CAN_NOT_TAG));
@@ -216,44 +204,10 @@ public class PostCreateServiceTest {
 
     // when
     AccessDeniedException accessDeniedException = assertThrows(AccessDeniedException.class,
-        () -> postCreateService.create(request, files));
+        () -> postCreateService.create(request));
 
     // then
     assertThat(accessDeniedException.getMessage(), is("접근 권한이 없습니다"));
-  }
-
-  @Test
-  void 최대치_이상의_태그_등록() {
-    // given
-    Long boardId = 1L;
-    List<TagDto> tagDtoList = new ArrayList<>();
-    MultipartFile[] files = new MultipartFile[1];
-    Board board = getBoard();
-
-    for (int i = 0; i < 15; i++) {
-      tagDtoList.add(new TagDto((long) i));
-    }
-    Set<String> authorities = Set.of("FREEBOARD_ACCESS");
-
-    PostCreateDto.Request request = PostCreateDto.Request
-        .builder().boardId(boardId)
-        .postContent(getPostContent())
-        .isSecret(PostIsSecret.NORMAL)
-        .isNotice(PostIsNotice.NORMAL)
-        .tagList(tagDtoList)
-        .build();
-
-    given(boardJpaRepository.findById(boardId)).willReturn(java.util.Optional.of(board));
-    given(accountContextService.getContextAuthorities()).willReturn(authorities);
-    given(accountContextService.isSignIn()).willReturn(true);
-    given(tagJpaRepository.findById(any(Long.class)))
-        .willReturn(Optional.of(new Tag("태그")));
-    // when
-    BusinessException businessException = assertThrows(BusinessException.class, () -> postCreateService.create(request, files));
-
-    // then
-    assertThat(businessException.getErrorCode(), is(TagErrorCode.TO_MANY_TAGS));
-    assertThat(businessException.getMessage(), is("태그 등록은 10개까지 가능합니다"));
   }
 
   private Anonymous getAnonymous() {
@@ -288,7 +242,7 @@ public class PostCreateServiceTest {
 
     // when
     BusinessException businessException = assertThrows(BusinessException.class,
-        () -> postCreateService.create(request, files));
+        () -> postCreateService.create(request));
 
     // then
     assertThat(businessException.getErrorCode(), is(PostErrorCode.ONLY_ADMIN_SET_NOTICE));

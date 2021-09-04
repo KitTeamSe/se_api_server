@@ -72,8 +72,6 @@ public class PostUpdateServiceTest {
   private TagJpaRepository tagJpaRepository;
   @Mock
   private AttachJpaRepository attachJpaRepository;
-  @Mock
-  private AttachUpdateService attachUpdateService;
   @InjectMocks
   private PostUpdateService postUpdateService;
 
@@ -105,14 +103,13 @@ public class PostUpdateServiceTest {
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
     given(postJpaRepository.findById(request.getPostId())).willReturn(java.util.Optional.of(post));
     given(accountContextService.getCurrentClientIP()).willReturn(ip);
-    willDoNothing().given(attachUpdateService).update(post.getPostId(), null, files);
     given(tagJpaRepository.findById(anyLong())).willReturn(java.util.Optional.of(new Tag("태그")));
     given(accountContextService.isSignIn()).willReturn(true);
     given(accountContextService.getCurrentAccountId()).willReturn(getAccount().getAccountId());
     given(postJpaRepository.save(post)).willReturn(savedPost);
 
     // when, then
-    assertDoesNotThrow(() -> postUpdateService.update(request, files));
+    assertDoesNotThrow(() -> postUpdateService.update(request));
   }
 
   @Test
@@ -144,14 +141,13 @@ public class PostUpdateServiceTest {
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
     given(postJpaRepository.findById(request.getPostId())).willReturn(java.util.Optional.of(post));
     given(accountContextService.getCurrentClientIP()).willReturn(ip);
-    willDoNothing().given(attachUpdateService).update(post.getPostId(), null, files);
     given(passwordEncoder.matches(getAnonymous().getAnonymousPassword(), password))
         .willReturn(true);
     given(accountContextService.isSignIn()).willReturn(false);
     given(postJpaRepository.save(post)).willReturn(savedPost);
 
     // when, then
-    assertDoesNotThrow(() -> postUpdateService.update(request, null));
+    assertDoesNotThrow(() -> postUpdateService.update(request));
   }
 
   @Test
@@ -185,7 +181,7 @@ public class PostUpdateServiceTest {
 
     // when
     BusinessException businessException
-        = assertThrows(BusinessException.class, () -> postUpdateService.update(request, files));
+        = assertThrows(BusinessException.class, () -> postUpdateService.update(request));
 
     // then
     assertThat(businessException.getErrorCode(), is(TagErrorCode.ANONYMOUS_CAN_NOT_TAG));
@@ -223,7 +219,7 @@ public class PostUpdateServiceTest {
 
     // when
     BusinessException businessException
-        = assertThrows(BusinessException.class, () -> postUpdateService.update(request, null));
+        = assertThrows(BusinessException.class, () -> postUpdateService.update(request));
 
     // then
     assertThat(businessException.getErrorCode(), is(TagErrorCode.NO_SUCH_TAG));
@@ -247,7 +243,7 @@ public class PostUpdateServiceTest {
 
     // when
     BusinessException businessException
-        = assertThrows(BusinessException.class, () -> postUpdateService.update(request, null));
+        = assertThrows(BusinessException.class, () -> postUpdateService.update(request));
 
     // then
     assertThat(businessException.getErrorCode(), is(PostErrorCode.NO_SUCH_POST));
@@ -285,7 +281,7 @@ public class PostUpdateServiceTest {
 
     // when
     BusinessException businessException
-        = assertThrows(BusinessException.class, () -> postUpdateService.update(request, null));
+        = assertThrows(BusinessException.class, () -> postUpdateService.update(request));
 
     // then
     assertThat(businessException.getErrorCode(), is(PostErrorCode.INVALID_INPUT));
@@ -326,55 +322,11 @@ public class PostUpdateServiceTest {
 
     // when
     BusinessException businessException
-        = assertThrows(BusinessException.class, () -> postUpdateService.update(request, null));
+        = assertThrows(BusinessException.class, () -> postUpdateService.update(request));
 
     // then
     assertThat(businessException.getErrorCode(), is(PostErrorCode.ANONYMOUS_PASSWORD_INCORRECT));
     assertThat(businessException.getErrorCode().getMessage(), is("익명 게시글 비밀번호가 틀렸습니다"));
-  }
-
-  @Test
-  void 최대치_이상의_태그_등록() {
-    // given
-    Long postId = 1L;
-    List<TagDto> tagDtoList = new ArrayList<>();
-    MultipartFile[] files = new MultipartFile[1];
-    Post post = new Post(
-        getAccount()
-        , getBoard()
-        , getPostContent()
-        , PostIsNotice.NORMAL
-        , PostIsSecret.NORMAL
-        , new HashSet<>(Arrays.asList("FREEBOARD_ACCESS"))
-        , new ArrayList<>()
-        , new ArrayList<>()
-        , "127.0.0.1");
-
-    for (int i = 0; i < 15; i++) {
-      tagDtoList.add(new TagDto((long) i));
-    }
-    Set<String> authorities = Set.of("FREEBOARD_ACCESS");
-
-    PostUpdateDto.Request request = PostUpdateDto.Request
-        .builder()
-        .postId(1L)
-        .postContent(new PostContent("제목제목제목", "내용내용내용"))
-        .isNotice(PostIsNotice.NORMAL)
-        .isSecret(PostIsSecret.NORMAL)
-        .tagList(tagDtoList)
-        .build();
-
-    given(accountContextService.getContextAuthorities()).willReturn(authorities);
-    given(postJpaRepository.findById(postId)).willReturn(Optional.of(post));
-    given(accountContextService.isSignIn()).willReturn(true);
-    given(tagJpaRepository.findById(any(Long.class)))
-        .willReturn(Optional.of(new Tag("태그")));
-    // when
-    BusinessException businessException = assertThrows(BusinessException.class, () -> postUpdateService.update(request, files));
-
-    // then
-    assertThat(businessException.getErrorCode(), is(TagErrorCode.TO_MANY_TAGS));
-    assertThat(businessException.getMessage(), is("태그 등록은 10개까지 가능합니다"));
   }
 
   private Board getBoard() {
