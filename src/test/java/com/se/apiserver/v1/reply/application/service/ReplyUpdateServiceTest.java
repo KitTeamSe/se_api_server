@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willDoNothing;
 
 import com.se.apiserver.v1.account.application.service.AccountContextService;
 import com.se.apiserver.v1.account.domain.entity.Account;
@@ -14,9 +13,7 @@ import com.se.apiserver.v1.account.domain.entity.AccountType;
 import com.se.apiserver.v1.account.domain.entity.InformationOpenAgree;
 import com.se.apiserver.v1.account.domain.entity.Question;
 import com.se.apiserver.v1.attach.application.dto.AttachReadDto;
-import com.se.apiserver.v1.attach.application.service.AttachUpdateService;
 import com.se.apiserver.v1.attach.domain.entity.Attach;
-import com.se.apiserver.v1.attach.infra.repository.AttachJpaRepository;
 import com.se.apiserver.v1.board.domain.entity.Board;
 import com.se.apiserver.v1.common.domain.entity.Anonymous;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
@@ -32,7 +29,6 @@ import com.se.apiserver.v1.reply.domain.entity.Reply;
 import com.se.apiserver.v1.reply.domain.entity.ReplyIsSecret;
 import com.se.apiserver.v1.reply.infra.repository.ReplyJpaRepository;
 import com.se.apiserver.v1.tag.domain.entity.Tag;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -44,7 +40,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,16 +48,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class ReplyUpdateServiceTest {
 
   private String data = "data";
-  private MultipartFile[] files = {
-      new MockMultipartFile("file"
-          , "file.png"
-          , "text/plain"
-          , data.getBytes(StandardCharsets.UTF_8)),
-      new MockMultipartFile("file"
-          , "file.png"
-          , "text/plain"
-          , data.getBytes(StandardCharsets.UTF_8)),
-  };
 
   @Mock
   private ReplyJpaRepository replyJpaRepository;
@@ -72,8 +57,6 @@ public class ReplyUpdateServiceTest {
   private AccountContextService accountContextService;
   @Mock
   private PasswordEncoder passwordEncoder;
-  @Mock
-  private AttachJpaRepository attachJpaRepository;
   @InjectMocks
   private ReplyUpdateService replyUpdateService;
 
@@ -120,7 +103,6 @@ public class ReplyUpdateServiceTest {
     // given
     Long postId = 1L;
     Long replyId = 1L;
-    List<Long> attachIdList = new ArrayList<>(Arrays.asList(1L, 2L, 3L));
     ReplyUpdateDto.Request request = ReplyUpdateDto.Request
         .builder()
         .replyId(replyId)
@@ -215,15 +197,6 @@ public class ReplyUpdateServiceTest {
         .isSecret(ReplyIsSecret.NORMAL)
         .build();
     Post post = getPost();
-    MultipartFile[] files = new MultipartFile[1];
-    Reply reply = new Reply(post
-        , request.getText()
-        , request.getIsSecret()
-        , null
-        , null
-        , "127.0.0.1"
-        , getAnonymous());
-    Long nonExistentReplyId = 2L;
 
     given(replyJpaRepository.findById(replyId))
         .willThrow(new BusinessException(ReplyErrorCode.NO_SUCH_REPLY));
@@ -252,7 +225,6 @@ public class ReplyUpdateServiceTest {
 
         .build();
     Post post = getPost();
-    MultipartFile[] files = new MultipartFile[1];
     Reply reply = new Reply(post
         , request.getText()
         , request.getIsSecret()
@@ -298,15 +270,6 @@ public class ReplyUpdateServiceTest {
         , null
         , "127.0.0.1"
         , anonymous);
-    MultipartFile[] files = new MultipartFile[1];
-    List<AttachReadDto.Response> dtoResponse
-        = new ArrayList<>(Arrays.asList(
-        AttachReadDto.Response
-            .builder()
-            .attachId(1L)
-            .replyId(replyId)
-            .downloadUrl("URL")
-            .fileName("file.jpg").build()));
     Set<String> authorities = new HashSet<>(Arrays.asList("FREEBOARD_ACCESS"));
 
     given(replyJpaRepository.findById(replyId)).willReturn(java.util.Optional.of(reply));

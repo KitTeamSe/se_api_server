@@ -65,21 +65,15 @@ public class ReplyCreateServiceTest {
   private AccountContextService accountContextService;
 
   @Mock
-  private AttachJpaRepository attachJpaRepository;
-
-  @Mock
   private PasswordEncoder passwordEncoder;
 
   @InjectMocks
   private ReplyCreateService replyCreateService;
 
-  MultipartFile[] files = new MultipartFile[1];
-
   @Test
   void 회원_댓글_등록_성공() {
     // given
     Long postId = 1L;
-    List<AttachReadDto.Response> dtoResponseList = new ArrayList<>();
     ReplyCreateDto.Request request = ReplyCreateDto.Request.builder()
         .postId(postId)
         .text("20180764 이름")
@@ -112,7 +106,6 @@ public class ReplyCreateServiceTest {
   void 익명_사용자_댓글_등록_성공() {
     // given
     Long postId = 1L;
-    List<AttachReadDto.Response> dtoResponseList = new ArrayList<>();
     Anonymous anonymous = getAnonymous();
     ReplyCreateDto.Request request = ReplyCreateDto.Request.builder()
         .postId(postId)
@@ -220,7 +213,6 @@ public class ReplyCreateServiceTest {
         .text(text)
         .isSecret(ReplyIsSecret.NORMAL)
         .build();
-    Set<String> authorities = new HashSet<>(Arrays.asList("FREEBOARD_ACCESS"));
 
     given(postJpaRepository.findById(postId)).willReturn(java.util.Optional.of(post));
 
