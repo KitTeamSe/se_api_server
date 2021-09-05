@@ -9,7 +9,6 @@ import com.se.apiserver.v1.common.infra.dto.SuccessResponse;
 import java.util.List;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,21 +24,26 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @Api(tags = "첨부파일 관리")
 @RequestMapping("/api/v1")
-@RequiredArgsConstructor
 public class AttachApiController {
   private final AttachCreateService attachCreateService;
   private final AttachDeleteService attachDeleteService;
   private final AttachReadService attachReadService;
 
+  public AttachApiController(
+      AttachCreateService attachCreateService,
+      AttachDeleteService attachDeleteService,
+      AttachReadService attachReadService) {
+    this.attachCreateService = attachCreateService;
+    this.attachDeleteService = attachDeleteService;
+    this.attachReadService = attachReadService;
+  }
 
   @PostMapping("/attach")
   @ResponseStatus(HttpStatus.CREATED)
   @ApiOperation("첨부파일 생성")
-  public SuccessResponse<List<AttachReadDto.Response>> create(@RequestParam(value = "postId", required = false) Long postId,
-      @RequestParam(value = "replyId", required = false) Long replyId,
-      @RequestParam(value = "multipartFile") MultipartFile[] multipartFile){
+  public SuccessResponse<List<AttachReadDto.Response>> create(@RequestParam(value = "files") MultipartFile... files){
     return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 등록되었습니다",
-        attachCreateService.create(postId, replyId, multipartFile));
+        attachCreateService.create(files));
   }
 
   @DeleteMapping("/attach/{id}")
