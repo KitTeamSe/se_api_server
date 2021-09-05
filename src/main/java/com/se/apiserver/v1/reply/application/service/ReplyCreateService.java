@@ -47,7 +47,7 @@ public class ReplyCreateService {
   }
 
   @Transactional
-  public Long create(ReplyCreateDto.Request request, MultipartFile[] files) {
+  public Long create(ReplyCreateDto.Request request, MultipartFile... files) {
     Post post = postJpaRepository.findById(request.getPostId())
         .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));
 
@@ -79,9 +79,9 @@ public class ReplyCreateService {
     return reply.getReplyId();
   }
 
-  private void createAttaches(Reply reply, MultipartFile[] files) {
+  private void createAttaches(Reply reply, MultipartFile... files) {
     if (files != null) {
-      attachCreateService.create(null, reply.getReplyId(), files);
+//      attachCreateService.create(null, reply.getReplyId(), files);
       reply.updateAttaches(attachJpaRepository.findAllByReplyId(reply.getReplyId()));
     }
   }
