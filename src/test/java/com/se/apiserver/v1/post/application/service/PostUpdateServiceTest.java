@@ -70,8 +70,6 @@ public class PostUpdateServiceTest {
   private PasswordEncoder passwordEncoder;
   @Mock
   private TagJpaRepository tagJpaRepository;
-  @Mock
-  private AttachJpaRepository attachJpaRepository;
   @InjectMocks
   private PostUpdateService postUpdateService;
 

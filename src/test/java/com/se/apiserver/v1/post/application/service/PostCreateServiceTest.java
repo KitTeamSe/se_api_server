@@ -13,13 +13,11 @@ import com.se.apiserver.v1.account.domain.entity.AccountType;
 import com.se.apiserver.v1.account.domain.entity.InformationOpenAgree;
 import com.se.apiserver.v1.account.domain.entity.Question;
 import com.se.apiserver.v1.attach.domain.entity.Attach;
-import com.se.apiserver.v1.attach.infra.repository.AttachJpaRepository;
 import com.se.apiserver.v1.board.application.error.BoardErrorCode;
 import com.se.apiserver.v1.board.domain.entity.Board;
 import com.se.apiserver.v1.board.infra.repository.BoardJpaRepository;
 import com.se.apiserver.v1.common.domain.entity.Anonymous;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
-import com.se.apiserver.v1.notice.application.service.NoticeSendService;
 import com.se.apiserver.v1.post.application.dto.PostCreateDto;
 import com.se.apiserver.v1.post.application.dto.PostCreateDto.TagDto;
 import com.se.apiserver.v1.post.application.error.PostErrorCode;
@@ -35,7 +33,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,7 +41,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.multipart.MultipartFile;
 
 @ExtendWith(MockitoExtension.class)
 public class PostCreateServiceTest {
@@ -59,10 +55,6 @@ public class PostCreateServiceTest {
   private PasswordEncoder passwordEncoder;
   @Mock
   private TagJpaRepository tagJpaRepository;
-  @Mock
-  private AttachJpaRepository attachJpaRepository;
-  @Mock
-  private NoticeSendService noticeSendService;
   @InjectMocks
   private PostCreateService postCreateService;
 
@@ -138,7 +130,6 @@ public class PostCreateServiceTest {
   void 존재하지_않는_게시판() {
     // given
     Long boardId = 2L;
-    MultipartFile[] files = new MultipartFile[1];
     PostCreateDto.Request request = PostCreateDto.Request
         .builder().boardId(boardId)
         .postContent(getPostContent())
@@ -163,7 +154,6 @@ public class PostCreateServiceTest {
     // given
     Long boardId = 2L;
     Board board = getBoard();
-    MultipartFile[] files = new MultipartFile[1];
     List<TagDto> tagDtoList = Arrays.asList(new TagDto(1L));
     PostCreateDto.Request request = PostCreateDto.Request
         .builder().boardId(boardId)
@@ -190,7 +180,6 @@ public class PostCreateServiceTest {
     // given
     Long boardId = 2L;
     Board board = getBoard();
-    MultipartFile[] files = new MultipartFile[1];
     PostCreateDto.Request request = PostCreateDto.Request
         .builder().boardId(boardId)
         .postContent(getPostContent())
@@ -224,9 +213,6 @@ public class PostCreateServiceTest {
     Set<String> authorities = Set.of("FREEBOARD_ACCESS");
     Account account = getAccount();
     Board board = getBoard();
-    Attach attach = new Attach("URL", "FILENAME");
-    List<Attach> attaches = Arrays.asList(attach);
-    MultipartFile[] files = new MultipartFile[1];
     PostCreateDto.Request request = PostCreateDto.Request
         .builder().boardId(boardId)
         .postContent(getPostContent())
