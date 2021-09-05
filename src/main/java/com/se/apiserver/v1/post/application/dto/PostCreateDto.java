@@ -42,18 +42,23 @@ public class PostCreateDto {
     @ApiModelProperty(notes = "태그들")
     @Singular("tagList")
     private List<TagDto> tagList;
+
+    @ApiModelProperty(notes = "첨부파일들")
+    @Singular("attachmentList")
+    private List<AttachDto> attachmentList;
   }
 
   @ApiModel("첨부 파일")
   @Getter
   @NoArgsConstructor
-  @AllArgsConstructor
   @Builder
   static public class AttachDto {
 
     private Long attachId;
-    private String downloadUrl;
-    private String fileName;
+
+    public AttachDto(Long attachId) {
+      this.attachId = attachId;
+    }
   }
 
   @ApiModel("게시글 태그 등록")
