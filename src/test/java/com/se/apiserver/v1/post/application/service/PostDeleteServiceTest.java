@@ -172,7 +172,7 @@ public class PostDeleteServiceTest {
         , new ArrayList<>()
         , new ArrayList<>()
         , "127.0.0.1");
-    Account newAccount = new Account(1L
+    Account newAccount = new Account(2L
         , "idString"
         , "password"
         , "name"
@@ -185,7 +185,7 @@ public class PostDeleteServiceTest {
         , InformationOpenAgree.AGREE
         , null
         , null);
-    given(accountContextService.getContextAccount()).willReturn(getAccount());
+    given(accountContextService.getContextAccount()).willReturn(newAccount);
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
     given(postJpaRepository.findById(postId)).willReturn(java.util.Optional.of(post));
 

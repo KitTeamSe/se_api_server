@@ -28,7 +28,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.test.context.TestExecutionListeners;
 
 @ExtendWith(MockitoExtension.class)
 public class TagReadServiceTest {

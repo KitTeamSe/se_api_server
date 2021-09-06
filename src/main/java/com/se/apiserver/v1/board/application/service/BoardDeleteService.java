@@ -20,9 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class BoardDeleteService {
 
-    @Value("${spring.deletedBoard}")
-    private String DELETEDBOARD;
-
     private final BoardJpaRepository boardJpaRepository;
     private final AccountContextService accountContextService;
     private final PostJpaRepository postJpaRepository;
@@ -32,11 +29,10 @@ public class BoardDeleteService {
         Set<String> authoritySet = accountContextService.getContextAuthorities();
 
         Board board = boardJpaRepository.findById(id).orElseThrow(() -> new BusinessException(BoardErrorCode.NO_SUCH_BOARD));
-        Optional<Board> deletedBoard = boardJpaRepository.findByNameEng("deletedBoard");
 
         List<Post> postList = postJpaRepository.findAllByBoard(board);
         for(Post post: postList){
-            post.delete(authoritySet, deletedBoard.get());
+            post.delete(authoritySet);
         }
         postJpaRepository.saveAll(postList);
         boardJpaRepository.delete(board);
