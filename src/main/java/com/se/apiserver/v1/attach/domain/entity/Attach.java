@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import lombok.AccessLevel;
@@ -44,18 +45,22 @@ public class Attach extends BaseEntity {
     @Size(min = 2, max = 255)
     private String fileName;
 
-    public Attach(@Size(min = 2, max = 255) String downloadUrl, @Size(min = 2, max = 255) String fileName) {
+    @Column(nullable = false)
+    private Long fileSize;
+
+    public Attach(@Size(min = 2, max = 255) String downloadUrl, @Size(min = 2, max = 255) String fileName, @NotNull Long fileSize) {
         this.downloadUrl = downloadUrl;
         this.fileName = fileName;
+        this.fileSize = fileSize;
     }
 
-    public Attach(@Size(min = 2, max = 255) String downloadUrl, @Size(min = 2, max = 255) String fileName, Post post) {
-        this(downloadUrl, fileName);
+    public Attach(@Size(min = 2, max = 255) String downloadUrl, @Size(min = 2, max = 255) String fileName, @NotNull Long fileSize, Post post) {
+        this(downloadUrl, fileName, fileSize);
         updatePost(post);
     }
 
-    public Attach(@Size(min = 2, max = 255) String downloadUrl, @Size(min = 2, max = 255) String fileName, Reply reply) {
-        this(downloadUrl, fileName);
+    public Attach(@Size(min = 2, max = 255) String downloadUrl, @Size(min = 2, max = 255) String fileName, @NotNull Long fileSize, Reply reply) {
+        this(downloadUrl, fileName, fileSize);
         updateReply(reply);
     }
 

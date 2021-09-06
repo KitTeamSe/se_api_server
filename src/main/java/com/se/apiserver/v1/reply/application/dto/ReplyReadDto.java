@@ -59,7 +59,7 @@ public class ReplyReadDto {
       }
 
       List<AttachDto> attaches = reply.getAttaches().stream()
-          .map(attach -> new AttachDto(attach.getAttachId(), attach.getDownloadUrl(), attach.getFileName()))
+          .map(attach -> new AttachDto(attach.getAttachId(), attach.getDownloadUrl(), attach.getFileName(), attach.getFileSize()))
           .collect(Collectors.toList());
       responseBuilder.attacheList(attaches);
       responseBuilder.createAt(reply.getCreatedAt());
@@ -93,11 +93,13 @@ public class ReplyReadDto {
       private Long attachId;
       private String downloadUrl;
       private String fileName;
+      private Long fileSize;
 
-      public AttachDto(Long attachId, String downloadUrl, String fileName) {
+      public AttachDto(Long attachId, String downloadUrl, String fileName, Long fileSize) {
         this.attachId = attachId;
         this.downloadUrl = downloadUrl;
         this.fileName = fileName;
+        this.fileSize = fileSize;
       }
     }
 
