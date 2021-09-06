@@ -26,7 +26,7 @@ public class LectureRoomCreateDto {
     @ApiModelProperty(notes = "정원", example = "50")
     private Integer capacity;
 
-    @ApiModelProperty(notes = "비고", example = "정원이 50명인 DB 107")
+    @ApiModelProperty(notes = "비고", example = "비고")
     private String note;
   }
 }
