@@ -42,9 +42,10 @@ public class AttachCreateService {
     List<Attach> attaches = new ArrayList<>();
 
     for (MultipartFileUploadDto multipartFileUploadDto : multipartFileUploadDtoList) {
+      // fileSize 정적으로 1L로 둔 상태. 추후 수정 예정
       Attach attach
           = new Attach(multipartFileUploadDto.getDownloadUrl()
-          , multipartFileUploadDto.getOriginalName());
+          , multipartFileUploadDto.getOriginalName(), 1L);
       attaches.add(attach);
     }
 
@@ -52,9 +53,6 @@ public class AttachCreateService {
   }
 
   private List<MultipartFileUploadDto> upload(MultipartFile... files) {
-//    return Arrays.stream(files).map(f -> new MultipartFileUploadDto("URL", f.getOriginalFilename()))
-//        .collect(Collectors.toList());
-
      return multipartFileUploadService.upload(files);
   }
 }

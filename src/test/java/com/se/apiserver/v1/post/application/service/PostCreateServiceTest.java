@@ -72,7 +72,7 @@ public class PostCreateServiceTest {
     Board board = getBoard();
     List<Tag> tags = Arrays.asList(new Tag("태그"));
     List<TagDto> tagDtoList = Arrays.asList(new TagDto(1L));
-    Attach attach = new Attach("URL", "FILENAME");
+    Attach attach = new Attach("URL", "FILENAME", 1L);
     List<Attach> attaches = Arrays.asList(attach);
     Post post = new Post(account, board, getPostContent(), PostIsNotice.NORMAL, PostIsSecret.NORMAL,
         authorities, tags, attaches, "127.0.0.1");
@@ -106,7 +106,7 @@ public class PostCreateServiceTest {
     Set<String> authorities = Set.of("FREEBOARD_ACCESS");
     Anonymous anonymous = getAnonymous();
     Board board = getBoard();
-    Attach attach = new Attach("URL", "FILENAME");
+    Attach attach = new Attach("URL", "FILENAME", 1L);
     List<Attach> attaches = Arrays.asList(attach);
     Post post = new Post(anonymous, board, getPostContent(), PostIsNotice.NORMAL,
         PostIsSecret.NORMAL,

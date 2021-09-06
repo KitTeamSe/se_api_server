@@ -68,11 +68,11 @@ public class AttachCreateServiceTest {
         new MultipartFileUploadDto("URL5", "FileName5")
     );
     List<Attach> attaches = Arrays.asList(
-        new Attach("URL1", "FileName1"),
-        new Attach("URL2", "FileName2"),
-        new Attach("URL3", "FileName3"),
-        new Attach("URL4", "FileName4"),
-        new Attach("URL5", "FileName5")
+        new Attach("URL1", "FileName1", 1L),
+        new Attach("URL2", "FileName2", 1L),
+        new Attach("URL3", "FileName3", 1L),
+        new Attach("URL4", "FileName4", 1L),
+        new Attach("URL5", "FileName5", 1L)
     );
 
     given(multipartFileUploadService.upload(files)).willReturn(multipartFileUploadDtoList);

@@ -270,6 +270,11 @@ public class PostReadDto {
           .collect(Collectors.toList())
       );
 
+      builder.attaches(post.getAttaches()
+          .stream()
+          .map(a -> AttachDto.fromEntity(a))
+          .collect(Collectors.toList()));
+
       if (post.getIsSecret() == PostIsSecret.SECRET && !isOwnerOrManager) {
         throw new BusinessException(PostErrorCode.CAN_NOT_ACCESS_POST);
       }
@@ -296,10 +301,13 @@ public class PostReadDto {
 
     private String fileName;
 
-    public AttachDto(Long attachId, String downloadUrl, String fileName) {
+    private Long fileSize;
+
+    public AttachDto(Long attachId, String downloadUrl, String fileName, Long fileSize) {
       this.attachId = attachId;
       this.downloadUrl = downloadUrl;
       this.fileName = fileName;
+      this.fileSize = fileSize;
     }
 
     static public AttachDto fromEntity(Attach attach) {
@@ -307,6 +315,7 @@ public class PostReadDto {
           .attachId(attach.getAttachId())
           .downloadUrl(attach.getDownloadUrl())
           .fileName(attach.getFileName())
+          .fileSize(attach.getFileSize())
           .build();
     }
   }

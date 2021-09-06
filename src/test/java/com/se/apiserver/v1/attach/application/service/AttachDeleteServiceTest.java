@@ -33,7 +33,7 @@ public class AttachDeleteServiceTest {
   void 단일_첨부_파일_삭제_성공() {
     // given
     Long attachcId = 1L;
-    Attach attach = new Attach("URL", "fileName");
+    Attach attach = new Attach("URL", "fileName", 1L);
     given(attachJpaRepository.findById(attachcId)).willReturn(java.util.Optional.of(attach));
     willDoNothing().given(multipartFileDeleteService).delete(attach.getSaveName());
     willDoNothing().given(attachJpaRepository).delete(attach);
@@ -66,8 +66,8 @@ public class AttachDeleteServiceTest {
     // given
     Long postId = 1L;
     List<Attach> attaches
-        = Arrays.asList(new Attach("URL1", "fileName1")
-        , new Attach("URL2", "fileName2"));
+        = Arrays.asList(new Attach("URL1", "fileName1", 1L)
+        , new Attach("URL2", "fileName2", 1L));
 
     given(attachJpaRepository.findAllByPostId(postId)).willReturn(attaches);
     willDoNothing().given(attachJpaRepository).deleteAttachesByPostId(postId);
@@ -84,8 +84,8 @@ public class AttachDeleteServiceTest {
     // given
     Long replyId = 1L;
     List<Attach> attaches
-        = Arrays.asList(new Attach("URL1", "fileName1")
-        , new Attach("URL2", "fileName2"));
+        = Arrays.asList(new Attach("URL1", "fileName1", 1L)
+        , new Attach("URL2", "fileName2", 1L));
 
     given(attachJpaRepository.findAllByReplyId(replyId)).willReturn(attaches);
     willDoNothing().given(attachJpaRepository).deleteAttachesByReplyId(replyId);
