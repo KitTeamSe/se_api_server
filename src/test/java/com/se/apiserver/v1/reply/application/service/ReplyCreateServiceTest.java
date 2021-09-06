@@ -101,7 +101,6 @@ public class ReplyCreateServiceTest {
     Set<String> authorities = new HashSet<>(Arrays.asList("FREEBOARD_ACCESS"));
 
     // 수정 요망
-    given(attachCreateService.create(null, null, files)).willReturn(dtoResponseList);
     given(postJpaRepository.findById(postId)).willReturn(java.util.Optional.of(post));
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
     given(accountContextService.isSignIn()).willReturn(true);
@@ -135,7 +134,6 @@ public class ReplyCreateServiceTest {
         , anonymous);
     Set<String> authorities = new HashSet<>(Arrays.asList("FREEBOARD_ACCESS"));
 
-    given(attachCreateService.create(null, null, files)).willReturn(dtoResponseList);
     given(postJpaRepository.findById(postId)).willReturn(java.util.Optional.of(post));
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
     given(accountContextService.isSignIn()).willReturn(false);
