@@ -45,7 +45,7 @@ class AccountReadServiceTest {
   @BeforeAll
   static void setup(){
     id = "4글자-20글자";
-    PageRequest pageRequest = PageRequest.builder().page(1).size(10).direction(Direction.ASC).build();
+    PageRequest pageRequest = PageRequest.builder().page(0).size(10).direction(Direction.ASC).build();
     pageable = pageRequest.of();
     accountSearchRequest = AccountSearchRequest.builder()
         .name("검색할 이름")
