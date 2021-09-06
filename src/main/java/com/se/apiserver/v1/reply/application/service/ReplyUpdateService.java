@@ -1,7 +1,7 @@
 package com.se.apiserver.v1.reply.application.service;
 
 import com.se.apiserver.v1.account.application.service.AccountContextService;
-import com.se.apiserver.v1.attach.application.service.AttachUpdateService;
+import com.se.apiserver.v1.attach.application.error.AttachErrorCode;
 import com.se.apiserver.v1.attach.domain.entity.Attach;
 import com.se.apiserver.v1.attach.infra.repository.AttachJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
@@ -13,12 +13,13 @@ import com.se.apiserver.v1.reply.application.error.ReplyErrorCode;
 import com.se.apiserver.v1.reply.domain.entity.Reply;
 import com.se.apiserver.v1.reply.domain.entity.ReplyIsSecret;
 import com.se.apiserver.v1.reply.infra.repository.ReplyJpaRepository;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional(readOnly = true)
@@ -29,25 +30,22 @@ public class ReplyUpdateService {
   private AccountContextService accountContextService;
   private PasswordEncoder passwordEncoder;
   private AttachJpaRepository attachJpaRepository;
-  private AttachUpdateService attachUpdateService;
 
   public ReplyUpdateService(
       ReplyJpaRepository replyJpaRepository,
       PostJpaRepository postJpaRepository,
       AccountContextService accountContextService,
       PasswordEncoder passwordEncoder,
-      AttachJpaRepository attachJpaRepository,
-      AttachUpdateService attachUpdateService) {
+      AttachJpaRepository attachJpaRepository) {
     this.replyJpaRepository = replyJpaRepository;
     this.postJpaRepository = postJpaRepository;
     this.accountContextService = accountContextService;
     this.passwordEncoder = passwordEncoder;
     this.attachJpaRepository = attachJpaRepository;
-    this.attachUpdateService = attachUpdateService;
   }
 
   @Transactional
-  public Long update(ReplyUpdateDto.Request request, MultipartFile[] files) {
+  public Long update(ReplyUpdateDto.Request request) {
     Reply reply = replyJpaRepository.findById(request.getReplyId())
         .orElseThrow(() -> new BusinessException(ReplyErrorCode.NO_SUCH_REPLY));
     Post post = postJpaRepository.findById(request.getPostId())
@@ -56,8 +54,7 @@ public class ReplyUpdateService {
     post.validateReadable();
     post.getBoard().validateAccessAuthority(accountContextService.getContextAuthorities());
 
-    attachUpdateService.update(null, reply.getReplyId(), files);
-    List<Attach> attaches = attachJpaRepository.findAllByReplyId(reply.getReplyId());
+    List<Attach> attaches = getAttaches(request.getAttachmentList());
 
     if (reply.getAnonymous() != null) {
       validatePasswordMatch(reply, request.getPassword());
@@ -69,7 +66,7 @@ public class ReplyUpdateService {
     updateReplyIsSecretIfNotNull(reply, request.getIsSecret());
     updateLastModifiedIp(reply, accountContextService.getCurrentClientIP());
 
-    reply = replyJpaRepository.save(reply);
+    replyJpaRepository.save(reply);
     reply.updateAttaches(attaches);
 
     return reply.getReplyId();
@@ -103,5 +100,15 @@ public class ReplyUpdateService {
     if (!passwordEncoder.matches(password, reply.getAnonymous().getAnonymousPassword())) {
       throw new BusinessException(ReplyErrorCode.INVALID_PASSWORD);
     }
+  }
+
+  private List<Attach> getAttaches(List<ReplyUpdateDto.AttachDto> attachmentList) {
+    if(attachmentList == null || attachmentList.size() == 0)
+      return new ArrayList<>();
+    return attachmentList.stream()
+        .map(a -> attachJpaRepository.findById(a.getAttachId())
+            .orElseThrow(() -> new BusinessException(AttachErrorCode.NO_SUCH_ATTACH))
+        )
+        .collect(Collectors.toList());
   }
 }
