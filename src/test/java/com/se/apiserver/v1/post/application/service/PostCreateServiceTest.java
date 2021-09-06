@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
 
 import com.se.apiserver.v1.account.application.service.AccountContextService;
 import com.se.apiserver.v1.account.domain.entity.Account;
@@ -18,6 +19,7 @@ import com.se.apiserver.v1.board.domain.entity.Board;
 import com.se.apiserver.v1.board.infra.repository.BoardJpaRepository;
 import com.se.apiserver.v1.common.domain.entity.Anonymous;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
+import com.se.apiserver.v1.notice.application.service.NoticeSendService;
 import com.se.apiserver.v1.post.application.dto.PostCreateDto;
 import com.se.apiserver.v1.post.application.dto.PostCreateDto.TagDto;
 import com.se.apiserver.v1.post.application.error.PostErrorCode;
@@ -55,6 +57,8 @@ public class PostCreateServiceTest {
   private PasswordEncoder passwordEncoder;
   @Mock
   private TagJpaRepository tagJpaRepository;
+  @Mock
+  private NoticeSendService noticeSendService;
   @InjectMocks
   private PostCreateService postCreateService;
 
@@ -87,6 +91,7 @@ public class PostCreateServiceTest {
     given(accountContextService.getContextAccount()).willReturn(account);
     given(tagJpaRepository.findById(tagDtoList.get(0).getTagId()))
         .willReturn(java.util.Optional.ofNullable(tags.get(0)));
+    willDoNothing().given(noticeSendService).sendPostNotice(any(List.class), any(Post.class));
     given(postJpaRepository.save(any(Post.class))).willReturn(post);
 
     // when, then

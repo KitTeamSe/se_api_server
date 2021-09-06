@@ -108,7 +108,6 @@ public class PostReadServiceTest {
     // given
     Long postId = 1L;
     String password = "qwerty";
-    Set<String> authorities = new HashSet<>();
     List<Tag> tags = new ArrayList<>();
     Post post = new Post(getAnonymous()
         , getBoard()
@@ -157,12 +156,6 @@ public class PostReadServiceTest {
         , new ArrayList<>()
         , new ArrayList<>()
         , "127.0.0.1");
-    PostDeleteDto.AnonymousPostDeleteRequest anonymousPostDeleteRequest
-        = AnonymousPostDeleteRequest
-        .builder()
-        .postId(postId)
-        .anonymousPassword("qwerty")
-        .build();
     given(postJpaRepository.findById(postId)).willReturn(java.util.Optional.of(post));
     given(passwordEncoder.matches(password, post.getAnonymousPassword())).willReturn(false);
 
