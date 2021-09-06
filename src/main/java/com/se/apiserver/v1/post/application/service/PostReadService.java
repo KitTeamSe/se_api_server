@@ -18,7 +18,6 @@ import com.se.apiserver.v1.post.application.dto.PostReadDto;
 import com.se.apiserver.v1.post.domain.repository.PostRepositoryProtocol;
 import com.se.apiserver.v1.post.infra.repository.PostJpaRepository;
 import com.se.apiserver.v1.post.infra.repository.PostQueryRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +30,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class PostReadService {
 
@@ -41,6 +39,21 @@ public class PostReadService {
   private final BoardJpaRepository boardJpaRepository;
   private final PostQueryRepository postQueryRepository;
   private final PostRepositoryProtocol postRepositoryProtocol;
+
+  public PostReadService(
+      PostJpaRepository postJpaRepository,
+      AccountContextService accountContextService,
+      PasswordEncoder passwordEncoder,
+      BoardJpaRepository boardJpaRepository,
+      PostQueryRepository postQueryRepository,
+      PostRepositoryProtocol postRepositoryProtocol) {
+    this.postJpaRepository = postJpaRepository;
+    this.accountContextService = accountContextService;
+    this.passwordEncoder = passwordEncoder;
+    this.boardJpaRepository = boardJpaRepository;
+    this.postQueryRepository = postQueryRepository;
+    this.postRepositoryProtocol = postRepositoryProtocol;
+  }
 
   @Transactional
   public PostReadDto.Response read(Long postId) {
