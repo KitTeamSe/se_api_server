@@ -45,9 +45,6 @@ public class ReplyReadServiceTest {
   @Mock
   private AccountContextService accountContextService;
 
-  @Mock
-  private PostJpaRepository postJpaRepository;
-
   @InjectMocks
   ReplyReadService replyReadService;
 
@@ -120,7 +117,6 @@ public class ReplyReadServiceTest {
     given(replyJpaRepository.findById(replyId)).willReturn(java.util.Optional.of(reply));
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
     given(accountContextService.isSignIn()).willReturn(true);
-    given(accountContextService.getContextAccount()).willReturn(getAccount());
 
     // when
     ReplyReadDto.Response response = replyReadService.read(replyId);
@@ -148,7 +144,6 @@ public class ReplyReadServiceTest {
     given(replyJpaRepository.findById(replyId)).willReturn(java.util.Optional.of(reply));
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
     given(accountContextService.isSignIn()).willReturn(true);
-    given(accountContextService.getContextAccount()).willReturn(getAccount());
 
     // when
     ReplyReadDto.Response response = replyReadService.read(replyId);
@@ -186,12 +181,12 @@ public class ReplyReadServiceTest {
         , null
         , "127.0.0.1"
         , getAccount());
-    Set<String> authorities = new HashSet<>();
+    Set<String> authorities = Set.of("FREEBOARD_ACCESS");
 
     given(replyJpaRepository.findById(replyId)).willReturn(java.util.Optional.of(reply));
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
     given(accountContextService.isSignIn()).willReturn(true);
-    given(accountContextService.getContextAccount()).willReturn(getAccount());
+    given(accountContextService.getCurrentAccountId()).willReturn(getAccount().getAccountId());
 
     // when
     ReplyReadDto.Response response = replyReadService.read(replyId);
@@ -232,7 +227,7 @@ public class ReplyReadServiceTest {
     given(replyJpaRepository.findById(replyId)).willReturn(java.util.Optional.of(reply));
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
     given(accountContextService.isSignIn()).willReturn(true);
-    given(accountContextService.getContextAccount()).willReturn(getAccount());
+    given(accountContextService.getCurrentAccountId()).willReturn(getAccount().getAccountId());
 
     // when
     ReplyReadDto.Response response = replyReadService.read(replyId);
