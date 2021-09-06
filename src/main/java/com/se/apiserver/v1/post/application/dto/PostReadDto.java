@@ -270,6 +270,11 @@ public class PostReadDto {
           .collect(Collectors.toList())
       );
 
+      builder.attaches(post.getAttaches()
+          .stream()
+          .map(a -> AttachDto.fromEntity(a))
+          .collect(Collectors.toList()));
+
       if (post.getIsSecret() == PostIsSecret.SECRET && !isOwnerOrManager) {
         throw new BusinessException(PostErrorCode.CAN_NOT_ACCESS_POST);
       }

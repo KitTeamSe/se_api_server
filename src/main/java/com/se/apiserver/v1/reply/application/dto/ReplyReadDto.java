@@ -59,7 +59,7 @@ public class ReplyReadDto {
       }
 
       List<AttachDto> attaches = reply.getAttaches().stream()
-          .map(attach -> new AttachDto(attach.getAttachId()))
+          .map(attach -> new AttachDto(attach.getAttachId(), attach.getDownloadUrl(), attach.getFileName()))
           .collect(Collectors.toList());
       responseBuilder.attacheList(attaches);
       responseBuilder.createAt(reply.getCreatedAt());
@@ -87,11 +87,18 @@ public class ReplyReadDto {
       return reply.getText();
     }
 
-    @Data
+    @Getter
     @NoArgsConstructor
-    @AllArgsConstructor
     public static class AttachDto {
       private Long attachId;
+      private String downloadUrl;
+      private String fileName;
+
+      public AttachDto(Long attachId, String downloadUrl, String fileName) {
+        this.attachId = attachId;
+        this.downloadUrl = downloadUrl;
+        this.fileName = fileName;
+      }
     }
 
   }
