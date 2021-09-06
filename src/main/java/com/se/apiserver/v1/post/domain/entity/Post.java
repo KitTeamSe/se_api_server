@@ -61,9 +61,6 @@ public class Post extends BaseEntity {
   @Column(nullable = false)
   private Integer views;
 
-  @Column(nullable = false)
-  private Integer numReply;
-
   @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, orphanRemoval = true)
   private Set<Reply> replies = new HashSet<>();
 
@@ -93,7 +90,6 @@ public class Post extends BaseEntity {
     this.isSecret = isSecret;
     this.postIsDeleted = PostIsDeleted.NORMAL;
     this.views = 0;
-    this.numReply = replies.size();
     this.createdIp = createdIp;
     addAttaches(attaches);
     addTags(tags);
@@ -284,6 +280,5 @@ public class Post extends BaseEntity {
 
   public void addReply(Reply reply) {
     this.replies.add(reply);
-    numReply = replies.size();
   }
 }
