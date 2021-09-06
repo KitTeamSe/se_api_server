@@ -62,7 +62,7 @@ public class PostAnnouncementDto {
         .postId(post.getPostId())
         .boardId(post.getBoard().getBoardId())
         .views(post.getViews())
-        .numReply(post.getNumReply())
+        .numReply(post.getReplies().size())
         .isSecret(post.getIsSecret())
         .title(post.getPostContent().getTitle())
         .previewText(previewText)
