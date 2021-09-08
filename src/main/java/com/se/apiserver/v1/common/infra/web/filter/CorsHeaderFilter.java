@@ -11,6 +11,7 @@ import org.springframework.web.filter.CorsFilter;
 @Configuration
 public class  CorsHeaderFilter {
 
+  // 주입 방식 변경 필요
   private final String MANAGER_SERVER_DOMAIN;
   private final String CLIENT_SERVER_DOMAIN;
 
