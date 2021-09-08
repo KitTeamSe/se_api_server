@@ -5,13 +5,12 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.se.apiserver.v1.attach.domain.entity.Attach;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 public class AttachReadDto {
 
-  @Data
+  @Getter
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
@@ -29,11 +28,14 @@ public class AttachReadDto {
 
     private String fileName;
 
+    private Long fileSize;
+
     public static Response fromEntity(Attach attach) {
       ResponseBuilder responseBuilder = Response.builder()
           .attachId(attach.getAttachId())
           .downloadUrl(attach.getDownloadUrl())
-          .fileName(attach.getFileName());
+          .fileName(attach.getFileName())
+          .fileSize(attach.getFileSize());
 
       if (attach.getPost() != null) {
         responseBuilder.postId(attach.getPost().getPostId());
