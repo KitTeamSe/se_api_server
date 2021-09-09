@@ -26,6 +26,7 @@ public class  CorsHeaderFilter {
     CorsConfiguration config = new CorsConfiguration();
     config.setAllowCredentials(true);
     config.addAllowedOrigin("http://localhost:3000");
+    config.addAllowedOrigin("https://localhost:3000");
     config.addAllowedOrigin(apiServerDomain);
     config.addAllowedOrigin(managerServerDomain);
     config.addAllowedOrigin(clientServerDomain);
