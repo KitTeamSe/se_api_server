@@ -50,15 +50,6 @@ public class SeExceptionAdvice {
     return new ResponseEntity<>(ExceptionResponse.of(e), e.getHttpStatus());
   }
 
-  @ExceptionHandler(ConstraintViolationException.class)
-  public ResponseEntity<PreconditionFailedException> handleConstraintViolation(final ConstraintViolationException e) {
-    this.countExceptionAndLog(e);
-    return new ResponseEntity<>(
-        new PreconditionFailedException(e.getMessage(), e),
-        HttpStatus.PRECONDITION_FAILED
-    );
-  }
-
   private void countExceptionAndLog(final Exception e) {
     logger.error(e.getClass().getSimpleName(), e.getMessage());
     logger.debug(e.getClass().getSimpleName(), e.getMessage(), e);
