@@ -7,7 +7,6 @@ import com.se.apiserver.v1.attach.infra.repository.AttachJpaRepository;
 import com.se.apiserver.v1.multipartfile.application.dto.MultipartFileUploadDto;
 import com.se.apiserver.v1.multipartfile.application.service.MultipartFileUploadService;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
@@ -42,10 +41,9 @@ public class AttachCreateService {
     List<Attach> attaches = new ArrayList<>();
 
     for (MultipartFileUploadDto multipartFileUploadDto : multipartFileUploadDtoList) {
-      // fileSize 정적으로 1L로 둔 상태. 추후 수정 예정
       Attach attach
           = new Attach(multipartFileUploadDto.getDownloadUrl()
-          , multipartFileUploadDto.getOriginalName(), 1L);
+          , multipartFileUploadDto.getOriginalName(), multipartFileUploadDto.getFileSize());
       attaches.add(attach);
     }
 
