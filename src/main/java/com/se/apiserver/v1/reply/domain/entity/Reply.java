@@ -38,8 +38,8 @@ public class Reply extends BaseEntity {
   @JoinColumn(name = "post_id", nullable = false)
   private Post post;
 
-  @Column(length = 500, nullable = false)
-  @Size(min = 4, max = 500)
+  @Column(length = 5000, nullable = false)
+  @Size(min = 4, max = 5000)
   private String text;
 
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
