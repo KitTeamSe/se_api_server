@@ -19,12 +19,11 @@ public class ReplyUpdateDto {
     @ApiModel(value = "댓글 수정 요청")
     public static class Request{
 
-        public Request(Long replyId, String password, Long postId, String text,
+        public Request(Long replyId, String password, String text,
             ReplyIsSecret isSecret,
             List<AttachDto> attachmentList) {
             this.replyId = replyId;
             this.password = password;
-            this.postId = postId;
             this.text = text;
             this.isSecret = isSecret;
             this.attachmentList = attachmentList;
@@ -37,11 +36,6 @@ public class ReplyUpdateDto {
 
         @ApiModelProperty(notes = "익명 댓글 비밀번호", example = "string")
         private String password;
-
-        @NotNull
-        @Min(1)
-        @ApiModelProperty(notes = "게시글 아이디", example = "1")
-        private Long postId;
 
         @NotNull
         @ApiModelProperty(notes = "댓글 내용", example = "string")

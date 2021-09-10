@@ -44,7 +44,7 @@ public class ReplyCreateDto {
     private Anonymous anonymous;
 
     @Min(1)
-    @ApiModelProperty(notes = "부모 댓글의 번호")
+    @ApiModelProperty(notes = "부모 댓글의 번호", example = "1")
     private Long parentId;
 
     @ApiModelProperty(notes = "비밀 여부")

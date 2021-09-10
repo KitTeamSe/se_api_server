@@ -26,19 +26,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReplyUpdateService {
 
   private ReplyJpaRepository replyJpaRepository;
-  private PostJpaRepository postJpaRepository;
   private AccountContextService accountContextService;
   private PasswordEncoder passwordEncoder;
   private AttachJpaRepository attachJpaRepository;
 
   public ReplyUpdateService(
       ReplyJpaRepository replyJpaRepository,
-      PostJpaRepository postJpaRepository,
       AccountContextService accountContextService,
       PasswordEncoder passwordEncoder,
       AttachJpaRepository attachJpaRepository) {
     this.replyJpaRepository = replyJpaRepository;
-    this.postJpaRepository = postJpaRepository;
     this.accountContextService = accountContextService;
     this.passwordEncoder = passwordEncoder;
     this.attachJpaRepository = attachJpaRepository;
@@ -48,8 +45,7 @@ public class ReplyUpdateService {
   public Long update(ReplyUpdateDto.Request request) {
     Reply reply = replyJpaRepository.findById(request.getReplyId())
         .orElseThrow(() -> new BusinessException(ReplyErrorCode.NO_SUCH_REPLY));
-    Post post = postJpaRepository.findById(request.getPostId())
-        .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));
+    Post post = reply.getPost();
 
     post.validateReadable();
     post.getBoard().validateAccessAuthority(accountContextService.getContextAuthorities());
