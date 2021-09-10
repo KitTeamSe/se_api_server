@@ -265,7 +265,7 @@ public class PostReadServiceTest {
 
     // when
     PostReadDto.PostListResponse postListResponse
-        = postReadService.readBoardPostList(pageable, boardId);
+        = postReadService.readBoardPostList(pageable, board.getNameEng());
 
     // then
     assertThat(postListResponse.getPostListItem().getSize(), is(TUPLE_COUNT));
