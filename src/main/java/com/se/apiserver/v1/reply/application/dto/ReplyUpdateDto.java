@@ -7,7 +7,6 @@ import java.util.List;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Singular;
@@ -19,12 +18,11 @@ public class ReplyUpdateDto {
     @ApiModel(value = "댓글 수정 요청")
     public static class Request{
 
-        public Request(Long replyId, String password, Long postId, String text,
+        public Request(Long replyId, String password, String text,
             ReplyIsSecret isSecret,
-            List<AttachDto> attachmentList) {
+            List<ReplyUpdateAttachDto> attachmentList) {
             this.replyId = replyId;
             this.password = password;
-            this.postId = postId;
             this.text = text;
             this.isSecret = isSecret;
             this.attachmentList = attachmentList;
@@ -39,11 +37,6 @@ public class ReplyUpdateDto {
         private String password;
 
         @NotNull
-        @Min(1)
-        @ApiModelProperty(notes = "게시글 아이디", example = "1")
-        private Long postId;
-
-        @NotNull
         @ApiModelProperty(notes = "댓글 내용", example = "string")
         private String text;
 
@@ -53,16 +46,16 @@ public class ReplyUpdateDto {
 
         @ApiModelProperty(notes = "첨부파일들")
         @Singular("attachmentList")
-        private List<AttachDto> attachmentList;
+        private List<ReplyUpdateAttachDto> attachmentList;
     }
 
     @Getter
     @NoArgsConstructor
     @Builder
-    public static class AttachDto {
+    public static class ReplyUpdateAttachDto {
         private Long attachId;
 
-        public AttachDto(Long attachId) {
+        public ReplyUpdateAttachDto(Long attachId) {
             this.attachId = attachId;
         }
     }

@@ -10,6 +10,7 @@ import com.se.apiserver.v1.post.application.error.PostErrorCode;
 import com.se.apiserver.v1.post.domain.entity.Post;
 import com.se.apiserver.v1.post.infra.repository.PostJpaRepository;
 import com.se.apiserver.v1.reply.application.dto.ReplyCreateDto;
+import com.se.apiserver.v1.reply.application.dto.ReplyCreateDto.ReplyCreateAttachDto;
 import com.se.apiserver.v1.reply.application.error.ReplyErrorCode;
 import com.se.apiserver.v1.reply.domain.entity.Reply;
 import com.se.apiserver.v1.reply.domain.entity.ReplyIsDelete;
@@ -101,7 +102,7 @@ public class ReplyCreateService {
     }
   }
 
-  private List<Attach> getAttaches(List<ReplyCreateDto.AttachDto> attachmentList) {
+  private List<Attach> getAttaches(List<ReplyCreateAttachDto> attachmentList) {
     if(attachmentList == null || attachmentList.size() == 0)
       return new ArrayList<>();
     return attachmentList.stream()

@@ -5,10 +5,9 @@ import com.se.apiserver.v1.attach.application.error.AttachErrorCode;
 import com.se.apiserver.v1.attach.domain.entity.Attach;
 import com.se.apiserver.v1.attach.infra.repository.AttachJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
-import com.se.apiserver.v1.post.application.error.PostErrorCode;
 import com.se.apiserver.v1.post.domain.entity.Post;
-import com.se.apiserver.v1.post.infra.repository.PostJpaRepository;
 import com.se.apiserver.v1.reply.application.dto.ReplyUpdateDto;
+import com.se.apiserver.v1.reply.application.dto.ReplyUpdateDto.ReplyUpdateAttachDto;
 import com.se.apiserver.v1.reply.application.error.ReplyErrorCode;
 import com.se.apiserver.v1.reply.domain.entity.Reply;
 import com.se.apiserver.v1.reply.domain.entity.ReplyIsSecret;
@@ -26,19 +25,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReplyUpdateService {
 
   private ReplyJpaRepository replyJpaRepository;
-  private PostJpaRepository postJpaRepository;
   private AccountContextService accountContextService;
   private PasswordEncoder passwordEncoder;
   private AttachJpaRepository attachJpaRepository;
 
   public ReplyUpdateService(
       ReplyJpaRepository replyJpaRepository,
-      PostJpaRepository postJpaRepository,
       AccountContextService accountContextService,
       PasswordEncoder passwordEncoder,
       AttachJpaRepository attachJpaRepository) {
     this.replyJpaRepository = replyJpaRepository;
-    this.postJpaRepository = postJpaRepository;
     this.accountContextService = accountContextService;
     this.passwordEncoder = passwordEncoder;
     this.attachJpaRepository = attachJpaRepository;
@@ -48,8 +44,7 @@ public class ReplyUpdateService {
   public Long update(ReplyUpdateDto.Request request) {
     Reply reply = replyJpaRepository.findById(request.getReplyId())
         .orElseThrow(() -> new BusinessException(ReplyErrorCode.NO_SUCH_REPLY));
-    Post post = postJpaRepository.findById(request.getPostId())
-        .orElseThrow(() -> new BusinessException(PostErrorCode.NO_SUCH_POST));
+    Post post = reply.getPost();
 
     post.validateReadable();
     post.getBoard().validateAccessAuthority(accountContextService.getContextAuthorities());
@@ -102,7 +97,7 @@ public class ReplyUpdateService {
     }
   }
 
-  private List<Attach> getAttaches(List<ReplyUpdateDto.AttachDto> attachmentList) {
+  private List<Attach> getAttaches(List<ReplyUpdateAttachDto> attachmentList) {
     if(attachmentList == null || attachmentList.size() == 0)
       return new ArrayList<>();
     return attachmentList.stream()
