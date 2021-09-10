@@ -259,13 +259,13 @@ public class PostReadServiceTest {
     }
     Page<Post> postPage = new PageImpl<>(postList);
 
-    given(boardJpaRepository.findById(boardId)).willReturn(java.util.Optional.of(board));
+    given(boardJpaRepository.findByNameEng(board.getNameEng())).willReturn(java.util.Optional.of(board));
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
     given(postJpaRepository.findAllByBoard(board, pageable)).willReturn(postPage);
 
     // when
     PostReadDto.PostListResponse postListResponse
-        = postReadService.readBoardPostList(pageable, boardId);
+        = postReadService.readBoardPostList(pageable, board.getNameEng());
 
     // then
     assertThat(postListResponse.getPostListItem().getSize(), is(TUPLE_COUNT));

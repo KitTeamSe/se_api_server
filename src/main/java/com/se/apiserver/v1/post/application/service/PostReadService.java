@@ -84,8 +84,8 @@ public class PostReadService {
   }
 
   public Page<PostAnnouncementDto> readAnnouncementList(
-      Pageable pageable, Long boardId) {
-    Board board = boardJpaRepository.findById(boardId)
+      Pageable pageable, String boardNameEng) {
+    Board board = boardJpaRepository.findByNameEng(boardNameEng)
         .orElseThrow(() -> new NotFoundException("존재하지 않는 게시판입니다."));
 
     Page<Post> allByBoardAndIsNotice = postRepositoryProtocol
@@ -107,8 +107,8 @@ public class PostReadService {
     return true;
   }
 
-  public PostReadDto.PostListResponse readBoardPostList(Pageable pageable, Long boardId) {
-    Board board = boardJpaRepository.findById(boardId)
+  public PostReadDto.PostListResponse readBoardPostList(Pageable pageable, String boardNameEng) {
+    Board board = boardJpaRepository.findByNameEng(boardNameEng)
         .orElseThrow(() -> new BusinessException(BoardErrorCode.NO_SUCH_BOARD));
     Set<String> authorities = accountContextService.getContextAuthorities();
     board.validateAccessAuthority(authorities);
