@@ -7,7 +7,6 @@ import java.util.List;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Singular;
@@ -21,7 +20,7 @@ public class ReplyUpdateDto {
 
         public Request(Long replyId, String password, String text,
             ReplyIsSecret isSecret,
-            List<AttachDto> attachmentList) {
+            List<ReplyUpdateAttachDto> attachmentList) {
             this.replyId = replyId;
             this.password = password;
             this.text = text;
@@ -47,16 +46,16 @@ public class ReplyUpdateDto {
 
         @ApiModelProperty(notes = "첨부파일들")
         @Singular("attachmentList")
-        private List<AttachDto> attachmentList;
+        private List<ReplyUpdateAttachDto> attachmentList;
     }
 
     @Getter
     @NoArgsConstructor
     @Builder
-    public static class AttachDto {
+    public static class ReplyUpdateAttachDto {
         private Long attachId;
 
-        public AttachDto(Long attachId) {
+        public ReplyUpdateAttachDto(Long attachId) {
             this.attachId = attachId;
         }
     }

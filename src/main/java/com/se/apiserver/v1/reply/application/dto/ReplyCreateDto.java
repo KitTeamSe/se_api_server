@@ -7,9 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.List;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Singular;
@@ -22,7 +20,7 @@ public class ReplyCreateDto {
   @ApiModel(value = "댓글 생성 요청")
   public static class Request {
 
-    public Request(Long postId, String text, Anonymous anonymous, Long parentId, ReplyIsSecret isSecret, List<AttachDto> attachmentList) {
+    public Request(Long postId, String text, Anonymous anonymous, Long parentId, ReplyIsSecret isSecret, List<ReplyCreateAttachDto> attachmentList) {
       this.postId = postId;
       this.text = text;
       this.anonymous = anonymous;
@@ -53,16 +51,16 @@ public class ReplyCreateDto {
 
     @ApiModelProperty(notes = "첨부파일들")
     @Singular("attachmentList")
-    private List<AttachDto> attachmentList;
+    private List<ReplyCreateAttachDto> attachmentList;
   }
 
   @Getter
   @NoArgsConstructor
   @Builder
-  public static class AttachDto {
+  public static class ReplyCreateAttachDto {
     private Long attachId;
 
-    public AttachDto(Long attachId) {
+    public ReplyCreateAttachDto(Long attachId) {
       this.attachId = attachId;
     }
   }

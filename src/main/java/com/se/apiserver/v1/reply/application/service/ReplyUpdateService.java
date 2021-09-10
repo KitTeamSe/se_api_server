@@ -5,10 +5,9 @@ import com.se.apiserver.v1.attach.application.error.AttachErrorCode;
 import com.se.apiserver.v1.attach.domain.entity.Attach;
 import com.se.apiserver.v1.attach.infra.repository.AttachJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
-import com.se.apiserver.v1.post.application.error.PostErrorCode;
 import com.se.apiserver.v1.post.domain.entity.Post;
-import com.se.apiserver.v1.post.infra.repository.PostJpaRepository;
 import com.se.apiserver.v1.reply.application.dto.ReplyUpdateDto;
+import com.se.apiserver.v1.reply.application.dto.ReplyUpdateDto.ReplyUpdateAttachDto;
 import com.se.apiserver.v1.reply.application.error.ReplyErrorCode;
 import com.se.apiserver.v1.reply.domain.entity.Reply;
 import com.se.apiserver.v1.reply.domain.entity.ReplyIsSecret;
@@ -98,7 +97,7 @@ public class ReplyUpdateService {
     }
   }
 
-  private List<Attach> getAttaches(List<ReplyUpdateDto.AttachDto> attachmentList) {
+  private List<Attach> getAttaches(List<ReplyUpdateAttachDto> attachmentList) {
     if(attachmentList == null || attachmentList.size() == 0)
       return new ArrayList<>();
     return attachmentList.stream()
