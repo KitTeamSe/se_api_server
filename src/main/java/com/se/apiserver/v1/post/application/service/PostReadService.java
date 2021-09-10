@@ -84,8 +84,8 @@ public class PostReadService {
   }
 
   public Page<PostAnnouncementDto> readAnnouncementList(
-      Pageable pageable, Long boardId) {
-    Board board = boardJpaRepository.findById(boardId)
+      Pageable pageable, String boardNameEng) {
+    Board board = boardJpaRepository.findByNameEng(boardNameEng)
         .orElseThrow(() -> new NotFoundException("존재하지 않는 게시판입니다."));
 
     Page<Post> allByBoardAndIsNotice = postRepositoryProtocol

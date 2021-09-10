@@ -69,13 +69,13 @@ public class PostAnnouncementServiceTest {
     }
     Page<Post> postPage = new PageImpl<>(postList);
 
-    given(boardJpaRepository.findById(1L)).willReturn(java.util.Optional.of(board));
+    given(boardJpaRepository.findByNameEng(board.getNameEng())).willReturn(java.util.Optional.of(board));
     given(postRepositoryProtocol
         .findAllByBoardAndIsNoticeEquals(board, PostIsNotice.NOTICE, pageable))
         .willReturn(postPage);
 
     // when
-    Page<PostAnnouncementDto> dtoPage = postReadService.readAnnouncementList(pageable, 1L);
+    Page<PostAnnouncementDto> dtoPage = postReadService.readAnnouncementList(pageable, board.getNameEng());
 
     // then
     List<PostAnnouncementDto> dtoList = dtoPage.getContent();

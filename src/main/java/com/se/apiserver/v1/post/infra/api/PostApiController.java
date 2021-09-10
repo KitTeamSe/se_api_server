@@ -98,10 +98,10 @@ public class PostApiController {
   @ResponseStatus(HttpStatus.OK)
   @ApiOperation("게시판에 따른 공지 목록 조회")
   public PaginationResponse<List<PostAnnouncementDto>> readAllAnnouncement(
-      AnnouncementPaginationRequest<Long> announcementPaginationRequest, Long boardId) {
+      AnnouncementPaginationRequest<Long> announcementPaginationRequest, String boardNameEng) {
 
     Page<PostAnnouncementDto> page = postReadService
-        .readAnnouncementList(announcementPaginationRequest.of(), boardId);
+        .readAnnouncementList(announcementPaginationRequest.of(), boardNameEng);
     return new PaginationResponse<>(HttpStatus.OK, "성공적으로 조회되었습니다.", page.getContent(),
         page.getContent().size(),
         page.getTotalPages(), page.getPageable().getPageNumber(), page.getNumberOfElements());
