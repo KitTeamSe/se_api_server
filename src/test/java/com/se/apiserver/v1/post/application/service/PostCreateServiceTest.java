@@ -65,7 +65,7 @@ public class PostCreateServiceTest {
   @Test
   void 회원_게시글_등록_성공() {
     // given
-    Long boardId = 1L;
+    String boardNameEng = "TestBoard";
     String ip = "127.0.0.1";
     Set<String> authorities = Set.of("MENU_MANAGE");
     Account account = getAccount();
@@ -77,14 +77,14 @@ public class PostCreateServiceTest {
     Post post = new Post(account, board, getPostContent(), PostIsNotice.NORMAL, PostIsSecret.NORMAL,
         authorities, tags, attaches, "127.0.0.1");
     PostCreateDto.Request request = PostCreateDto.Request
-        .builder().boardId(boardId)
+        .builder().boardNameEng(boardNameEng)
         .postContent(post.getPostContent())
         .isSecret(PostIsSecret.NORMAL)
         .isNotice(PostIsNotice.NORMAL)
         .tagList(tagDtoList)
         .build();
 
-    given(boardJpaRepository.findById(boardId)).willReturn(java.util.Optional.of(board));
+    given(boardJpaRepository.findByNameEng(boardNameEng)).willReturn(java.util.Optional.of(board));
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
     given(accountContextService.getCurrentClientIP()).willReturn(ip);
     given(accountContextService.isSignIn()).willReturn(true);
@@ -101,7 +101,7 @@ public class PostCreateServiceTest {
   @Test
   void 익명_사용자_게시글_작성_성공() {
     // given
-    Long boardId = 1L;
+    String boardNameEng = "TestBoard";
     String ip = "127.0.0.1";
     Set<String> authorities = Set.of("FREEBOARD_ACCESS");
     Anonymous anonymous = getAnonymous();
@@ -112,14 +112,14 @@ public class PostCreateServiceTest {
         PostIsSecret.NORMAL,
         authorities, new ArrayList<>(), attaches, "127.0.0.1");
     PostCreateDto.Request request = PostCreateDto.Request
-        .builder().boardId(boardId)
+        .builder().boardNameEng(boardNameEng)
         .postContent(post.getPostContent())
         .isSecret(PostIsSecret.NORMAL)
         .isNotice(PostIsNotice.NORMAL)
         .anonymous(anonymous)
         .build();
 
-    given(boardJpaRepository.findById(boardId)).willReturn(java.util.Optional.of(board));
+    given(boardJpaRepository.findByNameEng(boardNameEng)).willReturn(java.util.Optional.of(board));
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
     given(accountContextService.getCurrentClientIP()).willReturn(ip);
     given(accountContextService.isSignIn()).willReturn(false);
@@ -134,16 +134,16 @@ public class PostCreateServiceTest {
   @Test
   void 존재하지_않는_게시판() {
     // given
-    Long boardId = 2L;
+    String boardNameEng = "NotExistsBoard";
     PostCreateDto.Request request = PostCreateDto.Request
-        .builder().boardId(boardId)
+        .builder().boardNameEng(boardNameEng)
         .postContent(getPostContent())
         .isSecret(PostIsSecret.NORMAL)
         .isNotice(PostIsNotice.NORMAL)
         .anonymous(getAnonymous())
         .build();
 
-    given(boardJpaRepository.findById(boardId))
+    given(boardJpaRepository.findByNameEng(boardNameEng))
         .willThrow(new BusinessException(BoardErrorCode.NO_SUCH_BOARD));
     // when
     BusinessException businessException = assertThrows(BusinessException.class,
@@ -157,18 +157,18 @@ public class PostCreateServiceTest {
   @Test
   void 익명_사용자가_태그_등록_실패() {
     // given
-    Long boardId = 2L;
+    String boardNameEng = "TestBoard";
     Board board = getBoard();
     List<TagDto> tagDtoList = Arrays.asList(new TagDto(1L));
     PostCreateDto.Request request = PostCreateDto.Request
-        .builder().boardId(boardId)
+        .builder().boardNameEng(boardNameEng)
         .postContent(getPostContent())
         .isSecret(PostIsSecret.NORMAL)
         .anonymous(getAnonymous())
         .tagList(tagDtoList)
         .build();
 
-    given(boardJpaRepository.findById(boardId)).willReturn(java.util.Optional.of(board));
+    given(boardJpaRepository.findByNameEng(boardNameEng)).willReturn(java.util.Optional.of(board));
     given(accountContextService.isSignIn()).willReturn(false);
 
     // when
@@ -183,17 +183,17 @@ public class PostCreateServiceTest {
   @Test
   void 접근_권한_없음() {
     // given
-    Long boardId = 2L;
+    String boardNameEng = "TestBoard";
     Board board = getBoard();
     PostCreateDto.Request request = PostCreateDto.Request
-        .builder().boardId(boardId)
+        .builder().boardNameEng(boardNameEng)
         .postContent(getPostContent())
         .isSecret(PostIsSecret.NORMAL)
         .anonymous(getAnonymous())
         .tagList(new ArrayList<>())
         .build();
     Set<String> authorities = new HashSet<>();
-    given(boardJpaRepository.findById(boardId)).willReturn(java.util.Optional.of(board));
+    given(boardJpaRepository.findByNameEng(boardNameEng)).willReturn(java.util.Optional.of(board));
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
 
     // when
@@ -213,19 +213,19 @@ public class PostCreateServiceTest {
   @Test
   void 관리자가_아닌_사용자가_공지글_등록_실패() {
     // given
-    Long boardId = 1L;
+    String boardNameEng = "TestBoard";
     String ip = "127.0.0.1";
     Set<String> authorities = Set.of("FREEBOARD_ACCESS");
     Account account = getAccount();
     Board board = getBoard();
     PostCreateDto.Request request = PostCreateDto.Request
-        .builder().boardId(boardId)
+        .builder().boardNameEng(boardNameEng)
         .postContent(getPostContent())
         .isSecret(PostIsSecret.NORMAL)
         .isNotice(PostIsNotice.NOTICE)
         .build();
 
-    given(boardJpaRepository.findById(boardId)).willReturn(java.util.Optional.of(board));
+    given(boardJpaRepository.findByNameEng(boardNameEng)).willReturn(java.util.Optional.of(board));
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
     given(accountContextService.getCurrentClientIP()).willReturn(ip);
     given(accountContextService.isSignIn()).willReturn(true);

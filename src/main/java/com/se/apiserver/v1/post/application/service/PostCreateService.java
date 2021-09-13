@@ -55,7 +55,7 @@ public class PostCreateService {
 
   @Transactional
   public Long create(PostCreateDto.Request request) {
-    Board board = boardJpaRepository.findById(request.getBoardId())
+    Board board = boardJpaRepository.findByNameEng(request.getBoardNameEng())
         .orElseThrow(() -> new BusinessException(BoardErrorCode.NO_SUCH_BOARD));
 
     Set<String> authorities = accountContextService.getContextAuthorities();
