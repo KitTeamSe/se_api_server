@@ -5,9 +5,7 @@ import com.se.apiserver.v1.board.domain.entity.Board;
 import com.se.apiserver.v1.board.application.error.BoardErrorCode;
 import com.se.apiserver.v1.board.infra.repository.BoardJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
-import com.se.apiserver.v1.common.domain.exception.NotFoundException;
 import com.se.apiserver.v1.post.application.dto.PostAccessCheckDto;
-import com.se.apiserver.v1.post.application.dto.PostAnnouncementDto;
 import com.se.apiserver.v1.post.application.dto.PostReadDto.PostListItem;
 import com.se.apiserver.v1.post.application.dto.PostReadDto.PostSearchRequest;
 import com.se.apiserver.v1.post.domain.entity.Post;
@@ -83,21 +81,6 @@ public class PostReadService {
     return PostReadDto.Response.fromEntity(post, true);
   }
 
-  public Page<PostAnnouncementDto> readAnnouncementList(
-      Pageable pageable, String boardNameEng) {
-    Board board = boardJpaRepository.findByNameEng(boardNameEng)
-        .orElseThrow(() -> new NotFoundException("존재하지 않는 게시판입니다."));
-
-    Page<Post> allByBoardAndIsNotice = postRepositoryProtocol
-        .findAllByBoardAndIsNoticeEquals(board, PostIsNotice.NOTICE, pageable);
-
-    List<PostAnnouncementDto> list = allByBoardAndIsNotice.stream()
-        .map(PostAnnouncementDto::fromEntity).collect(
-            Collectors.toList());
-
-    return new PageImpl<>(list, allByBoardAndIsNotice.getPageable(), allByBoardAndIsNotice.getTotalElements());
-  }
-
   public Boolean checkAnonymousPostWriteAccess(
       PostAccessCheckDto.AnonymousPostAccessCheckDto anonymousPostAccessCheckDto) {
     Post post = postJpaRepository.findById(anonymousPostAccessCheckDto.getPostId())
@@ -107,13 +90,13 @@ public class PostReadService {
     return true;
   }
 
-  public PostReadDto.PostListResponse readBoardPostList(Pageable pageable, String boardNameEng) {
+  public PostReadDto.PostListResponse readBoardPostList(Pageable pageable, String boardNameEng, PostIsNotice isNotice) {
     Board board = boardJpaRepository.findByNameEng(boardNameEng)
         .orElseThrow(() -> new BusinessException(BoardErrorCode.NO_SUCH_BOARD));
     Set<String> authorities = accountContextService.getContextAuthorities();
     board.validateAccessAuthority(authorities);
 
-    Page<Post> allByBoard = postJpaRepository.findAllByBoard(board, pageable);
+    Page<Post> allByBoard = postJpaRepository.findAllByBoardAndIsNotice(pageable, board, isNotice);
     List<PostReadDto.PostListItem> list = allByBoard.stream()
         .map(p -> PostReadDto.PostListItem.fromEntity(p))
         .collect(Collectors.toList());
