@@ -31,7 +31,7 @@ public class PostQueryRepositoryImpl extends QuerydslRepositorySupport implement
     QAccount account = QAccount.account;
 
     JPQLQuery query = from(post);
-    query.where(post.board.boardId.eq(postSearchRequest.getBoardId()));
+    query.where(post.board.nameEng.eq(postSearchRequest.getBoardNameEng()));
 
     String keyword = postSearchRequest.getKeyword();
 

@@ -123,7 +123,7 @@ public class PostReadService {
   }
 
   public PostReadDto.PostListResponse search(PostSearchRequest pageRequest) {
-    Board board = boardJpaRepository.findById(pageRequest.getBoardId())
+    Board board = boardJpaRepository.findByNameEng(pageRequest.getBoardNameEng())
         .orElseThrow(() -> new BusinessException(BoardErrorCode.NO_SUCH_BOARD));
     Set<String> authorities = accountContextService.getContextAuthorities();
     board.validateAccessAuthority(authorities);

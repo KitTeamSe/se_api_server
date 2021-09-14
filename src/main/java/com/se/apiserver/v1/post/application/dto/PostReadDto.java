@@ -18,9 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.PageImpl;
@@ -32,8 +30,8 @@ public class PostReadDto {
   @Builder
   static public class PostSearchRequest {
 
-    @ApiModelProperty(notes = "게시판 아이디", example = "1")
-    private Long boardId;
+    @ApiModelProperty(notes = "게시판 영문명", example = "freeboard")
+    private String boardNameEng;
 
     @ApiModelProperty(notes = "검색 키워드", example = "검색할 문자열")
     @Size(min = 1)
@@ -45,9 +43,9 @@ public class PostReadDto {
     @NotNull
     private PageRequest pageRequest;
 
-    public PostSearchRequest(Long boardId, String keyword,
+    public PostSearchRequest(String boardNameEng, String keyword,
         PostSearchType postSearchType, PageRequest pageRequest) {
-      this.boardId = boardId;
+      this.boardNameEng = boardNameEng;
       this.keyword = keyword;
       this.postSearchType = postSearchType;
       this.pageRequest = pageRequest;
