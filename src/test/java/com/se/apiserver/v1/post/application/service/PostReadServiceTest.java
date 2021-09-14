@@ -14,8 +14,6 @@ import com.se.apiserver.v1.board.domain.entity.Board;
 import com.se.apiserver.v1.board.infra.repository.BoardJpaRepository;
 import com.se.apiserver.v1.common.domain.entity.Anonymous;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
-import com.se.apiserver.v1.post.application.dto.PostDeleteDto;
-import com.se.apiserver.v1.post.application.dto.PostDeleteDto.AnonymousPostDeleteRequest;
 import com.se.apiserver.v1.post.application.dto.PostReadDto;
 import com.se.apiserver.v1.post.application.dto.PostReadDto.PostSearchRequest;
 import com.se.apiserver.v1.post.application.error.PostErrorCode;
@@ -261,11 +259,50 @@ public class PostReadServiceTest {
 
     given(boardJpaRepository.findByNameEng(board.getNameEng())).willReturn(java.util.Optional.of(board));
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
-    given(postJpaRepository.findAllByBoard(board, pageable)).willReturn(postPage);
+    given(postJpaRepository.findAllByBoardAndIsNotice(pageable, board, PostIsNotice.NORMAL)).willReturn(postPage);
 
     // when
     PostReadDto.PostListResponse postListResponse
-        = postReadService.readBoardPostList(pageable, board.getNameEng());
+        = postReadService.readBoardPostList(pageable, board.getNameEng(), PostIsNotice.NORMAL);
+
+    // then
+    assertThat(postListResponse.getPostListItem().getSize(), is(TUPLE_COUNT));
+    assertThat(postListResponse.getBoardId(), is(board.getBoardId()));
+    assertThat(postListResponse.getBoardNameEng(), is(board.getNameEng()));
+    assertThat(postListResponse.getBoardNameKor(), is(board.getNameKor()));
+  }
+
+  @Test
+  void 공지_목록_조회() {
+    // given
+    Board board = getBoard();
+    Set<String> authorities = new HashSet<>(Arrays.asList("MENU_MANAGE"));
+    List<Post> postList = new ArrayList<>();
+    Pageable pageable = PageRequest.of(0, 10, Direction.ASC, "postId");
+    for (int i = 0; i < TUPLE_COUNT; i++) {
+      PostContent postContent = new PostContent(Integer.toString(i), "text" + i);
+      List<Tag> tags = new ArrayList<>();
+
+      Post post = new Post(getAccount()
+          , board
+          , postContent
+          , PostIsNotice.NOTICE
+          , PostIsSecret.NORMAL
+          , authorities
+          , tags
+          , null
+          , "127.0.0.1");
+      postList.add(post);
+    }
+    Page<Post> postPage = new PageImpl<>(postList);
+
+    given(boardJpaRepository.findByNameEng(board.getNameEng())).willReturn(java.util.Optional.of(board));
+    given(accountContextService.getContextAuthorities()).willReturn(authorities);
+    given(postJpaRepository.findAllByBoardAndIsNotice(pageable, board, PostIsNotice.NOTICE)).willReturn(postPage);
+
+    // when
+    PostReadDto.PostListResponse postListResponse
+        = postReadService.readBoardPostList(pageable, board.getNameEng(), PostIsNotice.NOTICE);
 
     // then
     assertThat(postListResponse.getPostListItem().getSize(), is(TUPLE_COUNT));
