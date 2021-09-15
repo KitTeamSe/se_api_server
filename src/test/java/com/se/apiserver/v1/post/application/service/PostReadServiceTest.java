@@ -314,7 +314,7 @@ public class PostReadServiceTest {
   @Test
   void 게시글_검색_성공() {
     // given
-    Long boardId = 1L;
+    String boardNameEng = "freeboard";
     Board board = getBoard();
     Set<String> authorities = new HashSet<>(Arrays.asList("FREEBOARD_ACCESS"));
     List<Post> postList = new ArrayList<>();
@@ -337,7 +337,7 @@ public class PostReadServiceTest {
     Page<Post> postPage = new PageImpl<>(postList);
     PostSearchRequest postSearchRequest = PostSearchRequest
         .builder()
-        .boardId(boardId)
+        .boardNameEng(boardNameEng)
         .keyword("제목")
         .postSearchType(PostSearchType.TITLE_TEXT)
         .pageRequest(com.se.apiserver.v1.common.infra.dto.PageRequest
@@ -348,7 +348,7 @@ public class PostReadServiceTest {
             .build())
         .build();
 
-    given(boardJpaRepository.findById(boardId)).willReturn(java.util.Optional.of(board));
+    given(boardJpaRepository.findByNameEng(boardNameEng)).willReturn(java.util.Optional.of(board));
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
     given(postQueryRepository.search(postSearchRequest)).willReturn(postPage);
 
@@ -363,7 +363,7 @@ public class PostReadServiceTest {
   @Test
   void 게시글_검색_오류() {
     // given
-    Long boardId = 1L;
+    String boardNameEng = "freeboard";
     Board board = getBoard();
     Set<String> authorities = new HashSet<>(Arrays.asList("FREEBOARD_ACCESS"));
     List<Post> postList = new ArrayList<>();
@@ -386,7 +386,7 @@ public class PostReadServiceTest {
     Page<Post> postPage = new PageImpl<>(postList);
     PostSearchRequest postSearchRequest = PostSearchRequest
         .builder()
-        .boardId(boardId)
+        .boardNameEng(boardNameEng)
         .keyword("제목")
         .postSearchType(null)
         .pageRequest(com.se.apiserver.v1.common.infra.dto.PageRequest
@@ -397,7 +397,7 @@ public class PostReadServiceTest {
             .build())
         .build();
 
-    given(boardJpaRepository.findById(boardId)).willReturn(java.util.Optional.of(board));
+    given(boardJpaRepository.findByNameEng(boardNameEng)).willReturn(java.util.Optional.of(board));
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
     given(postQueryRepository.search(postSearchRequest)).willThrow(new BusinessException(
         PostSearchErrorCode.NO_SUCH_SEARCH_TYPE));

@@ -4,9 +4,9 @@ import com.se.apiserver.v1.common.domain.entity.Anonymous;
 import com.se.apiserver.v1.post.domain.entity.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import javax.validation.constraints.Size;
 import lombok.*;
 
 import java.util.List;
@@ -21,9 +21,9 @@ public class PostCreateDto {
   static public class Request {
 
     @NotNull
-    @Min(1)
-    @ApiModelProperty(notes = "게시판 아이디", example = "1")
-    private Long boardId;
+    @Size(min = 1)
+    @ApiModelProperty(notes = "게시판 영문명", example = "freeboard")
+    private String boardNameEng;
 
     @NotNull
     private PostContent postContent;
