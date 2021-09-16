@@ -64,7 +64,7 @@ public class Menu extends AccountGenerateEntity {
   @JoinColumn(name = "manage_authority_id")
   private Authority manageAuthority;
 
-  @OneToOne(mappedBy = "menu", orphanRemoval = true)
+  @OneToOne(mappedBy = "menu", orphanRemoval = true, cascade = CascadeType.ALL)
   private Board board;
 
 
