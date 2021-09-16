@@ -1,20 +1,19 @@
 package com.se.apiserver.v1.post.application.service;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
+import static org.mockito.BDDMockito.willDoNothing;
 
 import com.se.apiserver.v1.account.application.service.AccountContextService;
 import com.se.apiserver.v1.account.domain.entity.Account;
 import com.se.apiserver.v1.account.domain.entity.AccountType;
 import com.se.apiserver.v1.account.domain.entity.InformationOpenAgree;
 import com.se.apiserver.v1.account.domain.entity.Question;
-import com.se.apiserver.v1.attach.application.service.AttachCreateService;
 import com.se.apiserver.v1.attach.domain.entity.Attach;
-import com.se.apiserver.v1.attach.infra.repository.AttachJpaRepository;
 import com.se.apiserver.v1.board.application.error.BoardErrorCode;
 import com.se.apiserver.v1.board.domain.entity.Board;
 import com.se.apiserver.v1.board.infra.repository.BoardJpaRepository;
@@ -36,17 +35,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.multipart.MultipartFile;
 
 @ExtendWith(MockitoExtension.class)
 public class PostCreateServiceTest {
@@ -56,15 +52,11 @@ public class PostCreateServiceTest {
   @Mock
   private AccountContextService accountContextService;
   @Mock
-  private AttachCreateService attachCreateService;
-  @Mock
   private BoardJpaRepository boardJpaRepository;
   @Mock
   private PasswordEncoder passwordEncoder;
   @Mock
   private TagJpaRepository tagJpaRepository;
-  @Mock
-  private AttachJpaRepository attachJpaRepository;
   @Mock
   private NoticeSendService noticeSendService;
   @InjectMocks
@@ -73,97 +65,89 @@ public class PostCreateServiceTest {
   @Test
   void 회원_게시글_등록_성공() {
     // given
-    Long boardId = 1L;
+    String boardNameEng = "TestBoard";
     String ip = "127.0.0.1";
     Set<String> authorities = Set.of("MENU_MANAGE");
     Account account = getAccount();
     Board board = getBoard();
     List<Tag> tags = Arrays.asList(new Tag("태그"));
     List<TagDto> tagDtoList = Arrays.asList(new TagDto(1L));
-    Attach attach = new Attach("URL", "FILENAME");
+    Attach attach = new Attach("URL", "FILENAME", 1L);
     List<Attach> attaches = Arrays.asList(attach);
-    MultipartFile[] files = new MultipartFile[1];
     Post post = new Post(account, board, getPostContent(), PostIsNotice.NORMAL, PostIsSecret.NORMAL,
         authorities, tags, attaches, "127.0.0.1");
     PostCreateDto.Request request = PostCreateDto.Request
-        .builder().boardId(boardId)
+        .builder().boardNameEng(boardNameEng)
         .postContent(post.getPostContent())
         .isSecret(PostIsSecret.NORMAL)
         .isNotice(PostIsNotice.NORMAL)
         .tagList(tagDtoList)
         .build();
 
-    given(boardJpaRepository.findById(boardId)).willReturn(java.util.Optional.of(board));
+    given(boardJpaRepository.findByNameEng(boardNameEng)).willReturn(java.util.Optional.of(board));
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
     given(accountContextService.getCurrentClientIP()).willReturn(ip);
     given(accountContextService.isSignIn()).willReturn(true);
     given(accountContextService.getContextAccount()).willReturn(account);
     given(tagJpaRepository.findById(tagDtoList.get(0).getTagId()))
         .willReturn(java.util.Optional.ofNullable(tags.get(0)));
+    willDoNothing().given(noticeSendService).sendPostNotice(any(List.class), any(Post.class));
     given(postJpaRepository.save(any(Post.class))).willReturn(post);
-    given(attachCreateService.create(post.getPostId(), null, files))
-        .willReturn(new ArrayList<>());
-    given(attachJpaRepository.findAllByPostId(post.getPostId())).willReturn(attaches);
 
     // when, then
-    assertDoesNotThrow(() -> postCreateService.create(request, files));
+    assertDoesNotThrow(() -> postCreateService.create(request));
   }
 
   @Test
   void 익명_사용자_게시글_작성_성공() {
     // given
-    Long boardId = 1L;
+    String boardNameEng = "TestBoard";
     String ip = "127.0.0.1";
     Set<String> authorities = Set.of("FREEBOARD_ACCESS");
     Anonymous anonymous = getAnonymous();
     Board board = getBoard();
-    Attach attach = new Attach("URL", "FILENAME");
+    Attach attach = new Attach("URL", "FILENAME", 1L);
     List<Attach> attaches = Arrays.asList(attach);
-    MultipartFile[] files = new MultipartFile[1];
     Post post = new Post(anonymous, board, getPostContent(), PostIsNotice.NORMAL,
         PostIsSecret.NORMAL,
         authorities, new ArrayList<>(), attaches, "127.0.0.1");
     PostCreateDto.Request request = PostCreateDto.Request
-        .builder().boardId(boardId)
+        .builder().boardNameEng(boardNameEng)
         .postContent(post.getPostContent())
         .isSecret(PostIsSecret.NORMAL)
         .isNotice(PostIsNotice.NORMAL)
         .anonymous(anonymous)
         .build();
 
-    given(boardJpaRepository.findById(boardId)).willReturn(java.util.Optional.of(board));
+    given(boardJpaRepository.findByNameEng(boardNameEng)).willReturn(java.util.Optional.of(board));
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
     given(accountContextService.getCurrentClientIP()).willReturn(ip);
     given(accountContextService.isSignIn()).willReturn(false);
     given(passwordEncoder.encode(request.getAnonymous().getAnonymousPassword()))
         .willReturn("password");
     given(postJpaRepository.save(any(Post.class))).willReturn(post);
-    given(attachCreateService.create(post.getPostId(), null, files))
-        .willReturn(new ArrayList<>());
-    given(attachJpaRepository.findAllByPostId(post.getPostId())).willReturn(attaches);
 
     // when, then
-    assertDoesNotThrow(() -> postCreateService.create(request, files));
+    assertDoesNotThrow(() -> postCreateService.create(request));
   }
 
   @Test
   void 존재하지_않는_게시판() {
     // given
-    Long boardId = 2L;
-    MultipartFile[] files = new MultipartFile[1];
+    String boardNameEng = "NotExistsBoard";
     PostCreateDto.Request request = PostCreateDto.Request
-        .builder().boardId(boardId)
+        .builder().boardNameEng(boardNameEng)
         .postContent(getPostContent())
         .isSecret(PostIsSecret.NORMAL)
         .isNotice(PostIsNotice.NORMAL)
         .anonymous(getAnonymous())
         .build();
 
-    given(boardJpaRepository.findById(boardId))
+    given(boardJpaRepository.findByNameEng(boardNameEng))
         .willThrow(new BusinessException(BoardErrorCode.NO_SUCH_BOARD));
     // when
     BusinessException businessException = assertThrows(BusinessException.class,
-        () -> postCreateService.create(request, files));
+        () -> postCreateService.create(request));
 
     // then
     assertThat(businessException.getErrorCode(), is(BoardErrorCode.NO_SUCH_BOARD));
@@ -173,24 +157,23 @@ public class PostCreateServiceTest {
   @Test
   void 익명_사용자가_태그_등록_실패() {
     // given
-    Long boardId = 2L;
+    String boardNameEng = "TestBoard";
     Board board = getBoard();
-    MultipartFile[] files = new MultipartFile[1];
     List<TagDto> tagDtoList = Arrays.asList(new TagDto(1L));
     PostCreateDto.Request request = PostCreateDto.Request
-        .builder().boardId(boardId)
+        .builder().boardNameEng(boardNameEng)
         .postContent(getPostContent())
         .isSecret(PostIsSecret.NORMAL)
         .anonymous(getAnonymous())
         .tagList(tagDtoList)
         .build();
 
-    given(boardJpaRepository.findById(boardId)).willReturn(java.util.Optional.of(board));
+    given(boardJpaRepository.findByNameEng(boardNameEng)).willReturn(java.util.Optional.of(board));
     given(accountContextService.isSignIn()).willReturn(false);
 
     // when
     BusinessException businessException = assertThrows(BusinessException.class,
-        () -> postCreateService.create(request, files));
+        () -> postCreateService.create(request));
 
     // then
     assertThat(businessException.getErrorCode(), is(TagErrorCode.ANONYMOUS_CAN_NOT_TAG));
@@ -200,60 +183,25 @@ public class PostCreateServiceTest {
   @Test
   void 접근_권한_없음() {
     // given
-    Long boardId = 2L;
+    String boardNameEng = "TestBoard";
     Board board = getBoard();
-    MultipartFile[] files = new MultipartFile[1];
     PostCreateDto.Request request = PostCreateDto.Request
-        .builder().boardId(boardId)
+        .builder().boardNameEng(boardNameEng)
         .postContent(getPostContent())
         .isSecret(PostIsSecret.NORMAL)
         .anonymous(getAnonymous())
         .tagList(new ArrayList<>())
         .build();
     Set<String> authorities = new HashSet<>();
-    given(boardJpaRepository.findById(boardId)).willReturn(java.util.Optional.of(board));
+    given(boardJpaRepository.findByNameEng(boardNameEng)).willReturn(java.util.Optional.of(board));
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
 
     // when
     AccessDeniedException accessDeniedException = assertThrows(AccessDeniedException.class,
-        () -> postCreateService.create(request, files));
+        () -> postCreateService.create(request));
 
     // then
     assertThat(accessDeniedException.getMessage(), is("접근 권한이 없습니다"));
-  }
-
-  @Test
-  void 최대치_이상의_태그_등록() {
-    // given
-    Long boardId = 1L;
-    List<TagDto> tagDtoList = new ArrayList<>();
-    MultipartFile[] files = new MultipartFile[1];
-    Board board = getBoard();
-
-    for (int i = 0; i < 15; i++) {
-      tagDtoList.add(new TagDto((long) i));
-    }
-    Set<String> authorities = Set.of("FREEBOARD_ACCESS");
-
-    PostCreateDto.Request request = PostCreateDto.Request
-        .builder().boardId(boardId)
-        .postContent(getPostContent())
-        .isSecret(PostIsSecret.NORMAL)
-        .isNotice(PostIsNotice.NORMAL)
-        .tagList(tagDtoList)
-        .build();
-
-    given(boardJpaRepository.findById(boardId)).willReturn(java.util.Optional.of(board));
-    given(accountContextService.getContextAuthorities()).willReturn(authorities);
-    given(accountContextService.isSignIn()).willReturn(true);
-    given(tagJpaRepository.findById(any(Long.class)))
-        .willReturn(Optional.of(new Tag("태그")));
-    // when
-    BusinessException businessException = assertThrows(BusinessException.class, () -> postCreateService.create(request, files));
-
-    // then
-    assertThat(businessException.getErrorCode(), is(TagErrorCode.TO_MANY_TAGS));
-    assertThat(businessException.getMessage(), is("태그 등록은 10개까지 가능합니다"));
   }
 
   private Anonymous getAnonymous() {
@@ -265,22 +213,19 @@ public class PostCreateServiceTest {
   @Test
   void 관리자가_아닌_사용자가_공지글_등록_실패() {
     // given
-    Long boardId = 1L;
+    String boardNameEng = "TestBoard";
     String ip = "127.0.0.1";
     Set<String> authorities = Set.of("FREEBOARD_ACCESS");
     Account account = getAccount();
     Board board = getBoard();
-    Attach attach = new Attach("URL", "FILENAME");
-    List<Attach> attaches = Arrays.asList(attach);
-    MultipartFile[] files = new MultipartFile[1];
     PostCreateDto.Request request = PostCreateDto.Request
-        .builder().boardId(boardId)
+        .builder().boardNameEng(boardNameEng)
         .postContent(getPostContent())
         .isSecret(PostIsSecret.NORMAL)
         .isNotice(PostIsNotice.NOTICE)
         .build();
 
-    given(boardJpaRepository.findById(boardId)).willReturn(java.util.Optional.of(board));
+    given(boardJpaRepository.findByNameEng(boardNameEng)).willReturn(java.util.Optional.of(board));
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
     given(accountContextService.getCurrentClientIP()).willReturn(ip);
     given(accountContextService.isSignIn()).willReturn(true);
@@ -288,7 +233,7 @@ public class PostCreateServiceTest {
 
     // when
     BusinessException businessException = assertThrows(BusinessException.class,
-        () -> postCreateService.create(request, files));
+        () -> postCreateService.create(request));
 
     // then
     assertThat(businessException.getErrorCode(), is(PostErrorCode.ONLY_ADMIN_SET_NOTICE));

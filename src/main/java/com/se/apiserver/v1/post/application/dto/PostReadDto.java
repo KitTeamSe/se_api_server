@@ -18,22 +18,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 
 public class PostReadDto {
 
-  @Data
+  @Getter
   @NoArgsConstructor
-  @AllArgsConstructor
   @Builder
   static public class PostSearchRequest {
 
-    @ApiModelProperty(notes = "게시판 아이디", example = "1")
-    private Long boardId;
+    @ApiModelProperty(notes = "게시판 영문명", example = "freeboard")
+    private String boardNameEng;
 
     @ApiModelProperty(notes = "검색 키워드", example = "검색할 문자열")
     @Size(min = 1)
@@ -44,34 +42,50 @@ public class PostReadDto {
 
     @NotNull
     private PageRequest pageRequest;
+
+    public PostSearchRequest(String boardNameEng, String keyword,
+        PostSearchType postSearchType, PageRequest pageRequest) {
+      this.boardNameEng = boardNameEng;
+      this.keyword = keyword;
+      this.postSearchType = postSearchType;
+      this.pageRequest = pageRequest;
+    }
   }
 
-  @Data
+  @Getter
   @NoArgsConstructor
-  @AllArgsConstructor
   @Builder
-  static public class PostListResponse{
+  static public class PostListResponse {
+
     private Long boardId;
     private String boardNameEng;
     private String boardNameKor;
     private PageImpl<PostListItem> postListItem;
 
-    public static PostListResponse fromEntity(PageImpl<PostListItem> postListItem, Board board){
+    public PostListResponse(Long boardId, String boardNameEng, String boardNameKor,
+        PageImpl<PostListItem> postListItem) {
+      this.boardId = boardId;
+      this.boardNameEng = boardNameEng;
+      this.boardNameKor = boardNameKor;
+      this.postListItem = postListItem;
+    }
+
+    public static PostListResponse fromEntity(PageImpl<PostListItem> postListItem, Board board) {
       return PostListResponse.builder()
-              .postListItem(postListItem)
-              .boardId(board.getBoardId())
-              .boardNameEng(board.getNameEng())
-              .boardNameKor(board.getNameKor())
-              .build();
+          .postListItem(postListItem)
+          .boardId(board.getBoardId())
+          .boardNameEng(board.getNameEng())
+          .boardNameKor(board.getNameKor())
+          .build();
     }
   }
 
 
-  @Data
+  @Getter
   @NoArgsConstructor
-  @AllArgsConstructor
   @Builder
-  static public class PostListItem{
+  static public class PostListItem {
+
     private Long postId;
 
     private Long boardId;
@@ -99,10 +113,32 @@ public class PostReadDto {
     @JsonInclude(Include.NON_NULL)
     private List<TagDto> tags;
 
-    public static PostListItem fromEntity(Post post){
+    public PostListItem(Long postId, Long boardId, Integer views, Integer numReply,
+        PostIsSecret isSecret, PostIsNotice isNotice, String title, String previewText,
+        String accountIdString, String nickname,
+        AccountType accountType, LocalDateTime createAt,
+        List<TagDto> tags) {
+      this.postId = postId;
+      this.boardId = boardId;
+      this.views = views;
+      this.numReply = numReply;
+      this.isSecret = isSecret;
+      this.isNotice = isNotice;
+      this.title = title;
+      this.previewText = previewText;
+      this.accountIdString = accountIdString;
+      this.nickname = nickname;
+      this.accountType = accountType;
+      this.createAt = createAt;
+      this.tags = tags;
+    }
+
+    public static PostListItem fromEntity(Post post) {
       String previewText = "";
-      if(post.getIsSecret() == PostIsSecret.NORMAL){
-        previewText = post.getPostContent().getText().length() <= 30 ? post.getPostContent().getText() : post.getPostContent().getText().substring(0, 30);
+      if (post.getIsSecret() == PostIsSecret.NORMAL) {
+        previewText =
+            post.getPostContent().getText().length() <= 30 ? post.getPostContent().getText()
+                : post.getPostContent().getText().substring(0, 30);
       }
 
       PostListItemBuilder builder = PostListItem.builder();
@@ -123,27 +159,27 @@ public class PostReadDto {
           .collect(Collectors.toList())
       );
 
-      AccountType accountType = post.getAccount() == null ? AccountType.ANONYMOUS : post.getAccount().getType();
+      AccountType accountType =
+          post.getAccount() == null ? AccountType.ANONYMOUS : post.getAccount().getType();
 
       return builder
-              .postId(post.getPostId())
-              .boardId(post.getBoard().getBoardId())
-              .views(post.getViews())
-              .numReply(post.getNumReply())
-              .isNotice(post.getIsNotice())
-              .isSecret(post.getIsSecret())
-              .title(post.getPostContent().getTitle())
-              .previewText(previewText)
-              .accountType(accountType)
-              .createAt(post.getCreatedAt())
-              .build();
+          .postId(post.getPostId())
+          .boardId(post.getBoard().getBoardId())
+          .views(post.getViews())
+          .numReply(post.getReplies().size())
+          .isNotice(post.getIsNotice())
+          .isSecret(post.getIsSecret())
+          .title(post.getPostContent().getTitle())
+          .previewText(previewText)
+          .accountType(accountType)
+          .createAt(post.getCreatedAt())
+          .build();
     }
   }
 
 
-  @Data
+  @Getter
   @NoArgsConstructor
-  @AllArgsConstructor
   @Builder
   static public class Response {
 
@@ -178,6 +214,28 @@ public class PostReadDto {
     @JsonInclude(Include.NON_NULL)
     private List<TagDto> tags;
 
+    public Response(Long postId, Long boardId, String boardNameEng, String boardNameKor,
+        Integer views, PostIsSecret isSecret,
+        PostIsNotice isNotice, String accountIdString, String nickname,
+        AccountType accountType, PostContent postContent, LocalDateTime createdAt,
+        List<AttachDto> attaches,
+        List<TagDto> tags) {
+      this.postId = postId;
+      this.boardId = boardId;
+      this.boardNameEng = boardNameEng;
+      this.boardNameKor = boardNameKor;
+      this.views = views;
+      this.isSecret = isSecret;
+      this.isNotice = isNotice;
+      this.accountIdString = accountIdString;
+      this.nickname = nickname;
+      this.accountType = accountType;
+      this.postContent = postContent;
+      this.createdAt = createdAt;
+      this.attaches = attaches;
+      this.tags = tags;
+    }
+
     public static Response fromEntity(Post post, boolean isOwnerOrManager) {
       Board board = post.getBoard();
       ResponseBuilder builder = Response.builder()
@@ -201,7 +259,8 @@ public class PostReadDto {
         builder.nickname(nickname);
       }
 
-      AccountType accountType = post.getAccount() == null ? AccountType.ANONYMOUS : post.getAccount().getType();
+      AccountType accountType =
+          post.getAccount() == null ? AccountType.ANONYMOUS : post.getAccount().getType();
       builder.accountType(accountType);
 
       builder.tags(post.getTags().stream()
@@ -209,8 +268,14 @@ public class PostReadDto {
           .collect(Collectors.toList())
       );
 
-      if (post.getIsSecret() == PostIsSecret.SECRET && !isOwnerOrManager)
+      builder.attaches(post.getAttaches()
+          .stream()
+          .map(a -> AttachDto.fromEntity(a))
+          .collect(Collectors.toList()));
+
+      if (post.getIsSecret() == PostIsSecret.SECRET && !isOwnerOrManager) {
         throw new BusinessException(PostErrorCode.CAN_NOT_ACCESS_POST);
+      }
 
       builder.attaches(post.getAttaches().stream()
           .map(a -> AttachDto.fromEntity(a))
@@ -223,41 +288,55 @@ public class PostReadDto {
     }
   }
 
-  @Data
+  @Getter
   @NoArgsConstructor
-  @AllArgsConstructor
   @Builder
-  static public class AttachDto{
+  static public class AttachDto {
+
     private Long attachId;
 
     private String downloadUrl;
 
     private String fileName;
 
+    private Long fileSize;
+
+    public AttachDto(Long attachId, String downloadUrl, String fileName, Long fileSize) {
+      this.attachId = attachId;
+      this.downloadUrl = downloadUrl;
+      this.fileName = fileName;
+      this.fileSize = fileSize;
+    }
+
     static public AttachDto fromEntity(Attach attach) {
       return AttachDto.builder()
           .attachId(attach.getAttachId())
           .downloadUrl(attach.getDownloadUrl())
           .fileName(attach.getFileName())
+          .fileSize(attach.getFileSize())
           .build();
     }
   }
 
-  @Data
+  @Getter
   @NoArgsConstructor
-  @AllArgsConstructor
   @Builder
-  static public class TagDto{
+  static public class TagDto {
+
     private Long tagId;
 
     private String tag;
 
-    static public TagDto fromEntity(Tag tag){
+    public TagDto(Long tagId, String tag) {
+      this.tagId = tagId;
+      this.tag = tag;
+    }
+
+    static public TagDto fromEntity(Tag tag) {
       return TagDto.builder()
           .tagId(tag.getTagId())
           .tag(tag.getText())
           .build();
     }
   }
-
 }

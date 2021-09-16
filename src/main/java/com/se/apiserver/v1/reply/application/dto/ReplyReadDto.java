@@ -30,7 +30,7 @@ public class ReplyReadDto {
     private String text;
     private String accountId;
     private String anonymousNickname;
-    private List<AttachDto> attacheList;
+    private List<ReplyReadAttachDto> attacheList;
     private List<Response> child;
     private LocalDateTime createAt;
     private ReplyIsSecret isSecret;
@@ -58,8 +58,8 @@ public class ReplyReadDto {
         responseBuilder.parentId(reply.getParent().getReplyId());
       }
 
-      List<AttachDto> attaches = reply.getAttaches().stream()
-          .map(attach -> new AttachDto(attach.getAttachId()))
+      List<ReplyReadAttachDto> attaches = reply.getAttaches().stream()
+          .map(attach -> new ReplyReadAttachDto(attach.getAttachId(), attach.getDownloadUrl(), attach.getFileName(), attach.getFileSize()))
           .collect(Collectors.toList());
       responseBuilder.attacheList(attaches);
       responseBuilder.createAt(reply.getCreatedAt());
@@ -87,11 +87,20 @@ public class ReplyReadDto {
       return reply.getText();
     }
 
-    @Data
+    @Getter
     @NoArgsConstructor
-    @AllArgsConstructor
-    public static class AttachDto {
+    public static class ReplyReadAttachDto {
       private Long attachId;
+      private String downloadUrl;
+      private String fileName;
+      private Long fileSize;
+
+      public ReplyReadAttachDto(Long attachId, String downloadUrl, String fileName, Long fileSize) {
+        this.attachId = attachId;
+        this.downloadUrl = downloadUrl;
+        this.fileName = fileName;
+        this.fileSize = fileSize;
+      }
     }
 
   }

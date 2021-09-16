@@ -2,31 +2,35 @@ package com.se.apiserver.v1.post.infra.api;
 
 import com.se.apiserver.v1.common.infra.dto.PageRequest;
 import com.se.apiserver.v1.common.infra.dto.SuccessResponse;
-import com.se.apiserver.v1.common.presentation.response.PaginationResponse;
-import com.se.apiserver.v1.common.presentation.response.Response;
-import com.se.apiserver.v1.post.application.dto.*;
+import com.se.apiserver.v1.post.application.dto.PostAccessCheckDto;
+import com.se.apiserver.v1.post.application.dto.PostCreateDto;
+import com.se.apiserver.v1.post.application.dto.PostDeleteDto;
+import com.se.apiserver.v1.post.application.dto.PostReadDto;
 import com.se.apiserver.v1.post.application.dto.PostReadDto.PostSearchRequest;
-import com.se.apiserver.v1.post.application.dto.request.AnnouncementPaginationRequest;
+import com.se.apiserver.v1.post.application.dto.PostUpdateDto;
 import com.se.apiserver.v1.post.application.service.PostCreateService;
 import com.se.apiserver.v1.post.application.service.PostDeleteService;
 import com.se.apiserver.v1.post.application.service.PostReadService;
 import com.se.apiserver.v1.post.application.service.PostUpdateService;
+import com.se.apiserver.v1.post.domain.entity.PostIsNotice;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import java.util.List;
-import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Api(tags = "게시글 관리")
 @RequestMapping("/api/v1")
-@RequiredArgsConstructor
 public class PostApiController {
 
   private final PostCreateService postCreateService;
@@ -34,24 +38,32 @@ public class PostApiController {
   private final PostReadService postReadService;
   private final PostDeleteService postDeleteService;
 
+  public PostApiController(
+      PostCreateService postCreateService,
+      PostUpdateService postUpdateService,
+      PostReadService postReadService,
+      PostDeleteService postDeleteService) {
+    this.postCreateService = postCreateService;
+    this.postUpdateService = postUpdateService;
+    this.postReadService = postReadService;
+    this.postDeleteService = postDeleteService;
+  }
+
   @PostMapping(value = "/post")
   @ResponseStatus(HttpStatus.CREATED)
   @ApiOperation(value = "게시글 생성")
-  public SuccessResponse<Long> create
-      (@RequestPart(value = "key") @Validated PostCreateDto.Request request,
-          @RequestPart(value = "files", required = false) MultipartFile[] files) {
+  public SuccessResponse<Long> create(@RequestBody @Validated PostCreateDto.Request request) {
     return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 등록되었습니다",
-        postCreateService.create(request, files));
+        postCreateService.create(request));
   }
 
   @PutMapping("/post")
   @ResponseStatus(HttpStatus.OK)
   @ApiOperation("게시글 수정")
   public SuccessResponse<Long> update(
-      @RequestPart(value = "key") @Validated PostUpdateDto.Request request,
-      @RequestPart(value = "files", required = false) MultipartFile[] files) {
+      @RequestBody @Validated PostUpdateDto.Request request) {
     return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 수정되었습니다",
-        postUpdateService.update(request, files));
+        postUpdateService.update(request));
   }
 
   @DeleteMapping("/post/{id}")
@@ -92,22 +104,9 @@ public class PostApiController {
   @ResponseStatus(HttpStatus.OK)
   @ApiOperation("게시판에 따른 게시글 목록 조회")
   public SuccessResponse<PostReadDto.PostListResponse> readSecret(PageRequest pageRequest,
-      Long boardId) {
+      String boardNameEng, PostIsNotice isNotice) {
     return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 조회되었습니다",
-        postReadService.readBoardPostList(pageRequest.of(), boardId));
-  }
-
-  @GetMapping("/post/announcement")
-  @ResponseStatus(HttpStatus.OK)
-  @ApiOperation("게시판에 따른 공지 목록 조회")
-  public PaginationResponse<List<PostAnnouncementDto>> readAllAnnouncement(
-      AnnouncementPaginationRequest<Long> announcementPaginationRequest, Long boardId) {
-
-    Page<PostAnnouncementDto> page = postReadService
-        .readAnnouncementList(announcementPaginationRequest.of(), boardId);
-    return new PaginationResponse<>(HttpStatus.OK, "성공적으로 조회되었습니다.", page.getContent(),
-        page.getContent().size(),
-        page.getTotalPages(), page.getPageable().getPageNumber(), page.getNumberOfElements());
+        postReadService.readBoardPostList(pageRequest.of(), boardNameEng, isNotice));
   }
 
   @PostMapping("/post/search")

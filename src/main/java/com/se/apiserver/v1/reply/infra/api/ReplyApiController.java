@@ -36,20 +36,18 @@ public class ReplyApiController {
   @ResponseStatus(HttpStatus.CREATED)
   @ApiOperation(value = "댓글 생성")
   public SuccessResponse<Long> create(
-      @RequestPart(value = "key") @Validated ReplyCreateDto.Request request,
-      @RequestPart(value = "files", required = false) MultipartFile[] files) {
+      @RequestBody @Validated ReplyCreateDto.Request request) {
     return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 등록되었습니다",
-        replyCreateService.create(request, files));
+        replyCreateService.create(request));
   }
 
   @PutMapping("/reply")
   @ResponseStatus(HttpStatus.OK)
   @ApiOperation("댓글 수정")
   public SuccessResponse<Long> update(
-      @RequestPart(value = "key") @Validated ReplyUpdateDto.Request request,
-      @RequestPart(value = "files", required = false) MultipartFile[] files) {
+      @RequestBody @Validated ReplyUpdateDto.Request request) {
     return new SuccessResponse<>(HttpStatus.OK.value(), "성공적으로 수정되었습니다",
-        replyUpdateService.update(request, files));
+        replyUpdateService.update(request));
   }
 
   @DeleteMapping("/reply/{id}")

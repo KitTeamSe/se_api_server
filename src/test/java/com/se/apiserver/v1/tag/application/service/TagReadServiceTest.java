@@ -28,7 +28,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.test.context.TestExecutionListeners;
 
 @ExtendWith(MockitoExtension.class)
 public class TagReadServiceTest {
@@ -85,19 +84,4 @@ public class TagReadServiceTest {
     assertThat(businessException.getErrorCode(), is(GlobalErrorCode.HANDLE_ACCESS_DENIED));
     assertThat(businessException.getMessage(), is("권한 없음"));
   }
-
-  @Test
-  void 두_글자_이하의_검색어_입력() {
-    // given
-    String text = "잉";
-    given(accountContextService.isSignIn()).willReturn(true);
-
-    // when
-    BusinessException businessException = assertThrows(BusinessException.class, () -> tagReadService.readMatchText(text));
-
-    // then
-    assertThat(businessException.getErrorCode(), is(TagErrorCode.TO_SHORT_LENGTH));
-    assertThat(businessException.getMessage(), is("검색어는 최소 두 글자 이상입니다."));
-  }
-
 }

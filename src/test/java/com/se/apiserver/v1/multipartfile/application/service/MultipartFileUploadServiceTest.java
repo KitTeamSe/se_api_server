@@ -67,7 +67,7 @@ class MultipartFileUploadServiceTest {
   public void 파일_업로드_성공() throws Exception{
     //given
     MockMultipartFile file = createMockMultipartFile("test", 1L);
-    List<MultipartFileUploadDto> datas = Collections.singletonList(new MultipartFileUploadDto("https://localhost:3000/savedName", "test"));
+    List<MultipartFileUploadDto> datas = Collections.singletonList(new MultipartFileUploadDto("https://localhost:3000/savedName", "test", 1L));
     Response<List<MultipartFileUploadDto>> response = new Response<>(HttpStatus.OK, "success", datas);
     ResponseEntity<Response<List<MultipartFileUploadDto>>> responseEntity = new ResponseEntity<>(response, response.getStatus());
 
@@ -85,7 +85,12 @@ class MultipartFileUploadServiceTest {
     //when
     List<MultipartFileUploadDto> result = multipartFileUploadService.upload(file);
     //then
-    assertEquals(datas.get(0).getDownloadUrl(), result.get(0).getDownloadUrl());
+    assertAll(
+        () -> assertEquals(datas.get(0).getDownloadUrl(), result.get(0).getDownloadUrl()),
+        () -> assertEquals(datas.get(0).getOriginalName(), result.get(0).getOriginalName()),
+        () -> assertEquals(datas.get(0).getFileSize(), result.get(0).getFileSize())
+    );
+
   }
   
   @Test

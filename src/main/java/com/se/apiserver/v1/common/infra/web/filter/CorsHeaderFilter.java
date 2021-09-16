@@ -1,6 +1,6 @@
 package com.se.apiserver.v1.common.infra.web.filter;
 
-import com.se.apiserver.v1.common.infra.web.config.CorsHeaderProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,13 +11,14 @@ import org.springframework.web.filter.CorsFilter;
 @Configuration
 public class  CorsHeaderFilter {
 
-  private final String MANAGER_SERVER_DOMAIN;
-  private final String CLIENT_SERVER_DOMAIN;
+  @Value("${se-api-server.api-server-domain}")
+  private String apiServerDomain;
 
-  public CorsHeaderFilter(CorsHeaderProperties properties){
-    MANAGER_SERVER_DOMAIN = properties.getManagerServerDomain();
-    CLIENT_SERVER_DOMAIN = properties.getClientServerDomain();
-  }
+  @Value("${se-api-server.manager-server-domain}")
+  private String managerServerDomain;
+
+  @Value("${se-api-server.client-server-domain}")
+  private String clientServerDomain;
 
   @Bean
   public FilterRegistrationBean corsFilter(){
@@ -25,8 +26,10 @@ public class  CorsHeaderFilter {
     CorsConfiguration config = new CorsConfiguration();
     config.setAllowCredentials(true);
     config.addAllowedOrigin("http://localhost:3000");
-    config.addAllowedOrigin(MANAGER_SERVER_DOMAIN);
-    config.addAllowedOrigin(CLIENT_SERVER_DOMAIN);
+    config.addAllowedOrigin("https://localhost:3000");
+    config.addAllowedOrigin(apiServerDomain);
+    config.addAllowedOrigin(managerServerDomain);
+    config.addAllowedOrigin(clientServerDomain);
     config.addAllowedHeader("*");
     config.addAllowedMethod("*");
     source.registerCorsConfiguration("/**", config);

@@ -25,6 +25,7 @@ import java.util.Set;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Reply extends BaseEntity {
 
+  private static final Integer MAX_ATTACH_CAPACITY = 10;
   public static String MANAGE_AUTHORITY = "REPLY_MANAGE";
   public static String DELETED_REPLY_TEXT = "사용자에 의해 삭제된 댓글입니다.";
   public static String SECRET_REPLY_TEXT = "비밀 댓글입니다.";
@@ -37,8 +38,8 @@ public class Reply extends BaseEntity {
   @JoinColumn(name = "post_id", nullable = false)
   private Post post;
 
-  @Column(length = 500, nullable = false)
-  @Size(min = 4, max = 500)
+  @Column(length = 5000, nullable = false)
+  @Size(min = 4, max = 5000)
   private String text;
 
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
@@ -77,13 +78,25 @@ public class Reply extends BaseEntity {
     attaches.add(attach);
   }
 
+  public void addAttaches(List<Attach> attachList) {
+    if (attachList == null) {
+      return;
+    }
+    attachList.stream()
+        .forEach(a -> a.updateReply(this));
+
+    if (this.attaches.size() > MAX_ATTACH_CAPACITY) {
+      throw new BusinessException(PostErrorCode.OVER_MAX_ATTACH_CAPACITY);
+    }
+  }
+
   private Reply(Post post, String text, ReplyIsSecret isSecret, List<Attach> attaches, Reply parent,
       String ip) {
     setPost(post);
     this.text = text;
     this.isDelete = ReplyIsDelete.NORMAL;
     this.isSecret = isSecret;
-    updateAttaches(attaches);
+    addAttaches(attaches);
     updateParent(parent);
     this.createdIp = ip;
   }
@@ -114,11 +127,20 @@ public class Reply extends BaseEntity {
     return false;
   }
 
-  public void updateAttaches(List<Attach> attaches) {
-    if (attaches == null) {
-      return;
-    }
-    this.attaches.clear();
+  public void updateAttaches(List<Attach> attachList) {
+    this.attaches.forEach(a -> {
+      if (!attachList.contains(a)) {
+        a.setReply(null);
+      }
+    });
+
+    attachList.forEach(a -> {
+      if (!this.attaches.contains(a)) {
+        a.setReply(this);
+      }
+    });
+
+
     this.attaches.addAll(attaches);
   }
 

@@ -12,9 +12,12 @@ public class MultipartFileUploadDto {
 
   private String originalName;
 
-  public MultipartFileUploadDto(String downloadUrl, String originalName) {
+  private Long fileSize;
+
+  public MultipartFileUploadDto(String downloadUrl, String originalName, Long fileSize) {
     this.downloadUrl = downloadUrl;
     this.originalName = originalName;
+    this.fileSize = fileSize;
   }
 
   public void changeToInternalUrl(String internalUrl){

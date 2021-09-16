@@ -52,9 +52,19 @@ public class ErrorResponse {
         .map(error -> ErrorResponse.FieldError.builder()
             .reason(error.getDefaultMessage())
             .field(error.getField())
-            .value((String) error.getRejectedValue())
+            .value(getRejectedValue(error))
             .build())
         .collect(Collectors.toList());
+  }
+
+  private static String getRejectedValue(org.springframework.validation.FieldError error){
+    Object rejectedValue = error.getRejectedValue();
+    try{
+      return String.valueOf(rejectedValue);
+    }
+    catch (Exception e){
+      return "";
+    }
   }
 
   @Getter

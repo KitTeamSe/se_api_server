@@ -15,7 +15,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -24,8 +23,9 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post extends BaseEntity {
+
   public static final String MANAGE_AUTHORITY = "MENU_MANAGE";
-  public static final Integer MAX_TAG_CAPACITY = 10;
+  public static final Integer MAX_TAG_CAPACITY = 20;
   public static final Integer MAX_ATTACH_CAPACITY = 10;
 
   @Id
@@ -33,7 +33,7 @@ public class Post extends BaseEntity {
   private Long postId;
 
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-  @JoinColumn(name = "board_id", referencedColumnName = "boardId", nullable = false)
+  @JoinColumn(name = "board_id", referencedColumnName = "boardId")
   private Board board;
 
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
@@ -61,9 +61,6 @@ public class Post extends BaseEntity {
   @Column(nullable = false)
   private Integer views;
 
-  @Column(nullable = false)
-  private Integer numReply;
-
   @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, orphanRemoval = true)
   private Set<Reply> replies = new HashSet<>();
 
@@ -84,8 +81,8 @@ public class Post extends BaseEntity {
 
   // 첨부 파일, 태그 모두 존재 입력
   public Post(Board board, PostContent postContent, PostIsNotice isNotice,
-              PostIsSecret isSecret, Set<String> authorities,
-              List<Tag> tags, List<Attach> attaches, String createdIp) {
+      PostIsSecret isSecret, Set<String> authorities,
+      List<Tag> tags, List<Attach> attaches, String createdIp) {
     validateBoardAccessAuthority(board, authorities);
     this.board = board;
     this.postContent = postContent;
@@ -93,22 +90,21 @@ public class Post extends BaseEntity {
     this.isSecret = isSecret;
     this.postIsDeleted = PostIsDeleted.NORMAL;
     this.views = 0;
-    this.numReply = replies.size();
     this.createdIp = createdIp;
     addAttaches(attaches);
     addTags(tags);
   }
 
-  public Post(Account account, Board board,  PostContent postContent,
-              PostIsNotice isNotice, PostIsSecret isSecret, Set<String> authorities
-          , List<Tag> tags, List<Attach> attaches, String createdIp) {
+  public Post(Account account, Board board, PostContent postContent,
+      PostIsNotice isNotice, PostIsSecret isSecret, Set<String> authorities
+      , List<Tag> tags, List<Attach> attaches, String createdIp) {
     this(board, postContent, isNotice, isSecret, authorities, tags, attaches, createdIp);
     this.account = account;
   }
 
   public Post(Anonymous anonymous, Board board, PostContent postContent,
-              PostIsNotice isNotice, PostIsSecret isSecret, Set<String> authorities
-          , List<Tag> tags, List<Attach> attaches, String createdIp) {
+      PostIsNotice isNotice, PostIsSecret isSecret, Set<String> authorities
+      , List<Tag> tags, List<Attach> attaches, String createdIp) {
     this(board, postContent, isNotice, isSecret, authorities, tags, attaches, createdIp);
     this.anonymous = anonymous;
   }
@@ -124,8 +120,9 @@ public class Post extends BaseEntity {
   }
 
   public void validateNoticeAccess(PostIsNotice isNotice, Set<String> authorities) {
-    if(isNotice == PostIsNotice.NOTICE && !hasManageAuthority(authorities))
+    if (isNotice == PostIsNotice.NOTICE && !hasManageAuthority(authorities)) {
       throw new BusinessException(PostErrorCode.ONLY_ADMIN_SET_NOTICE);
+    }
   }
 
   public boolean hasManageAuthority(Set<String> authorities) {
@@ -133,13 +130,15 @@ public class Post extends BaseEntity {
   }
 
   public void validateAccountAccess(Long contextAccountId, Set<String> authorities) {
-    if(!account.getAccountId().equals(contextAccountId) && !hasManageAuthority(authorities))
+    if (!account.getAccountId().equals(contextAccountId) && !hasManageAuthority(authorities)) {
       throw new BusinessException(AccountErrorCode.CAN_NOT_ACCESS_ACCOUNT);
+    }
   }
 
   public void validateAccountAccess(Set<String> authorities) {
-    if(!hasManageAuthority(authorities))
+    if (!hasManageAuthority(authorities)) {
       throw new BusinessException(AccountErrorCode.CAN_NOT_ACCESS_ACCOUNT);
+    }
   }
 
 
@@ -147,21 +146,24 @@ public class Post extends BaseEntity {
     board.validateAccessAuthority(authorities);
   }
 
-  public void validateBoardAccessAuthority(Set<String> authorities){
+  public void validateBoardAccessAuthority(Set<String> authorities) {
     validateBoardAccessAuthority(this.board, authorities);
 
   }
+
   public void validateBoardManageAuthority(Board board, Set<String> authorities) {
     board.validateManageAuthority(authorities);
   }
 
   public void addAttaches(List<Attach> attachList) {
-    if(attachList == null)
+    if (attachList == null) {
       return;
+    }
     attachList.stream()
-            .forEach(a -> a.updatePost(this));
-    if(this.attaches.size() > MAX_ATTACH_CAPACITY)
+        .forEach(a -> a.updatePost(this));
+    if (this.attaches.size() > MAX_ATTACH_CAPACITY) {
       throw new BusinessException(PostErrorCode.OVER_MAX_ATTACH_CAPACITY);
+    }
   }
 
   public void addAttache(Attach attach) {
@@ -170,8 +172,9 @@ public class Post extends BaseEntity {
 
   public void addTags(List<Tag> tags) {
     this.tags.addAll(tags);
-    if(this.tags.size() > MAX_TAG_CAPACITY)
+    if (this.tags.size() > MAX_TAG_CAPACITY) {
       throw new BusinessException(PostErrorCode.OVER_MAX_TAG_CAPACITY);
+    }
   }
 
   public void addTag(Tag Tag) {
@@ -193,12 +196,18 @@ public class Post extends BaseEntity {
   }
 
   public void updateAttaches(List<Attach> attachList) {
-    attachList.stream()
-            .forEach(a -> {
-              if(!this.attaches.contains(a)) {
-                addAttache(a);
-              }
-            });
+    this.attaches.forEach(a -> {
+      if (!attachList.contains(a)) {
+        a.setPost(null);
+      }
+    });
+
+    attachList.forEach(a -> {
+      if (!this.attaches.contains(a)) {
+        a.setPost(this);
+        addAttache(a);
+      }
+    });
   }
 
   public void updateTags(List<Tag> tags) {
@@ -207,7 +216,7 @@ public class Post extends BaseEntity {
   }
 
   public void update(Board board, PostContent postContent, PostIsNotice isNotice,
-                     PostIsSecret isSecret, Set<String> authorities, String ip) {
+      PostIsSecret isSecret, Set<String> authorities, String ip) {
     updateBoard(board, authorities);
     updateContent(postContent);
     updateIsNotice(isNotice, authorities);
@@ -220,20 +229,23 @@ public class Post extends BaseEntity {
   }
 
   public boolean isOwner(Account contextAccount) {
-    if(this.account == contextAccount)
+    if (this.account == contextAccount) {
       return true;
+    }
     return false;
   }
 
   public boolean isOwner(Long accountId) {
-    if(this.account.getAccountId() == accountId)
+    if (this.account.getAccountId() == accountId) {
       return true;
+    }
     return false;
   }
 
   public String getAnonymousPassword() {
-    if(this.anonymous == null)
+    if (this.anonymous == null) {
       throw new BusinessException(PostErrorCode.NOT_ANONYMOUS_POST);
+    }
     return anonymous.getAnonymousPassword();
   }
 
@@ -242,30 +254,31 @@ public class Post extends BaseEntity {
     delete();
   }
 
-  public void delete(Set<String> authorities, Board deletedBoard) {
+  public void delete(Set<String> authorities) {
     validateAccountAccess(authorities);
     delete();
-    this.board = deletedBoard;
+    this.board = null;
   }
 
   public void delete() {
-    if(this.postIsDeleted == PostIsDeleted.DELETED)
+    if (this.postIsDeleted == PostIsDeleted.DELETED) {
       throw new BusinessException(PostErrorCode.DELETED_POST);
+    }
 
     this.postIsDeleted = PostIsDeleted.DELETED;
   }
 
-  public void increaseViews(){
+  public void increaseViews() {
     views += 1;
   }
 
   public void validateReadable() {
-    if(this.postIsDeleted == PostIsDeleted.DELETED)
+    if (this.postIsDeleted == PostIsDeleted.DELETED) {
       throw new BusinessException(PostErrorCode.DELETED_POST);
+    }
   }
 
   public void addReply(Reply reply) {
     this.replies.add(reply);
-    numReply = replies.size();
   }
 }

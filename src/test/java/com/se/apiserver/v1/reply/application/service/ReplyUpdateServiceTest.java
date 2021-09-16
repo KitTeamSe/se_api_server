@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willDoNothing;
 
 import com.se.apiserver.v1.account.application.service.AccountContextService;
 import com.se.apiserver.v1.account.domain.entity.Account;
@@ -14,11 +13,7 @@ import com.se.apiserver.v1.account.domain.entity.AccountType;
 import com.se.apiserver.v1.account.domain.entity.InformationOpenAgree;
 import com.se.apiserver.v1.account.domain.entity.Question;
 import com.se.apiserver.v1.attach.application.dto.AttachReadDto;
-import com.se.apiserver.v1.attach.application.service.AttachCreateService;
-import com.se.apiserver.v1.attach.application.service.AttachDeleteService;
-import com.se.apiserver.v1.attach.application.service.AttachUpdateService;
 import com.se.apiserver.v1.attach.domain.entity.Attach;
-import com.se.apiserver.v1.attach.infra.repository.AttachJpaRepository;
 import com.se.apiserver.v1.board.domain.entity.Board;
 import com.se.apiserver.v1.common.domain.entity.Anonymous;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
@@ -34,7 +29,6 @@ import com.se.apiserver.v1.reply.domain.entity.Reply;
 import com.se.apiserver.v1.reply.domain.entity.ReplyIsSecret;
 import com.se.apiserver.v1.reply.infra.repository.ReplyJpaRepository;
 import com.se.apiserver.v1.tag.domain.entity.Tag;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -46,7 +40,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
@@ -55,16 +48,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class ReplyUpdateServiceTest {
 
   private String data = "data";
-  private MultipartFile[] files = {
-      new MockMultipartFile("file"
-          , "file.png"
-          , "text/plain"
-          , data.getBytes(StandardCharsets.UTF_8)),
-      new MockMultipartFile("file"
-          , "file.png"
-          , "text/plain"
-          , data.getBytes(StandardCharsets.UTF_8)),
-  };
 
   @Mock
   private ReplyJpaRepository replyJpaRepository;
@@ -74,24 +57,17 @@ public class ReplyUpdateServiceTest {
   private AccountContextService accountContextService;
   @Mock
   private PasswordEncoder passwordEncoder;
-  @Mock
-  private AttachUpdateService attachUpdateService;
-  @Mock
-  private AttachJpaRepository attachJpaRepository;
   @InjectMocks
   private ReplyUpdateService replyUpdateService;
 
   @Test
   void 익명_댓글_수정_성공() {
     // given
-    Long postId = 1L;
     Long replyId = 1L;
-    List<Long> attachIdList = Arrays.asList(1L);
     ReplyUpdateDto.Request request = ReplyUpdateDto.Request
         .builder()
         .replyId(replyId)
         .password("1234")
-        .postId(postId)
         .text("댓글댓글댓글댓글댓글")
         .isSecret(ReplyIsSecret.NORMAL)
         .build();
@@ -108,30 +84,25 @@ public class ReplyUpdateServiceTest {
     Set<String> authorities = new HashSet<>(Arrays.asList("FREEBOARD_ACCESS"));
 
     given(replyJpaRepository.findById(replyId)).willReturn(java.util.Optional.of(reply));
-    given(postJpaRepository.findById(postId)).willReturn(java.util.Optional.of(post));
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
     given(
         passwordEncoder.matches(request.getPassword(), reply.getAnonymous().getAnonymousPassword()))
         .willReturn(true);
-    willDoNothing().given(attachUpdateService).update(null, reply.getReplyId(), files);
     given(replyJpaRepository.save(reply)).willReturn(any(Reply.class));
     given(replyJpaRepository.save(reply)).willReturn(savedReply);
 
     // when, then
-    assertDoesNotThrow(() -> replyUpdateService.update(request, files));
+    assertDoesNotThrow(() -> replyUpdateService.update(request));
   }
 
   @Test
   void 회원_댓글_수정_성공() {
     // given
-    Long postId = 1L;
     Long replyId = 1L;
-    List<Long> attachIdList = new ArrayList<>(Arrays.asList(1L, 2L, 3L));
     ReplyUpdateDto.Request request = ReplyUpdateDto.Request
         .builder()
         .replyId(replyId)
         .password("1234")
-        .postId(postId)
         .text("댓글댓글댓글댓글댓글")
         .isSecret(ReplyIsSecret.NORMAL)
         .build();
@@ -145,19 +116,16 @@ public class ReplyUpdateServiceTest {
         , "127.0.0.1"
         , account);
     Reply savedReply = reply;
-    MultipartFile[] files = new MultipartFile[1];
     Set<String> authorities = new HashSet<>(Arrays.asList("FREEBOARD_ACCESS"));
 
     given(replyJpaRepository.findById(replyId)).willReturn(java.util.Optional.of(reply));
-    given(postJpaRepository.findById(postId)).willReturn(java.util.Optional.of(post));
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
     given(accountContextService.getCurrentAccountId()).willReturn(account.getAccountId());
-    willDoNothing().given(attachUpdateService).update(null, reply.getReplyId(), files);
     given(replyJpaRepository.save(reply)).willReturn(reply);
     given(replyJpaRepository.save(reply)).willReturn(savedReply);
 
     // when, then
-    assertDoesNotThrow(() -> replyUpdateService.update(request, files));
+    assertDoesNotThrow(() -> replyUpdateService.update(request));
   }
 
   @Test
@@ -170,7 +138,6 @@ public class ReplyUpdateServiceTest {
         .builder()
         .replyId(replyId)
         .password("1234")
-        .postId(postId)
         .text("댓글댓글댓글댓글댓글")
         .isSecret(ReplyIsSecret.NORMAL)
         .build();
@@ -184,7 +151,6 @@ public class ReplyUpdateServiceTest {
         , null
         , "127.0.0.1"
         , account);
-    MultipartFile[] files = new MultipartFile[1];
     List<AttachReadDto.Response> dtoResponse
         = new ArrayList<>(Arrays.asList(
         AttachReadDto.Response
@@ -196,14 +162,13 @@ public class ReplyUpdateServiceTest {
     Set<String> authorities = new HashSet<>(Arrays.asList("FREEBOARD_ACCESS"));
 
     given(replyJpaRepository.findById(replyId)).willReturn(java.util.Optional.of(reply));
-    given(postJpaRepository.findById(postId)).willReturn(java.util.Optional.of(post));
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
     given(accountContextService.getCurrentAccountId()).willReturn(anotherAccountId);
 
     // when
     AccessDeniedException accessDeniedException = assertThrows(AccessDeniedException.class,
         () -> replyUpdateService
-            .update(request, files));
+            .update(request));
     // then
     assertThat(accessDeniedException.getMessage(), is("작성자 본인만 삭제 가능합니다"));
   }
@@ -217,20 +182,10 @@ public class ReplyUpdateServiceTest {
         .builder()
         .replyId(replyId)
         .password("1234")
-        .postId(postId)
         .text("댓글댓글댓글댓글댓글")
         .isSecret(ReplyIsSecret.NORMAL)
         .build();
     Post post = getPost();
-    MultipartFile[] files = new MultipartFile[1];
-    Reply reply = new Reply(post
-        , request.getText()
-        , request.getIsSecret()
-        , null
-        , null
-        , "127.0.0.1"
-        , getAnonymous());
-    Long nonExistentReplyId = 2L;
 
     given(replyJpaRepository.findById(replyId))
         .willThrow(new BusinessException(ReplyErrorCode.NO_SUCH_REPLY));
@@ -238,60 +193,20 @@ public class ReplyUpdateServiceTest {
     // when
     BusinessException businessException = assertThrows(BusinessException.class,
         () -> replyUpdateService
-            .update(request, files));
+            .update(request));
     // then
     assertThat(businessException.getErrorCode(), is(ReplyErrorCode.NO_SUCH_REPLY));
     assertThat(businessException.getMessage(), is("존재하지 않는 댓글"));
   }
 
   @Test
-  void 존재하지_않는_게시글() {
-    // given
-    Long replyId = 1L;
-    Long nonExistentPostId = 2L;
-    ReplyUpdateDto.Request request = ReplyUpdateDto.Request
-        .builder()
-        .replyId(replyId)
-        .password("1234")
-        .postId(nonExistentPostId)
-        .text("댓글댓글댓글댓글댓글")
-        .isSecret(ReplyIsSecret.NORMAL)
-
-        .build();
-    Post post = getPost();
-    MultipartFile[] files = new MultipartFile[1];
-    Reply reply = new Reply(post
-        , request.getText()
-        , request.getIsSecret()
-        , null
-        , null
-        , "127.0.0.1"
-        , getAnonymous());
-
-    given(replyJpaRepository.findById(replyId)).willReturn(Optional.of(reply));
-    given(postJpaRepository.findById(nonExistentPostId))
-        .willThrow(new BusinessException(PostErrorCode.NO_SUCH_POST));
-
-    // when
-    BusinessException businessException = assertThrows(BusinessException.class,
-        () -> replyUpdateService
-            .update(request, files));
-
-    // then
-    assertThat(businessException.getErrorCode(), is(PostErrorCode.NO_SUCH_POST));
-    assertThat(businessException.getMessage(), is("존재하지 않는 게시글"));
-  }
-
-  @Test
   void 익명_댓글_비밀번호_불일치() {
     // given
-    Long postId = 1L;
     Long replyId = 1L;
     ReplyUpdateDto.Request request = ReplyUpdateDto.Request
         .builder()
         .replyId(replyId)
         .password("wrong")
-        .postId(postId)
         .text("댓글댓글댓글댓글댓글")
         .isSecret(ReplyIsSecret.NORMAL)
 
@@ -305,19 +220,9 @@ public class ReplyUpdateServiceTest {
         , null
         , "127.0.0.1"
         , anonymous);
-    MultipartFile[] files = new MultipartFile[1];
-    List<AttachReadDto.Response> dtoResponse
-        = new ArrayList<>(Arrays.asList(
-        AttachReadDto.Response
-            .builder()
-            .attachId(1L)
-            .replyId(replyId)
-            .downloadUrl("URL")
-            .fileName("file.jpg").build()));
     Set<String> authorities = new HashSet<>(Arrays.asList("FREEBOARD_ACCESS"));
 
     given(replyJpaRepository.findById(replyId)).willReturn(java.util.Optional.of(reply));
-    given(postJpaRepository.findById(postId)).willReturn(java.util.Optional.of(post));
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
     given(
         passwordEncoder.matches(request.getPassword(), reply.getAnonymous().getAnonymousPassword()))
@@ -325,7 +230,7 @@ public class ReplyUpdateServiceTest {
 
     // when
     BusinessException businessException = assertThrows(BusinessException.class,
-        () -> replyUpdateService.update(request, files));
+        () -> replyUpdateService.update(request));
 
     // then
     assertThat(businessException.getErrorCode(), is(ReplyErrorCode.INVALID_PASSWORD));

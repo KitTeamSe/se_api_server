@@ -44,8 +44,18 @@ public class ExceptionResponse {
     final List<org.springframework.validation.FieldError> errors = bindingResult.getFieldErrors();
     return errors.parallelStream()
         .map(error ->
-            new FieldError(error.getField(), (String) error.getRejectedValue(), error.getDefaultMessage()))
+            new FieldError(error.getField(), getRejectedValue(error), error.getDefaultMessage()))
         .collect(Collectors.toList());
+  }
+
+  private static String getRejectedValue(org.springframework.validation.FieldError error){
+    Object rejectedValue = error.getRejectedValue();
+    try{
+      return String.valueOf(rejectedValue);
+    }
+    catch (Exception e){
+      return "";
+    }
   }
 
   public String getMessage() {

@@ -5,9 +5,7 @@ import com.se.apiserver.v1.board.domain.entity.Board;
 import com.se.apiserver.v1.board.application.error.BoardErrorCode;
 import com.se.apiserver.v1.board.infra.repository.BoardJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
-import com.se.apiserver.v1.common.domain.exception.NotFoundException;
 import com.se.apiserver.v1.post.application.dto.PostAccessCheckDto;
-import com.se.apiserver.v1.post.application.dto.PostAnnouncementDto;
 import com.se.apiserver.v1.post.application.dto.PostReadDto.PostListItem;
 import com.se.apiserver.v1.post.application.dto.PostReadDto.PostSearchRequest;
 import com.se.apiserver.v1.post.domain.entity.Post;
@@ -18,7 +16,6 @@ import com.se.apiserver.v1.post.application.dto.PostReadDto;
 import com.se.apiserver.v1.post.domain.repository.PostRepositoryProtocol;
 import com.se.apiserver.v1.post.infra.repository.PostJpaRepository;
 import com.se.apiserver.v1.post.infra.repository.PostQueryRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +28,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class PostReadService {
 
@@ -41,6 +37,21 @@ public class PostReadService {
   private final BoardJpaRepository boardJpaRepository;
   private final PostQueryRepository postQueryRepository;
   private final PostRepositoryProtocol postRepositoryProtocol;
+
+  public PostReadService(
+      PostJpaRepository postJpaRepository,
+      AccountContextService accountContextService,
+      PasswordEncoder passwordEncoder,
+      BoardJpaRepository boardJpaRepository,
+      PostQueryRepository postQueryRepository,
+      PostRepositoryProtocol postRepositoryProtocol) {
+    this.postJpaRepository = postJpaRepository;
+    this.accountContextService = accountContextService;
+    this.passwordEncoder = passwordEncoder;
+    this.boardJpaRepository = boardJpaRepository;
+    this.postQueryRepository = postQueryRepository;
+    this.postRepositoryProtocol = postRepositoryProtocol;
+  }
 
   @Transactional
   public PostReadDto.Response read(Long postId) {
@@ -70,21 +81,6 @@ public class PostReadService {
     return PostReadDto.Response.fromEntity(post, true);
   }
 
-  public Page<PostAnnouncementDto> readAnnouncementList(
-      Pageable pageable, Long boardId) {
-    Board board = boardJpaRepository.findById(boardId)
-        .orElseThrow(() -> new NotFoundException("존재하지 않는 게시판입니다."));
-
-    Page<Post> allByBoardAndIsNotice = postRepositoryProtocol
-        .findAllByBoardAndIsNoticeEquals(board, PostIsNotice.NOTICE, pageable);
-
-    List<PostAnnouncementDto> list = allByBoardAndIsNotice.stream()
-        .map(PostAnnouncementDto::fromEntity).collect(
-            Collectors.toList());
-
-    return new PageImpl<>(list, allByBoardAndIsNotice.getPageable(), allByBoardAndIsNotice.getTotalElements());
-  }
-
   public Boolean checkAnonymousPostWriteAccess(
       PostAccessCheckDto.AnonymousPostAccessCheckDto anonymousPostAccessCheckDto) {
     Post post = postJpaRepository.findById(anonymousPostAccessCheckDto.getPostId())
@@ -94,13 +90,13 @@ public class PostReadService {
     return true;
   }
 
-  public PostReadDto.PostListResponse readBoardPostList(Pageable pageable, Long boardId) {
-    Board board = boardJpaRepository.findById(boardId)
+  public PostReadDto.PostListResponse readBoardPostList(Pageable pageable, String boardNameEng, PostIsNotice isNotice) {
+    Board board = boardJpaRepository.findByNameEng(boardNameEng)
         .orElseThrow(() -> new BusinessException(BoardErrorCode.NO_SUCH_BOARD));
     Set<String> authorities = accountContextService.getContextAuthorities();
     board.validateAccessAuthority(authorities);
 
-    Page<Post> allByBoard = postJpaRepository.findAllByBoard(board, pageable);
+    Page<Post> allByBoard = postJpaRepository.findAllByBoardAndIsNotice(pageable, board, isNotice);
     List<PostReadDto.PostListItem> list = allByBoard.stream()
         .map(p -> PostReadDto.PostListItem.fromEntity(p))
         .collect(Collectors.toList());
@@ -110,7 +106,7 @@ public class PostReadService {
   }
 
   public PostReadDto.PostListResponse search(PostSearchRequest pageRequest) {
-    Board board = boardJpaRepository.findById(pageRequest.getBoardId())
+    Board board = boardJpaRepository.findByNameEng(pageRequest.getBoardNameEng())
         .orElseThrow(() -> new BusinessException(BoardErrorCode.NO_SUCH_BOARD));
     Set<String> authorities = accountContextService.getContextAuthorities();
     board.validateAccessAuthority(authorities);
