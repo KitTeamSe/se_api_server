@@ -11,8 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class MenuDeleteService {
+
     private final MenuJpaRepository menuJpaRepository;
     private final BoardDeleteService boardDeleteService;
+
     public MenuDeleteService(
         MenuJpaRepository menuJpaRepository,
         BoardDeleteService boardDeleteService) {

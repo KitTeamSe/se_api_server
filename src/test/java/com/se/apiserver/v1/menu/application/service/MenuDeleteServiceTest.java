@@ -5,6 +5,8 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.se.apiserver.v1.board.application.service.BoardDeleteService;
+import com.se.apiserver.v1.board.domain.entity.Board;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
 import com.se.apiserver.v1.menu.application.error.MenuErrorCode;
 import com.se.apiserver.v1.menu.domain.entity.Menu;
@@ -21,6 +23,8 @@ class MenuDeleteServiceTest {
 
   @Mock
   private MenuJpaRepository menuJpaRepository;
+  @Mock
+  private BoardDeleteService boardDeleteService;
 
   @InjectMocks
   private MenuDeleteService menuDeleteService;
@@ -31,7 +35,8 @@ class MenuDeleteServiceTest {
     Menu menu = mock(Menu.class);
     when(menu.isRemovable()).thenReturn(true);
     when(menuJpaRepository.findById(anyLong())).thenReturn(Optional.ofNullable(menu));
-
+    Board board = mock(Board.class);
+    when(menu.getBoard()).thenReturn(board);
     // when
     // then
     assertDoesNotThrow(() -> menuDeleteService.delete(1L));
