@@ -19,6 +19,7 @@ import com.se.apiserver.v1.board.domain.entity.Board;
 import com.se.apiserver.v1.board.infra.repository.BoardJpaRepository;
 import com.se.apiserver.v1.common.domain.entity.Anonymous;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
+import com.se.apiserver.v1.common.infra.dto.PageRequest;
 import com.se.apiserver.v1.notice.application.service.NoticeSendService;
 import com.se.apiserver.v1.post.application.dto.PostCreateDto;
 import com.se.apiserver.v1.post.application.dto.PostCreateDto.TagDto;
@@ -27,10 +28,12 @@ import com.se.apiserver.v1.post.domain.entity.Post;
 import com.se.apiserver.v1.post.domain.entity.PostContent;
 import com.se.apiserver.v1.post.domain.entity.PostIsNotice;
 import com.se.apiserver.v1.post.domain.entity.PostIsSecret;
+import com.se.apiserver.v1.post.domain.exception.NoticeSizeException;
 import com.se.apiserver.v1.post.infra.repository.PostJpaRepository;
 import com.se.apiserver.v1.tag.application.error.TagErrorCode;
 import com.se.apiserver.v1.tag.domain.entity.Tag;
 import com.se.apiserver.v1.tag.infra.repository.TagJpaRepository;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -41,6 +44,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -96,6 +102,43 @@ public class PostCreateServiceTest {
 
     // when, then
     assertDoesNotThrow(() -> postCreateService.create(request));
+  }
+
+  @Test
+  void 공지_개수_제한_초과로_인한_공지글_등록_실패() throws NoSuchFieldException, IllegalAccessException {
+    // given
+    String boardNameEng = "TestBoard";
+    Set<String> authorities = Set.of("MENU_MANAGE");
+    Account account = getAccount();
+    Board board = getBoard();
+    List<TagDto> tagDtoList
+        = Arrays.asList(new TagDto(1L));
+    Post post = new Post(account, board, getPostContent(), PostIsNotice.NORMAL, PostIsSecret.NORMAL,
+        authorities, new ArrayList<>(), new ArrayList<>(), "127.0.0.1");
+    PostCreateDto.Request request = PostCreateDto.Request
+        .builder().boardNameEng(boardNameEng)
+        .postContent(post.getPostContent())
+        .isSecret(PostIsSecret.NORMAL)
+        .isNotice(PostIsNotice.NOTICE)
+        .tagList(tagDtoList)
+        .build();
+    List<Post> postList = Arrays.asList(post);
+    Page<Post> allByBoard = new PageImpl<>(postList);
+    Field field = postCreateService.getClass().getDeclaredField("MAX_NOTICE_SIZE");
+    field.setAccessible(true);
+    field.set(postCreateService, 1);
+
+    given(boardJpaRepository.findByNameEng(boardNameEng)).willReturn(java.util.Optional.of(board));
+    given(postJpaRepository
+        .findAllByBoardAndIsNotice(new PageRequest(0, (Integer)field.get(postCreateService), Direction.ASC).of(), board,
+            request.getIsNotice())).willReturn(allByBoard);
+
+    // when
+    NoticeSizeException noticeSizeException
+        = assertThrows(NoticeSizeException.class, () -> postCreateService.create(request));
+
+    // then
+    assertThat(noticeSizeException.getMessage(), is("더 이상 공지글을 등록할 수 없습니다."));
   }
 
   @Test
