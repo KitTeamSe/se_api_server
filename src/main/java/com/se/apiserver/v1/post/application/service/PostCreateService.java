@@ -8,11 +8,13 @@ import com.se.apiserver.v1.board.domain.entity.Board;
 import com.se.apiserver.v1.board.application.error.BoardErrorCode;
 import com.se.apiserver.v1.board.infra.repository.BoardJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
+import com.se.apiserver.v1.common.infra.dto.PageRequest;
 import com.se.apiserver.v1.notice.application.service.NoticeSendService;
 import com.se.apiserver.v1.post.application.dto.PostCreateDto;
 import com.se.apiserver.v1.post.domain.entity.*;
 import com.se.apiserver.v1.attach.application.error.AttachErrorCode;
 import com.se.apiserver.v1.post.application.error.PostErrorCode;
+import com.se.apiserver.v1.post.domain.exception.NoticeSizeException;
 import com.se.apiserver.v1.post.infra.repository.PostJpaRepository;
 import com.se.apiserver.v1.tag.application.error.TagErrorCode;
 import com.se.apiserver.v1.tag.domain.entity.Tag;
@@ -21,6 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +33,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class PostCreateService {
+  @Value("${spring.post.max-notice-size}")
+  private Integer MAX_NOTICE_SIZE;
+
   private final PostJpaRepository postJpaRepository;
   private final AccountContextService accountContextService;
   private final BoardJpaRepository boardJpaRepository;
@@ -57,6 +65,8 @@ public class PostCreateService {
   public Long create(PostCreateDto.Request request) {
     Board board = boardJpaRepository.findByNameEng(request.getBoardNameEng())
         .orElseThrow(() -> new BusinessException(BoardErrorCode.NO_SUCH_BOARD));
+
+    checkNoticeSize(board, request.getIsNotice());
 
     Set<String> authorities = accountContextService.getContextAuthorities();
     List<Tag> tags = getTagsIfSignIn(request.getTagList());
@@ -116,5 +126,19 @@ public class PostCreateService {
             .orElseThrow(() -> new BusinessException(AttachErrorCode.NO_SUCH_ATTACH))
         )
         .collect(Collectors.toList());
+  }
+
+  private void checkNoticeSize(Board board, PostIsNotice isNotice) {
+    if (isNotice == PostIsNotice.NORMAL) {
+      return;
+    }
+
+    Page<Post> allByBoard
+        = postJpaRepository.findAllByBoardAndIsNotice(
+            new PageRequest(0, MAX_NOTICE_SIZE, Direction.ASC).of(), board, isNotice);
+
+    if (allByBoard.getContent().size() >= MAX_NOTICE_SIZE) {
+      throw new NoticeSizeException("더 이상 공지글을 등록할 수 없습니다.");
+    }
   }
 }
