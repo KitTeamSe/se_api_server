@@ -130,7 +130,8 @@ public class PostCreateServiceTest {
 
     given(boardJpaRepository.findByNameEng(boardNameEng)).willReturn(java.util.Optional.of(board));
     given(postJpaRepository
-        .findAllByBoardAndIsNotice(new PageRequest(0, (Integer)field.get(postCreateService), Direction.ASC).of(), board,
+        .findAllByBoardAndIsNotice(
+            new PageRequest(0, (Integer) field.get(postCreateService), Direction.ASC).of(), board,
             request.getIsNotice())).willReturn(allByBoard);
 
     // when
@@ -207,6 +208,7 @@ public class PostCreateServiceTest {
         .builder().boardNameEng(boardNameEng)
         .postContent(getPostContent())
         .isSecret(PostIsSecret.NORMAL)
+        .isNotice(PostIsNotice.NORMAL)
         .anonymous(getAnonymous())
         .tagList(tagDtoList)
         .build();
@@ -232,6 +234,7 @@ public class PostCreateServiceTest {
         .builder().boardNameEng(boardNameEng)
         .postContent(getPostContent())
         .isSecret(PostIsSecret.NORMAL)
+        .isNotice(PostIsNotice.NORMAL)
         .anonymous(getAnonymous())
         .tagList(new ArrayList<>())
         .build();
@@ -254,21 +257,34 @@ public class PostCreateServiceTest {
   }
 
   @Test
-  void 관리자가_아닌_사용자가_공지글_등록_실패() {
+  void 관리자가_아닌_사용자가_공지글_등록_실패() throws NoSuchFieldException, IllegalAccessException {
     // given
     String boardNameEng = "TestBoard";
     String ip = "127.0.0.1";
     Set<String> authorities = Set.of("FREEBOARD_ACCESS");
     Account account = getAccount();
     Board board = getBoard();
+    Post post = new Post(account, board, getPostContent(), PostIsNotice.NORMAL, PostIsSecret.NORMAL,
+        authorities, new ArrayList<>(), new ArrayList<>(), "127.0.0.1");
     PostCreateDto.Request request = PostCreateDto.Request
-        .builder().boardNameEng(boardNameEng)
+        .builder()
+        .boardNameEng(boardNameEng)
         .postContent(getPostContent())
         .isSecret(PostIsSecret.NORMAL)
         .isNotice(PostIsNotice.NOTICE)
         .build();
+    List<Post> postList = Arrays.asList(post);
+    Page<Post> allByBoard = new PageImpl<>(postList);
+    Field field = postCreateService.getClass().getDeclaredField("MAX_NOTICE_SIZE");
+    field.setAccessible(true);
+    field.set(postCreateService, 10);
 
-    given(boardJpaRepository.findByNameEng(boardNameEng)).willReturn(java.util.Optional.of(board));
+    given(boardJpaRepository.findByNameEng(request.getBoardNameEng()))
+        .willReturn(java.util.Optional.of(board));
+    given(postJpaRepository
+        .findAllByBoardAndIsNotice(
+            new PageRequest(0, (Integer) field.get(postCreateService), Direction.ASC).of(), board,
+            request.getIsNotice())).willReturn(allByBoard);
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
     given(accountContextService.getCurrentClientIP()).willReturn(ip);
     given(accountContextService.isSignIn()).willReturn(true);
