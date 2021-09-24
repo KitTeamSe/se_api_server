@@ -103,7 +103,7 @@ public class PostApiController {
   @GetMapping("/post")
   @ResponseStatus(HttpStatus.OK)
   @ApiOperation("게시판에 따른 게시글 목록 조회")
-  public SuccessResponse<PostReadDto.PostListResponse> readSecret(PageRequest pageRequest,
+  public SuccessResponse<PostReadDto.PostListResponse> readBoardPostList(PageRequest pageRequest,
       String boardNameEng, PostIsNotice isNotice) {
     return new SuccessResponse<>(HttpStatus.CREATED.value(), "성공적으로 조회되었습니다",
         postReadService.readBoardPostList(pageRequest.of(), boardNameEng, isNotice));
