@@ -7,10 +7,13 @@ import com.se.apiserver.v1.attach.infra.repository.AttachJpaRepository;
 import com.se.apiserver.v1.board.domain.entity.Board;
 import com.se.apiserver.v1.common.domain.entity.Anonymous;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
+import com.se.apiserver.v1.common.infra.dto.PageRequest;
 import com.se.apiserver.v1.post.application.dto.PostCreateDto;
 import com.se.apiserver.v1.post.application.dto.PostUpdateDto;
 import com.se.apiserver.v1.post.application.error.PostErrorCode;
 import com.se.apiserver.v1.post.domain.entity.Post;
+import com.se.apiserver.v1.post.domain.entity.PostIsNotice;
+import com.se.apiserver.v1.post.domain.exception.NoticeSizeException;
 import com.se.apiserver.v1.post.infra.repository.PostJpaRepository;
 import com.se.apiserver.v1.tag.application.error.TagErrorCode;
 import com.se.apiserver.v1.tag.domain.entity.Tag;
@@ -19,6 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +32,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class PostUpdateService {
+
+  @Value("${spring.post.max-notice-size}")
+  private Integer MAX_NOTICE_SIZE;
 
   private final PostJpaRepository postJpaRepository;
   private final AccountContextService accountContextService;
@@ -54,6 +63,8 @@ public class PostUpdateService {
     post.validateReadable();
 
     Board board = post.getBoard();
+    checkNoticeSize(board, request.getIsNotice());
+
     List<Tag> tags = getTagsIfSignIn(request.getTagList());
 
     List<Attach> attaches = getAttaches(request.getAttachmentList());
@@ -112,5 +123,19 @@ public class PostUpdateService {
             .orElseThrow(() -> new BusinessException(AttachErrorCode.NO_SUCH_ATTACH))
         )
         .collect(Collectors.toList());
+  }
+
+  private void checkNoticeSize(Board board, PostIsNotice isNotice) {
+    if (isNotice == PostIsNotice.NORMAL) {
+      return;
+    }
+
+    Page<Post> allByBoard
+        = postJpaRepository.findAllByBoardAndIsNotice(
+        new PageRequest(0, MAX_NOTICE_SIZE, Direction.ASC).of(), board, isNotice);
+
+    if (allByBoard.getContent().size() >= MAX_NOTICE_SIZE) {
+      throw new NoticeSizeException("더 이상 공지글을 등록할 수 없습니다.");
+    }
   }
 }
