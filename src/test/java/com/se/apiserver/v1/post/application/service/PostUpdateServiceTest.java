@@ -4,7 +4,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
@@ -12,10 +11,10 @@ import com.se.apiserver.v1.account.application.service.AccountContextService;
 import com.se.apiserver.v1.account.domain.entity.Account;
 import com.se.apiserver.v1.account.domain.entity.AccountType;
 import com.se.apiserver.v1.account.domain.entity.InformationOpenAgree;
-import com.se.apiserver.v1.account.domain.entity.Question;
 import com.se.apiserver.v1.board.domain.entity.Board;
 import com.se.apiserver.v1.common.domain.entity.Anonymous;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
+import com.se.apiserver.v1.common.infra.dto.PageRequest;
 import com.se.apiserver.v1.post.application.dto.PostCreateDto;
 import com.se.apiserver.v1.post.application.dto.PostCreateDto.TagDto;
 import com.se.apiserver.v1.post.application.dto.PostUpdateDto;
@@ -24,10 +23,12 @@ import com.se.apiserver.v1.post.domain.entity.Post;
 import com.se.apiserver.v1.post.domain.entity.PostContent;
 import com.se.apiserver.v1.post.domain.entity.PostIsNotice;
 import com.se.apiserver.v1.post.domain.entity.PostIsSecret;
+import com.se.apiserver.v1.post.domain.exception.NoticeSizeException;
 import com.se.apiserver.v1.post.infra.repository.PostJpaRepository;
 import com.se.apiserver.v1.tag.application.error.TagErrorCode;
 import com.se.apiserver.v1.tag.domain.entity.Tag;
 import com.se.apiserver.v1.tag.infra.repository.TagJpaRepository;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,6 +40,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
@@ -209,7 +213,8 @@ public class PostUpdateServiceTest {
     given(accountContextService.getContextAuthorities()).willReturn(authorities);
     given(postJpaRepository.findById(request.getPostId())).willReturn(java.util.Optional.of(post));
     given(accountContextService.isSignIn()).willReturn(true);
-    given(tagJpaRepository.findById(anyLong())).willThrow(new BusinessException(TagErrorCode.NO_SUCH_TAG));
+    given(tagJpaRepository.findById(anyLong()))
+        .willThrow(new BusinessException(TagErrorCode.NO_SUCH_TAG));
 
     // when
     BusinessException businessException
@@ -323,6 +328,94 @@ public class PostUpdateServiceTest {
     assertThat(businessException.getErrorCode().getMessage(), is("익명 게시글 비밀번호가 틀렸습니다"));
   }
 
+  @Test
+  void 관리자가_일반_게시글을_공지_게시글로_수정_성공() throws NoSuchFieldException, IllegalAccessException {
+    // given
+    String ip = "127.0.0.1";
+    Set<String> authorities = Set.of("MENU_MANAGE");
+    Post post = new Post(
+        getAssistantAccount()
+        , getBoard()
+        , getPostContent()
+        , PostIsNotice.NORMAL
+        , PostIsSecret.NORMAL
+        , new HashSet<>(authorities)
+        , new ArrayList<>()
+        , new ArrayList<>()
+        , ip);
+    Post savedPost = post;
+    PostUpdateDto.Request request = PostUpdateDto.Request
+        .builder()
+        .postId(1L)
+        .postContent(new PostContent("제목제목제목", "내용내용내용"))
+        .isNotice(PostIsNotice.NOTICE)
+        .isSecret(PostIsSecret.NORMAL)
+        .build();
+    List<Post> postList = Arrays.asList(post);
+    Page<Post> allByBoard = new PageImpl<>(postList);
+    Field field = postUpdateService.getClass().getDeclaredField("MAX_NOTICE_SIZE");
+    field.setAccessible(true);
+    field.set(postUpdateService, 10);
+
+    given(accountContextService.getContextAuthorities()).willReturn(authorities);
+    given(postJpaRepository.findById(request.getPostId())).willReturn(java.util.Optional.of(post));
+    given(postJpaRepository
+        .findAllByBoardAndIsNotice(
+            new PageRequest(0, (Integer) field.get(postUpdateService), Direction.ASC).of(),
+            post.getBoard(),
+            request.getIsNotice())).willReturn(allByBoard);
+    given(accountContextService.getCurrentClientIP()).willReturn(ip);
+    given(accountContextService.isSignIn()).willReturn(true);
+    given(accountContextService.getCurrentAccountId()).willReturn(getAccount().getAccountId());
+    given(postJpaRepository.save(post)).willReturn(savedPost);
+
+    // when, then
+    assertDoesNotThrow(() -> postUpdateService.update(request));
+  }
+
+  @Test
+  void 공지_개수_제한_초과로_인한_공지글_등록_실패() throws NoSuchFieldException, IllegalAccessException {
+    // given
+    Set<String> authorities = Set.of("MENU_MANAGE");
+    Post post = new Post(
+        getAssistantAccount()
+        , getBoard()
+        , getPostContent()
+        , PostIsNotice.NORMAL
+        , PostIsSecret.NORMAL
+        , new HashSet<>(authorities)
+        , new ArrayList<>()
+        , new ArrayList<>()
+        , "127.0.0.1");
+    PostUpdateDto.Request request = PostUpdateDto.Request
+        .builder()
+        .postId(1L)
+        .postContent(new PostContent("제목제목제목", "내용내용내용"))
+        .isNotice(PostIsNotice.NOTICE)
+        .isSecret(PostIsSecret.NORMAL)
+        .build();
+    List<Post> postList = Arrays.asList(post);
+    Page<Post> allByBoard = new PageImpl<>(postList);
+    Field field = postUpdateService.getClass().getDeclaredField("MAX_NOTICE_SIZE");
+    field.setAccessible(true);
+    field.set(postUpdateService, 1);
+
+    given(accountContextService.getContextAuthorities()).willReturn(authorities);
+    given(postJpaRepository.findById(request.getPostId())).willReturn(java.util.Optional.of(post));
+    given(postJpaRepository
+        .findAllByBoardAndIsNotice(
+            new PageRequest(0, (Integer) field.get(postUpdateService), Direction.ASC).of(),
+            post.getBoard(),
+            request.getIsNotice())).willReturn(allByBoard);
+
+    // when
+    NoticeSizeException noticeSizeException
+        = assertThrows(NoticeSizeException.class, () -> postUpdateService.update(request));
+
+    // then
+    assertThat(noticeSizeException.getMessage(), is("더 이상 공지글을 등록할 수 없습니다."));
+  }
+
   private Board getBoard() {
     String nameEng = "FREEBOARD";
     String nameKor = "자유게시판";
@@ -338,22 +431,35 @@ public class PostUpdateServiceTest {
   }
 
   private Account getAccount() {
-    Long accountId = 1L;
-    String idString = "jduck1024";
-    String password = "1234";
-    String name = "윤진";
-    String nickname = "오리";
-    String studentId = "20180764";
-    AccountType accountType = AccountType.STUDENT;
-    String phoneNumber = "01012345678";
-    String email = "20180764@kumoh.ac.kr";
-    String lastSingInIp = "127.0.0.1";
-    InformationOpenAgree informationOpenAgree = InformationOpenAgree.AGREE;
-    Question question = null;
-    String answer = null;
+    return new Account(1L
+        , "studentId"
+        , "1234"
+        , "name"
+        , "student"
+        , "studentId"
+        , AccountType.STUDENT
+        , "01012345678"
+        , "se@kumoh.ac.kr"
+        , "127.0.0.1"
+        , InformationOpenAgree.AGREE
+        , null
+        , null);
+  }
 
-    return new Account(accountId, idString, password, name, nickname, studentId, accountType,
-        phoneNumber, email, lastSingInIp, informationOpenAgree, question, answer);
+  private Account getAssistantAccount() {
+    return new Account(1L
+        , "assistantId"
+        , "1234"
+        , "name"
+        , "assistant"
+        , "assistantId"
+        , AccountType.ASSISTANT
+        , "01012345678"
+        , "se@kumoh.ac.kr"
+        , "127.0.0.1"
+        , InformationOpenAgree.AGREE
+        , null
+        , null);
   }
 
   private Anonymous getAnonymous() {
