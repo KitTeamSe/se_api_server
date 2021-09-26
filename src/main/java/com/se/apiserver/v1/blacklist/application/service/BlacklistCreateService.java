@@ -5,6 +5,8 @@ import com.se.apiserver.v1.blacklist.application.error.BlacklistErrorCode;
 import com.se.apiserver.v1.blacklist.application.dto.BlacklistCreateDto;
 import com.se.apiserver.v1.blacklist.infra.repository.BlacklistJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
+import java.time.LocalDateTime;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class BlacklistCreateService {
 
     private final BlacklistJpaRepository blacklistJpaRepository;
+
+    @Value("${spring.blacklist.release.default-plus-day}")
+    private Integer defaultPlusDay;
 
     public BlacklistCreateService(
         BlacklistJpaRepository blacklistJpaRepository) {
@@ -28,7 +33,7 @@ public class BlacklistCreateService {
             request.getIp(),
             request.getIdString(),
             request.getReason(),
-            request.getReleaseDate()
+            request.getReleaseDate() == null ? LocalDateTime.now().plusDays(defaultPlusDay) : request.getReleaseDate()
         );
 
         blacklistJpaRepository.save(blacklist);
