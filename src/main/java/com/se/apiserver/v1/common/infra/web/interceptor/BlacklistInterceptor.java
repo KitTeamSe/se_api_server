@@ -1,5 +1,7 @@
 package com.se.apiserver.v1.common.infra.web.interceptor;
 
+import com.se.apiserver.v1.account.application.service.AccountContextService;
+import com.se.apiserver.v1.account.domain.entity.Account;
 import com.se.apiserver.v1.blacklist.application.service.BlacklistDetailService;
 import com.se.apiserver.v1.common.domain.error.GlobalErrorCode;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
@@ -10,21 +12,36 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class BlacklistInterceptor implements HandlerInterceptor {
 
   private final BlacklistDetailService blacklistDetailService;
+  private final AccountContextService accountContextService;
 
-  public BlacklistInterceptor(BlacklistDetailService blacklistDetailService) {
+  public BlacklistInterceptor(BlacklistDetailService blacklistDetailService,
+      AccountContextService accountContextService) {
     this.blacklistDetailService = blacklistDetailService;
+    this.accountContextService = accountContextService;
   }
 
   @Override
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
       throws Exception {
+
     if(request.getMethod().equals("GET")) {
       return true;
     }
 
-    if(blacklistDetailService.isBaned(getIp(request))){
+    if (request.getRequestURI().equals("/api/v1/siginin")) {
+      return true;
+    }
+
+    if (blacklistDetailService.isBannedIp(getIp(request))){
       throw new BusinessException(GlobalErrorCode.BANNED_IP);
     }
+
+    if (accountContextService != null) {
+      if (blacklistDetailService.isBannedUser(getUserIdString())) {
+        throw new BusinessException(GlobalErrorCode.BANNED_IP);
+      }
+    }
+
     return true;
   }
 
@@ -34,5 +51,9 @@ public class BlacklistInterceptor implements HandlerInterceptor {
       ip = request.getRemoteAddr();
     }
     return ip;
+  }
+
+  private String getUserIdString() {
+    return accountContextService.getContextAccount().getIdString();
   }
 }

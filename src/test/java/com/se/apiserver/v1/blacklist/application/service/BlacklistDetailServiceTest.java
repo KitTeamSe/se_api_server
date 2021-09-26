@@ -31,8 +31,8 @@ class BlacklistDetailServiceTest {
     when(blacklistJpaRepository.findByIp(anyString()))
         .thenReturn(Optional.ofNullable(null), Optional.of(mock(Blacklist.class)));
     //when
-    boolean normal = blacklistDetailService.isBaned(normalIp);
-    boolean baned = blacklistDetailService.isBaned(banedIp);
+    boolean normal = blacklistDetailService.isBannedIp(normalIp);
+    boolean baned = blacklistDetailService.isBannedIp(banedIp);
     //then
     assertAll(
         () -> assertEquals(false, normal),
