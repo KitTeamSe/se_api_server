@@ -16,7 +16,6 @@ public class BlacklistScheduleTask {
 
   @Scheduled(cron = "${spring.blacklist.schedule.cron}", zone = "${spring.blacklist.schedule.zone}")
   public void release() {
-    // 정해진 cron시간 마다 릴리즈기간 지난 블랙리스트 삭제
     blacklistDeleteService.deleteExpired();
   }
 
