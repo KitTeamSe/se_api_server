@@ -17,7 +17,7 @@ public class BlacklistCreateService {
     private final BlacklistJpaRepository blacklistJpaRepository;
 
     @Value("${spring.blacklist.release.default-plus-day}")
-    private Integer defaultPlusDay;
+    private Integer DEFAULT_PLUS_DAY;
 
     public BlacklistCreateService(
         BlacklistJpaRepository blacklistJpaRepository) {
@@ -33,7 +33,7 @@ public class BlacklistCreateService {
             request.getIp(),
             request.getIdString(),
             request.getReason(),
-            request.getReleaseDate() == null ? LocalDateTime.now().plusDays(defaultPlusDay) : request.getReleaseDate()
+            request.getReleaseDate() == null ? LocalDateTime.now().plusDays(DEFAULT_PLUS_DAY) : request.getReleaseDate()
         );
 
         blacklistJpaRepository.save(blacklist);

@@ -32,7 +32,7 @@ class BlacklistReadServiceTest {
   public void 블랙리스트_읽기_성공() throws Exception{
     //given
     long id = 0L;
-    Blacklist blacklist = new Blacklist("4-20글자", "4-20글자");
+    Blacklist blacklist = new Blacklist("4-20글자", null, "4-20글자", null);
     when(blacklistJpaRepository.findById(anyLong())).thenReturn(Optional.of(blacklist));
     //when
     BlacklistReadDto.Response response = blacklistReadService.read(id);
@@ -57,7 +57,7 @@ class BlacklistReadServiceTest {
   public void 블랙리스트_읽기_ALL_성공() throws Exception{
     //given
     PageRequest pageRequest = PageRequest.of(0, 10);
-    Blacklist blacklist = new Blacklist("4-20글자", "4-20글자");
+    Blacklist blacklist = new Blacklist("4-20글자", null, "4-20글자", null);
     PageImpl page = new PageImpl(Collections.singletonList(blacklist), pageRequest, 1L);
     when(blacklistJpaRepository.findAll(pageRequest)).thenReturn(page);
     //when

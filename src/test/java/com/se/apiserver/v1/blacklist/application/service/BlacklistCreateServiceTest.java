@@ -11,6 +11,7 @@ import com.se.apiserver.v1.blacklist.application.error.BlacklistErrorCode;
 import com.se.apiserver.v1.blacklist.domain.entity.Blacklist;
 import com.se.apiserver.v1.blacklist.infra.repository.BlacklistJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,7 +31,7 @@ class BlacklistCreateServiceTest {
   @Test
   public void 블랙리스트_생성_성공() throws Exception{
     //given
-    BlacklistCreateDto.Request request = new Request("127.0.0.1", "4-20글자");
+    BlacklistCreateDto.Request request = new Request("127.0.0.1",null,"4-20글자", LocalDateTime.now());
     //when
     //then
     assertDoesNotThrow(() -> blacklistCreateService.create(request));
@@ -39,9 +40,20 @@ class BlacklistCreateServiceTest {
   @Test
   public void 블랙리스트_생성_실패_IP_중복() throws Exception{
     //given
-    BlacklistCreateDto.Request request = new Request("127.0.0.1", "4-20글자");
+    BlacklistCreateDto.Request request = new Request("127.0.0.1", null, "4-20글자", LocalDateTime.now());
     when(blacklistJpaRepository.findByIp(anyString())).thenReturn(Optional.of(mock(Blacklist.class)));
     //when
+    BusinessException exception = assertThrows(BusinessException.class, () -> blacklistCreateService.create(request));
+    //then
+    assertEquals(BlacklistErrorCode.DUPLICATED_BLACKLIST, exception.getErrorCode());
+  }
+
+  @Test
+  public void 블랙리스트_생성_실패_유저ID_중복() throws Exception{
+    // given
+    BlacklistCreateDto.Request request = new Request(null, "idString", "4-20글자", LocalDateTime.now());
+    when(blacklistJpaRepository.findByIdString(anyString())).thenReturn(Optional.of(mock(Blacklist.class)));
+    // when
     BusinessException exception = assertThrows(BusinessException.class, () -> blacklistCreateService.create(request));
     //then
     assertEquals(BlacklistErrorCode.DUPLICATED_BLACKLIST, exception.getErrorCode());

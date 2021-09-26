@@ -1,5 +1,6 @@
-package com.se.apiserver.v1.blacklist.application.service;
+package com.se.apiserver.v1.blacklist.infra.schedule;
 
+import com.se.apiserver.v1.blacklist.application.service.BlacklistDeleteService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -18,4 +19,5 @@ public class BlacklistScheduleTask {
     // 정해진 cron시간 마다 릴리즈기간 지난 블랙리스트 삭제
     blacklistDeleteService.deleteExpired();
   }
+
 }
