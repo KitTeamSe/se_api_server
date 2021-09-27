@@ -11,6 +11,7 @@ import com.se.apiserver.v1.account.domain.entity.AccountVerifyToken;
 import com.se.apiserver.v1.account.infra.repository.AccountJpaRepository;
 import com.se.apiserver.v1.account.infra.repository.AccountVerifyTokenJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
+import com.se.apiserver.v1.mail.application.service.MailSendService;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
@@ -30,6 +31,8 @@ class AccountVerifyServiceTest {
   private AccountVerifyTokenJpaRepository accountVerifyTokenJpaRepository;
   @Mock
   private JavaMailSender javaMailSender;
+  @Mock
+  private MailSendService mailSendService;
 
   @InjectMocks
   private AccountVerifyService accountVerifyService;
@@ -74,7 +77,10 @@ class AccountVerifyServiceTest {
   public void 인증_성공() throws Exception{
     //given
     when(accountVerifyTokenJpaRepository.findFirstByToken(anyString())).thenReturn(
-        Optional.ofNullable(AccountVerifyToken.builder().status(AccountVerifyStatus.UNVERIFIED).timeExpire(LocalDateTime.now().plusHours(1)).build())
+        Optional.of(
+            new AccountVerifyToken(null, null,
+                LocalDateTime.now().plusHours(1),
+                AccountVerifyStatus.UNVERIFIED))
     );
     //when
     //then
@@ -95,7 +101,10 @@ class AccountVerifyServiceTest {
   public void 인증_실패_인증된_사용자() throws Exception{
     //given
     when(accountVerifyTokenJpaRepository.findFirstByToken(anyString())).thenReturn(
-        Optional.ofNullable(AccountVerifyToken.builder().status(AccountVerifyStatus.VERIFIED).build())
+        Optional.of(
+            new AccountVerifyToken(null, null,
+                LocalDateTime.now().plusHours(1),
+                AccountVerifyStatus.VERIFIED))
     );
     //when
     BusinessException exception = assertThrows(BusinessException.class, () -> accountVerifyService.verify(token));
@@ -107,7 +116,10 @@ class AccountVerifyServiceTest {
   public void 인증_실패_토큰_만료() throws Exception{
     //given
     when(accountVerifyTokenJpaRepository.findFirstByToken(anyString())).thenReturn(
-        Optional.ofNullable(AccountVerifyToken.builder().status(AccountVerifyStatus.UNVERIFIED).timeExpire(LocalDateTime.now().minusHours(1)).build())
+        Optional.of(
+            new AccountVerifyToken(null, null,
+                LocalDateTime.now().minusHours(1),
+                AccountVerifyStatus.UNVERIFIED))
     );
     //when
     BusinessException exception = assertThrows(BusinessException.class, () -> accountVerifyService.verify(token));
