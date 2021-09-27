@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 public enum BlacklistErrorCode implements ErrorCode {
     NO_SUCH_BLACKLIST(400,"BK01","존재하지 않는 블랙리스트"),
-    DUPLICATED_BLACKLIST(401,"BK02","등록 ip 중복");
+    DUPLICATED_BLACKLIST(401,"BK02","IP 혹은 사용자 중복");
     private int status;
     private final String code;
     private final String message;

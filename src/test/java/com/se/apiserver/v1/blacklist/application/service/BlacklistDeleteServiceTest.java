@@ -1,6 +1,7 @@
 package com.se.apiserver.v1.blacklist.application.service;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -9,6 +10,8 @@ import com.se.apiserver.v1.blacklist.application.error.BlacklistErrorCode;
 import com.se.apiserver.v1.blacklist.domain.entity.Blacklist;
 import com.se.apiserver.v1.blacklist.infra.repository.BlacklistJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,6 +36,16 @@ class BlacklistDeleteServiceTest {
     //when
     //then
     assertDoesNotThrow(() -> blacklistDeleteService.delete(id));
+  }
+
+  @Test
+  public void 기간지난_블랙리스트_삭제_성공() throws Exception {
+    // given
+    Blacklist blacklist = new Blacklist("127.0.0.1", null, "접근금지 사유", LocalDateTime.now().minusDays(1));
+    when(blacklistJpaRepository.findAllByReleaseDateBefore(any())).thenReturn(Collections.singletonList(blacklist));
+    //when
+    //then
+    assertDoesNotThrow(() -> blacklistDeleteService.deleteExpired());
   }
 
   @Test

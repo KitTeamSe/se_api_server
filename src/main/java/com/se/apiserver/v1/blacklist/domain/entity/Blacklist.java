@@ -2,6 +2,7 @@ package com.se.apiserver.v1.blacklist.domain.entity;
 
 import com.se.apiserver.v1.common.domain.entity.BaseEntity;
 
+import java.time.LocalDateTime;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import lombok.AccessLevel;
@@ -17,16 +18,25 @@ public class Blacklist extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long blacklistId;
 
-  @Column(length = 20, nullable = false, unique = true)
+  @Column(length = 20)
   @Size(min = 4, max = 20)
   private String ip;
+
+  @Column
+  @Size(min = 4, max = 20)
+  private String idString;
 
   @Column(length = 50, nullable = false)
   @Size(min = 4, max = 20)
   private String reason;
 
-  public Blacklist(@Size(min = 4, max = 20) String ip, @Size(min = 4, max = 20) String reason) {
+  @Column
+  private LocalDateTime releaseDate;
+
+  public Blacklist(String ip, String idString, String reason, LocalDateTime releaseDate) {
     this.ip = ip;
+    this.idString = idString;
     this.reason = reason;
+    this.releaseDate = releaseDate;
   }
 }
