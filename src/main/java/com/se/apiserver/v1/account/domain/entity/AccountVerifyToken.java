@@ -11,7 +11,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.Email;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -37,9 +36,8 @@ public class AccountVerifyToken extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private AccountVerifyStatus status;
 
-  @Builder
-  public AccountVerifyToken(@Email String email, String token, LocalDateTime timeExpire,
-      AccountVerifyStatus status) {
+  public AccountVerifyToken(String email, String token,
+      LocalDateTime timeExpire, AccountVerifyStatus status) {
     this.email = email;
     this.token = token;
     this.timeExpire = timeExpire;

@@ -74,7 +74,10 @@ class AccountVerifyServiceTest {
   public void 인증_성공() throws Exception{
     //given
     when(accountVerifyTokenJpaRepository.findFirstByToken(anyString())).thenReturn(
-        Optional.ofNullable(AccountVerifyToken.builder().status(AccountVerifyStatus.UNVERIFIED).timeExpire(LocalDateTime.now().plusHours(1)).build())
+        Optional.of(
+            new AccountVerifyToken(null, null,
+                LocalDateTime.now().plusHours(1),
+                AccountVerifyStatus.UNVERIFIED))
     );
     //when
     //then
@@ -95,7 +98,10 @@ class AccountVerifyServiceTest {
   public void 인증_실패_인증된_사용자() throws Exception{
     //given
     when(accountVerifyTokenJpaRepository.findFirstByToken(anyString())).thenReturn(
-        Optional.ofNullable(AccountVerifyToken.builder().status(AccountVerifyStatus.VERIFIED).build())
+        Optional.of(
+            new AccountVerifyToken(null, null,
+                LocalDateTime.now().plusHours(1),
+                AccountVerifyStatus.VERIFIED))
     );
     //when
     BusinessException exception = assertThrows(BusinessException.class, () -> accountVerifyService.verify(token));
@@ -107,7 +113,10 @@ class AccountVerifyServiceTest {
   public void 인증_실패_토큰_만료() throws Exception{
     //given
     when(accountVerifyTokenJpaRepository.findFirstByToken(anyString())).thenReturn(
-        Optional.ofNullable(AccountVerifyToken.builder().status(AccountVerifyStatus.UNVERIFIED).timeExpire(LocalDateTime.now().minusHours(1)).build())
+        Optional.of(
+            new AccountVerifyToken(null, null,
+                LocalDateTime.now().minusHours(1),
+                AccountVerifyStatus.VERIFIED))
     );
     //when
     BusinessException exception = assertThrows(BusinessException.class, () -> accountVerifyService.verify(token));
