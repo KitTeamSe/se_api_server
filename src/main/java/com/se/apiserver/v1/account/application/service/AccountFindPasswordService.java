@@ -5,25 +5,31 @@ import com.se.apiserver.v1.account.application.error.AccountErrorCode;
 import com.se.apiserver.v1.account.application.dto.AccountFindPasswordDto.Request;
 import com.se.apiserver.v1.account.infra.repository.AccountJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
-import lombok.RequiredArgsConstructor;
+import com.se.apiserver.v1.mail.application.dto.MailSendDto;
+import com.se.apiserver.v1.mail.application.service.MailSendService;
 import net.bytebuddy.utility.RandomString;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class AccountFindPasswordService {
 
   private final AccountJpaRepository accountJpaRepository;
   private final PasswordEncoder passwordEncoder;
-  private final JavaMailSender mailSender;
+  private final MailSendService mailSendService;
 
-  @Value("${spring.mail.username}")
-  private String SERVER_EMAIL;
+  public AccountFindPasswordService(
+      AccountJpaRepository accountJpaRepository,
+      PasswordEncoder passwordEncoder,
+      MailSendService mailSendService) {
+    this.accountJpaRepository = accountJpaRepository;
+    this.passwordEncoder = passwordEncoder;
+    this.mailSendService = mailSendService;
+  }
 
+  @Transactional
   public void findPassword(Request request) {
     Account account = accountJpaRepository.findByIdString(request.getId()).orElseThrow(() -> new BusinessException(AccountErrorCode.NO_SUCH_ACCOUNT));
     validateEmailMatch(account, request.getEmail());
@@ -32,12 +38,9 @@ public class AccountFindPasswordService {
     account.updatePassword(passwordEncoder.encode(randomPassword));
     accountJpaRepository.save(account);
 
-    SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-    simpleMailMessage.setSubject("SE 비밀번호 변경 안내");
-    simpleMailMessage.setText("SE 변경된 비밀번호는 " + randomPassword + " 입니다.\n 변경된 비밀번호로 로그인하고 비밀번호를 변경해주세요.");
-    simpleMailMessage.setFrom(SERVER_EMAIL);
-    simpleMailMessage.setTo(account.getEmail());
-    mailSender.send(simpleMailMessage);
+    String text = "SE 변경된 비밀번호는 " + randomPassword + " 입니다.\n 변경된 비밀번호로 로그인하고 비밀번호를 변경해주세요.";
+    String subject = "SE 비밀번호 변경 안내";
+    mailSendService.send(new MailSendDto(account.getEmail(), subject, text));
   }
 
   private void validateQuestionMatch(Account account, Long questionId, String answer) {
