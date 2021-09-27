@@ -11,6 +11,7 @@ import com.se.apiserver.v1.account.domain.entity.AccountVerifyToken;
 import com.se.apiserver.v1.account.infra.repository.AccountJpaRepository;
 import com.se.apiserver.v1.account.infra.repository.AccountVerifyTokenJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
+import com.se.apiserver.v1.mail.application.service.MailSendService;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
@@ -30,6 +31,8 @@ class AccountVerifyServiceTest {
   private AccountVerifyTokenJpaRepository accountVerifyTokenJpaRepository;
   @Mock
   private JavaMailSender javaMailSender;
+  @Mock
+  private MailSendService mailSendService;
 
   @InjectMocks
   private AccountVerifyService accountVerifyService;
@@ -116,7 +119,7 @@ class AccountVerifyServiceTest {
         Optional.of(
             new AccountVerifyToken(null, null,
                 LocalDateTime.now().minusHours(1),
-                AccountVerifyStatus.VERIFIED))
+                AccountVerifyStatus.UNVERIFIED))
     );
     //when
     BusinessException exception = assertThrows(BusinessException.class, () -> accountVerifyService.verify(token));

@@ -11,6 +11,7 @@ import com.se.apiserver.v1.account.domain.entity.Account;
 import com.se.apiserver.v1.account.domain.entity.Question;
 import com.se.apiserver.v1.account.infra.repository.AccountJpaRepository;
 import com.se.apiserver.v1.common.domain.exception.BusinessException;
+import com.se.apiserver.v1.mail.application.service.MailSendService;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,8 @@ class AccountFindPasswordServiceTest {
   private PasswordEncoder passwordEncoder;
   @Mock
   private JavaMailSender mailSender;
+  @Mock
+  private MailSendService mailSendService;
 
   @InjectMocks
   private AccountFindPasswordService accountFindPasswordService;
