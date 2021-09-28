@@ -1,7 +1,9 @@
 package com.se.apiserver.v1.blacklist.domain.entity;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
+import com.se.apiserver.v1.account.domain.entity.Account;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -27,10 +29,8 @@ class BlacklistTest {
   public void 제약조건_검사() throws Exception{
     //given
     String ip = "1";
-    String idString = "2";
-    String reason = "3";
-
-    Blacklist blacklist = new Blacklist(ip, idString, reason, null);
+    String reason = "2";
+    Blacklist blacklist = new Blacklist(ip, null, reason, null);
     //when
     Set<ConstraintViolation<Blacklist>> constraintViolation = validator.validate(blacklist);
     Iterator<ConstraintViolation<Blacklist>> iterator = constraintViolation.iterator();
@@ -41,8 +41,7 @@ class BlacklistTest {
     //then
     assertAll(
         () -> assertTrue(violationList.contains(ip)),
-        () -> assertTrue(violationList.contains(reason)),
-        () -> assertTrue(violationList.contains(idString))
+        () -> assertTrue(violationList.contains(reason))
     );
   }
 }

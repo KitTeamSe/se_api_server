@@ -9,7 +9,6 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication
-@EnableScheduling
 public class ApiserverApplication {
 
   public static void main(String[] args) {

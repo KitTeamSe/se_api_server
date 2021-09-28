@@ -102,4 +102,9 @@ public class AccountContextService implements UserDetailsService {
       Account account = accountJpaRepository.findById(accountId).orElseThrow(() -> new BusinessException(AccountErrorCode.NO_SUCH_ACCOUNT));
       return isOwner(account);
   }
+
+  public boolean isAnonymous() {
+    System.out.println(SecurityContextHolder.getContext().getAuthentication().getName());
+    return SecurityContextHolder.getContext().getAuthentication().getName().equals(ANONYMOUS_ID);
+  }
 }

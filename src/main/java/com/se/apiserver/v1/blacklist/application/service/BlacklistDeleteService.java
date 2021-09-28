@@ -27,9 +27,4 @@ public class BlacklistDeleteService {
         blacklistJpaRepository.delete(blacklist);
     }
 
-    @Transactional
-    public void deleteExpired() {
-        List<Blacklist> blacklist = blacklistJpaRepository.findAllByReleaseDateBefore(LocalDateTime.now());
-        blacklistJpaRepository.deleteAll(blacklist);
-    }
 }
