@@ -46,9 +46,9 @@ public class BlacklistReadDto {
         public static Response fromEntity(Blacklist blacklist) {
             return Response.builder()
                 .id(blacklist.getBlacklistId())
-                .ip(blacklist.getIp())
-                .accountId(blacklist.getAccount().getAccountId())
-                .idString(blacklist.getAccount().getIdString())
+                .ip(blacklist.getIp() != null ? blacklist.getIp() : null)
+                .accountId(blacklist.getAccount() != null ? blacklist.getAccount().getAccountId() : null)
+                .idString(blacklist.getAccount() != null ? blacklist.getAccount().getIdString() : null)
                 .reason(blacklist.getReason())
                 .releaseDate(blacklist.getReleaseDate())
                 .build();
