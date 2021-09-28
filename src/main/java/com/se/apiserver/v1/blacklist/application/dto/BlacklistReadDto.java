@@ -21,6 +21,9 @@ public class BlacklistReadDto {
         @ApiModelProperty(notes = "아이피", example = "127.0.0.1")
         private String ip;
 
+        @ApiModelProperty(notes = "고유아이디", example = "1")
+        private Long accountId;
+
         @ApiModelProperty(notes = "사용자 아이디(로그인아이디)", example = "user")
         private String idString;
 
@@ -30,10 +33,11 @@ public class BlacklistReadDto {
         @ApiModelProperty(notes = "릴리즈 일시")
         private LocalDateTime releaseDate;
 
-        public Response(Long id, String ip, String idString, String reason,
+        public Response(Long id, String ip, Long accountId, String idString, String reason,
             LocalDateTime releaseDate) {
             this.id = id;
             this.ip = ip;
+            this.accountId = accountId;
             this.idString = idString;
             this.reason = reason;
             this.releaseDate = releaseDate;
@@ -42,8 +46,9 @@ public class BlacklistReadDto {
         public static Response fromEntity(Blacklist blacklist) {
             return Response.builder()
                 .id(blacklist.getBlacklistId())
-                .idString(blacklist.getIdString())
-                .ip(blacklist.getIp())
+                .ip(blacklist.getIp() != null ? blacklist.getIp() : null)
+                .accountId(blacklist.getAccount() != null ? blacklist.getAccount().getAccountId() : null)
+                .idString(blacklist.getAccount() != null ? blacklist.getAccount().getIdString() : null)
                 .reason(blacklist.getReason())
                 .releaseDate(blacklist.getReleaseDate())
                 .build();

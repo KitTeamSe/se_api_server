@@ -28,18 +28,12 @@ public class BlacklistInterceptor implements HandlerInterceptor {
       return true;
     }
 
-    if (request.getRequestURI().equals("/api/v1/siginin")) {
-      return true;
-    }
-
-    if (blacklistDetailService.isBannedIp(getIp(request))){
+    if(accountContextService.isAnonymous() && blacklistDetailService.isBannedIp(getIp(request))){
       throw new BusinessException(GlobalErrorCode.BANNED_IP);
     }
 
-    if (accountContextService != null) {
-      if (blacklistDetailService.isBannedUser(getUserIdString())) {
-        throw new BusinessException(GlobalErrorCode.BANNED_IP);
-      }
+    if (!accountContextService.isAnonymous() && blacklistDetailService.isBannedAccount(getAccount())) {
+      throw new BusinessException(GlobalErrorCode.BANNED_ACCOUNT);
     }
 
     return true;
@@ -53,7 +47,7 @@ public class BlacklistInterceptor implements HandlerInterceptor {
     return ip;
   }
 
-  private String getUserIdString() {
-    return accountContextService.getContextAccount().getIdString();
+  private Account getAccount() {
+    return accountContextService.getContextAccount();
   }
 }

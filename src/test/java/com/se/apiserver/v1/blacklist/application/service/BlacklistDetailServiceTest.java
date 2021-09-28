@@ -1,13 +1,19 @@
 package com.se.apiserver.v1.blacklist.application.service;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.se.apiserver.v1.account.domain.entity.Account;
 import com.se.apiserver.v1.blacklist.domain.entity.Blacklist;
 import com.se.apiserver.v1.blacklist.infra.repository.BlacklistJpaRepository;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import org.apache.tomcat.jni.Local;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -24,19 +30,36 @@ class BlacklistDetailServiceTest {
   private BlacklistDetailService blacklistDetailService;
 
   @Test
-  public void 블랙리스트_벤_여부_확인() throws Exception{
+  public void 블랙리스트_IP_차단_여부_확인() throws Exception{
     //given
     String normalIp = "4-20글자";
-    String banedIp = "127.0.0.1";
-    when(blacklistJpaRepository.findByIp(anyString()))
-        .thenReturn(Optional.ofNullable(null), Optional.of(mock(Blacklist.class)));
+    String bannedIp = "127.0.0.1";
+    when(blacklistJpaRepository.findByIpAndReleaseDateAfter(anyString(), any(LocalDateTime.class)))
+        .thenReturn(Collections.emptyList(), Collections.singletonList(mock(Blacklist.class)));
     //when
     boolean normal = blacklistDetailService.isBannedIp(normalIp);
-    boolean baned = blacklistDetailService.isBannedIp(banedIp);
+    boolean banned = blacklistDetailService.isBannedIp(bannedIp);
     //then
     assertAll(
         () -> assertEquals(false, normal),
-        () -> assertEquals(true, baned)
+        () -> assertEquals(true, banned)
+    );
+  }
+  
+  @Test
+  public void 블랙리스트_계정_차단_여부_확인() throws Exception{
+    // given
+    Account normalAccount = mock(Account.class);
+    Account bannedAccount = mock(Account.class);
+    when(blacklistJpaRepository.findByAccountAndReleaseDateAfter(any(Account.class), any(LocalDateTime.class)))
+        .thenReturn(Collections.emptyList(), Collections.singletonList(mock(Blacklist.class)));
+    // when
+    boolean normal = blacklistDetailService.isBannedAccount(normalAccount);
+    boolean banned = blacklistDetailService.isBannedAccount(bannedAccount);
+    // then
+    assertAll(
+        () -> assertEquals(false, normal),
+        () -> assertEquals(true, banned)
     );
   }
 }
