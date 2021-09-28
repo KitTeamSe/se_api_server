@@ -39,16 +39,6 @@ class BlacklistDeleteServiceTest {
   }
 
   @Test
-  public void 기간지난_블랙리스트_삭제_성공() throws Exception {
-    // given
-    Blacklist blacklist = new Blacklist("127.0.0.1", null, "접근금지 사유", LocalDateTime.now().minusDays(1));
-    when(blacklistJpaRepository.findAllByReleaseDateBefore(any())).thenReturn(Collections.singletonList(blacklist));
-    //when
-    //then
-    assertDoesNotThrow(() -> blacklistDeleteService.deleteExpired());
-  }
-
-  @Test
   public void 블랙리스트_삭제_실패_ID_불일치() throws Exception{
     //given
     long id = 0L;
