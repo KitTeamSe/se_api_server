@@ -1,5 +1,6 @@
 package com.se.apiserver.v1.post.domain.entity;
 
+import javax.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,10 +14,12 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostContent {
     @Column(length = 50, nullable = false)
+    @NotBlank
     @Size(min = 3, max = 50)
     private String title;
 
     @Column(length = 2000, nullable = false)
+    @NotBlank
     @Size(min = 5, max = 2000)
     private String text;
 
