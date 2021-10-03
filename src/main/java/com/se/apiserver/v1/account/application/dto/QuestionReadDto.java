@@ -1,6 +1,7 @@
 package com.se.apiserver.v1.account.application.dto;
 
 import com.se.apiserver.v1.account.domain.entity.Question;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Data;
@@ -9,6 +10,7 @@ public class QuestionReadDto {
 
   @Data
   @Builder
+  @ApiModel("질문 조회 응답")
   static public class Response{
 
     @ApiModelProperty(notes = "질문 id", example = "1")

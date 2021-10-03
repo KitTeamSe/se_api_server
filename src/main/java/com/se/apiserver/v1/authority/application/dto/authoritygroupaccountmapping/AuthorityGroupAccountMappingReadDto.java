@@ -1,6 +1,7 @@
 package com.se.apiserver.v1.authority.application.dto.authoritygroupaccountmapping;
 
 import com.se.apiserver.v1.authority.domain.entity.AuthorityGroupAccountMapping;
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +13,7 @@ public class AuthorityGroupAccountMappingReadDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
+    @ApiModel("그룹-사용자 매핑 조회 응답")
     static public class Response{
 
         private Long id;

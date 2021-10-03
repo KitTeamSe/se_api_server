@@ -11,6 +11,7 @@ import com.se.apiserver.v1.post.application.error.PostErrorCode;
 import com.se.apiserver.v1.post.domain.entity.*;
 
 import com.se.apiserver.v1.tag.domain.entity.Tag;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.time.LocalDateTime;
@@ -28,6 +29,7 @@ public class PostReadDto {
   @Getter
   @NoArgsConstructor
   @Builder
+  @ApiModel(value = "게시글 검색 요청")
   static public class PostSearchRequest {
 
     @ApiModelProperty(notes = "게시판 영문명", example = "freeboard")
@@ -55,6 +57,7 @@ public class PostReadDto {
   @Getter
   @NoArgsConstructor
   @Builder
+  @ApiModel(value = "게시글 읽기 요청")
   static public class PostListResponse {
 
     private Long boardId;

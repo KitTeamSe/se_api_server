@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.se.apiserver.v1.menu.domain.entity.Menu;
 import com.se.apiserver.v1.menu.domain.entity.MenuType;
+import io.swagger.annotations.ApiModel;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ public class MenuReadDto {
   @Getter
   @Builder
   @NoArgsConstructor(access = AccessLevel.PROTECTED)
+  @ApiModel("메뉴 목록 조회 응답")
   static public class ReadAllResponse {
 
     @JsonUnwrapped
@@ -54,6 +56,7 @@ public class MenuReadDto {
   @Getter
   @Builder
   @NoArgsConstructor(access = AccessLevel.PROTECTED)
+  @ApiModel("메뉴 조회 응답")
   static public class ReadResponse {
 
     private Long menuId;

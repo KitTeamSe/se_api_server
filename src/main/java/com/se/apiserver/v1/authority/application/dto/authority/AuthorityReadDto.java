@@ -14,7 +14,7 @@ public class AuthorityReadDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    @ApiModel
+    @ApiModel("권한 조회 응답")
     public static class Response{
         private Long authorityId;
 

@@ -17,7 +17,7 @@ public class PostCreateDto {
   @Builder
   @NoArgsConstructor
   @AllArgsConstructor
-  @ApiModel(value = "PostCreateRequestDto")
+  @ApiModel(value = "게시글 생성 요청")
   static public class Request {
 
     @NotNull
