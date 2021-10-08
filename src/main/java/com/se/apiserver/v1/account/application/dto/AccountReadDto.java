@@ -6,6 +6,7 @@ import com.se.apiserver.v1.account.domain.entity.Account;
 import com.se.apiserver.v1.account.domain.entity.AccountType;
 import com.se.apiserver.v1.account.domain.entity.InformationOpenAgree;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.NotNull;
 
@@ -20,6 +21,7 @@ public class AccountReadDto {
 
   @Data
   @Builder
+  @ApiModel("회원 조회 응답")
   static public class Response {
 
     private String idString;

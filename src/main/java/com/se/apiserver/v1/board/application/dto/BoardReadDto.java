@@ -1,6 +1,7 @@
 package com.se.apiserver.v1.board.application.dto;
 
 import com.se.apiserver.v1.board.domain.entity.Board;
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +22,7 @@ public class BoardReadDto {
     @Data
     @AllArgsConstructor
     @Builder
+    @ApiModel(value = "게시판 읽기 응답")
     static public class ReadResponse{
         private Long boardId;
 

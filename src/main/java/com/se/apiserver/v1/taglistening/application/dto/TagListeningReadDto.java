@@ -1,6 +1,7 @@
 package com.se.apiserver.v1.taglistening.application.dto;
 
 import com.se.apiserver.v1.taglistening.domain.entity.TagListening;
+import io.swagger.annotations.ApiModel;
 import javax.validation.constraints.Min;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,6 +12,7 @@ public class TagListeningReadDto {
   @Getter
   @NoArgsConstructor
   @Builder
+  @ApiModel("수신 태그 조회 응답")
   static public class Response {
 
     private Long tagListeningId;

@@ -4,6 +4,7 @@ import com.se.apiserver.v1.authority.application.dto.authority.AuthorityReadDto;
 import com.se.apiserver.v1.authority.domain.entity.Authority;
 import com.se.apiserver.v1.authority.domain.entity.AuthorityGroup;
 import com.se.apiserver.v1.authority.domain.entity.AuthorityGroupType;
+import io.swagger.annotations.ApiModel;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
@@ -40,6 +41,7 @@ public class AuthorityGroupReadDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
+    @ApiModel("권한 그룹 조회 응답")
     static public class Response{
 
         private Long authorityGroupId;
