@@ -3,6 +3,7 @@ package com.se.apiserver.v1.attach.application.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.se.apiserver.v1.attach.domain.entity.Attach;
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,6 +14,7 @@ public class AttachReadDto {
   @Getter
   @NoArgsConstructor
   @AllArgsConstructor
+  @ApiModel("첨부 파일 조회 응답")
   @Builder
   static public class Response {
 

@@ -1,11 +1,13 @@
 package com.se.apiserver.v1.notice.application.dto;
 
 import com.se.apiserver.v1.notice.domain.entity.Notice;
+import io.swagger.annotations.ApiModel;
 import lombok.*;
 
 public class NoticeReadDto {
     @Data
     @Builder
+    @ApiModel("알림 조회 응답")
     static public class ReadResponse {
         private String title;
 
