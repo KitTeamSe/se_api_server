@@ -4,6 +4,7 @@ import com.se.apiserver.v1.common.domain.entity.Anonymous;
 import com.se.apiserver.v1.post.domain.entity.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import javax.validation.constraints.Size;
@@ -25,9 +26,11 @@ public class PostCreateDto {
     @ApiModelProperty(notes = "게시판 영문명", example = "freeboard")
     private String boardNameEng;
 
+    @Valid
     @NotNull
     private PostContent postContent;
 
+    @Valid
     @ApiModelProperty(notes = "익명 사용자 정보, 회원으로 등록일 경우 생략")
     private Anonymous anonymous;
 
