@@ -30,6 +30,7 @@ public class ReplyReadDto {
     private String text;
     private String accountId;
     private String anonymousNickname;
+    private String ip;
     private List<ReplyReadAttachDto> attacheList;
     private List<Response> child;
     private LocalDateTime createAt;
@@ -52,6 +53,8 @@ public class ReplyReadDto {
         responseBuilder.accountId(reply.getAccount().getIdString());
       } else {
         responseBuilder.anonymousNickname(reply.getAnonymous().getAnonymousNickname());
+        String ip = reply.getLastModifiedIp() == null ? reply.getCreatedIp() : reply.getLastModifiedIp();
+        responseBuilder.ip(ip);
       }
 
       if (reply.getParent() != null){
