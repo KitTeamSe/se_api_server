@@ -15,24 +15,24 @@ import javax.validation.constraints.Size;
 public class PostContent {
     @Column(length = 50, nullable = false)
     @NotBlank
-    @Size(min = 3, max = 50)
+    @Size(min = 1, max = 50)
     private String title;
 
     @Column(length = 2000, nullable = false)
     @NotBlank
-    @Size(min = 5, max = 2000)
+    @Size(min = 1, max = 2000)
     private String text;
 
-    public PostContent(@Size(min = 3, max = 50) String title, @Size(min = 5, max = 2000) String text) {
+    public PostContent(@Size(min = 1, max = 50) String title, @Size(min = 1, max = 2000) String text) {
         this.title = title;
         this.text = text;
     }
 
-    public void updateTitle(@Size(min = 3, max = 50) String title){
+    public void updateTitle(@Size(min = 1, max = 50) String title){
         this.title = title;
     }
 
-    public void updateText(@Size(min = 5, max = 2000) String text){
+    public void updateText(@Size(min = 1, max = 2000) String text){
         this.text = text;
     }
 }

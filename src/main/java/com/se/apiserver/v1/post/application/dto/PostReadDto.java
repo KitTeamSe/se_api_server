@@ -111,6 +111,8 @@ public class PostReadDto {
 
     private AccountType accountType;
 
+    private String ip;
+
     private LocalDateTime createAt;
 
     @JsonInclude(Include.NON_NULL)
@@ -119,7 +121,7 @@ public class PostReadDto {
     public PostListItem(Long postId, Long boardId, Integer views, Integer numReply,
         PostIsSecret isSecret, PostIsNotice isNotice, String title, String previewText,
         String accountIdString, String nickname,
-        AccountType accountType, LocalDateTime createAt,
+        AccountType accountType, String ip, LocalDateTime createAt,
         List<TagDto> tags) {
       this.postId = postId;
       this.boardId = boardId;
@@ -132,6 +134,7 @@ public class PostReadDto {
       this.accountIdString = accountIdString;
       this.nickname = nickname;
       this.accountType = accountType;
+      this.ip = ip;
       this.createAt = createAt;
       this.tags = tags;
     }
@@ -155,6 +158,8 @@ public class PostReadDto {
       } else {
         String nickname = post.getAnonymous().getAnonymousNickname();
         builder.nickname(nickname);
+        String ip = post.getLastModifiedIp() == null ? post.getCreatedIp() : post.getLastModifiedIp();
+        builder.ip(ip);
       }
 
       builder.tags(post.getTags().stream()
@@ -206,6 +211,8 @@ public class PostReadDto {
 
     private AccountType accountType;
 
+    private String ip;
+
     @JsonInclude(Include.NON_NULL)
     private PostContent postContent;
 
@@ -220,7 +227,7 @@ public class PostReadDto {
     public Response(Long postId, Long boardId, String boardNameEng, String boardNameKor,
         Integer views, PostIsSecret isSecret,
         PostIsNotice isNotice, String accountIdString, String nickname,
-        AccountType accountType, PostContent postContent, LocalDateTime createdAt,
+        AccountType accountType, String ip, PostContent postContent, LocalDateTime createdAt,
         List<AttachDto> attaches,
         List<TagDto> tags) {
       this.postId = postId;
@@ -233,6 +240,7 @@ public class PostReadDto {
       this.accountIdString = accountIdString;
       this.nickname = nickname;
       this.accountType = accountType;
+      this.ip = ip;
       this.postContent = postContent;
       this.createdAt = createdAt;
       this.attaches = attaches;
@@ -260,6 +268,8 @@ public class PostReadDto {
       } else {
         String nickname = post.getAnonymous().getAnonymousNickname();
         builder.nickname(nickname);
+        String ip = post.getLastModifiedIp() == null ? post.getCreatedIp() : post.getLastModifiedIp();
+        builder.ip(ip);
       }
 
       AccountType accountType =

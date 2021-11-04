@@ -11,7 +11,6 @@ import com.se.apiserver.v1.post.application.dto.PostReadDto.PostSearchRequest;
 import com.se.apiserver.v1.post.domain.entity.Post;
 import com.se.apiserver.v1.post.application.error.PostErrorCode;
 import com.se.apiserver.v1.post.domain.entity.PostIsNotice;
-import com.se.apiserver.v1.post.domain.entity.PostIsSecret;
 import com.se.apiserver.v1.post.application.dto.PostReadDto;
 import com.se.apiserver.v1.post.domain.repository.PostRepositoryProtocol;
 import com.se.apiserver.v1.post.infra.repository.PostJpaRepository;
@@ -128,6 +127,8 @@ public class PostReadService {
   }
 
   private void validateAnonymousPostPassword(Post post, String password) {
+    if(isOwnerOrHasManageAuthority(post))
+      return;
     if (!passwordEncoder.matches(password, post.getAnonymousPassword())) {
       throw new BusinessException(PostErrorCode.ANONYMOUS_PASSWORD_INCORRECT);
     }
@@ -136,14 +137,8 @@ public class PostReadService {
 
   private boolean isOwnerOrHasManageAuthority(Post post) {
     Set<String> authorities = accountContextService.getContextAuthorities();
-    if (post.getAccount() == null) {
-      return post.getIsSecret() == PostIsSecret.NORMAL;
-    }
-    if (authorities.contains(Post.MANAGE_AUTHORITY) || post
-        .isOwner(accountContextService.getCurrentAccountId())) {
-      return true;
-    }
-    return false;
+    return authorities.contains(Post.MANAGE_AUTHORITY) || post
+        .isOwner(accountContextService.getCurrentAccountId());
   }
 
 

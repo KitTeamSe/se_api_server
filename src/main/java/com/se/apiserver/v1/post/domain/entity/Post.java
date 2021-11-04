@@ -229,14 +229,14 @@ public class Post extends BaseEntity {
   }
 
   public boolean isOwner(Account contextAccount) {
-    if (this.account == contextAccount) {
+    if (this.account != null && this.account == contextAccount) {
       return true;
     }
     return false;
   }
 
   public boolean isOwner(Long accountId) {
-    if (this.account.getAccountId() == accountId) {
+    if (this.account != null && this.account.getAccountId().equals(accountId)) {
       return true;
     }
     return false;

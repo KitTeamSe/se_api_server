@@ -39,7 +39,7 @@ public class Reply extends BaseEntity {
   private Post post;
 
   @Column(length = 5000, nullable = false)
-  @Size(min = 4, max = 5000)
+  @Size(min = 1, max = 5000)
   private String text;
 
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
