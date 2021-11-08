@@ -16,6 +16,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -159,7 +160,7 @@ public class PostReadDto {
         String nickname = post.getAnonymous().getAnonymousNickname();
         builder.nickname(nickname);
         String ip = post.getLastModifiedIp() == null ? post.getCreatedIp() : post.getLastModifiedIp();
-        builder.ip(ip);
+        builder.ip(hideIpHalf(ip));
       }
 
       builder.tags(post.getTags().stream()
@@ -269,7 +270,7 @@ public class PostReadDto {
         String nickname = post.getAnonymous().getAnonymousNickname();
         builder.nickname(nickname);
         String ip = post.getLastModifiedIp() == null ? post.getCreatedIp() : post.getLastModifiedIp();
-        builder.ip(ip);
+        builder.ip(hideIpHalf(ip));
       }
 
       AccountType accountType =
@@ -351,5 +352,18 @@ public class PostReadDto {
           .tag(tag.getText())
           .build();
     }
+  }
+
+  static private String hideIpHalf(String ip){
+    StringBuilder sb = new StringBuilder();
+    StringTokenizer st = new StringTokenizer(ip, ".");
+
+    int delimiterCnt = 0;
+    while(st.hasMoreTokens() && delimiterCnt < 2){
+      sb.append(st.nextElement()).append(".");
+      delimiterCnt++;
+    }
+    sb.deleteCharAt(sb.length() - 1);
+    return sb.toString();
   }
 }
