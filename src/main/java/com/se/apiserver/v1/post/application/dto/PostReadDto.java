@@ -357,7 +357,7 @@ public class PostReadDto {
   }
 
   static private String hideIpHalf(String ip){
-    Pattern pattern = Pattern.compile("([0-9]*.[0-9]*)");
+    Pattern pattern = Pattern.compile("([0-9]+.[0-9]+)");
     Matcher matcher = pattern.matcher(ip);
     if(matcher.find())
       return matcher.group(1);
