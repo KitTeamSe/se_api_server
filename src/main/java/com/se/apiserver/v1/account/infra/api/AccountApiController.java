@@ -175,6 +175,13 @@ public class AccountApiController {
         return new SuccessResponse(HttpStatus.OK.value(), "조회 성공", questionReadService.readAll());
     }
 
+    @GetMapping(path = "/account/question/{userId}")
+    @ResponseStatus(value = HttpStatus.OK)
+    @ApiOperation(value = "사용자 아이디로 회원가입 질문 조회")
+    public SuccessResponse<List<Response>> readQuestionByUserId(@PathVariable(name = "userId") String userId) {
+        return new SuccessResponse(HttpStatus.OK.value(), "조회 성공", questionReadService.readQuestionByUserId(userId));
+    }
+
     private String getIp(HttpServletRequest httpServletRequest){
         String ip = httpServletRequest.getHeader("x-forwarded-for");
         return ip != null ? ip : httpServletRequest.getRemoteAddr();
