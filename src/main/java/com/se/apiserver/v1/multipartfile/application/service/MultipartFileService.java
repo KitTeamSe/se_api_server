@@ -19,6 +19,9 @@ public abstract class MultipartFileService {
   @Value("${service-name}")
   protected String SERVICE_NAME;
 
+  @Value("${se-file-server.scheme}")
+  private String SCHEME;
+
   protected BusinessException getBusinessExceptionFromFileServerException(HttpStatusCodeException e){
     try{
       String errorCodeJson = e.getResponseBodyAsString();
@@ -31,6 +34,6 @@ public abstract class MultipartFileService {
   }
 
   protected String getCurrentHostUrl(){
-    return ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+    return ServletUriComponentsBuilder.fromCurrentContextPath().scheme(SCHEME).build().toUriString();
   }
 }
