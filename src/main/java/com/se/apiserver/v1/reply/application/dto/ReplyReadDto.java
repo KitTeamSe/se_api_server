@@ -6,6 +6,9 @@ import com.se.apiserver.v1.reply.domain.entity.ReplyIsSecret;
 import io.swagger.annotations.ApiModel;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -54,7 +57,7 @@ public class ReplyReadDto {
       } else {
         responseBuilder.anonymousNickname(reply.getAnonymous().getAnonymousNickname());
         String ip = reply.getLastModifiedIp() == null ? reply.getCreatedIp() : reply.getLastModifiedIp();
-        responseBuilder.ip(ip);
+        responseBuilder.ip(hideIpHalf(ip));
       }
 
       if (reply.getParent() != null){
@@ -105,7 +108,6 @@ public class ReplyReadDto {
         this.fileSize = fileSize;
       }
     }
-
   }
 
   @Builder
@@ -117,5 +119,13 @@ public class ReplyReadDto {
     int totalPage;
     int currentPage;
     int perPage;
+  }
+
+  static private String hideIpHalf(String ip){
+    Pattern pattern = Pattern.compile("([0-9]+.[0-9]+)");
+    Matcher matcher = pattern.matcher(ip);
+    if(matcher.find())
+      return matcher.group(1);
+    return "";
   }
 }

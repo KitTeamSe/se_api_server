@@ -16,6 +16,9 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -159,7 +162,7 @@ public class PostReadDto {
         String nickname = post.getAnonymous().getAnonymousNickname();
         builder.nickname(nickname);
         String ip = post.getLastModifiedIp() == null ? post.getCreatedIp() : post.getLastModifiedIp();
-        builder.ip(ip);
+        builder.ip(hideIpHalf(ip));
       }
 
       builder.tags(post.getTags().stream()
@@ -269,7 +272,7 @@ public class PostReadDto {
         String nickname = post.getAnonymous().getAnonymousNickname();
         builder.nickname(nickname);
         String ip = post.getLastModifiedIp() == null ? post.getCreatedIp() : post.getLastModifiedIp();
-        builder.ip(ip);
+        builder.ip(hideIpHalf(ip));
       }
 
       AccountType accountType =
@@ -351,5 +354,13 @@ public class PostReadDto {
           .tag(tag.getText())
           .build();
     }
+  }
+
+  static private String hideIpHalf(String ip){
+    Pattern pattern = Pattern.compile("([0-9]+.[0-9]+)");
+    Matcher matcher = pattern.matcher(ip);
+    if(matcher.find())
+      return matcher.group(1);
+    return "";
   }
 }
