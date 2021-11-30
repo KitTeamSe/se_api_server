@@ -17,6 +17,8 @@ import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -355,16 +357,10 @@ public class PostReadDto {
   }
 
   static private String hideIpHalf(String ip){
-    StringBuilder sb = new StringBuilder();
-    StringTokenizer st = new StringTokenizer(ip, ".");
-
-    int delimiterCnt = 0;
-    while(st.hasMoreTokens() && delimiterCnt < 2){
-      sb.append(st.nextElement()).append(".");
-      delimiterCnt++;
-    }
-    if(sb.length() > 0)
-      sb.deleteCharAt(sb.length() - 1);
-    return sb.toString();
+    Pattern pattern = Pattern.compile("([0-9]*.[0-9]*)");
+    Matcher matcher = pattern.matcher(ip);
+    if(matcher.find())
+      return matcher.group(1);
+    return "";
   }
 }
